@@ -46,6 +46,8 @@ Périmètre : `Modele/`. **Issue préalable obligatoire.** Le modèle s'applique
 
 ## Ce que la CI vérifie
 
+`scripts/ci_locale.sh` rejoue les mêmes étapes en local, dans le même ordre.
+
 | Vérification | Échoue si… |
 |---|---|
 | Garde-fou (avant compilation) | construction interdite dans un fichier Lean (voir ci-dessous), configuration de build modifiée hors des clés autorisées |

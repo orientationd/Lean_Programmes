@@ -40,8 +40,8 @@ Trois choix structurants :
    automatiquement les scénarios correspondants pour tous les programmes.
 3. **Tout est entier et décidable.** Montants en M€, taux en points de base,
    coefficients en pour mille (`Modele/Unites.lean`). Chaque propriété se
-   décide par `decide +kernel` : pas de Mathlib, pas de flottants, build en
-   quelques secondes.
+   décide par `decide +kernel` : pas de Mathlib, pas de flottants. La CI
+   complète, rejeu des preuves compris, tient en deux minutes environ.
 
 ## Engagements et évaluation
 
