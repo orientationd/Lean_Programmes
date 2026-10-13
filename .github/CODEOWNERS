@@ -1,0 +1,28 @@
+# Revue obligatoire (avec la protection de branche « Require review from
+# Code Owners »). Remplacer @VOTRE-ORG/... par de vraies équipes ou comptes.
+# La dernière règle qui correspond l'emporte.
+
+# Par défaut : mainteneurs du dépôt
+*                         @VOTRE-ORG/mainteneurs
+
+# Socle commun : toute modification change l'évaluation de TOUS les programmes
+/Modele/                  @VOTRE-ORG/socle
+/Modele.lean              @VOTRE-ORG/socle
+/Hypotheses/              @VOTRE-ORG/socle
+/Hypotheses.lean          @VOTRE-ORG/socle
+/Proprietes/              @VOTRE-ORG/socle
+/Proprietes.lean          @VOTRE-ORG/socle
+/Engagements.lean         @VOTRE-ORG/socle
+/Audit.lean               @VOTRE-ORG/socle
+/Rapport.lean             @VOTRE-ORG/socle
+/lakefile.toml            @VOTRE-ORG/socle
+/lean-toolchain           @VOTRE-ORG/socle
+/scripts/                 @VOTRE-ORG/socle
+/.github/                 @VOTRE-ORG/socle
+
+# Registre : l'ajout d'un programme passe par les mainteneurs
+/Programmes.lean          @VOTRE-ORG/mainteneurs
+
+# Un bloc par programme : ses mainteneurs relisent les PR qui le touchent
+/Programmes/ExempleRelance/        @mainteneur-exemple-relance
+/Programmes/ExempleConsolidation/  @mainteneur-exemple-consolidation

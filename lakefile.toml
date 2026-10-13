@@ -1,0 +1,35 @@
+name = "programmes"
+version = "0.1.0"
+defaultTargets = ["Modele", "Hypotheses", "Proprietes", "Programmes", "Engagements", "rapport"]
+
+[leanOptions]
+autoImplicit = false
+relaxedAutoImplicit = false
+
+# Modèle économique commun : état, leviers, scénario, projection.
+# Toute modification ici change l'évaluation de TOUS les programmes.
+[[lean_lib]]
+name = "Modele"
+
+# Hypothèses partagées (démographie, économie, droit) et leur combinaison.
+[[lean_lib]]
+name = "Hypotheses"
+
+# Propriétés partagées, évaluées pour chaque programme sous chaque scénario.
+[[lean_lib]]
+name = "Proprietes"
+
+# Un dossier par programme + registre (Programmes.lean).
+[[lean_lib]]
+name = "Programmes"
+
+# Preuve que tous les engagements de tous les programmes sont tenus.
+# Séparée de `Programmes` pour que le rapport se construise même quand un
+# engagement est cassé (il explique alors lequel).
+[[lean_lib]]
+name = "Engagements"
+
+# Matrice programme × scénario × propriété (JSON + Markdown).
+[[lean_exe]]
+name = "rapport"
+root = "Rapport"
