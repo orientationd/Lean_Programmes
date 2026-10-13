@@ -68,7 +68,7 @@ hypothèse ajoutée plus tard par n'importe qui.
 | `Engagements.lean` | preuve que tous les engagements sont tenus |
 | `Rapport.lean` | exécutable `rapport` : JSON + Markdown |
 | `Audit.lean` | refuse `sorry`, `native_decide` et tout `axiom` |
-| `scripts/` | diff de rapports, contrôle du registre |
+| `scripts/` | garde-fou syntaxique, diff de rapports, contrôle du registre |
 | `.github/` | CI, commentaire de PR, CODEOWNERS, modèles d'issue et de PR |
 
 ## En local
@@ -77,10 +77,14 @@ hypothèse ajoutée plus tard par n'importe qui.
 # elan installe automatiquement la version de Lean fixée dans lean-toolchain
 curl -sSfL https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh | sh
 
-lake build                       # tout compiler, engagements compris
-lake env lean Audit.lean         # audit des axiomes
-lake exe rapport                 # écrit rapport.json et rapport.md
-python3 scripts/verifier_registre.py
+scripts/ci_locale.sh                     # toutes les étapes ci-dessous, dans l'ordre de la CI
+
+python3 -I scripts/garde_fou.py          # avant de compiler du code non relu
+python3 -I scripts/verifier_registre.py
+lake build                               # tout compiler, engagements compris
+lake env leanchecker --fresh Engagements # rejouer les preuves dans le noyau
+lake env lean Audit.lean                 # audit des axiomes
+lake exe rapport                         # écrit rapport.json et rapport.md
 ```
 
 ## CI
@@ -88,17 +92,45 @@ python3 scripts/verifier_registre.py
 `ci.yml`, sur chaque push et chaque PR (forks compris, jeton en lecture
 seule) :
 
-1. contrôle du registre (dossiers, imports, CODEOWNERS) ;
-2. compilation du socle et des programmes ;
-3. matrice d'évaluation sur la PR **et** sur la branche de base, puis diff ;
+1. **garde-fou syntaxique**, bloquant, avant toute compilation ;
+2. contrôle du registre (dossiers, imports, CODEOWNERS) ;
+3. matrice d'évaluation sur la branche de base, **puis** sur la PR, et diff ;
 4. preuve des engagements ;
-5. audit des axiomes ;
-6. résumé dans le job, artefact `rapport-pr`.
+5. rejeu indépendant des preuves par `leanchecker` ;
+6. audit des axiomes ;
+7. résumé dans le job, artefact `rapport-pr`.
 
 `commentaire-pr.yml` (déclenché par `workflow_run`) publie ce résumé en
 commentaire de la PR. Il dispose des droits d'écriture, donc il n'exécute
 jamais le code de la PR et revérifie que le numéro de PR lu dans l'artefact
 correspond bien au commit du run.
+
+## Modèle de confiance
+
+Une PR externe fait exécuter son code par la CI : `lake build` élabore les
+fichiers Lean de la PR, et l'élaboration peut exécuter du code (`#eval`,
+`run_cmd`, `elab`…). Sans précaution, une PR pourrait remplacer le binaire
+`lean`, désactiver le noyau (`set_option debug.skipKernelTC true`) ou
+réécrire le rapport, et afficher des engagements verts alors qu'ils sont
+faux. Les défenses, dans l'ordre :
+
+| Défense | Contre |
+|---|---|
+| `scripts/garde_fou.py` **de la branche de base**, avant toute compilation | `#eval`, `run_cmd`, `elab`, `macro`, `initialize`, `set_option`, `import Lean`, `unsafe`, `implemented_by`, `native_decide`, `sorry`, `axiom` ; `lakefile.lean`, options Lean et dépendances dans la configuration, toolchain non officielle |
+| Scripts Python pris sur la base | une PR qui modifie l'outil qui la juge |
+| Base évaluée avant la PR | une PR qui altère le rapport de référence |
+| `leanchecker --fresh` | une preuve acceptée par l'élaborateur mais pas par le noyau (testé : une « preuve » de `1 = 2` injectée en contournant le noyau passe `lake build` et l'audit des axiomes, `leanchecker` la rejette) |
+| `Audit.lean` | `sorryAx`, `Lean.ofReduceBool`, tout axiome hors `propext`, `Classical.choice`, `Quot.sound` |
+| En-tête du commentaire calculé via l'API | un artefact falsifié qui afficherait « ✅ » |
+
+**Limite irréductible.** Sur l'événement `pull_request`, GitHub exécute le
+workflow *de la PR*. Une PR qui modifie l'outillage (`.github/`,
+`scripts/`, `Rapport.lean`, `Audit.lean`, configuration de build) peut donc
+neutraliser toute vérification. Le commentaire de PR le signale en tête
+(calcul fait côté privilégié, à partir de la liste des fichiers donnée par
+l'API) : le verdict d'une telle PR ne vaut qu'après relecture. Les PR qui ne
+touchent que `Programmes/`, `Hypotheses/` ou `Proprietes/`, le cas normal
+d'une contribution externe, ont un verdict fiable sans relecture du code.
 
 ## Gouvernance des contributions externes
 
@@ -108,7 +140,9 @@ correspond bien au commit du run.
   « Vérifier et évaluer » requis, *Require review from Code Owners*,
   *Dismiss stale approvals*.
 * **Actions → Fork pull request workflows** : exiger une approbation pour
-  les contributeurs externes.
+  les contributeurs externes (au minimum les nouveaux).
+* **CODEOWNERS** sur `.github/` et `scripts/` : c'est l'outillage dont
+  dépend la confiance dans la CI (voir « Modèle de confiance »).
 * **CODEOWNERS** : remplacer `@VOTRE-ORG/...` et les comptes d'exemple.
 
 Le socle commun (`Modele/`, `Hypotheses/`, `Proprietes/`) est relu par

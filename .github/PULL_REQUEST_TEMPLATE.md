@@ -20,8 +20,9 @@
 
 ## Vérifications
 
-- [ ] `lake build` et `lake env lean Audit.lean` passent en local
+- [ ] `python3 -I scripts/garde_fou.py`, `lake build` et `lake env lean Audit.lean` passent en local
 - [ ] J'ai relu l'impact avec `lake exe rapport` (ou dans le commentaire du bot)
 - [ ] Aucun `sorry`, `native_decide` ni `axiom`
+- [ ] Je ne modifie pas l'outillage (`.github/`, `scripts/`, `Rapport.lean`, `Audit.lean`, config de build) — ou c'est l'objet même de la PR
 - [ ] Programme : chaque mesure cite sa source dans le champ `source`
 - [ ] Engagement retiré : je l'explique ci-dessus (un engagement cassé ne se supprime pas en silence)

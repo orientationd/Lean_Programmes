@@ -78,6 +78,48 @@ def perimetre(fichiers: list[str]) -> list[str]:
     return lignes
 
 
+def nouveautes(base: dict, pr: dict) -> list[str]:
+    """Résultats des lignes, colonnes ou programmes ajoutés par la PR (absents
+    du diff cellule à cellule, qui ne compare que l'existant)."""
+    if not base.get("programmes"):
+        return []  # pas de base : tout serait « nouveau »
+    out: list[str] = []
+    props = [q["id"] for q in pr.get("proprietes", [])]
+    nb_scen = len(pr.get("scenarios", []))
+
+    nouveaux_s = ids(pr, "scenarios") - ids(base, "scenarios")
+    lignes = [f"| {p['id']} | {ev['scenario']} | "
+              + " | ".join("✅" if ev["proprietes"].get(q) else "❌" for q in props) + " |"
+              for p in pr["programmes"] if p["id"] in ids(base, "programmes")
+              for ev in p["evaluations"] if ev["scenario"] in nouveaux_s]
+    if lignes:
+        out += ["", f"### Résultats sous les nouveaux scénarios ({len(nouveaux_s)})", "",
+                "| Programme | Scénario | " + " | ".join(props) + " |",
+                "| --- | --- | " + " | ".join("---" for _ in props) + " |"]
+        out += lignes[:MAX_LIGNES]
+        if len(lignes) > MAX_LIGNES:
+            out.append(f"| … | {len(lignes) - MAX_LIGNES} de plus | " + " | ".join("" for _ in props) + " |")
+
+    def tenues(p: dict, q: str) -> str:
+        return f"{sum(1 for ev in p['evaluations'] if ev['proprietes'].get(q))}/{nb_scen}"
+
+    nouveaux_p = [p for p in pr["programmes"] if p["id"] not in ids(base, "programmes")]
+    if nouveaux_p:
+        out += ["", "### Nouveaux programmes : scénarios où la propriété tient", "",
+                "| Programme | " + " | ".join(props) + " |",
+                "| --- | " + " | ".join("---" for _ in props) + " |"]
+        out += [f"| {p['id']} | " + " | ".join(tenues(p, q) for q in props) + " |" for p in nouveaux_p]
+
+    nouvelles_q = [q for q in props if q not in ids(base, "proprietes")]
+    if nouvelles_q:
+        out += ["", "### Nouvelles propriétés : scénarios où elles tiennent", "",
+                "| Programme | " + " | ".join(nouvelles_q) + " |",
+                "| --- | " + " | ".join("---" for _ in nouvelles_q) + " |"]
+        out += [f"| {p['id']} | " + " | ".join(tenues(p, q) for q in nouvelles_q) + " |"
+                for p in pr["programmes"]]
+    return out
+
+
 def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
     out = ["## Impact de la PR sur l'évaluation", ""]
     out += perimetre(fichiers)
@@ -92,6 +134,8 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
             out.append(f"- {nom} ajoutés : " + ", ".join(f"`{x}`" for x in ajout))
         if retrait:
             out.append(f"- {nom} retirés : " + ", ".join(f"`{x}`" for x in retrait))
+
+    out += nouveautes(base, pr)
 
     # Engagements
     eb, ep = index_engagements(base), index_engagements(pr)

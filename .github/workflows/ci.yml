@@ -4,6 +4,18 @@
 # seule et aucun secret n'est exposé. Le commentaire de PR est publié par un
 # workflow séparé et privilégié (commentaire-pr.yml) qui n'exécute jamais le
 # code de la PR.
+#
+# Modèle de confiance (détails dans le README) :
+#   * les scripts Python sont ceux de la BRANCHE DE BASE, jamais ceux de la PR ;
+#   * le garde-fou syntaxique (scripts/garde_fou.py) passe AVANT toute
+#     compilation : sans #eval, run_cmd, set_option, import Lean…, compiler
+#     le code de la PR ne peut pas falsifier les étapes suivantes ;
+#   * les preuves sont rejouées par leanchecker, indépendamment de
+#     l'élaborateur ;
+#   * une PR qui modifie l'outillage (.github/, scripts/, Rapport.lean,
+#     Audit.lean, configuration de build) exécute sa propre version de cet
+#     outillage : son verdict ne vaut qu'après relecture humaine. Le
+#     commentaire de PR le signale.
 
 name: CI
 
@@ -24,11 +36,39 @@ jobs:
     name: Vérifier et évaluer
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      ELAN_NO_OVERRIDE_NOTICE: "1"
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Récupérer les outils de la branche de base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          OUTILS="$RUNNER_TEMP/outils"
+          mkdir -p "$OUTILS"
+          if [ -n "$BASE_SHA" ] && git cat-file -e "$BASE_SHA:scripts/garde_fou.py" 2>/dev/null; then
+            git archive "$BASE_SHA" scripts | tar -x -C "$OUTILS"
+            echo "Outils pris sur la base ($BASE_SHA)."
+          else
+            # Push sur main, ou PR qui introduit les scripts.
+            cp -r scripts "$OUTILS/"
+            [ -n "$BASE_SHA" ] && echo "::warning::La base n'a pas de garde-fou : outils de la PR utilisés."
+          fi
+          echo "OUTILS=$OUTILS/scripts" >> "$GITHUB_ENV"
+
+      # Bloquant : si le garde-fou échoue, aucun code de la PR n'est compilé.
+      - name: Garde-fou syntaxique (avant toute compilation)
+        id: garde
+        run: python3 -I "$OUTILS/garde_fou.py" .
+
+      - name: Registre des programmes
+        id: registre
+        continue-on-error: true
+        run: python3 -I "$OUTILS/verifier_registre.py" .
 
       - name: Installer elan (gestionnaire de versions Lean)
         run: |
@@ -42,10 +82,19 @@ jobs:
           path: ~/.elan/toolchains
           key: elan-${{ runner.os }}-${{ hashFiles('lean-toolchain') }}
 
-      - name: Registre des programmes
-        id: registre
-        continue-on-error: true
-        run: python3 scripts/verifier_registre.py
+      # La base est évaluée AVANT de compiler le code de la PR.
+      - name: Calculer la matrice sur la branche de base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          mkdir -p out
+          git diff --name-only "$BASE_SHA" "$GITHUB_SHA" > out/fichiers.txt
+          git worktree add -q "$RUNNER_TEMP/base" "$BASE_SHA"
+          # La base peut ne pas compiler (premier commit, toolchain cassée…) :
+          # dans ce cas le diff présente tout comme nouveau.
+          ( cd "$RUNNER_TEMP/base" && lake build rapport && lake exe rapport --json "$GITHUB_WORKSPACE/out/base.json" --md /dev/null ) \
+            || echo "::warning::La base ne produit pas de rapport ; diff calculé contre un rapport vide."
 
       - name: Compiler le modèle, les hypothèses, les propriétés et les programmes
         id: compilation
@@ -58,24 +107,10 @@ jobs:
           mkdir -p out
           lake exe rapport --json out/rapport.json --md out/rapport.md
 
-      - name: Calculer la matrice sur la branche de base
-        if: github.event_name == 'pull_request'
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          mkdir -p out
-          git diff --name-only "$BASE_SHA" "$GITHUB_SHA" > out/fichiers.txt
-          git worktree add -q ../base "$BASE_SHA"
-          # La base peut ne pas compiler (premier commit, toolchain cassée…) :
-          # dans ce cas le diff présente tout comme nouveau.
-          ( cd ../base && lake build rapport && lake exe rapport --json "$GITHUB_WORKSPACE/out/base.json" --md /dev/null ) \
-            || echo "::warning::La base ne produit pas de rapport ; diff calculé contre un rapport vide."
-
       - name: Comparer base et PR
-        if: github.event_name == 'pull_request' && !cancelled()
+        if: github.event_name == 'pull_request' && steps.compilation.outcome == 'success'
         run: |
-          mkdir -p out
-          python3 scripts/diff_rapport.py out/base.json out/rapport.json \
+          python3 -I "$OUTILS/diff_rapport.py" out/base.json out/rapport.json \
             --fichiers out/fichiers.txt --out out/diff.md
 
       - name: Vérifier les engagements (preuves Lean)
@@ -83,33 +118,50 @@ jobs:
         continue-on-error: true
         run: lake build Engagements
 
+      - name: Rejouer toutes les preuves dans le noyau (leanchecker)
+        id: noyau
+        if: steps.engagements.outcome == 'success'
+        continue-on-error: true
+        run: lake env leanchecker --fresh Engagements
+
       - name: Auditer les axiomes (pas de sorry, native_decide ni axiom)
         id: audit
+        if: steps.engagements.outcome == 'success'
         continue-on-error: true
         run: lake env lean Audit.lean
 
       - name: Rédiger le résumé
         if: ${{ !cancelled() }}
         env:
+          GARDE: ${{ steps.garde.outcome }}
           REGISTRE: ${{ steps.registre.outcome }}
           COMPILATION: ${{ steps.compilation.outcome }}
           RAPPORT: ${{ steps.rapport.outcome }}
           ENGAGEMENTS: ${{ steps.engagements.outcome }}
+          NOYAU: ${{ steps.noyau.outcome }}
           AUDIT: ${{ steps.audit.outcome }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           mkdir -p out
-          statut() { [ "$1" = "success" ] && echo "✅" || echo "❌"; }
+          statut() {
+            case "$1" in
+              success) echo "✅" ;;
+              skipped|"") echo "⏭️ non exécuté" ;;
+              *) echo "❌" ;;
+            esac
+          }
           {
             echo "### Vérifications"
             echo ""
             echo "| Vérification | Statut |"
             echo "| --- | --- |"
+            echo "| Garde-fou syntaxique (pas de code exécuté à la compilation) | $(statut "$GARDE") |"
             echo "| Registre des programmes | $(statut "$REGISTRE") |"
             echo "| Compilation (modèle, hypothèses, propriétés, programmes) | $(statut "$COMPILATION") |"
             echo "| Matrice d'évaluation | $(statut "$RAPPORT") |"
             echo "| Engagements prouvés par le noyau Lean | $(statut "$ENGAGEMENTS") |"
+            echo "| Rejeu indépendant des preuves (leanchecker) | $(statut "$NOYAU") |"
             echo "| Audit des axiomes | $(statut "$AUDIT") |"
             echo ""
             [ -f out/diff.md ] && cat out/diff.md && echo ""
@@ -138,12 +190,16 @@ jobs:
       - name: Statut final
         if: ${{ !cancelled() }}
         env:
+          GARDE: ${{ steps.garde.outcome }}
           REGISTRE: ${{ steps.registre.outcome }}
+          COMPILATION: ${{ steps.compilation.outcome }}
           RAPPORT: ${{ steps.rapport.outcome }}
           ENGAGEMENTS: ${{ steps.engagements.outcome }}
+          NOYAU: ${{ steps.noyau.outcome }}
           AUDIT: ${{ steps.audit.outcome }}
         run: |
-          echo "registre=$REGISTRE rapport=$RAPPORT engagements=$ENGAGEMENTS audit=$AUDIT"
-          for s in "$REGISTRE" "$RAPPORT" "$ENGAGEMENTS" "$AUDIT"; do
+          echo "garde=$GARDE registre=$REGISTRE compilation=$COMPILATION rapport=$RAPPORT"
+          echo "engagements=$ENGAGEMENTS noyau=$NOYAU audit=$AUDIT"
+          for s in "$GARDE" "$REGISTRE" "$COMPILATION" "$RAPPORT" "$ENGAGEMENTS" "$NOYAU" "$AUDIT"; do
             [ "$s" = "success" ] || exit 1
           done

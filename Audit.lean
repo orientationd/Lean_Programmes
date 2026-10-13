@@ -14,6 +14,11 @@ attrape notamment :
   plutôt qu'au noyau ;
 * tout `axiom` ajouté dans le dépôt (une hypothèse doit être une donnée,
   jamais un axiome).
+
+Complément indispensable : `lake env leanchecker --fresh Engagements`, qui
+rejoue chaque déclaration dans le noyau. Une preuve fausse ajoutée en
+contournant le noyau ne dépend d'aucun axiome interdit : seul le rejeu la
+détecte.
 -/
 
 open Lean Elab Command

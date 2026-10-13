@@ -2,6 +2,9 @@
 """Vérifie la cohérence entre les dossiers de Programmes/, le registre
 Programmes.lean et CODEOWNERS.
 
+Usage :
+    python3 -I scripts/verifier_registre.py [RACINE]
+
 Pour chaque dossier `Programmes/X/` :
   - `Programme.lean` existe et déclare `id := "X"` ;
   - `Programmes.lean` importe `Programmes.X.Programme` et liste `X.programme` ;
@@ -14,10 +17,10 @@ import re
 import sys
 from pathlib import Path
 
-RACINE = Path(__file__).resolve().parent.parent
-
-
 def main() -> int:
+    # En CI, le script vient de la branche de base et s'applique à la PR :
+    # la racine est passée en argument.
+    RACINE = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent).resolve()
     erreurs: list[str] = []
     registre = (RACINE / "Programmes.lean").read_text(encoding="utf-8")
     codeowners_f = RACINE / ".github" / "CODEOWNERS"

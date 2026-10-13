@@ -48,17 +48,29 @@ Périmètre : `Modele/`. **Issue préalable obligatoire.** Le modèle s'applique
 
 | Vérification | Échoue si… |
 |---|---|
+| Garde-fou (avant compilation) | construction interdite dans un fichier Lean (voir ci-dessous), configuration de build modifiée hors des clés autorisées |
 | Registre | un dossier de programme n'est pas enregistré ou n'a pas de mainteneur |
 | Compilation | le code Lean ne compile pas |
 | Matrice | identifiant dupliqué ou scénario hors bornes de plausibilité |
 | Engagements | un engagement revendiqué est faux |
+| Rejeu (leanchecker) | une preuve est acceptée par l'élaborateur mais rejetée par le noyau |
 | Audit | `sorry`, `native_decide` ou `axiom` dans le dépôt |
 
-Le bot commente la PR avec l'impact : engagements cassés, cellules de la
-matrice qui changent, indicateurs modifiés.
+Le bot commente la PR avec l'impact : engagements cassés, résultats sous
+les nouveaux scénarios, cellules de la matrice qui changent, indicateurs
+modifiés. Si la PR touche l'outillage (`.github/`, `scripts/`,
+`Rapport.lean`, `Audit.lean`, configuration de build), le commentaire
+l'indique en tête : son verdict ne vaut qu'après relecture.
 
 ## Règles
 
+* Hors outillage (`Rapport.lean`, `Audit.lean`), le Lean du dépôt est du
+  Lean « pur » : pas de commande `#…`, `run_cmd`, `elab`, `macro`,
+  `syntax`, `initialize`, `set_option`, `attribute`, `unsafe`,
+  `implemented_by`, `opaque`, `native_decide`, `sorry`, `axiom`, et seuls
+  les modules du dépôt s'importent. Un programme n'en a jamais besoin ;
+  c'est ce qui rend le verdict de la CI fiable sur une PR externe.
+  `python3 -I scripts/garde_fou.py` le vérifie en local.
 * Les hypothèses sont des **données** (`def`), jamais des `axiom`.
 * Pas de valeur numérique sans source.
 * Un engagement cassé ne se supprime pas en silence : la PR qui le retire
