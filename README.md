@@ -45,14 +45,23 @@ Trois choix structurants :
    décide par `decide +kernel` : pas de Mathlib, pas de flottants. La CI
    complète, rejeu des preuves compris, tient en deux minutes environ.
 
-## Engagements et évaluation
+## Engagements, contrats et évaluation
 
-| | Engagements | Évaluation |
-|---|---|---|
-| Qui les définit | chaque programme (`engagements := …`) | le dépôt (`Proprietes.toutes` × `Hypotheses.tous`) |
-| Nature | revendication : « sous tel scénario, telle propriété tient » | constat, sur toute la matrice |
-| Vérification | théorème `Engagements.tous_tenus`, noyau Lean | `lake exe rapport` |
-| Si c'est faux | **la CI échoue** | la cellule passe à ❌ dans le rapport |
+| | Engagements | Contrats de mesure | Évaluation |
+|---|---|---|---|
+| Qui les définit | chaque programme (`engagements := …`) | chaque mesure (`contrats := …`) | le dépôt (`Proprietes.toutes` × `Hypotheses.tous`) |
+| Nature | « sous tel scénario, telle propriété macro tient » | énoncé universel sur le dispositif : « pour toute commune… » | constat, sur toute la matrice |
+| Vérification | calcul dans le noyau (`decide +kernel`) | preuve Lean, fournie avec le contrat | `lake exe rapport` |
+| Si c'est faux | **la CI échoue** | **la CI échoue**, Lean désigne le contrat | la cellule passe à ❌ dans le rapport |
+
+Exemple de contrats : la mesure R-07 d'`ExempleRelance` (amende SRU
+automatique selon la part de logements sociaux manquants) prouve, pour
+toute commune, que l'amende est nulle si l'objectif est atteint, plafonnée,
+jamais augmentée par la construction d'un logement social, jamais
+inférieure au prélèvement actuel et jamais supérieure au maximum qu'un
+préfet peut infliger aujourd'hui. Le sous-modèle communal est dans
+`Modele/Logement.lean`, le panel de communes (fictives) dans
+`Hypotheses/Communes.lean`.
 
 Un engagement peut porter sur **tous** les scénarios
 (`tous.map fun H => ⟨H, propriété⟩`) : il est alors vérifié contre toute
@@ -62,8 +71,8 @@ hypothèse ajoutée plus tard par n'importe qui.
 
 | Chemin | Rôle |
 |---|---|
-| `Modele/` | état, unités, axes d'hypothèses, leviers, projection, propriétés, programmes (types) |
-| `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous` |
+| `Modele/` | état, unités, axes d'hypothèses, leviers, projection, propriétés, programmes (types), sous-modèle communal SRU |
+| `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes |
 | `Proprietes/` | propriétés partagées, registre `Proprietes.toutes` |
 | `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` |
 | `Programmes.lean` | registre `Programmes.tous` |
