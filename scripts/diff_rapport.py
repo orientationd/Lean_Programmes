@@ -56,6 +56,45 @@ def index_engagements(r: dict) -> dict:
             for p in r.get("programmes", []) for e in p["engagements"]}
 
 
+def index_contrats(r: dict) -> set:
+    return {(p["id"], c["mesure"], c["titre"])
+            for p in r.get("programmes", []) for c in p.get("contrats", [])}
+
+
+def index_sru(r: dict) -> dict:
+    return {(p["id"], l["mesure"], l["commune"]): l
+            for p in r.get("programmes", []) for l in p.get("sru", [])}
+
+
+def euros(v: int) -> str:
+    return f"{v:,}".replace(",", "\u202f") + " €"
+
+
+def mesures_communales(base: dict, pr: dict) -> list[str]:
+    out: list[str] = []
+    cb, cp = index_contrats(base), index_contrats(pr)
+    ajoutes, retires = sorted(cp - cb), sorted(cb - cp)
+    if ajoutes or retires:
+        out += ["", "### Contrats de mesure", ""]
+        out += [f"- ✅ ajouté : {k[0]} {k[1]} — {k[2]}" for k in ajoutes]
+        out += [f"- ⚠️ retiré : {k[0]} {k[1]} — {k[2]} (à justifier dans la PR)" for k in retires]
+
+    sb, sp = index_sru(base), index_sru(pr)
+    lignes = []
+    for k in sorted(sp):
+        avant = sb.get(k, {}).get("amende")
+        apres = sp[k]["amende"]
+        if avant != apres:
+            lignes.append(f"| {k[0]} | {k[1]} | {k[2]} | {euros(sp[k]['actuel'])} | "
+                          f"{'—' if avant is None else euros(avant)} | {euros(apres)} |")
+    if lignes:
+        out += ["", f"<details><summary>Amendes SRU modifiées sur le panel communal ({len(lignes)})</summary>",
+                "", "| Programme | Mesure | Commune | Droit actuel | Avant | Après |",
+                "| --- | --- | --- | --- | --- | --- |"]
+        out += lignes[:MAX_LIGNES] + ["", "</details>"]
+    return out
+
+
 def ids(r: dict, cle: str) -> set:
     return {x["id"] for x in r.get(cle, [])}
 
@@ -136,6 +175,7 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
             out.append(f"- {nom} retirés : " + ", ".join(f"`{x}`" for x in retrait))
 
     out += nouveautes(base, pr)
+    out += mesures_communales(base, pr)
 
     # Engagements
     eb, ep = index_engagements(base), index_engagements(pr)
@@ -186,7 +226,7 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
     if not (changes or lignes or casses or pr.get("erreurs")) and len(out) <= 3:
         out.append("Aucun changement d'évaluation.")
     elif not (changes or lignes or casses or pr.get("erreurs")):
-        out += ["", "Aucun changement sur les programmes existants."]
+        out += ["", "Aucun changement de la matrice d'évaluation (propriétés et indicateurs macro)."]
     return "\n".join(out) + "\n"
 
 
