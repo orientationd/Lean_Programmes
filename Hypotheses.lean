@@ -4,3 +4,4 @@ import Hypotheses.Economie
 import Hypotheses.Droit
 import Hypotheses.Scenarios
 import Hypotheses.Communes
+import Hypotheses.Automobile

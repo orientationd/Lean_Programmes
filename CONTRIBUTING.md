@@ -22,7 +22,11 @@ le dossier (voir README, « Propriété des programmes »).
    par ligne. La PR doit être ouverte depuis l'un de ces comptes.
 3. Dans `Programme.lean` : remplacer le namespace et `id := "<Nom>"`,
    renseigner les mesures. Chaque mesure cite sa source (`source := "p. 12"`).
-4. Déclarer les engagements que le programme revendique, s'il en revendique.
+4. Déclarer les engagements que le programme revendique, s'il en revendique,
+   et les **contrats** de chaque mesure : propriétés du dispositif prouvées
+   pour tous les cas (voir la mesure R-07 d'`ExempleRelance`). Un contrat
+   porte sa preuve ; les théorèmes génériques du modèle commun
+   (`Modele/Logement.lean` pour le SRU) font l'essentiel du travail.
 5. Enregistrer le programme dans `Programmes.lean` (import + `tous`).
 
 Ajouter un co-propriétaire : un propriétaire actuel ajoute son compte dans

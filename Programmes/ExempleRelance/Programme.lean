@@ -12,6 +12,18 @@ d'aucun parti ; les montants sont arbitraires.
 namespace Programmes.ExempleRelance
 open Modele
 
+/-- Barème de la mesure R-07 : coefficient ×1 à ×5 selon la part de
+l'objectif SRU non atteinte, plafond (5 % des DRF) et seuil (4 000 €) du
+droit actuel. -/
+def baremeSRU : BaremeSRU where
+  tauxBasePm := 250
+  coefMinPm := 1000
+  coefMaxPm := 5000
+  plafondPb := 500
+  seuil := 4000
+
+theorem baremeSRU_valide : baremeSRU.Valide := by decide
+
 def mesures : List Mesure := [
   { id := "R-01", titre := "Plan d'investissement de transition"
     source := "Exemple fictif, §1"
@@ -30,7 +42,35 @@ def mesures : List Mesure := [
     leviers := [.ageLegal (-24)] },
   { id := "R-06", titre := "Taxe sur les profits exceptionnels"
     source := "Exemple fictif, §6"
-    leviers := [.prelevement 15000] }
+    leviers := [.prelevement 15000] },
+  { id := "R-07"
+    titre := "Amende SRU automatique selon la part de logements sociaux manquants"
+    source := "Exemple fictif, §7 — remplace la majoration préfectorale discrétionnaire (CCH L.302-9-1)"
+    leviers := [.amendeSRU baremeSRU]
+    contrats := [
+      { titre := "Nulle pour toute commune qui atteint son objectif"
+        enonce := ∀ c : Commune, c.Valide → c.objectif ≤ c.logementsSociaux →
+          baremeSRU.amende c = 0
+        preuve := fun _ hc h => BaremeSRU.amende_nulle_si_conforme baremeSRU_valide hc h },
+      { titre := "Ne dépasse jamais 5 % des dépenses réelles de fonctionnement"
+        enonce := ∀ c : Commune, c.Valide → baremeSRU.amende c ≤ c.plafond 500
+        preuve := fun _ hc => BaremeSRU.amende_plafonnee baremeSRU_valide hc },
+      { titre := "Construire des logements sociaux ne fait jamais payer plus"
+        enonce := ∀ c : Commune, c.Valide → ∀ k, 0 ≤ k →
+          baremeSRU.amende { c with logementsSociaux := c.logementsSociaux + k } ≤
+            baremeSRU.amende c
+        preuve := fun _ hc _ hk =>
+          BaremeSRU.amende_decroit_avec_logements_sociaux baremeSRU_valide hc hk },
+      { titre := "Jamais moins que le prélèvement de base actuel"
+        enonce := ∀ c : Commune, c.Valide → SRU.prelevementActuel c ≤ baremeSRU.amende c
+        preuve := fun _ hc => BaremeSRU.amende_ge_prelevement_actuel baremeSRU_valide hc
+          (by decide) (by decide) (by decide) },
+      { titre := "Jamais plus que le maximum qu'un préfet peut infliger aujourd'hui"
+        enonce := ∀ (medianePFH : Int) (c : Commune), c.Valide →
+          baremeSRU.amende c ≤ SRU.majorationMaxActuelle medianePFH c
+        preuve := fun med _ hc => BaremeSRU.amende_le_majoration_max_actuelle baremeSRU_valide hc med
+          (by decide) (by decide) (by decide) }
+    ] }
 ]
 
 open Hypotheses in

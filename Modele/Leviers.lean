@@ -1,5 +1,6 @@
 import Modele.Scenario
 import Modele.Logement
+import Modele.Automobile
 
 /-!
 # Leviers : le vocabulaire fermé des mesures
@@ -52,6 +53,15 @@ inductive Levier where
   solde consolidé** des administrations publiques. Ses effets se lisent
   dans le panel communal du rapport et dans les contrats de la mesure. -/
   | amendeSRU (bareme : BaremeSRU)
+  /-- Dépense versée **une fois**, M€ (achat, développement…). Elle augmente
+  la dette dès l'année 0 mais pas les dépenses des années suivantes. Effet
+  de demande non modélisé (choix prudent). -/
+  | depensePonctuelle (montant : Int)
+  /-- Remplacement de véhicules par l'État (sous-modèle :
+  `Modele/Automobile.lean`). Effet macro : coût d'achat versé une fois.
+  Effet sur la balance commerciale : calculé par le sous-modèle et affiché
+  dans le rapport à 5 et 10 ans. -/
+  | remplacementVehicules (operation : Remplacement)
   deriving Repr, DecidableEq
 
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
@@ -98,5 +108,7 @@ def Levier.appliquer (H : Scenario) : Levier → Etat → Etat
   -- de comportement des communes : évolution du modèle commun, à discuter
   -- en issue.
   | .amendeSRU _, s => s
+  | .depensePonctuelle m, s => { s with dette := s.dette + m }
+  | .remplacementVehicules r, s => { s with dette := s.dette + r.cout / 1000000 }
 
 end Modele
