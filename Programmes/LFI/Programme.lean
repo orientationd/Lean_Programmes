@@ -3,11 +3,13 @@ import Hypotheses
 import Proprietes
 
 /-!
-# La France insoumise — Mélenchon 2027 (volet automobile)
+# La France insoumise — Mélenchon 2027 (extraits)
 
-Transcription **partielle et non officielle** du plan d'investissement
-productif « Automobile » publié sur melenchon2027.fr (consulté le
-21 octobre 2026). Chaque mesure reprend une ligne du tableau « Les
+Transcription **partielle et non officielle** de melenchon2027.fr
+(consulté le 21 octobre 2026) : le plan d'investissement productif
+« Automobile » (L-01 à L-09) et deux mesures phares de *L'Avenir en
+commun* 2025 (L-10 retraite à 60 ans, L-11 SMIC à 1 600 € net). Les
+mesures automobiles reprennent chacune une ligne du tableau « Les
 investissements supplémentaires », en millions d'euros par an.
 
 Seule la colonne **État** est imputée aux dépenses publiques. La colonne
@@ -66,13 +68,19 @@ def mesures : List Mesure := [
     leviers := [] },
   { id := "L-09", titre := "Recherche et développement : minibus autonomes"
     source := s!"{page} : État 20 M€/an, pôle public bancaire et autres 30 M€/an"
-    leviers := [.depenseSecteur .tertiaireMarchand 20] }
+    leviers := [.depenseSecteur .tertiaireMarchand 20] },
+  { id := "L-10", titre := "Retraite à 60 ans après 40 annuités"
+    source := "L'Avenir en commun 2025, chap. 8 « Travailler tous, travailler moins, travailler mieux », § 8 (melenchon2027.fr/programme2025/livre/chapitre8/s8) ; −48 mois par rapport au repère de 64 ans du modèle, 40 annuités non modélisées ; le coût suit l'hypothèse économique du scénario"
+    leviers := [.ageLegal (-48)] },
+  { id := "L-11", titre := "SMIC porté à 1 600 € net"
+    source := "L'Avenir en commun 2025 (melenchon2027.fr, « SMIC à 1600 € net »). Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +11,0 %"
+    leviers := [.revalorisationSmic 1100] }
 ]
 
 def programme : Programme where
   id := "LFI"
-  nom := "La France insoumise — Mélenchon 2027 (volet automobile)"
-  description := "Transcription partielle et non officielle du plan d'investissement productif « Automobile » : 1,37 Md€/an de dépenses de l'État (la source annonce 1,4 Md€) et 3,1 Md€/an du pôle public bancaire et d'autres acteurs."
+  nom := "La France insoumise — Mélenchon 2027 (extraits)"
+  description := "Transcription partielle et non officielle : plan d'investissement productif « Automobile » (1,37 Md€/an de dépenses de l'État, 3,1 Md€/an du pôle public bancaire et d'autres acteurs), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025)."
   mainteneurs := ["@orientationd"]
   source := "https://melenchon2027.fr/programme/plans-investissement/automobile/ (consulté le 21 octobre 2026)"
   mesures := mesures
