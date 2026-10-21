@@ -78,7 +78,7 @@ namespace Programme
 
 /-- Situation de départ après application des mesures. -/
 def etatInitial (p : Programme) (H : Scenario) : Etat :=
-  p.mesures.foldl (fun s m => m.appliquer H s) H.reference.etat
+  p.mesures.foldl (fun s m => m.appliquer H s) (etatDepart H)
 
 /-- Situation à l'horizon avec le programme. -/
 def resultat (p : Programme) (H : Scenario) : Etat :=

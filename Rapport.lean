@@ -152,14 +152,22 @@ def etatJson (s : Etat) : Json :=
     ("depenses", toJson s.depenses), ("dette", toJson s.dette),
     ("deficitPb", toJson s.deficitPb), ("dettePb", toJson s.dettePb),
     ("chomagePb", toJson s.chomagePb), ("smicMensuel", toJson s.smicMensuel),
-    ("emissionsMt", toJson s.emissionsMt), ("ageLegalMois", toJson s.ageLegalMois)]
+    ("emissionsMt", toJson s.emissionsMt), ("ageLegalMois", toJson s.ageLegalMois),
+    ("populationMilliers", toJson s.populationMilliers),
+    ("actifs", toJson s.actifs),
+    ("emploiTotal", toJson s.emploiTotal),
+    ("pibParHabitant", toJson s.pibParHabitant),
+    ("autresRecettes", toJson s.autresRecettes),
+    ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
+    ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]
 
 def rapportJson : Json :=
   Json.mkObj [
     ("version", toJson (1 : Nat)),
     ("scenarios", Json.arr <| Hypotheses.tous.toArray.map fun H =>
       Json.mkObj [("id", toJson H.id), ("demo", toJson H.demo.id),
-        ("eco", toJson H.eco.id), ("droit", toJson H.droit.id),
+        ("natalite", toJson H.natalite.id), ("eco", toJson H.eco.id),
+        ("energie", toJson H.energie.id), ("droit", toJson H.droit.id),
         ("horizon", toJson H.horizon)]),
     ("proprietes", Json.arr <| Proprietes.toutes.toArray.map fun q =>
       Json.mkObj [("id", toJson q.id), ("titre", toJson q.titre),
@@ -195,6 +203,70 @@ def rapportJson : Json :=
               ("solde10ansCts", toJson (r.soldeCumuleCts h 10)),
               ("equilibre", toJson (equilibreTexte h r))])]),
     ("erreurs", toJson erreursRegistre)]
+
+/-! ## Synthèse (données des graphiques et tableaux du PDF) -/
+
+/-- Horizon de la synthèse, en années. -/
+def horizonSynthese : Nat := 10
+
+def sourcesJson (l : List String) : Json := toJson l
+
+def rapportSyntheseJson : Json :=
+  let annee0 := Hypotheses.reference2026.annee
+  let scens := Hypotheses.tous
+  Json.mkObj [
+    ("version", toJson (1 : Nat)),
+    ("anneeDepart", toJson annee0),
+    ("annees", toJson ((List.range (horizonSynthese + 1)).map (annee0 + ·))),
+    ("horizonProprietes", toJson Hypotheses.horizon),
+    ("nbScenarios", toJson scens.length),
+    ("secteurs", Json.arr <| Secteur.tous.toArray.map fun x =>
+      Json.mkObj [("id", toJson x.id), ("nom", toJson x.nom)]),
+    ("impots", Json.arr <| Impot.tous.toArray.map fun i =>
+      Json.mkObj [("id", toJson i.id), ("nom", toJson i.nom)]),
+    ("proprietes", Json.arr <| Proprietes.toutes.toArray.map fun q =>
+      Json.mkObj [("id", toJson q.id), ("titre", toJson q.titre)]),
+    ("programmes", Json.arr <| Programmes.tous.toArray.map fun p =>
+      Json.mkObj [("id", toJson p.id), ("nom", toJson p.nom),
+        ("description", toJson p.description), ("nbMesures", toJson p.mesures.length),
+        ("mesures", Json.arr <| p.mesures.toArray.map fun m =>
+          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre)]),
+        ("contrats", toJson ((contrats p).map fun (m, t) => s!"{m} — {t}")),
+        ("engagements", Json.arr <| p.engagements.toArray.map fun e =>
+          Json.mkObj [("scenario", toJson e.scenario.id), ("propriete", toJson e.propriete.id),
+            ("tenu", toJson (engagementTenu p e))]),
+        ("matrice", Json.mkObj <| Proprietes.toutes.map fun q =>
+          (q.id, toJson (scens.filter fun H =>
+            q.evaluer H (tendanciel H) (p.resultat H)).length))]),
+    ("variantes", Json.arr <| Hypotheses.variantesSynthese.toArray.map fun (vid, nom, H) =>
+      Json.mkObj [("id", toJson vid), ("nom", toJson nom), ("scenario", toJson H.id),
+        ("natalite", toJson H.natalite.description), ("energie", toJson H.energie.description),
+        ("icfCentiemes", toJson H.natalite.icfCentiemes),
+        ("naissancesMilliers", toJson H.natalite.naissancesMilliers),
+        ("prixBrentDollars", toJson H.energie.prixBrentDollars),
+        ("prixReferenceDollars", toJson H.energie.prixReferenceDollars),
+        ("effetPibPar10DollarsPb", toJson H.energie.effetPibPar10DollarsPb),
+        ("tendanciel", Json.arr <| (trajectoire H horizonSynthese (etatDepart H)).toArray.map etatJson),
+        ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
+          (p.id, Json.arr <| (trajectoire H horizonSynthese (p.etatInitial H)).toArray.map etatJson))]),
+    ("hypotheses", Json.mkObj [
+      ("reference", Json.mkObj [("description", toJson Hypotheses.reference2026.description),
+        ("sources", sourcesJson Hypotheses.reference2026.sources)]),
+      ("demographie", Json.arr <| Hypotheses.Demo.toutes.toArray.map fun d =>
+        Json.mkObj [("id", toJson d.id), ("description", toJson d.description),
+          ("sources", sourcesJson d.sources)]),
+      ("natalite", Json.arr <| Hypotheses.Natalite.toutes.toArray.map fun n =>
+        Json.mkObj [("id", toJson n.id), ("description", toJson n.description),
+          ("sources", sourcesJson n.sources)]),
+      ("economie", Json.arr <| Hypotheses.Eco.toutes.toArray.map fun e =>
+        Json.mkObj [("id", toJson e.id), ("description", toJson e.description),
+          ("sources", sourcesJson e.sources)]),
+      ("energie", Json.arr <| Hypotheses.Energie.toutes.toArray.map fun e =>
+        Json.mkObj [("id", toJson e.id), ("description", toJson e.description),
+          ("sources", sourcesJson e.sources)]),
+      ("droit", Json.arr <| Hypotheses.Droit.toutes.toArray.map fun j =>
+        Json.mkObj [("id", toJson j.id), ("description", toJson j.description),
+          ("sources", sourcesJson j.sources)])])]
 
 /-! ## Markdown -/
 
@@ -382,6 +454,10 @@ def option (args : List String) (nom defaut : String) : String :=
 def main (args : List String) : IO UInt32 := do
   let fJson := option args "--json" "rapport.json"
   let fMd := option args "--md" "rapport.md"
+  if args.contains "--synthese" then
+    let f := option args "--synthese" "synthese.json"
+    IO.FS.writeFile f (Rapport.rapportSyntheseJson.compress ++ "\n")
+    IO.println s!"Synthèse écrite : {f}"
   IO.FS.writeFile fJson (Rapport.rapportJson.pretty ++ "\n")
   IO.FS.writeFile fMd Rapport.rapportMarkdown
   let errs := Rapport.erreursRegistre

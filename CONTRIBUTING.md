@@ -38,6 +38,13 @@ Une mesure ne s'exprime qu'avec les leviers de `Modele/Leviers.lean`. Si
 aucun ne convient, ouvrir une issue « Faire évoluer le modèle commun »
 plutôt que de forcer un levier inadapté.
 
+Quand la source précise l'impôt visé ou le secteur aidé, préférer
+`prelevementSur` (par exemple `.prelevementSur .impotSocietes 15000`) à
+`prelevement`, et `depenseSecteur` (par exemple
+`.depenseSecteur .industrie 500`) à `depense` : la synthèse PDF attribue
+alors recettes et emplois au bon poste au lieu de « autres impôts » ou
+d'une répartition au prorata.
+
 ### 2. Proposer une hypothèse
 
 Périmètre : `Hypotheses/`. Ajouter une valeur sur un axe et l'ajouter à la
