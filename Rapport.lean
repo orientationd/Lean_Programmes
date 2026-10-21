@@ -97,6 +97,33 @@ def panelSRU (b : BaremeSRU) : List LigneSRU :=
       amende := b.amende c
       plafonnee := decide (c.plafond b.plafondPb < b.brut c) }
 
+/-- Variantes SRU des mesures : (mesure, nom de la variante, barème). -/
+def variantesSRU (p : Programme) : List (String × String × BaremeSRU) :=
+  p.mesures.flatMap fun m => m.variantes.flatMap fun v => v.leviers.filterMap fun
+    | .amendeSRU b => some (m.id, v.nom, b)
+    | _ => none
+
+/-- Remplacements de véhicules : (mesure, version, opération), version
+retenue puis variantes. -/
+def remplacements (p : Programme) : List (String × String × Remplacement) :=
+  p.mesures.flatMap fun m =>
+    (m.leviers.filterMap fun
+      | .remplacementVehicules r => some (m.id, "retenue", r)
+      | _ => none) ++
+    (m.variantes.flatMap fun v => v.leviers.filterMap fun
+      | .remplacementVehicules r => some (m.id, v.nom, r)
+      | _ => none)
+
+/-- Centimes ↦ `"-166,6 M€"` (arrondi au dixième). -/
+def fmtMEurosCts (cts : Int) : String :=
+  let d := (cts.natAbs + 5000000) / 10000000
+  s!"{if cts < 0 && d > 0 then "-" else ""}{d / 10},{d % 10} M€"
+
+def equilibreTexte (h : HypAuto) (r : Remplacement) : String :=
+  match r.anneeEquilibre h with
+  | some n => s!"{n} ans"
+  | none => "jamais"
+
 /-- Identifiants présents plusieurs fois dans une liste. -/
 def doublons (ids : List String) : List String :=
   (ids.filter fun i => (ids.filter (· == i)).length > 1).eraseDups
@@ -158,7 +185,15 @@ def rapportJson : Json :=
           (panelSRU b).toArray.map fun l =>
             Json.mkObj [("mesure", toJson m), ("commune", toJson l.commune.id),
               ("actuel", toJson l.actuel), ("maxActuel", toJson l.maxActuel),
-              ("amende", toJson l.amende), ("plafonnee", toJson l.plafonnee)])]),
+              ("amende", toJson l.amende), ("plafonnee", toJson l.plafonnee)]),
+        ("automobile", Json.arr <| (remplacements p).toArray.flatMap fun (m, v, r) =>
+          Hypotheses.Automobile.toutes.toArray.map fun h =>
+            Json.mkObj [("mesure", toJson m), ("version", toJson v), ("hypothese", toJson h.id),
+              ("coutEuros", toJson r.cout), ("importsInitialesCts", toJson r.importsInitialesCts),
+              ("gainAnnuelCts", toJson (r.gainAnnuelCts h)),
+              ("solde5ansCts", toJson (r.soldeCumuleCts h 5)),
+              ("solde10ansCts", toJson (r.soldeCumuleCts h 10)),
+              ("equilibre", toJson (equilibreTexte h r))])]),
     ("erreurs", toJson erreursRegistre)]
 
 /-! ## Markdown -/
@@ -273,6 +308,56 @@ def rapportMarkdown : String := Id.run do
       let total (f : LigneSRU → Int) := lignes.foldl (fun acc l => acc + f l) 0
       out := out.push (ligne ["**Total**", "", "", fmtEuros (total (·.actuel)),
         fmtEuros (total (·.maxActuel)), fmtEuros (total (·.amende)), ""])
+      out := out.push ""
+      out := out.push "</details>"
+      out := out.push ""
+      let versions := (("retenue", b) :: (variantesSRU p).filterMap fun (m', nom, b') =>
+        if m' == m then some (nom, b') else none)
+      if versions.length > 1 then
+        let panel := Hypotheses.Communes.panel
+        let tot (f : Commune → Int) := panel.foldl (fun acc c => acc + f c) 0
+        out := out.push s!"<details><summary>{m} — comparaison des taux d'amende (communes fictives)</summary>"
+        out := out.push ""
+        out := out.push (ligne ["Version", "Barème", "Total du panel", "Communes plafonnées",
+          "Charge maximale (% des DRF)"])
+        out := out.push (separateur 5)
+        out := out.push (ligne ["Droit actuel, prélèvement de base", "×1, plafond 5 %",
+          fmtEuros (tot SRU.prelevementActuel), "", ""])
+        out := out.push (ligne ["Droit actuel, maximum préfectoral", "jusqu'à ×5, plafond 5 % ou 7,5 %",
+          fmtEuros (tot (SRU.majorationMaxActuelle Hypotheses.Communes.medianePFH)), "", ""])
+        for (nom, b') in versions do
+          let plafonnees := (panel.filter fun c => decide (c.plafond b'.plafondPb < b'.brut c)).length
+          let charge := panel.foldl (fun acc c =>
+            max acc (ratioPb (b'.amende c) c.depensesReellesFonctionnement)) 0
+          out := out.push (ligne [nom,
+            s!"{fmtCoef b'.coefMinPm} à {fmtCoef b'.coefMaxPm}, plafond {fmtPb b'.plafondPb} %",
+            fmtEuros (tot b'.amende), s!"{plafonnees}/{panel.length}", s!"{fmtPb charge} %"])
+        out := out.push ""
+        out := out.push ("Destination des fonds : le prélèvement net va à l'EPCI délégataire des aides " ++
+          "à la pierre ou à l'établissement public foncier, la majoration au FNAP. Effet direct sur " ++
+          "le budget de l'État : nul. Ordre de grandeur : en PACA, bilan 2020-2022, 63,2 M€ nets et " ++
+          "32,6 M€ de majorations (préfecture de région PACA).")
+        out := out.push ""
+        out := out.push "</details>"
+        out := out.push ""
+
+    let rs := remplacements p
+    unless rs.isEmpty do
+      out := out.push "<details><summary>Remplacement de véhicules — balance commerciale à 5 et 10 ans</summary>"
+      out := out.push ""
+      out := out.push ("Sous-modèle `Modele/Automobile.lean` : importations de véhicules l'année 0, puis " ++
+        "chaque année carburant importé évité moins électricité non exportée. Pour mémoire, déficit " ++
+        "commercial automobile de la France en 2025 ≈ 20 Md€ (Douanes).")
+      out := out.push ""
+      out := out.push (ligne ["Mesure", "Version", "Hypothèse", "Coût budgétaire", "Importations an 0",
+        "Effet annuel", "Solde à 5 ans", "Solde à 10 ans", "Équilibre"])
+      out := out.push (separateur 9)
+      for (m, v, r) in rs do
+        for h in Hypotheses.Automobile.toutes do
+          out := out.push (ligne [m, v, h.id, fmtMEurosCts (r.cout * 100),
+            fmtMEurosCts (-r.importsInitialesCts), s!"{fmtMEurosCts (r.gainAnnuelCts h)}/an",
+            fmtMEurosCts (r.soldeCumuleCts h 5), fmtMEurosCts (r.soldeCumuleCts h 10),
+            equilibreTexte h r])
       out := out.push ""
       out := out.push "</details>"
       out := out.push ""
