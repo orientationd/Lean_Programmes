@@ -43,7 +43,9 @@ Quand la source précise l'impôt visé ou le secteur aidé, préférer
 `prelevement`, et `depenseSecteur` (par exemple
 `.depenseSecteur .industrie 500`) à `depense` : la synthèse PDF attribue
 alors recettes et emplois au bon poste au lieu de « autres impôts » ou
-d'une répartition au prorata.
+d'une répartition au prorata. Un financement par prêt ou prise de
+participation de l'État (EDF, nationalisation) est un `pretEtat` : il
+pèse sur la dette, pas sur le déficit.
 
 ### 2. Proposer une hypothèse
 

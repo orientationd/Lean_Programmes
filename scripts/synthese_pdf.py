@@ -728,6 +728,10 @@ def section_annexes(D: Donnees) -> list:
         "Déficit « de l'État » : le modèle suit les administrations publiques consolidées ; les "
         "transferts internes (par exemple les amendes SRU versées par les communes) sont neutres "
         "sur le solde.",
+        "Prêts et prises de participation de l'État (financement des EPR2, nationalisations) : "
+        "opérations financières, comptées dans la dette mais pas dans le déficit, conformément au "
+        "traitement de Maastricht. L'activité qu'ils financent se déroule hors des administrations "
+        "publiques et n'est pas modélisée.",
         "Population active : tendance démographique et effet de l'âge légal (30 000 actifs par "
         "mois, INSEE). La natalité n'agit pas sur les actifs avant l'horizon.",
         f"Les hypothèses démographiques sont fixées à l'horizon des propriétés "

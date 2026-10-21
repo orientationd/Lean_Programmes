@@ -69,6 +69,13 @@ inductive Levier where
   /-- Dépense nouvelle, M€/an, dont l'effet sur l'emploi bénéficie à un
   secteur identifié (sinon : au prorata de tous les secteurs). -/
   | depenseSecteur (secteur : Secteur) (montant : Int)
+  /-- Prêt ou prise de participation de l'État dans une entité hors
+  administrations publiques (EDF, entreprise nationalisée…), M€/an,
+  versé chaque année de la projection. Opération financière : la dette
+  augmente, pas le déficit. L'activité financée (chantiers, emplois) se
+  déroule hors des administrations publiques et n'est pas modélisée (choix
+  prudent), pas plus que les remboursements au-delà de l'horizon. -/
+  | pretEtat (montantAnnuel : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -135,5 +142,6 @@ def Levier.appliquer (H : Scenario) : Levier → Etat → Etat
   | .remplacementVehicules r, s => { s with dette := s.dette + r.cout / 1000000 }
   | .prelevementSur i r, s => appliquerPrelevement H i r s
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) m s
+  | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
 
 end Modele

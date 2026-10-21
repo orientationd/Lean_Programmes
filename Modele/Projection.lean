@@ -37,7 +37,7 @@ def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
     impots := impots
     autresRecettes := autresRecettes
     depenses := depenses
-    dette := s.dette + (depenses - recettes)
+    dette := s.dette + (depenses - recettes) + s.operationsFinancieres
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - H.demo.decesMilliers + H.demo.soldeMigratoireMilliers
