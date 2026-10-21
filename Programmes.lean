@@ -1,6 +1,7 @@
 import Programmes.ExempleRelance.Programme
 import Programmes.ExempleConsolidation.Programme
 import Programmes.texte_orientation_d.Programme
+import Programmes.LFI.Programme
 
 /-!
 # Registre des programmes
@@ -22,7 +23,8 @@ namespace Programmes
 def tous : List Modele.Programme := [
   ExempleRelance.programme,
   ExempleConsolidation.programme,
-  texte_orientation_d.programme
+  texte_orientation_d.programme,
+  LFI.programme
 ]
 
 end Programmes
