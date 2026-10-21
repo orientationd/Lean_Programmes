@@ -1,0 +1,44 @@
+# Les Républicains — plan Retailleau du 12 octobre 2026
+
+> **Transcription partielle et non officielle** du plan de redressement
+> présenté par Bruno Retailleau le 12 octobre 2026, d'après
+> [Public Sénat](https://www.publicsenat.fr/actualites/economie/presidentielle-2027-bruno-retailleau-sengage-sur-un-plan-deconomies-de-pres-de-200-milliards-deuros-sil-est-elu),
+> [Europe 1](https://www.europe1.fr/politique/presidentielle-2027-bruno-retailleau-promet-des-economies-de-pres-de-200-milliards-deuros-jusquen-2032-1141661)
+> et l'AFP, consultés le 21 octobre 2026. Aucun document programme n'est
+> cité par ces sources. Toute erreur se signale par une issue. Le parti
+> peut demander la propriété de ce dossier.
+
+Le plan annonce 197 Md€ d'économies « jusqu'en 2032 » (État 96, protection
+sociale 91, collectivités 10), 51 à 56 Md€ d'allègements fiscaux (les deux
+chiffres figurent dans la source), un excédent primaire en 2030, un
+déficit sous 3 % du PIB en 2031 et de 2,2 % en fin de quinquennat.
+
+## Modélisé (`Programme.lean`)
+
+| Mesure | Levier |
+|---|---|
+| LR-01 400 000 agents non remplacés | −25 Md€ |
+| LR-02 Opérateurs de l'État | −12,5 Md€ |
+| LR-03 Base zéro, délégation au privé, formation pro aux régions | −22,5 Md€ |
+| LR-04 Fin de soutiens (ENR, APD, culture, contrats aidés, SNU, MaPrimeRénov') | −23 Md€ |
+| LR-05 Immigration | −10 Md€ (dont 4,5 sous condition constitutionnelle) |
+| LR-06 Fraude fiscale et sociale | +5 Md€ de recettes |
+| LR-07 Subventions aux associations | −3 Md€ |
+| LR-08 Retraites (décote 63-65 ans et autres) | −42 Md€ forfaitaires, âge légal inchangé |
+| LR-09 Chômage et prestations plafonnées à 70 % du SMIC | −30 Md€ |
+| LR-10 Jour de carence d'ordre public | −4 Md€ |
+| LR-11 Collectivités de plus de 10 M€ de budget | −10 Md€ |
+| LR-12 Suppression des impôts de production | −30 Md€ d'autres impôts |
+| LR-13 Heures supplémentaires et allègements des ménages | −21 Md€ de cotisations |
+
+Les montants sont lus comme des économies annuelles en régime de
+croisière (2032) et appliqués dès l'année 0. Les économies transcrites
+totalisent 182 Md€ et 5 Md€ de recettes, pour 197 Md€ annoncés : la
+différence n'est pas détaillée dans les sources.
+
+## Non modélisé
+
+* Mécanisme des 42 Md€ de retraites (âge, durée, décote) : non détaillé.
+* Référendum sur la règle d'or (projet de loi de 2011) et révision
+  constitutionnelle : hors modèle.
+* Dépenses de santé (280 Md€) : aucun engagement chiffré dans la source.
