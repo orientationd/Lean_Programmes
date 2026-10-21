@@ -124,6 +124,7 @@ faux. Les défenses, dans l'ordre :
 | `leanchecker` sur tous les modules compilés du dépôt | une preuve acceptée par l'élaborateur mais pas par le noyau (testé : une « preuve » de `1 = 2` injectée en contournant le noyau passe `lake build` et l'audit des axiomes, `leanchecker` la rejette). La bibliothèque standard n'est pas rejouée (`--fresh`, ~80 s de plus) : elle vient de la toolchain officielle imposée par le garde-fou, et une toolchain compromise compromettrait `leanchecker` lui-même |
 | `Audit.lean` | `sorryAx`, `Lean.ofReduceBool`, tout axiome hors `propext`, `Classical.choice`, `Quot.sound` |
 | En-tête du commentaire calculé via l'API | un artefact falsifié qui afficherait « ✅ » |
+| Contrôle d'accès en `pull_request_target` | la modification d'un programme par un autre que ses propriétaires (voir « Propriété des programmes ») |
 
 **Limite irréductible.** Sur l'événement `pull_request`, GitHub exécute le
 workflow *de la PR*. Une PR qui modifie l'outillage (`.github/`,
@@ -143,11 +144,9 @@ réglages du dépôt :
 
 * **Rules → Rulesets → New branch ruleset**, cible : branche par défaut.
   *Restrict deletions*, *Block force pushes*, *Require a pull request
-  before merging*, *Require status checks to pass* avec « Vérifier et
-  évaluer » (le statut n'est proposé qu'après un premier run de la CI).
-  Mainteneur seul : 0 approbation requise, GitHub interdisant d'approuver
-  sa propre PR. Dès qu'il y a plusieurs mainteneurs : 1 approbation,
-  *Require review from Code Owners*, *Dismiss stale pull request approvals*.
+  before merging* (0 approbation requise), *Require status checks to pass*
+  avec « Vérifier et évaluer » et « Contrôle d'accès aux programmes »
+  (chaque statut n'est proposé qu'après son premier run).
 * **Actions → General** : *Allow actions created by GitHub* (le dépôt
   n'utilise que des actions `actions/*`) ; *Workflow permissions* en
   lecture seule ; *Approval for running fork pull request workflows* au
@@ -155,8 +154,28 @@ réglages du dépôt :
 * **Security** : activer *Private vulnerability reporting*
   ([SECURITY.md](SECURITY.md)).
 * **Équipes** : sur un compte personnel, CODEOWNERS ne vise que des
-  comptes. Pour une équipe `socle` et une équipe par programme, créer une
-  organisation et y transférer le dépôt.
+  comptes. Pour une équipe `socle`, créer une organisation et y transférer
+  le dépôt.
+
+### Propriété des programmes
+
+Chaque dossier `Programmes/<X>/` appartient aux comptes listés dans
+`Programmes/<X>/PROPRIETAIRES`. Le workflow « Accès aux programmes »
+refuse toute PR qui ajoute, modifie, renomme ou supprime un fichier d'un
+programme sans que son auteur en soit propriétaire :
+
+* programme existant : propriétaires lus sur la branche de base, donc
+  personne ne peut s'ajouter soi-même ;
+* nouveau programme : son `PROPRIETAIRES` doit nommer l'auteur de la PR.
+
+Les propriétaires n'ont pas besoin d'être collaborateurs du dépôt : ils
+contribuent depuis un fork. Le workflow tourne en `pull_request_target`
+(version de la branche de base, impossible à modifier par la PR) et ne lit
+que des données de la PR via l'API, sans jamais exécuter son code.
+
+Limite : un administrateur du dépôt peut toujours contourner un ruleset.
+La garantie pour les autres est la transparence : le contrôle reste rouge
+sur la PR et l'historique public le montre.
 
 Le socle commun (`Modele/`, `Hypotheses/`, `Proprietes/`) et l'outillage
 sont relus par les mainteneurs du socle ; chaque dossier de programme par

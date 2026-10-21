@@ -24,6 +24,6 @@
 # Registre : l'ajout d'un programme passe par les mainteneurs
 /Programmes.lean          @VOTRE-ORG/mainteneurs
 
-# Un bloc par programme : ses mainteneurs relisent les PR qui le touchent
-/Programmes/ExempleRelance/        @mainteneur-exemple-relance
-/Programmes/ExempleConsolidation/  @mainteneur-exemple-consolidation
+# Programmes : la propriété d'un dossier Programmes/<X>/ est déclarée dans
+# Programmes/<X>/PROPRIETAIRES et imposée par la CI (accès aux programmes),
+# sans exiger que les propriétaires soient collaborateurs du dépôt.

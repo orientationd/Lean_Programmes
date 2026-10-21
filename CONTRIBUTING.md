@@ -6,18 +6,29 @@ la revue attribuable aux bonnes personnes.
 
 ## Quatre types de contribution
 
-### 1. Ajouter ou modifier un programme
+### 1. Créer ou modifier son programme
 
-Périmètre : `Programmes/<Nom>/` (+ une ligne dans `Programmes.lean` et
-`.github/CODEOWNERS` pour un nouveau programme).
+Périmètre : `Programmes/<Nom>/` (+ deux lignes dans `Programmes.lean` pour
+un nouveau programme).
 
-1. Copier `Programmes/ExempleRelance/` vers `Programmes/<Nom>/`
-   (CamelCase, ASCII).
-2. Dans `Programme.lean` : remplacer le namespace et `id := "<Nom>"`,
+**Un programme n'est modifiable que par ses propriétaires**, listés dans
+`Programmes/<Nom>/PROPRIETAIRES`. La CI refuse toute autre PR qui touche
+le dossier (voir README, « Propriété des programmes »).
+
+1. Copier `Programmes/ExempleRelance/` vers `Programmes/<Nom>/`. `<Nom>` est
+   un identifiant Lean ASCII : lettres, chiffres et `_`, commençant par une
+   lettre (ex. `texte_orientation_d`).
+2. Mettre son compte GitHub dans `Programmes/<Nom>/PROPRIETAIRES`, un compte
+   par ligne. La PR doit être ouverte depuis l'un de ces comptes.
+3. Dans `Programme.lean` : remplacer le namespace et `id := "<Nom>"`,
    renseigner les mesures. Chaque mesure cite sa source (`source := "p. 12"`).
-3. Déclarer les engagements que le programme revendique, s'il en revendique.
-4. Enregistrer le programme dans `Programmes.lean` (import + `tous`) et ses
-   mainteneurs dans `.github/CODEOWNERS`.
+4. Déclarer les engagements que le programme revendique, s'il en revendique.
+5. Enregistrer le programme dans `Programmes.lean` (import + `tous`).
+
+Ajouter un co-propriétaire : un propriétaire actuel ajoute son compte dans
+`PROPRIETAIRES`. Proposer une modification au programme de quelqu'un
+d'autre : ouvrir une issue, ou soumettre la modification à l'un de ses
+propriétaires, qui la reprend dans sa propre PR.
 
 Une mesure ne s'exprime qu'avec les leviers de `Modele/Leviers.lean`. Si
 aucun ne convient, ouvrir une issue « Faire évoluer le modèle commun »

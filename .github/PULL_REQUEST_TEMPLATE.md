@@ -2,8 +2,8 @@
 
 <!-- Une PR = un seul type. Cochez-en un. -->
 
-- [ ] Nouveau programme
-- [ ] Modification d'un programme (mesures, montants, engagements)
+- [ ] Nouveau programme (mon compte est dans son `PROPRIETAIRES`)
+- [ ] Modification de mon programme (mesures, montants, engagements)
 - [ ] Hypothèse : nouvelle valeur sur un axe ou correction d'une donnée
 - [ ] Propriété partagée
 - [ ] Modèle commun (état, leviers, projection) — **issue préalable obligatoire : #…**

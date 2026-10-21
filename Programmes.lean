@@ -1,11 +1,13 @@
 import Programmes.ExempleRelance.Programme
 import Programmes.ExempleConsolidation.Programme
+import Programmes.texte_orientation_d.Programme
 
 /-!
 # Registre des programmes
 
 Ajouter un programme :
-1. copier un dossier d'exemple dans `Programmes/<NomDuProgramme>/` ;
+1. copier un dossier d'exemple dans `Programmes/<NomDuProgramme>/` et y
+   lister son compte GitHub dans `PROPRIETAIRES` ;
 2. ajouter son `import` ci-dessus ;
 3. l'ajouter à `tous` ci-dessous.
 
@@ -19,7 +21,8 @@ namespace Programmes
 
 def tous : List Modele.Programme := [
   ExempleRelance.programme,
-  ExempleConsolidation.programme
+  ExempleConsolidation.programme,
+  texte_orientation_d.programme
 ]
 
 end Programmes

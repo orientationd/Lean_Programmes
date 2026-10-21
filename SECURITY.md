@@ -18,6 +18,8 @@ Relèvent de ce canal :
   correspond pas au code de la PR ;
 * une élévation de droits d'un workflow : écriture sur le dépôt, accès à
   un secret, commentaire sur une autre PR ;
+* un moyen de modifier le programme d'un autre sans être dans son
+  `PROPRIETAIRES`, ou de s'y ajouter ;
 * un écart entre le rapport compilé et le rapport interprété.
 
 ## Hors périmètre

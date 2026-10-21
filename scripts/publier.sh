@@ -51,9 +51,10 @@ BASES=(main socle/sous-modele-sru main)
 git checkout -q main
 
 # 1. Comptes et badge
-if grep -q "VOTRE-ORG\|mainteneur-exemple" .github/CODEOWNERS Programmes/*/Programme.lean; then
+CIBLES=(.github/CODEOWNERS Programmes/*/Programme.lean Programmes/*/PROPRIETAIRES)
+if grep -q "VOTRE-ORG\|mainteneur-exemple" "${CIBLES[@]}"; then
   perl -pi -e "s{\@VOTRE-ORG/[A-Za-z0-9-]+}{\@$COMPTE}g; s{\@mainteneur-exemple-[A-Za-z0-9-]+}{\@$COMPTE}g" \
-    .github/CODEOWNERS Programmes/*/Programme.lean
+    "${CIBLES[@]}"
   URL_CI="https://github.com/$COMPTE/$DEPOT/actions/workflows/ci.yml"
   perl -pi -e "s{<!-- badge-ci -->}{[![CI]($URL_CI/badge.svg)]($URL_CI)}" README.md
   python3 -I scripts/verifier_registre.py .
