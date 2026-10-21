@@ -18,7 +18,8 @@ from pathlib import Path
 SOCLE = ("Modele/", "Modele.lean", "Hypotheses/", "Hypotheses.lean",
          "Proprietes/", "Proprietes.lean", "lakefile.toml", "lean-toolchain")
 INDICATEURS = [("deficitPb", "Déficit % PIB", True), ("dettePb", "Dette % PIB", True),
-               ("chomagePb", "Chômage %", True), ("emissionsMt", "Émissions Mt", False)]
+               ("chomagePb", "Chômage %", True), ("emissionsMt", "Émissions Mt", False),
+               ("actifs", "Actifs", False)]
 MAX_LIGNES = 30
 
 
@@ -207,8 +208,8 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
     for k in sorted(ib.keys() & ip.keys()):
         deltas = []
         for champ, libelle, pb in INDICATEURS:
-            a, b = ib[k][champ], ip[k][champ]
-            if a != b:
+            a, b = ib[k].get(champ), ip[k].get(champ)
+            if a is not None and b is not None and a != b:
                 deltas.append(f"{libelle} {fmt(a, pb)} → {fmt(b, pb)}")
         if deltas:
             lignes.append(f"| {k[0]} | {k[1]} | {'<br>'.join(deltas)} |")
