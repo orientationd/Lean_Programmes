@@ -26,7 +26,9 @@ jobs:
     if: >-
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion != 'cancelled'
-    runs-on: ubuntu-latest
+    # Runner 1 vCPU (0,002 $/min au lieu de 0,006) : ce job ne fait que
+    # télécharger un artefact et appeler l'API.
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       - name: Télécharger l'artefact du run CI

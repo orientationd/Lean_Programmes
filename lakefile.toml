@@ -1,6 +1,6 @@
 name = "programmes"
 version = "0.1.0"
-defaultTargets = ["Modele", "Hypotheses", "Proprietes", "Programmes", "Engagements", "rapport"]
+defaultTargets = ["Modele", "Hypotheses", "Proprietes", "Programmes", "Engagements"]
 
 [leanOptions]
 autoImplicit = false
@@ -30,6 +30,10 @@ name = "Programmes"
 name = "Engagements"
 
 # Matrice programme × scénario × propriété (JSON + Markdown).
+# En CI et par défaut, le rapport est interprété :
+#   lake env lean --run Rapport.lean
+# L'exécutable compilé reste disponible (`lake exe rapport`), même sortie,
+# mais sa compilation en C coûte ~60 s.
 [[lean_exe]]
 name = "rapport"
 root = "Rapport"

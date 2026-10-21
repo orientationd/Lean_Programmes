@@ -22,10 +22,19 @@ etape() {
 etape garde "Garde-fou syntaxique" python3 -I scripts/garde_fou.py . || {
   echo "Garde-fou en échec : rien n'est compilé."; exit 1; }
 etape registre "Registre des programmes" python3 -I scripts/verifier_registre.py .
-etape compilation "Compilation" lake build rapport || exit 1
-etape rapport "Matrice d'évaluation" lake exe rapport --json out/rapport.json --md out/rapport.md
+# Tous les modules compilés du dépôt, d'après les .olean (comme en CI).
+modules() {
+  (cd .lake/build/lib/lean && find . -name '*.olean' | sed 's|^\./||; s|\.olean$||; s|/|.|g' | sort)
+}
+rejouer() {
+  # shellcheck disable=SC2046
+  lake env leanchecker $(modules)
+}
+
+etape compilation "Compilation" lake build Programmes || exit 1
+etape rapport "Matrice d'évaluation" lake env lean --run Rapport.lean --json out/rapport.json --md out/rapport.md
 if etape engagements "Engagements (noyau Lean)" lake build Engagements; then
-  etape noyau "Rejeu des preuves (leanchecker)" lake env leanchecker --fresh Engagements
+  etape noyau "Rejeu des preuves (leanchecker)" rejouer
   etape audit "Audit des axiomes" lake env lean Audit.lean
 else
   grep -h "non tenus" out/ci-rapport.log 2>/dev/null

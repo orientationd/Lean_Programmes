@@ -93,19 +93,22 @@ jobs:
           git worktree add -q "$RUNNER_TEMP/base" "$BASE_SHA"
           # La base peut ne pas compiler (premier commit, toolchain cassée…) :
           # dans ce cas le diff présente tout comme nouveau.
-          ( cd "$RUNNER_TEMP/base" && lake build rapport && lake exe rapport --json "$GITHUB_WORKSPACE/out/base.json" --md /dev/null ) \
+          ( cd "$RUNNER_TEMP/base" && lake build Programmes \
+              && lake env lean --run Rapport.lean --json "$GITHUB_WORKSPACE/out/base.json" --md /dev/null ) \
             || echo "::warning::La base ne produit pas de rapport ; diff calculé contre un rapport vide."
 
+      # Seuls les .olean sont produits : le rapport est interprété (étape
+      # suivante), ce qui évite de compiler tout le dépôt en C (~60 s).
       - name: Compiler le modèle, les hypothèses, les propriétés et les programmes
         id: compilation
-        run: lake build rapport
+        run: lake build Programmes
 
       - name: Calculer la matrice d'évaluation
         id: rapport
         continue-on-error: true
         run: |
           mkdir -p out
-          lake exe rapport --json out/rapport.json --md out/rapport.md
+          lake env lean --run Rapport.lean --json out/rapport.json --md out/rapport.md
 
       - name: Comparer base et PR
         if: github.event_name == 'pull_request' && steps.compilation.outcome == 'success'
@@ -118,11 +121,21 @@ jobs:
         continue-on-error: true
         run: lake build Engagements
 
+      # Rejoue chaque module compilé du dépôt, liste tirée des .olean (un
+      # module déplacé par srcDir n'y échappe pas). La bibliothèque standard
+      # n'est pas rejouée (--fresh, ~80 s) : elle vient de la toolchain
+      # officielle imposée par le garde-fou, et une toolchain compromise
+      # compromettrait leanchecker lui-même.
       - name: Rejouer toutes les preuves dans le noyau (leanchecker)
         id: noyau
         if: steps.engagements.outcome == 'success'
         continue-on-error: true
-        run: lake env leanchecker --fresh Engagements
+        run: |
+          MODULES=$(cd .lake/build/lib/lean && find . -name '*.olean' \
+            | sed 's|^\./||; s|\.olean$||; s|/|.|g' | sort)
+          echo "$(echo "$MODULES" | wc -l) modules rejoués"
+          # shellcheck disable=SC2086
+          lake env leanchecker $MODULES
 
       - name: Auditer les axiomes (pas de sorry, native_decide ni axiom)
         id: audit

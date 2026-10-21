@@ -82,9 +82,9 @@ scripts/ci_locale.sh                     # toutes les étapes ci-dessous, dans l
 python3 -I scripts/garde_fou.py          # avant de compiler du code non relu
 python3 -I scripts/verifier_registre.py
 lake build                               # tout compiler, engagements compris
-lake env leanchecker --fresh Engagements # rejouer les preuves dans le noyau
 lake env lean Audit.lean                 # audit des axiomes
-lake exe rapport                         # écrit rapport.json et rapport.md
+lake env lean --run Rapport.lean         # écrit rapport.json et rapport.md
+                                         # (ou `lake exe rapport`, compilé, même sortie)
 ```
 
 ## CI
@@ -119,7 +119,7 @@ faux. Les défenses, dans l'ordre :
 | `scripts/garde_fou.py` **de la branche de base**, avant toute compilation | `#eval`, `run_cmd`, `elab`, `macro`, `initialize`, `set_option`, `import Lean`, `unsafe`, `implemented_by`, `native_decide`, `sorry`, `axiom` ; `lakefile.lean`, options Lean et dépendances dans la configuration, toolchain non officielle |
 | Scripts Python pris sur la base | une PR qui modifie l'outil qui la juge |
 | Base évaluée avant la PR | une PR qui altère le rapport de référence |
-| `leanchecker --fresh` | une preuve acceptée par l'élaborateur mais pas par le noyau (testé : une « preuve » de `1 = 2` injectée en contournant le noyau passe `lake build` et l'audit des axiomes, `leanchecker` la rejette) |
+| `leanchecker` sur tous les modules compilés du dépôt | une preuve acceptée par l'élaborateur mais pas par le noyau (testé : une « preuve » de `1 = 2` injectée en contournant le noyau passe `lake build` et l'audit des axiomes, `leanchecker` la rejette). La bibliothèque standard n'est pas rejouée (`--fresh`, ~80 s de plus) : elle vient de la toolchain officielle imposée par le garde-fou, et une toolchain compromise compromettrait `leanchecker` lui-même |
 | `Audit.lean` | `sorryAx`, `Lean.ofReduceBool`, tout axiome hors `propext`, `Classical.choice`, `Quot.sound` |
 | En-tête du commentaire calculé via l'API | un artefact falsifié qui afficherait « ✅ » |
 
