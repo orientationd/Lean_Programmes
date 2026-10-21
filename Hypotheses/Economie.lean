@@ -59,6 +59,22 @@ def croissanceHaute : Economie where
   baisseEmissionsPm := 40
   sources := ["À COMPLÉTER"]
 
-def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute]
+def multiplicateurFort : Economie where
+  id := "eco-multiplicateur-fort"
+  description := "Économie en sous-emploi : multiplicateur budgétaire de 2,5"
+  croissancePb := 250
+  croissanceDepensesPb := 280
+  seuilOkunPb := 300
+  okunPm := 500
+  chomageFrictionnelPb := 450
+  multiplicateurPm := 2500
+  fuiteFiscalePm := 150
+  elasticiteChomageSmicPm := 80
+  economieParMoisRetraite := 1500
+  coutParPbPlus65 := 180
+  baisseEmissionsPm := 25
+  sources := ["Exemple de PR externe — à sourcer (littérature sur les multiplicateurs en sous-emploi)"]
+
+def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute, multiplicateurFort]
 
 end Hypotheses.Eco
