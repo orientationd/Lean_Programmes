@@ -79,3 +79,14 @@ l'indique en tête : son verdict ne vaut qu'après relecture.
   explique pourquoi.
 * Les exemples fournis sont fictifs ; un programme réel reproduit fidèlement
   son document source, sans interprétation favorable ni défavorable.
+
+## Licence des contributions
+
+Le dépôt est sous [CC0 1.0](LICENSE). En ouvrant une PR, vous acceptez que
+votre contribution soit publiée sous la même licence (règle « inbound =
+outbound » des conditions d'utilisation de GitHub). Ne proposez que du
+contenu que vous avez le droit de verser au domaine public. CC0 n'oblige pas
+à citer ses sources ; ce dépôt l'exige quand même pour toute valeur
+numérique.
+
+Débats, revues et issues suivent les [règles de conduite](CODE_OF_CONDUCT.md).

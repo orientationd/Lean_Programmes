@@ -1,5 +1,7 @@
 # Programmes vérifiés
 
+<!-- badge-ci -->
+
 Des programmes politiques formalisés en Lean 4, évalués sous un jeu
 d'hypothèses partagées, avec une CI qui vérifie à chaque PR :
 
@@ -134,20 +136,32 @@ d'une contribution externe, ont un verdict fiable sans relecture du code.
 
 ## Gouvernance des contributions externes
 
-À configurer dans les réglages GitHub du dépôt :
+Publication : créer un dépôt **vide** sur GitHub, puis
+`scripts/publier.sh COMPTE [DEPOT]` remplace les comptes d'exemple de
+CODEOWNERS par le vôtre et pousse toutes les branches. Ensuite, dans les
+réglages du dépôt :
 
-* **Branch protection** sur `main` : PR obligatoire, statut
-  « Vérifier et évaluer » requis, *Require review from Code Owners*,
-  *Dismiss stale approvals*.
-* **Actions → Fork pull request workflows** : exiger une approbation pour
-  les contributeurs externes (au minimum les nouveaux).
-* **CODEOWNERS** sur `.github/` et `scripts/` : c'est l'outillage dont
-  dépend la confiance dans la CI (voir « Modèle de confiance »).
-* **CODEOWNERS** : remplacer `@VOTRE-ORG/...` et les comptes d'exemple.
+* **Rules → Rulesets → New branch ruleset**, cible : branche par défaut.
+  *Restrict deletions*, *Block force pushes*, *Require a pull request
+  before merging*, *Require status checks to pass* avec « Vérifier et
+  évaluer » (le statut n'est proposé qu'après un premier run de la CI).
+  Mainteneur seul : 0 approbation requise, GitHub interdisant d'approuver
+  sa propre PR. Dès qu'il y a plusieurs mainteneurs : 1 approbation,
+  *Require review from Code Owners*, *Dismiss stale pull request approvals*.
+* **Actions → General** : *Allow actions created by GitHub* (le dépôt
+  n'utilise que des actions `actions/*`) ; *Workflow permissions* en
+  lecture seule ; *Approval for running fork pull request workflows* au
+  minimum pour les nouveaux contributeurs.
+* **Security** : activer *Private vulnerability reporting*
+  ([SECURITY.md](SECURITY.md)).
+* **Équipes** : sur un compte personnel, CODEOWNERS ne vise que des
+  comptes. Pour une équipe `socle` et une équipe par programme, créer une
+  organisation et y transférer le dépôt.
 
-Le socle commun (`Modele/`, `Hypotheses/`, `Proprietes/`) est relu par
-l'équipe `socle` ; chaque dossier de programme par ses propres mainteneurs.
-Voir [CONTRIBUTING.md](CONTRIBUTING.md).
+Le socle commun (`Modele/`, `Hypotheses/`, `Proprietes/`) et l'outillage
+sont relus par les mainteneurs du socle ; chaque dossier de programme par
+ses propres mainteneurs. Voir [CONTRIBUTING.md](CONTRIBUTING.md) et les
+[règles de conduite](CODE_OF_CONDUCT.md).
 
 ## Limites
 
@@ -160,4 +174,10 @@ Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Licence
 
-À définir (code et données peuvent relever de licences différentes).
+[CC0 1.0 Universel](LICENSE) : le dépôt est versé au domaine public. Code,
+modèle, hypothèses et documentation peuvent être réutilisés, modifiés et
+redistribués sans condition, y compris commercialement, sans obligation de
+citer. En droit français, le droit moral de l'auteur est inaliénable : CC0
+y renonce dans la mesure permise et prévoit une licence de repli tout aussi
+large. Les sources citées dans les hypothèses (INSEE, COR…) gardent leur
+propre licence.
