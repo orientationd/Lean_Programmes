@@ -42,7 +42,7 @@ def mesures : List Mesure := [
     leviers := [.ageLegal (-24)] },
   { id := "R-06", titre := "Taxe sur les profits exceptionnels"
     source := "Exemple fictif, §6"
-    leviers := [.prelevement 15000] },
+    leviers := [.prelevementSur .impotSocietes 15000] },
   { id := "R-07"
     titre := "Amende SRU automatique selon la part de logements sociaux manquants"
     source := "Exemple fictif, §7 — remplace la majoration préfectorale discrétionnaire (CCH L.302-9-1)"

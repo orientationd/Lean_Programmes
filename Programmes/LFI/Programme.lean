@@ -20,6 +20,16 @@ d'entreprises, critères de production française, moratoire sur les
 fermetures, prix national de l'électricité…) ne sont pas traduites en
 leviers : voir README.md. Aucun engagement n'est déclaré, la source n'en
 formulant pas dans les termes des propriétés du dépôt.
+
+Secteur bénéficiaire des emplois (levier `depenseSecteur`, nomenclature
+agrégée de l'INSEE) : industrie pour les lignes de production, les aides à
+l'achat conditionnées à la production locale, la sous-traitance, les
+batteries et le recyclage (la gestion des déchets relève de l'industrie
+dans cette nomenclature, la réparation automobile du tertiaire : la ligne
+L-06 est classée en industrie, part majoritaire supposée) ; tertiaire
+marchand pour la location (activité de location, NAF 77) et la recherche
+et développement (NAF 72). Ce classement est une interprétation, ouverte
+à la discussion par issue.
 -/
 
 namespace Programmes.LFI
@@ -32,22 +42,22 @@ def page : String :=
 def mesures : List Mesure := [
   { id := "L-01", titre := "Nouvelles lignes de production"
     source := s!"{page} : État 100 M€/an, pôle public bancaire et autres 200 M€/an"
-    leviers := [.depense 100] },
+    leviers := [.depenseSecteur .industrie 100] },
   { id := "L-02", titre := "Service public de la location abordable"
     source := s!"{page} : État 300 M€/an, pôle public bancaire et autres 700 M€/an ; parc public de 1,4 million de véhicules d'ici 2032"
-    leviers := [.depense 300] },
+    leviers := [.depenseSecteur .tertiaireMarchand 300] },
   { id := "L-03", titre := "Aides à l'achat électrique et local"
     source := s!"{page} : État 200 M€/an, pôle public bancaire et autres 200 M€/an"
-    leviers := [.depense 200] },
+    leviers := [.depenseSecteur .industrie 200] },
   { id := "L-04", titre := "Sous-traitance et équipementiers (Fonds Avenir Automobile)"
     source := s!"{page} : État 200 M€/an, pôle public bancaire et autres 800 M€/an"
-    leviers := [.depense 200] },
+    leviers := [.depenseSecteur .industrie 200] },
   { id := "L-05", titre := "Batteries"
     source := s!"{page} : État 500 M€/an, pôle public bancaire et autres 900 M€/an ; cible d'au moins 100 GWh de capacité annuelle"
-    leviers := [.depense 500] },
+    leviers := [.depenseSecteur .industrie 500] },
   { id := "L-06", titre := "Réparation, recyclage, réemploi"
     source := s!"{page} : État 50 M€/an, pôle public bancaire et autres 240 M€/an"
-    leviers := [.depense 50] },
+    leviers := [.depenseSecteur .industrie 50] },
   { id := "L-07", titre := "Bornes de recharge"
     source := s!"{page} : État 0, pôle public bancaire et autres 20 M€/an"
     leviers := [] },
@@ -56,7 +66,7 @@ def mesures : List Mesure := [
     leviers := [] },
   { id := "L-09", titre := "Recherche et développement : minibus autonomes"
     source := s!"{page} : État 20 M€/an, pôle public bancaire et autres 30 M€/an"
-    leviers := [.depense 20] }
+    leviers := [.depenseSecteur .tertiaireMarchand 20] }
 ]
 
 def programme : Programme where

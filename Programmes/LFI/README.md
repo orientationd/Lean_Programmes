@@ -15,6 +15,11 @@ supplémentaires de l'État » et 4,5 Md€/an d'investissements tous acteurs
 confondus. La colonne « pôle public bancaire et autres » (3,1 Md€/an) est
 citée mais n'est pas imputée aux administrations publiques.
 
+Chaque dépense est rattachée au secteur qui en reçoit les emplois
+(industrie : L-01, L-03 à L-06 ; tertiaire marchand : L-02 location,
+L-09 recherche). Ce classement est une interprétation détaillée dans
+`Programme.lean`.
+
 ## Ce qui ne l'est pas, faute de montant dans la source
 
 * Sanctions des flottes d'entreprises : seuil d'achat électrique porté à
