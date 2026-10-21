@@ -38,7 +38,7 @@ def programme : Programme where
   id := "ExempleRelance"
   nom := "Exemple relance (fictif)"
   description := "Relance par l'investissement de transition et le pouvoir d'achat, financée en partie par des prélèvements nouveaux."
-  mainteneurs := ["@mainteneur-exemple-relance"]
+  mainteneurs := ["@orientationd"]
   source := "Programme fictif — aucun document source"
   mesures := mesures
   engagements := [

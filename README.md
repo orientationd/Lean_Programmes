@@ -1,6 +1,6 @@
 # Programmes vérifiés
 
-<!-- badge-ci -->
+[![CI](https://github.com/orientationd/Lean_Programmes/actions/workflows/ci.yml/badge.svg)](https://github.com/orientationd/Lean_Programmes/actions/workflows/ci.yml)
 
 Des programmes politiques formalisés en Lean 4, évalués sous un jeu
 d'hypothèses partagées, avec une CI qui vérifie à chaque PR :

@@ -35,7 +35,7 @@ def programme : Programme where
   id := "ExempleConsolidation"
   nom := "Exemple consolidation (fictif)"
   description := "Réduction du déficit par les économies de dépense et le recul de l'âge légal, avec une baisse ciblée des impôts de production."
-  mainteneurs := ["@mainteneur-exemple-consolidation"]
+  mainteneurs := ["@orientationd"]
   source := "Programme fictif — aucun document source"
   mesures := mesures
   engagements :=

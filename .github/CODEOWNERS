@@ -4,25 +4,25 @@
 # ensuite les remplacer par des équipes (@org/socle, @org/<programme>).
 
 # Par défaut : mainteneurs du dépôt
-*                         @VOTRE-ORG/mainteneurs
+*                         @orientationd
 
 # Socle commun : toute modification change l'évaluation de TOUS les programmes
-/Modele/                  @VOTRE-ORG/socle
-/Modele.lean              @VOTRE-ORG/socle
-/Hypotheses/              @VOTRE-ORG/socle
-/Hypotheses.lean          @VOTRE-ORG/socle
-/Proprietes/              @VOTRE-ORG/socle
-/Proprietes.lean          @VOTRE-ORG/socle
-/Engagements.lean         @VOTRE-ORG/socle
-/Audit.lean               @VOTRE-ORG/socle
-/Rapport.lean             @VOTRE-ORG/socle
-/lakefile.toml            @VOTRE-ORG/socle
-/lean-toolchain           @VOTRE-ORG/socle
-/scripts/                 @VOTRE-ORG/socle
-/.github/                 @VOTRE-ORG/socle
+/Modele/                  @orientationd
+/Modele.lean              @orientationd
+/Hypotheses/              @orientationd
+/Hypotheses.lean          @orientationd
+/Proprietes/              @orientationd
+/Proprietes.lean          @orientationd
+/Engagements.lean         @orientationd
+/Audit.lean               @orientationd
+/Rapport.lean             @orientationd
+/lakefile.toml            @orientationd
+/lean-toolchain           @orientationd
+/scripts/                 @orientationd
+/.github/                 @orientationd
 
 # Registre : l'ajout d'un programme passe par les mainteneurs
-/Programmes.lean          @VOTRE-ORG/mainteneurs
+/Programmes.lean          @orientationd
 
 # Programmes : la propriété d'un dossier Programmes/<X>/ est déclarée dans
 # Programmes/<X>/PROPRIETAIRES et imposée par la CI (accès aux programmes),
