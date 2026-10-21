@@ -1,4 +1,5 @@
 import Modele.Scenario
+import Modele.Logement
 
 /-!
 # Leviers : le vocabulaire fermé des mesures
@@ -45,6 +46,12 @@ inductive Levier where
   /-- Investissement de transition : réduction d'émissions (MtCO₂e) pour un
   coût annuel (M€). -/
   | transition (reductionMt : Int) (coutAnnuel : Int)
+  /-- Amende SRU automatique selon la part de logements sociaux manquants
+  (barème et propriétés : `Modele/Logement.lean`). C'est un transfert des
+  communes vers le FNAP et les établissements fonciers : **neutre sur le
+  solde consolidé** des administrations publiques. Ses effets se lisent
+  dans le panel communal du rapport et dans les contrats de la mesure. -/
+  | amendeSRU (bareme : BaremeSRU)
   deriving Repr, DecidableEq
 
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
@@ -86,5 +93,10 @@ def Levier.appliquer (H : Scenario) : Levier → Etat → Etat
         depenses := s.depenses - d * H.eco.economieParMoisRetraite }
   | .transition r c, s =>
       appliquerDepense H c { s with emissionsMt := s.emissionsMt - r }
+  -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
+  -- logement (rattrapage induit) demanderait un indicateur et une hypothèse
+  -- de comportement des communes : évolution du modèle commun, à discuter
+  -- en issue.
+  | .amendeSRU _, s => s
 
 end Modele

@@ -41,6 +41,20 @@ def ligne (cellules : List String) : String :=
 def separateur (n : Nat) : String :=
   ligne (List.replicate n "---")
 
+/-- `1218750` ↦ `"1 218 750 €"` (espace fine insécable). -/
+def fmtEuros (x : Int) : String :=
+  let chiffres := (toString x.natAbs).toList
+  let groupes := (chiffres.reverse.toArray.toList.foldl (fun (acc : List (List Char)) ch =>
+    match acc with
+    | g :: rest => if g.length < 3 then (ch :: g) :: rest else [ch] :: g :: rest
+    | [] => [[ch]]) []).map String.ofList
+  (if x < 0 then "-" else "") ++ " ".intercalate groupes ++ " €"
+
+/-- Coefficient en pm ↦ `"×1,48"`. -/
+def fmtCoef (pm : Int) : String :=
+  let frac := toString ((pm.natAbs % 1000) / 10)
+  s!"×{pm.natAbs / 1000},{if frac.length < 2 then "0" ++ frac else frac}"
+
 /-! ## Calculs -/
 
 structure Evaluation where
@@ -57,6 +71,31 @@ def evaluer (p : Programme) (H : Scenario) : Evaluation :=
 
 def engagementTenu (p : Programme) (e : Engagement) : Bool :=
   e.propriete.evaluer e.scenario (tendanciel e.scenario) (p.resultat e.scenario)
+
+/-- Contrats des mesures : (mesure, titre). Ils sont prouvés par
+construction : un contrat faux empêche la compilation. -/
+def contrats (p : Programme) : List (String × String) :=
+  p.mesures.flatMap fun m => m.contrats.map fun k => (m.id, k.titre)
+
+/-- Mesures utilisant le levier `amendeSRU`, avec leur barème. -/
+def baremesSRU (p : Programme) : List (String × BaremeSRU) :=
+  p.mesures.flatMap fun m => m.leviers.filterMap fun
+    | .amendeSRU b => some (m.id, b)
+    | _ => none
+
+structure LigneSRU where
+  commune : Commune
+  actuel : Int
+  maxActuel : Int
+  amende : Int
+  plafonnee : Bool
+
+def panelSRU (b : BaremeSRU) : List LigneSRU :=
+  Hypotheses.Communes.panel.map fun c =>
+    { commune := c, actuel := SRU.prelevementActuel c
+      maxActuel := SRU.majorationMaxActuelle Hypotheses.Communes.medianePFH c
+      amende := b.amende c
+      plafonnee := decide (c.plafond b.plafondPb < b.brut c) }
 
 /-- Identifiants présents plusieurs fois dans une liste. -/
 def doublons (ids : List String) : List String :=
@@ -112,7 +151,14 @@ def rapportJson : Json :=
         ("engagements", Json.arr <| p.engagements.toArray.map fun e =>
           Json.mkObj [("scenario", toJson e.scenario.id),
             ("propriete", toJson e.propriete.id),
-            ("tenu", toJson (engagementTenu p e))])]),
+            ("tenu", toJson (engagementTenu p e))]),
+        ("contrats", Json.arr <| (contrats p).toArray.map fun (m, t) =>
+          Json.mkObj [("mesure", toJson m), ("titre", toJson t)]),
+        ("sru", Json.arr <| (baremesSRU p).toArray.flatMap fun (m, b) =>
+          (panelSRU b).toArray.map fun l =>
+            Json.mkObj [("mesure", toJson m), ("commune", toJson l.commune.id),
+              ("actuel", toJson l.actuel), ("maxActuel", toJson l.maxActuel),
+              ("amende", toJson l.amende), ("plafonnee", toJson l.plafonnee)])]),
     ("erreurs", toJson erreursRegistre)]
 
 /-! ## Markdown -/
@@ -200,6 +246,36 @@ def rapportMarkdown : String := Id.run do
     out := out.push ""
     out := out.push "</details>"
     out := out.push ""
+    let ks := contrats p
+    unless ks.isEmpty do
+      out := out.push "**Contrats des mesures** (prouvés pour tous les cas, vérifiés à la compilation) :"
+      out := out.push ""
+      for (m, t) in ks do
+        out := out.push s!"- ✅ {m} — {t}"
+      out := out.push ""
+    for (m, b) in baremesSRU p do
+      let lignes := panelSRU b
+      out := out.push s!"<details><summary>{m} — panel communal SRU (communes fictives)</summary>"
+      out := out.push ""
+      out := out.push "Neutre sur le solde consolidé des APU (transfert communes → FNAP / EPF) : aucun effet sur la matrice ci-dessus."
+      out := out.push ""
+      out := out.push (ligne ["Commune", "Logements sociaux", "Part manquante", "Droit actuel (base)",
+        "Maximum préfectoral actuel", s!"Amende {m}", "Coefficient"])
+      out := out.push (separateur 7)
+      for l in lignes do
+        let c := l.commune
+        out := out.push (ligne [c.id, s!"{fmtPb c.tauxLogementsSociauxPb} % / {fmtPb c.tauxLegalPb} %",
+          s!"{fmtPb (c.partManquantePm * 10)} %", fmtEuros l.actuel, fmtEuros l.maxActuel,
+          fmtEuros l.amende,
+          if c.manquants = 0 then "—"
+          else if l.plafonnee then s!"{fmtCoef (b.coefPm c)} → plafonné"
+          else fmtCoef (b.coefPm c)])
+      let total (f : LigneSRU → Int) := lignes.foldl (fun acc l => acc + f l) 0
+      out := out.push (ligne ["**Total**", "", "", fmtEuros (total (·.actuel)),
+        fmtEuros (total (·.maxActuel)), fmtEuros (total (·.amende)), ""])
+      out := out.push ""
+      out := out.push "</details>"
+      out := out.push ""
 
   -- Légende
   out := out.push "## Propriétés"

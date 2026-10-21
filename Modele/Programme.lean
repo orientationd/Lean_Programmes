@@ -4,7 +4,9 @@ import Modele.Propriete
 # Mesures, programmes, engagements
 
 * Une `Mesure` est une liste de leviers, avec la référence de la page du
-  programme d'où elle est tirée (traçabilité).
+  programme d'où elle est tirée (traçabilité), et d'éventuels **contrats** :
+  des propriétés du dispositif prouvées pour tous les cas (toute commune,
+  tout ménage…).
 * Un `Programme` est une liste de mesures, plus des **engagements** : les
   couples (scénario, propriété) que ses auteurs revendiquent.
 
@@ -21,6 +23,19 @@ Deux niveaux de vérification :
 
 namespace Modele
 
+/-- Propriété d'une mesure prouvée une fois pour toutes, typiquement « pour
+toute commune » ou « pour tout ménage ». Un contrat ne peut pas exister sans
+sa preuve : s'il devient faux (changement de la mesure ou du modèle
+commun), la compilation échoue et Lean désigne le contrat cassé.
+
+Différence avec un engagement : un engagement porte sur l'état macro sous
+un scénario et se décide par calcul ; un contrat est un énoncé universel
+sur le dispositif lui-même et se prouve. -/
+structure Contrat where
+  titre : String
+  enonce : Prop
+  preuve : enonce
+
 structure Mesure where
   /-- Identifiant unique dans le programme, ex. `"R-03"`. -/
   id : String
@@ -28,7 +43,8 @@ structure Mesure where
   /-- Référence dans le document source (page, section, URL). -/
   source : String
   leviers : List Levier
-  deriving Repr
+  /-- Propriétés prouvées du dispositif (voir `Contrat`). -/
+  contrats : List Contrat := []
 
 def Mesure.appliquer (H : Scenario) (m : Mesure) (s : Etat) : Etat :=
   m.leviers.foldl (fun s l => l.appliquer H s) s
