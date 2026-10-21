@@ -142,15 +142,20 @@ Publication : créer un dépôt **vide** sur GitHub, puis
 CODEOWNERS par le vôtre et pousse toutes les branches. Ensuite, dans les
 réglages du dépôt :
 
-* **Rules → Rulesets → New branch ruleset**, cible : branche par défaut.
-  *Restrict deletions*, *Block force pushes*, *Require a pull request
-  before merging* (0 approbation requise), *Require status checks to pass*
-  avec « Vérifier et évaluer » et « Contrôle d'accès aux programmes »
-  (chaque statut n'est proposé qu'après son premier run).
-* **Actions → General** : *Allow actions created by GitHub* (le dépôt
-  n'utilise que des actions `actions/*`) ; *Workflow permissions* en
-  lecture seule ; *Approval for running fork pull request workflows* au
-  minimum pour les nouveaux contributeurs.
+* **Rules → Rulesets → New ruleset → Import a ruleset** :
+  [`.github/rulesets/main.json`](.github/rulesets/main.json). Sur la
+  branche par défaut : suppression et force-push interdits, PR obligatoire
+  (0 approbation), branche à jour avant fusion, statuts « Vérifier et
+  évaluer » et « Contrôle d'accès aux programmes » obligatoires et
+  épinglés sur l'app GitHub Actions (id 15368), si bien qu'aucun autre
+  émetteur de statut ne peut les satisfaire. Aucun contournement déclaré.
+* **Actions → General** : *Allow orientationd, and select non-orientationd,
+  actions* avec seulement *Allow actions created by GitHub* (le dépôt
+  n'utilise que des actions `actions/*`) ; *Workflow permissions* : *Read
+  repository contents and packages permissions*, et *Allow GitHub Actions
+  to create and approve pull requests* décoché ; *Approval for running fork
+  pull request workflows* : au minimum *Require approval for first-time
+  contributors*.
 * **Security** : activer *Private vulnerability reporting*
   ([SECURITY.md](SECURITY.md)).
 * **Équipes** : sur un compte personnel, CODEOWNERS ne vise que des
