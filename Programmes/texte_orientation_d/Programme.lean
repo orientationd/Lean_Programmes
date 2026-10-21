@@ -19,6 +19,8 @@ Trois mesures :
 * **O-03** — transparence des attributions de logements sociaux par preuve
   à divulgation nulle de connaissance (ZK). Spécification et garanties :
   sous-modèle d'attribution.
+* **O-04** — construction de six EPR2, au niveau du programme
+  gouvernemental en cours, financée comme lui par un prêt de l'État.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -57,6 +59,20 @@ theorem baremeSRU_valide : baremeSRU.Valide := by decide
 def baremeSRUPlafondActuel : BaremeSRU := { baremeSRU with plafondPb := 500 }
 def baremeSRUModere : BaremeSRU := { baremeSRU with coefMaxPm := 3000, plafondPb := 500 }
 def baremeSRUSevere : BaremeSRU := { baremeSRU with coefMaxPm := 10000, plafondPb := 1500 }
+
+/-! ## O-04 — Six EPR2, comme le programme gouvernemental -/
+
+/-- Programme gouvernemental : 6 EPR2 (Penly, Gravelines, Bugey), devis EDF
+du 18 décembre 2025 de 72,8 Md€ (euros 2020), décision finale
+d'investissement fin 2026, première mise en service visée en 2038. Accord
+État-EDF de juin 2025 : prêt bonifié de l'État couvrant au moins la moitié
+des coûts de construction, contrat pour différence à 100 €/MWh sur 40 ans.
+Prêt supposé versé linéairement de 2027 à 2038 : 72 800 / 2 / 12 ≈ 3 033
+M€/an. -/
+def pretEPR2 : Int := 3033
+
+/-- Variante : l'État prête la totalité du coût de construction. -/
+def pretEPR2Total : Int := 6067
 
 /-! ## Mesures -/
 
@@ -127,13 +143,20 @@ def mesures : List Mesure := [
       { titre := "La commission peut toujours produire la preuve pour l'attributaire légitime"
         enonce := ∀ (R : Type) (engager : List Candidat → R) (cs : List Candidat) (a : Candidat),
           (cs.map (·.id)).Nodup → choisir cs = some a → EnonceZK engager (engager cs) a.id
-        preuve := fun _ engager _ _ hnd h => zk_complet engager hnd h }] }
+        preuve := fun _ engager _ _ hnd h => zk_complet engager hnd h }] },
+
+  { id := "O-04"
+    titre := "Construction de six EPR2, au niveau du programme gouvernemental"
+    source := "texte_orientation_d, mesure 4 ; programme gouvernemental : devis EDF du 18 décembre 2025 (72,8 Md€₂₀₂₀ pour 6 EPR2), accord État-EDF du 19 juin 2025 (prêt de l'État ≥ 50 %, CfD 100 €/MWh), première mise en service 2038. Effets hors horizon : production, CfD, remboursements"
+    leviers := [.pretEtat pretEPR2]
+    variantes := [
+      { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] }
 ]
 
 def programme : Programme where
   id := "texte_orientation_d"
   nom := "texte_orientation_d"
-  description := "Programme de orientation_d : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK."
+  description := "Programme de orientation_d : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2 financés par prêt de l'État."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

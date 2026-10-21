@@ -3,6 +3,7 @@ import Programmes.ExempleConsolidation.Programme
 import Programmes.texte_orientation_d.Programme
 import Programmes.LFI.Programme
 import Programmes.PS.Programme
+import Programmes.PCF.Programme
 
 /-!
 # Registre des programmes
@@ -26,7 +27,8 @@ def tous : List Modele.Programme := [
   ExempleConsolidation.programme,
   texte_orientation_d.programme,
   LFI.programme,
-  PS.programme
+  PS.programme,
+  PCF.programme
 ]
 
 end Programmes

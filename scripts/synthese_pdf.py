@@ -53,7 +53,7 @@ ORDINAL = ["#86b6ef", "#2a78d6", "#104281"]   # bas → haut, une seule teinte
 TENDANCIEL = "#898781"
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, BASE, FOND = "#e1e0d9", "#c3c2b7", "#f4f3ef"
-PAR_FIGURE = 5          # au-delà, les programmes sont répartis sur plusieurs figures
+PAR_FIGURE = 6          # au-delà, les programmes sont répartis sur plusieurs figures
 
 FONT_DIR = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
 pdfmetrics.registerFont(TTFont("Sans", str(FONT_DIR / "DejaVuSans.ttf")))
