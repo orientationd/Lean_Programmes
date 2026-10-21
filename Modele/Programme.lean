@@ -36,6 +36,13 @@ structure Contrat where
   enonce : Prop
   preuve : enonce
 
+/-- Variante d'une mesure : même intention, autres paramètres (taux,
+origine des véhicules…). Le rapport la compare à la version retenue ; elle
+n'entre pas dans l'évaluation du programme. -/
+structure Variante where
+  nom : String
+  leviers : List Levier
+
 structure Mesure where
   /-- Identifiant unique dans le programme, ex. `"R-03"`. -/
   id : String
@@ -45,6 +52,8 @@ structure Mesure where
   leviers : List Levier
   /-- Propriétés prouvées du dispositif (voir `Contrat`). -/
   contrats : List Contrat := []
+  /-- Variantes comparées dans le rapport (voir `Variante`). -/
+  variantes : List Variante := []
 
 def Mesure.appliquer (H : Scenario) (m : Mesure) (s : Etat) : Etat :=
   m.leviers.foldl (fun s l => l.appliquer H s) s
