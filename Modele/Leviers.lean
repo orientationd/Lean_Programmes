@@ -37,8 +37,8 @@ inductive Levier where
   | prelevement (rendementStatique : Int)
   /-- Baisse de prélèvement, coût **statique** en M€/an. -/
   | baissePrelevement (coutStatique : Int)
-  /-- Prestation forfaitaire, €/an par habitant (le coût dépend de
-  l'hypothèse démographique). -/
+  /-- Prestation forfaitaire, €/an par habitant (coût calculé sur la
+  population de l'année de mise en œuvre). -/
   | prestationParHabitant (eurosParAn : Int)
   /-- Revalorisation du SMIC, pb. -/
   | revalorisationSmic (hausse : Int)

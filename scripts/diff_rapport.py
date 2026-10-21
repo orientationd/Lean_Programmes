@@ -224,8 +224,13 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
     if pr.get("erreurs"):
         out += ["", "### ⛔ Erreurs de registre", ""] + [f"- {e}" for e in pr["erreurs"]]
 
+    axes_changes = any(ids(pr, c) != ids(base, c) for c in ("scenarios", "programmes", "proprietes"))
     if not (changes or lignes or casses or pr.get("erreurs")) and len(out) <= 3:
         out.append("Aucun changement d'évaluation.")
+    elif not (changes or lignes or casses or pr.get("erreurs")) and axes_changes:
+        out += ["", "Aucune cellule commune à la base et à la PR n'a changé. Des scénarios, "
+                "programmes ou propriétés ont été ajoutés ou retirés : leurs résultats ne se "
+                "comparent pas cellule à cellule (voir les tableaux ci-dessus et le rapport complet)."]
     elif not (changes or lignes or casses or pr.get("erreurs")):
         out += ["", "Aucun changement de la matrice d'évaluation (propriétés et indicateurs macro)."]
     return "\n".join(out) + "\n"

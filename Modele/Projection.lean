@@ -48,9 +48,10 @@ def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
 de niveau dû au prix du pétrole (nul au prix de référence). -/
 def etatDepart (H : Scenario) : Etat :=
   let s := H.reference.etat
-  let effetPb := H.energie.effetPibPar10DollarsPb
-    * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / 10
-  chocPib H none (appliquerPb s.pib effetPb) s
+  -- effet (pb du PIB par tranche de 10 $) × écart de prix / 10 $, sans arrondi intermédiaire
+  let dPib := s.pib * H.energie.effetPibPar10DollarsPb
+    * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / 100000
+  chocPib H none dPib s
 
 /-- `f` appliquée `n` fois. -/
 def iterer (f : Etat → Etat) : Nat → Etat → Etat

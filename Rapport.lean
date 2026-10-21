@@ -241,6 +241,11 @@ def rapportSyntheseJson : Json :=
     ("variantes", Json.arr <| Hypotheses.variantesSynthese.toArray.map fun (vid, nom, H) =>
       Json.mkObj [("id", toJson vid), ("nom", toJson nom), ("scenario", toJson H.id),
         ("natalite", toJson H.natalite.description), ("energie", toJson H.energie.description),
+        ("icfCentiemes", toJson H.natalite.icfCentiemes),
+        ("naissancesMilliers", toJson H.natalite.naissancesMilliers),
+        ("prixBrentDollars", toJson H.energie.prixBrentDollars),
+        ("prixReferenceDollars", toJson H.energie.prixReferenceDollars),
+        ("effetPibPar10DollarsPb", toJson H.energie.effetPibPar10DollarsPb),
         ("tendanciel", Json.arr <| (trajectoire H horizonSynthese (etatDepart H)).toArray.map etatJson),
         ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
           (p.id, Json.arr <| (trajectoire H horizonSynthese (p.etatInitial H)).toArray.map etatJson))]),

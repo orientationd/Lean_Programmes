@@ -77,15 +77,20 @@ def ajouter (v : ParSecteur) (s : Secteur) (d : Int) : ParSecteur :=
 def total (v : ParSecteur) : Int :=
   v.agriculture + v.industrie + v.construction + v.tertiaireMarchand + v.tertiaireNonMarchand
 
+/-- Tous les secteurs sont positifs ou nuls. -/
+abbrev Positif (v : ParSecteur) : Prop :=
+  0 ≤ v.agriculture ∧ 0 ≤ v.industrie ∧ 0 ≤ v.construction ∧
+  0 ≤ v.tertiaireMarchand ∧ 0 ≤ v.tertiaireNonMarchand
+
 /-- Répartit `d` : entièrement sur `cible` si elle est donnée, sinon au
-prorata (le reste d'arrondi va au tertiaire marchand). Le total augmente
-exactement de `d`. -/
+prorata, parts arrondies vers zéro (le reste va au tertiaire marchand). Le
+total augmente exactement de `d`. -/
 def repartir (v : ParSecteur) (d : Int) : Option Secteur → ParSecteur
   | some s => v.ajouter s d
   | none =>
     let t := v.total
     if t = 0 then v.ajouter .tertiaireMarchand d else
-    let part (x : Int) := d * x / t
+    let part (x : Int) := if d < 0 then -((-d) * x / t) else d * x / t
     let a := part v.agriculture
     let i := part v.industrie
     let c := part v.construction
@@ -181,11 +186,12 @@ def croitre (v : ParImpot) (tauxPb : Int) : ParImpot :=
     taxeFonciere := v.taxeFonciere + appliquerPb v.taxeFonciere tauxPb
     autres := v.autres + appliquerPb v.autres tauxPb }
 
-/-- Répartit `d` au prorata des prélèvements (reste d'arrondi sur « autres »). -/
+/-- Répartit `d` au prorata des prélèvements, parts arrondies vers zéro (reste
+sur « autres »). -/
 def repartir (v : ParImpot) (d : Int) : ParImpot :=
   let t := v.total
   if t = 0 then v.ajouter .autres d else
-  let part (x : Int) := d * x / t
+  let part (x : Int) := if d < 0 then -((-d) * x / t) else d * x / t
   let a := part v.tva
   let b := part v.ir
   let c := part v.csgCrds

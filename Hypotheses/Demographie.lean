@@ -13,7 +13,6 @@ open Modele
 def centrale : Demographie where
   id := "demo-centrale"
   description := "Mortalité et migrations de 2025 prolongées, population active quasi stable"
-  populationMilliers := 69950
   partPlus65Pb := 2350
   decesMilliers := 651
   soldeMigratoireMilliers := 176
@@ -26,7 +25,6 @@ def centrale : Demographie where
 def vieillissementRapide : Demographie where
   id := "demo-vieillissement"
   description := "Vieillissement plus rapide : plus de décès, moins de migrations, population active stable"
-  populationMilliers := 69500
   partPlus65Pb := 2450
   decesMilliers := 670
   soldeMigratoireMilliers := 140

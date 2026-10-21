@@ -36,9 +36,6 @@ structure Reference where
 structure Demographie where
   id : String
   description : String
-  /-- Population à l'horizon, milliers (repère ; la trajectoire est calculée
-  année par année à partir des naissances, décès et migrations). -/
-  populationMilliers : Int
   /-- Part des 65 ans et plus à l'horizon, pb. -/
   partPlus65Pb : Int
   /-- Décès par an, milliers. -/
@@ -144,7 +141,9 @@ def id (H : Scenario) : String :=
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
   0 < H.reference.etat.pib ∧ 0 < H.reference.populationMilliers ∧
-  0 < H.demo.populationMilliers ∧
+  0 < H.reference.etat.actifs ∧ H.reference.etat.emploiTotal ≤ H.reference.etat.actifs ∧
+  H.reference.etat.emploi.Positif ∧
+  0 ≤ H.eco.chomageFrictionnelPb ∧ H.eco.chomageFrictionnelPb < 10000 ∧
   0 ≤ H.demo.partPlus65Pb ∧ H.demo.partPlus65Pb ≤ 10000 ∧
   -1000 ≤ H.eco.croissancePb ∧ H.eco.croissancePb ≤ 2000 ∧
   -1000 ≤ H.eco.croissanceDepensesPb ∧ H.eco.croissanceDepensesPb ≤ 2000 ∧

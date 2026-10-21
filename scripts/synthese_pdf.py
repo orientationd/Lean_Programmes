@@ -140,6 +140,12 @@ class Donnees:
     def fin(self, variante: str, prog: str | None) -> dict:
         return self.traj(variante, prog)[-1]
 
+    def brent(self, variante: str) -> int:
+        return self.var[variante]["prixBrentDollars"]
+
+    def icf(self, variante: str) -> str:
+        return nombre(self.var[variante]["icfCentiemes"] / 100, 2)
+
     def lignes(self):
         """(id, nom court) : tendanciel puis programmes."""
         return [(None, "Tendanciel (sans programme)")] + [(p["id"], nom_court(p["nom"])) for p in self.progs]
@@ -297,7 +303,7 @@ def structure_impots(D: Donnees):
 
 def points_petrole(D: Donnees, champs):
     """Valeur en fin de période selon le prix du pétrole : trois points par ligne."""
-    variantes = [("petrole-bas", "50 $"), ("central", "63 $"), ("petrole-haut", "100 $")]
+    variantes = [(v, f"{D.brent(v)} $") for v in ("petrole-bas", "central", "petrole-haut")]
     lignes = D.lignes()
     fig, axes = figure(0.24 * len(lignes) + 0.9, 1, len(champs), sharey=True)
     for ax, (champ, titre, dec, suffixe, tr) in zip(axes, champs):
@@ -321,8 +327,9 @@ def points_petrole(D: Donnees, champs):
 
 
 def courbes_natalite(D: Donnees):
-    variantes = [("natalite-basse", "basse (1,40 enfant par femme)"),
-                 ("central", "centrale (1,56)"), ("natalite-haute", "haute (1,80)")]
+    variantes = [("natalite-basse", f"basse ({D.icf('natalite-basse')} enfant par femme)"),
+                 ("central", f"centrale ({D.icf('central')})"),
+                 ("natalite-haute", f"haute ({D.icf('natalite-haute')})")]
     fig, ax = figure(2.3)
     x = D.annees
     for (v, lab), c in zip(variantes, ORDINAL):
@@ -452,17 +459,24 @@ def section_resume(D: Donnees, meta) -> list:
 
     (dmin, nmin), (dmax, nmax) = ext(lambda e: e["deficitPb"])
     (cmin, ncmin), (cmax, ncmax) = ext(lambda e: e["chomagePb"])
-    pib_c, pib_h = D.fin("central", None)["pib"], D.fin("petrole-haut", None)["pib"]
+    ids = [None] + [p["id"] for p in D.progs]
+    pertes = [(D.fin("central", i)["pib"] - D.fin("petrole-haut", i)["pib"]) * 100
+              / D.fin("central", i)["pib"] for i in ids]
+    hausses = [(D.fin("petrole-haut", i)["deficitPb"] - D.fin("central", i)["deficitPb"]) / 100
+               for i in ids]
+
+    def plage(vals, dec, unite):
+        a, b = nombre(min(vals), dec), nombre(max(vals), dec)
+        return f"{a}{unite}" if a == b else f"{a} à {b}{unite}"
     out.append(P("Ce qu'il faut retenir", "h2"))
     out += puces([
         f"En {a1}, le déficit public va de {pct_pb(dmin)} ({echap(nmin)}) à {pct_pb(dmax)} "
         f"({echap(nmax)}), contre {pct_pb(base['deficitPb'])} sans programme.",
         f"Le chômage va de {pct_pb(cmin, 2)} ({echap(ncmin)}) à {pct_pb(cmax, 2)} "
         f"({echap(ncmax)}), contre {pct_pb(base['chomagePb'], 2)} sans programme.",
-        f"Un Brent à 100 $ au lieu de 63 $ réduit le PIB d'environ "
-        f"{nombre((pib_c - pib_h) * 100 / pib_c, 1)}{NBSP}% et creuse le déficit d'environ "
-        f"{nombre((D.fin('petrole-haut', None)['deficitPb'] - base['deficitPb']) / 100, 1)} point, "
-        "quel que soit le programme.",
+        f"Un Brent à {D.brent('petrole-haut')} $ au lieu de {D.brent('central')} $ réduit le PIB "
+        f"de {plage(pertes, 1, NBSP + '%')} et creuse le déficit de {plage(hausses, 1, ' point')} "
+        "selon le programme (tendanciel compris).",
         f"La natalité ne change que la population "
         f"({nombre(D.fin('natalite-basse', None)['populationMilliers'] / 1000, 1)} à "
         f"{nombre(D.fin('natalite-haute', None)['populationMilliers'] / 1000, 1)} millions en {a1}) "
@@ -521,7 +535,7 @@ def section_emploi(D: Donnees) -> list:
     for g in D.groupes:
         out.append(png(barres_secteurs(D, g)))
     larg = [0.25, 0.085, 0.1, 0.09, 0.12, 0.12, 0.11, 0.125]
-    ent = [f"Emploi en {a1} (milliers)"] + [SECTEURS_TAB.get(s["id"], s["nom"]) for s in secs] \
+    ent = ["Emploi (milliers)"] + [SECTEURS_TAB.get(s["id"], s["nom"]) for s in secs] \
         + ["Total", "Part industrie"]
 
     def rangee(nom, e):
@@ -530,7 +544,7 @@ def section_emploi(D: Donnees) -> list:
                nombre(e["emploi"]["industrie"] * 100 / e["emploiTotal"], 2) + NBSP + "%"]
 
     rows = [rangee(f"Situation de départ ({a0})", D.traj("central", None)[0])]
-    rows += [rangee(nom, D.fin("central", pid)) for pid, nom in D.lignes()]
+    rows += [rangee(f"{nom} ({a1})", D.fin("central", pid)) for pid, nom in D.lignes()]
     out.append(Spacer(1, 3))
     out.append(tableau(ent, rows, larg))
     base = D.fin("central", None)["emploi"]
@@ -542,8 +556,10 @@ def section_emploi(D: Donnees) -> list:
         rows2.append([nom_court(p["nom"])] + [signe(v, 0) for v in ds] + [signe(sum(ds), 0)])
     out.append(Spacer(1, 6))
     out.append(tableau(ent2, rows2, [0.25, 0.1, 0.11, 0.11, 0.13, 0.15, 0.15]))
+    e0 = D.traj("central", None)[0]
     out.append(P("Emploi au sens du BIT. Structure de départ : estimations d'emploi INSEE 2024 "
-                 "par secteur, appliquées à l'emploi 2025 (31,8 millions d'actifs, chômage 7,9 %). "
+                 f"par secteur, appliquées à l'emploi {a0} ({nombre(e0['actifs'] / 1e6, 1)} millions "
+                 f"d'actifs, chômage {pct_pb(e0['chomagePb'])}). "
                  "Agric. : agriculture ; Constr. : construction ; Tert. march. / non m. : tertiaire "
                  "marchand / non marchand.", "note"))
     return out
@@ -562,12 +578,12 @@ def section_impots(D: Donnees) -> list:
     for g in D.groupes:
         out.append(png(petits_multiples_impots(D, g)))
     larg = [0.22] + [0.077] * len(imp) + [0.164]
-    ent = [f"Recettes {a1} (Md€)"] + [COURTS_TAB.get(i["id"], i["nom"]) for i in imp] + ["Total"]
+    ent = [f"Recettes {a1} (Md€)"] + [COURTS_TAB.get(i["id"], i["nom"]) for i in imp] + ["Prélèv. oblig."]
     rows = [[nom] + [md(D.fin("central", pid)["impots"][i["id"]], 1) for i in imp]
             + [md(impots_total(D.fin("central", pid)), 1)] for pid, nom in D.lignes()]
     out.append(KeepTogether([Spacer(1, 3), tableau(ent, rows, larg, surligner_premiere=True)]))
     base = D.fin("central", None)
-    ent2 = [f"Écart au tendanciel {a1} (Md€)"] + [COURTS_TAB.get(i["id"], i["nom"]) for i in imp] + ["Total"]
+    ent2 = [f"Écart au tendanciel {a1} (Md€)"] + [COURTS_TAB.get(i["id"], i["nom"]) for i in imp] + ["Prélèv. oblig."]
     rows2 = []
     for p in D.progs:
         e = D.fin("central", p["id"])
@@ -576,7 +592,8 @@ def section_impots(D: Donnees) -> list:
                      + [signe((impots_total(e) - impots_total(base)) / 1000, 1)])
     out.append(KeepTogether([Spacer(1, 6), tableau(ent2, rows2, larg)]))
     out.append(P(f"CSG : CSG et CRDS ; Cotis. : cotisations sociales ; IS : impôt sur les sociétés ; "
-                 f"Accise : accise sur les énergies (TICPE) ; T. fonc. : taxe foncière. Situation de "
+                 f"Accise : accise sur les énergies (TICPE) ; T. fonc. : taxe foncière ; Prélèv. oblig. : "
+                 f"somme des colonnes (hors recettes non fiscales). Situation de "
                  f"départ {a0} : INSEE, comptes des administrations publiques 2025 ; DGCL (taxe "
                  "foncière) ; ministère de la Transition écologique (accise, dernier chiffre publié : "
                  "2022). Rendements nets des pertes dues aux comportements (fuite fiscale).", "note"))
@@ -586,13 +603,16 @@ def section_impots(D: Donnees) -> list:
 def section_petrole(D: Donnees) -> list:
     a1 = D.annees[-1]
     out = [P("Sensibilité au prix du pétrole", "h1"),
-           P("Trois prix du Brent : 50 $, 63 $ (référence, prix figé par l'INSEE pour 2026) et "
-             "100 $ (choc). Chaque hausse de 10 $ coûte 0,25 % de PIB l'année de départ (INSEE : "
-             "−0,2 à −0,3 %) ; l'effet se propage aux recettes et à l'emploi.")]
+           P(f"Trois prix du Brent : {D.brent('petrole-bas')} $, {D.brent('central')} $ (référence, "
+             f"prix figé par l'INSEE pour 2026) et {D.brent('petrole-haut')} $ (choc). Chaque hausse "
+             f"de 10 $ coûte {nombre(-D.var['central']['effetPibPar10DollarsPb'] / 100, 2)} % de PIB "
+             "l'année de départ (INSEE : −0,2 à −0,3 %) ; l'effet se propage aux recettes et à "
+             "l'emploi.")]
     champs = [("deficitPb", f"Déficit public en {a1} (% du PIB)", 1, NBSP + "%", lambda v: v / 100),
               ("chomagePb", f"Chômage en {a1} (%)", 1, NBSP + "%", lambda v: v / 100)]
     out.append(png(points_petrole(D, champs)))
-    ent = [f"{a1}, Brent à 50 / 63 / 100 $", "PIB (Md€)", "Déficit public (%)", "Dette (%)", "Chômage (%)"]
+    prix = " / ".join(str(D.brent(v)) for v in ("petrole-bas", "central", "petrole-haut"))
+    ent = [f"{a1}, Brent à {prix} $", "PIB (Md€)", "Déficit public (%)", "Dette (%)", "Chômage (%)"]
     rows = []
     for pid, nom in D.lignes():
         es = [D.fin(v, pid) for v in ("petrole-bas", "central", "petrole-haut")]
@@ -611,8 +631,9 @@ def section_petrole(D: Donnees) -> list:
 def section_natalite(D: Donnees) -> list:
     a1 = D.annees[-1]
     out = [P("Sensibilité à la natalité", "h1"),
-           P("Trois hypothèses de fécondité : 1,40 enfant par femme (poursuite de la baisse), "
-             "1,56 (niveau de 2025) et 1,80 (niveau de 2014). Sur dix ans, la natalité modifie la "
+           P(f"Trois hypothèses de fécondité : {D.icf('natalite-basse')} enfant par femme "
+             f"(poursuite de la baisse), {D.icf('central')} (niveau de 2025) et "
+             f"{D.icf('natalite-haute')} (niveau de 2014). Sur dix ans, la natalité modifie la "
              "population, donc le PIB par habitant, mais pas encore la population active.")]
     out.append(png(courbes_natalite(D)))
     ent = [f"PIB par habitant en {a1} (€)", "Natalité basse", "Centrale", "Haute"]
@@ -621,8 +642,11 @@ def section_natalite(D: Donnees) -> list:
             for pid, nom in D.lignes()]
     out.append(Spacer(1, 3))
     out.append(tableau(ent, rows, [0.46, 0.18, 0.18, 0.18], surligner_premiere=True))
-    out.append(P("Naissances 2025 : 645 000 (INSEE, bilan démographique 2025), mises à l'échelle de "
-                 "la fécondité pour les variantes. Décès et solde migratoire de 2025 prolongés.", "note"))
+    naiss = " / ".join(nombre(D.var[v]["naissancesMilliers"] * 1000)
+                       for v in ("natalite-basse", "central", "natalite-haute"))
+    out.append(P(f"Naissances par an : {naiss} (2025 : 645 000, INSEE, bilan démographique 2025 ; "
+                 "variantes mises à l'échelle de la fécondité). Décès et solde migratoire de 2025 "
+                 "prolongés.", "note"))
     return out
 
 
@@ -706,6 +730,11 @@ def section_annexes(D: Donnees) -> list:
         "sur le solde.",
         "Population active : tendance démographique et effet de l'âge légal (30 000 actifs par "
         "mois, INSEE). La natalité n'agit pas sur les actifs avant l'horizon.",
+        f"Les hypothèses démographiques sont fixées à l'horizon des propriétés "
+        f"({D.d['horizonProprietes']} ans). Au-delà, la synthèse prolonge au même rythme la hausse "
+        "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "
+        "de la même façon sur tous les programmes et sur le tendanciel ; il ne change pas les "
+        "écarts entre eux.",
         "Programmes réels : transcriptions partielles et non officielles, limitées aux mesures "
         "chiffrées dans la source ; toute erreur se signale par une issue sur le dépôt.",
     ])
