@@ -19,7 +19,7 @@ d'hypothèses partagées, avec une CI qui vérifie à chaque PR :
 
 ```
                  Hypotheses/                     Proprietes/
-   démographie × économie × droit         déficit, dette, chômage, émissions…
+   démographie × économie × pétrole × droit   déficit, dette, chômage, émissions…
            │  (produit cartésien)                     │
            ▼                                          ▼
    ┌───────────────┐    Modele/ (commun)    ┌───────────────────┐
@@ -77,9 +77,9 @@ hypothèse ajoutée plus tard par n'importe qui.
 | `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` |
 | `Programmes.lean` | registre `Programmes.tous` |
 | `Engagements.lean` | preuve que tous les engagements sont tenus |
-| `Rapport.lean` | exécutable `rapport` : JSON + Markdown |
+| `Rapport.lean` | exécutable `rapport` : JSON + Markdown, export `--synthese` |
 | `Audit.lean` | refuse `sorry`, `native_decide` et tout `axiom` |
-| `scripts/` | garde-fou syntaxique, diff de rapports, contrôle du registre |
+| `scripts/` | garde-fou syntaxique, diff de rapports, contrôle du registre, synthèse PDF |
 | `.github/` | CI, commentaire de PR, CODEOWNERS, modèles d'issue et de PR |
 
 ## En local
@@ -97,6 +97,28 @@ lake env lean Audit.lean                 # audit des axiomes
 lake env lean --run Rapport.lean         # écrit rapport.json et rapport.md
                                          # (ou `lake exe rapport`, compilé, même sortie)
 ```
+
+## Synthèse PDF
+
+`scripts/synthese_pdf.py` met en page, sur dix ans et pour chaque
+programme, les trajectoires calculées par le modèle commun : PIB, déficit
+et dette publics, chômage, population active, emploi par secteur, impôts
+et taxes majeurs (TVA, IR, CSG-CRDS, cotisations, IS, accise sur les
+énergies, taxe foncière, autres), taux de prélèvements obligatoires,
+sensibilité au prix du pétrole (50, 63, 100 $) et à la natalité (1,40,
+1,56, 1,80 enfant par femme), propriétés et engagements, hypothèses et
+sources.
+
+```sh
+lake env lean --run Rapport.lean --synthese out/synthese.json
+pip install matplotlib reportlab
+python3 scripts/synthese_pdf.py out/synthese.json out/synthese.pdf
+```
+
+Le workflow `synthese.yml` la régénère à chaque fusion dans `main` (et à la
+demande, onglet Actions) et la publie en artefact `synthese`. Le script ne
+calcule rien : tous les chiffres sortent de `Rapport.lean`, donc du même
+code que la matrice d'évaluation.
 
 ## CI
 
