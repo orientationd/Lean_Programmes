@@ -4,6 +4,9 @@ import Programmes.texte_orientation_d.Programme
 import Programmes.LFI.Programme
 import Programmes.PS.Programme
 import Programmes.PCF.Programme
+import Programmes.RN.Programme
+import Programmes.LR.Programme
+import Programmes.Horizons.Programme
 
 /-!
 # Registre des programmes
@@ -28,7 +31,10 @@ def tous : List Modele.Programme := [
   texte_orientation_d.programme,
   LFI.programme,
   PS.programme,
-  PCF.programme
+  PCF.programme,
+  RN.programme,
+  LR.programme,
+  Horizons.programme
 ]
 
 end Programmes

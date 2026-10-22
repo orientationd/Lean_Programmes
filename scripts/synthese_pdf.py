@@ -128,8 +128,10 @@ class Donnees:
         self.var = {v["id"]: v for v in d["variantes"]}
         self.progs = d["programmes"]
         # la couleur suit le programme (ordre du registre), jamais son rang
-        self.couleur = {p["id"]: SERIES[i % PAR_FIGURE] for i, p in enumerate(self.progs)}
-        self.groupes = [self.progs[i:i + PAR_FIGURE] for i in range(0, len(self.progs), PAR_FIGURE)]
+        self.couleur = {p["id"]: SERIES[i % len(SERIES)] for i, p in enumerate(self.progs)}
+        nb = -(-len(self.progs) // PAR_FIGURE) or 1            # groupes de tailles équilibrées
+        taille = -(-len(self.progs) // nb)
+        self.groupes = [self.progs[i:i + taille] for i in range(0, len(self.progs), taille)]
         self.secteurs = d["secteurs"]
         self.impots = d["impots"]
 
@@ -495,10 +497,10 @@ def section_resume(D: Donnees, meta) -> list:
         "d'hypothèses ; aucun programme n'apporte ses propres élasticités.",
         f"Les mesures sont supposées appliquées dès {a0} (année 0), puis la projection les "
         "porte jusqu'à l'horizon : les écarts au tendanciel sont des effets de niveau durables.",
-        "Le déficit présenté est celui des administrations publiques (État, sécurité sociale, "
-        "collectivités), au sens de Maastricht : le modèle ne sépare pas le budget de l'État.",
-        "Le modèle est volontairement simple ; ses limites sont détaillées en annexe C. Les "
-        "programmes « Exemple » sont fictifs ; LFI et PS sont des transcriptions partielles.",
+        "Le déficit présenté est celui des administrations publiques au sens de Maastricht ; le "
+        "modèle, volontairement simple, ne sépare pas le budget de l'État (limites en annexe C). "
+        "Les programmes « Exemple » sont fictifs ; les autres sont des transcriptions partielles "
+        "et non officielles.",
     ])
     return out
 

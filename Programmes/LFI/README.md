@@ -1,4 +1,4 @@
-# La France insoumise — Mélenchon 2027 (volet automobile)
+# La France insoumise — Mélenchon 2027 (extraits)
 
 > **Transcription partielle et non officielle** du plan d'investissement
 > productif « Automobile » de [melenchon2027.fr](https://melenchon2027.fr/programme/plans-investissement/automobile/),
@@ -19,6 +19,19 @@ Chaque dépense est rattachée au secteur qui en reçoit les emplois
 (industrie : L-01, L-03 à L-06 ; tertiaire marchand : L-02 location,
 L-09 recherche). Ce classement est une interprétation détaillée dans
 `Programme.lean`.
+
+Deux mesures phares de *L'Avenir en commun* 2025 (melenchon2027.fr, pages
+non lisibles automatiquement ; libellés repris de la présentation du site
+et du chap. 8 § 8) :
+
+| Mesure | Levier |
+|---|---|
+| L-10 Retraite à 60 ans après 40 annuités | −48 mois d'âge légal (coût selon l'hypothèse du scénario ; les 40 annuités ne sont pas modélisées) |
+| L-11 SMIC à 1 600 € net | +11,0 % (conversion net/brut, voir `source`) |
+
+Le reste de *L'Avenir en commun* (32 h, impôt sur le revenu à 14 tranches,
+ISF climatique, garantie d'autonomie…) n'est pas encore transcrit :
+contributions bienvenues.
 
 ## Ce qui ne l'est pas, faute de montant dans la source
 
