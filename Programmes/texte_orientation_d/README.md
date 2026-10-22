@@ -63,10 +63,32 @@ contestées, rotation plus rapide, confiance des demandeurs.
 Chiffrage provisoire (hypothèses) : 20 M€ de développement, 5 M€/an
 d'exploitation.
 
+### O-04 — Six EPR2, au niveau du programme gouvernemental
+
+Même programme que celui engagé par le gouvernement : six EPR2 (Penly,
+Gravelines, Bugey), devis EDF du 18 décembre 2025 de 72,8 Md€ (euros
+2020), décision finale d'investissement fin 2026, première mise en service
+visée en 2038. Financement repris de l'accord État-EDF du 19 juin 2025 :
+prêt bonifié de l'État couvrant au moins la moitié des coûts de
+construction, contrat pour différence à 100 €/MWh (euros 2024) sur 40 ans.
+
+Modélisation : prêt de l'État de 36,4 Md€ versé linéairement de 2027 à
+2038, soit 3,0 Md€/an (levier `pretEtat`). C'est une opération financière
+au sens de Maastricht : la dette augmente, pas le déficit. Variante : prêt
+couvrant la totalité du coût (6,1 Md€/an). Non modélisés, car hors
+horizon ou hors administrations publiques : production (2038 et au-delà),
+flux du contrat pour différence, remboursements, activité des chantiers
+et emplois d'EDF et de ses fournisseurs, réduction d'émissions.
+
+Sources : [communiqué EDF du 18 décembre 2025](https://www.edf.fr/en/the-edf-group/dedicated-sections/journalists/all-press-releases/edf-shares-its-forecasted-cost-estimate-of-the-epr2-programme-for-eu728bn),
+[accord État-EDF, AFP, 19 juin 2025](https://www.connaissancedesenergies.org/afp/edf-et-letat-francais-parviennent-un-accord-pour-financer-la-relance-du-nucleaire-250619).
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).
 * Valeurs électriques (consommation, prix à l'export) à sourcer (RTE).
 * Chiffrage de O-03 et éventuelle hypothèse d'effet sur l'immobilier.
+* Taux du prêt bonifié et calendrier réel des décaissements (O-04), dès
+  la décision finale d'investissement.
 * Panel SRU réel (inventaire SRU par commune) à la place des communes
   fictives.

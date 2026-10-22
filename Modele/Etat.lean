@@ -219,6 +219,10 @@ structure Etat where
   depenses : Int
   /-- Dette publique, M€. -/
   dette : Int
+  /-- Opérations financières annuelles des administrations publiques (prêts,
+  prises de participation), M€/an : elles accroissent la dette sans entrer
+  dans le déficit (traitement de Maastricht). -/
+  operationsFinancieres : Int
   /-- SMIC mensuel brut, €. -/
   smicMensuel : Int
   /-- Émissions territoriales de gaz à effet de serre, MtCO₂e. -/

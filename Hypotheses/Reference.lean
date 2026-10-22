@@ -48,6 +48,7 @@ def reference2026 : Reference where
     autresRecettes := 233300       -- recettes totales 1 561,6 Md€ − impôts et cotisations 1 328,3 Md€
     depenses := 1714100            -- dépenses des APU 2025 (INSEE)
     dette := 3460500               -- dette de Maastricht fin 2025 (INSEE)
+    operationsFinancieres := 0     -- flux nets tendanciels supposés nuls (à sourcer)
     smicMensuel := 1820            -- repère provisoire, brut
     emissionsMt := 370             -- à sourcer (inventaire national, Citepa)
     ageLegalMois := 768            -- repère provisoire : 64 ans

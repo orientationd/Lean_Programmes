@@ -158,6 +158,7 @@ def etatJson (s : Etat) : Json :=
     ("emploiTotal", toJson s.emploiTotal),
     ("pibParHabitant", toJson s.pibParHabitant),
     ("autresRecettes", toJson s.autresRecettes),
+    ("operationsFinancieres", toJson s.operationsFinancieres),
     ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
     ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]
 

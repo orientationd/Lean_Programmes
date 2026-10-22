@@ -53,7 +53,7 @@ ORDINAL = ["#86b6ef", "#2a78d6", "#104281"]   # bas → haut, une seule teinte
 TENDANCIEL = "#898781"
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, BASE, FOND = "#e1e0d9", "#c3c2b7", "#f4f3ef"
-PAR_FIGURE = 5          # au-delà, les programmes sont répartis sur plusieurs figures
+PAR_FIGURE = 6          # au-delà, les programmes sont répartis sur plusieurs figures
 
 FONT_DIR = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
 pdfmetrics.registerFont(TTFont("Sans", str(FONT_DIR / "DejaVuSans.ttf")))
@@ -728,6 +728,10 @@ def section_annexes(D: Donnees) -> list:
         "Déficit « de l'État » : le modèle suit les administrations publiques consolidées ; les "
         "transferts internes (par exemple les amendes SRU versées par les communes) sont neutres "
         "sur le solde.",
+        "Prêts et prises de participation de l'État (financement des EPR2, nationalisations) : "
+        "opérations financières, comptées dans la dette mais pas dans le déficit, conformément au "
+        "traitement de Maastricht. L'activité qu'ils financent se déroule hors des administrations "
+        "publiques et n'est pas modélisée.",
         "Population active : tendance démographique et effet de l'âge légal (30 000 actifs par "
         "mois, INSEE). La natalité n'agit pas sur les actifs avant l'horizon.",
         f"Les hypothèses démographiques sont fixées à l'horizon des propriétés "
