@@ -60,6 +60,12 @@ travail : `dureeTravail variationPm` (le PIB suit le volume d'heures).
 Taux de l'IS : `impotSocietes tauxPb retourAssiettePm`, avec un
 coefficient de retour d'assiette explicite.
 
+Accidents du travail : `preventionAccidents fondsMeur baissePm` (fonds
+publics et baisse du taux d'accidents ; le sous-modèle calcule coûts
+évités, journées rendues et décès). Textes européens : les propriétés
+`ue-*` (`Proprietes/Europe.lean`) traduisent les règles listées dans
+`Hypotheses/Europe.lean` ; en ajouter une = un texte cité + un critère.
+
 Objectifs d'emplois et immigration : `annonceEmplois n` enregistre un
 objectif déclaré (sans effet sur le modèle ; la propriété « emplois
 annoncés réalisables » vérifie qu'il tient dans la population active),

@@ -39,6 +39,11 @@ Trois mesures :
   le nombre de nuitées.
 * **O-13** — autorisation de la conduite autonome (FSD), avec indemnisation
   des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite.
+* **O-14** — partenaires d'accompagnement à l'application des normes et à
+  la lutte contre les accidents du travail, financés par des fonds dédiés
+  de l'État ; objectif : la moyenne de l'Union européenne.
+* **O-15** — passage au logiciel libre pour tous les logiciels de l'État et
+  tous ses ordinateurs.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -135,6 +140,23 @@ constant, prudent). Automatisation du transport de personnes : +0,05 % de
 PIB (hypothèse : 0,3 % de PIB pour taxis, VTC et livraison, 15 % de gain
 de coût) et 20 000 emplois de chauffeurs en moins. -/
 def indemnisationTaxis : Int := 1500
+
+/-- Accidents du travail : 190 accidents avec arrêt pour 10 000 emplois en
+France contre ≈ 110 en moyenne dans l'Union (Eurostat). Fonds dédiés :
+500 M€/an (hypothèse : réseau de partenaires d'accompagnement des
+entreprises, renfort de l'inspection et de la médecine du travail). Objectif
+atteint à l'horizon : −42,5 % du taux (190 → 110, arrondi entier). Variante : fonds doublés,
+objectif inchangé. -/
+def fondsPrevention : Int := 500
+def baisseAccidentsPm : Int := 425
+
+/-- Logiciel libre : licences et services propriétaires de l'État ≈ 1 Md€/an
+(hypothèse : accords-cadres Microsoft, Oracle, SAP… de l'État et de ses
+opérateurs) ; économie nette de 400 M€/an à partir de la quatrième année,
+après une migration de 900 M€ (formation, adaptation, matériel) étalée sur
+trois ans et comptée en une fois dans la dette, par prudence. -/
+def economieLibre : Int := 400
+def coutMigrationLibre : Int := 900
 
 /-! ## Mesures -/
 
@@ -273,13 +295,31 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 13 ; {indemnisationTaxis} M€/an d'indemnisation (60 000 licences × 25 000 €, hypothèse), +0,05 % de PIB et −20 000 emplois de chauffeurs (hypothèses, voir `indemnisationTaxis`)"
     leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 5 20000]
     variantes := [
-      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] }
+      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] },
+
+  { id := "O-14"
+    titre := "Partenaires d'accompagnement des normes et de lutte contre les accidents du travail, financés par l'État ; objectif : moyenne de l'Union européenne"
+    source := s!"Texte Orientation D, mesure 14 ; {fondsPrevention} M€/an de fonds dédiés et taux d'accidents ramené de 190 à 110 pour 10 000 emplois (hypothèses, voir `fondsPrevention`) ; sources du sous-modèle : CNAM, rapport AT-MP 2023 ; Eurostat, accidents du travail 2022"
+    leviers := [.preventionAccidents fondsPrevention baisseAccidentsPm]
+    variantes := [
+      { nom := "fonds doublés (1 Md€/an)", leviers := [.preventionAccidents 1000 baisseAccidentsPm] },
+      { nom := "objectif à moitié atteint (−21 %)", leviers := [.preventionAccidents fondsPrevention 210] }] },
+
+  { id := "O-15"
+    titre := "Passage au logiciel libre pour tous les logiciels et tous les ordinateurs de l'État"
+    source := s!"Texte Orientation D, mesure 15 ; migration {coutMigrationLibre} M€ en une fois puis {economieLibre} M€/an d'économies de licences à partir de la quatrième année (hypothèses, voir `economieLibre`)"
+    leviers := [.depensePonctuelle coutMigrationLibre] },
+  { id := "O-15b"
+    titre := "Logiciel libre : économies de licences en régime de croisière"
+    source := "Texte Orientation D, mesure 15 (suite) ; entrée en vigueur la quatrième année"
+    leviers := [.economieSur .fonctionnement economieLibre]
+    debut := 3 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

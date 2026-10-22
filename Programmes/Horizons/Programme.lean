@@ -37,7 +37,10 @@ def mesures : List Mesure := [
     leviers := [.dureeTravail 17, .prelevementSur .cotisations (-300)] },
   { id := "H-05", titre := "Immigration légale divisée par deux en cinq ans"
     source := s!"{emission} : « largement inférieur à 200 000 » titres par an ; conversion : solde migratoire réduit de 90 000 par an (moitié du solde 2025 de 176 000, hypothèse : les titres ne sont pas le solde)"
-    leviers := [.migration (-90)] }
+    leviers := [.migration (-90)] },
+  { id := "H-06", titre := "Retraite : 15 % de capitalisation en complément de la répartition"
+    source := "É. Philippe, AmCham, février 2026 (via ÉlyséeScope) ; sans montant ni calendrier : non modélisé (le modèle n'a pas de fonds de pension) ; mesure enregistrée pour mémoire"
+    leviers := [] }
 ]
 
 def programme : Programme where

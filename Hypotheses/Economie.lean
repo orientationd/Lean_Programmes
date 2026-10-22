@@ -22,6 +22,14 @@ santé moyenne (DREES, comptes de la santé), soit 247 Md€ × (2 − 1) /
 (1 + 0,222) × 10⁻⁴ ≈ 20 M€ par point de base.
 `contenuImportDemandePm` = 300 : contenu en importations de la demande
 intérieure ≈ 30 % (INSEE, tableaux entrées-sorties).
+Accidents du travail : 564 000 accidents avec arrêt et 759 décès en 2023
+(Assurance maladie — Risques professionnels, rapport annuel 2023), soit
+190 pour 10 000 personnes en emploi et 13 décès pour 10 000 accidents ;
+coût de la branche AT-MP ≈ 13,5 Md€ → 24 000 € par accident (maladies
+professionnelles comprises, approximation) ; ≈ 40 millions de journées
+indemnisées → 70 jours par accident. Moyenne de l'Union : incidence
+française ≈ 1,75 fois la moyenne UE-27 (Eurostat, accidents non mortels
+> 3 jours, 2022), d'où une cible de 110 pour 10 000.
 `robotisationTendanciellePb` = 20 : gains de productivité de 0,2 %/an sur
 les dépenses de fonctionnement, d'affaires économiques et de santé
 (hypothèse ; la productivité des services publics est mal mesurée).
@@ -59,6 +67,10 @@ def centrale : Economie where
   coutSanteParPbPlus65 := 20
   contenuImportDemandePm := 300
   robotisationTendanciellePb := 20
+  coutParAccidentEuros := 24000
+  joursPerdusParAccident := 70
+  letaliteAccidentsPdm := 13
+  tauxAccidentsUEPdm := 110
   baisseEmissionsPm := 30
   sources := ["À COMPLÉTER"]
 
@@ -83,6 +95,10 @@ def croissanceBasse : Economie where
   coutSanteParPbPlus65 := 20
   contenuImportDemandePm := 300
   robotisationTendanciellePb := 20
+  coutParAccidentEuros := 24000
+  joursPerdusParAccident := 70
+  letaliteAccidentsPdm := 13
+  tauxAccidentsUEPdm := 110
   baisseEmissionsPm := 20
   sources := ["À COMPLÉTER"]
 
@@ -107,6 +123,10 @@ def croissanceHaute : Economie where
   coutSanteParPbPlus65 := 20
   contenuImportDemandePm := 300
   robotisationTendanciellePb := 20
+  coutParAccidentEuros := 24000
+  joursPerdusParAccident := 70
+  letaliteAccidentsPdm := 13
+  tauxAccidentsUEPdm := 110
   baisseEmissionsPm := 40
   sources := ["À COMPLÉTER"]
 

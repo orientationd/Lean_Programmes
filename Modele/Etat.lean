@@ -378,6 +378,8 @@ structure Etat where
   /-- Variation d'importations due aux mesures, M€ par an (flux porté par la
   projection ; négatif = carburant évité…). -/
   variationImportsAnnuelle : Int
+  /-- Accidents du travail avec arrêt pour 10 000 personnes en emploi, par an. -/
+  tauxAccidentsPdm : Int
   /-- Gains de productivité par robotisation et automatisation des services,
   pb par an : réduisent la croissance des dépenses de fonctionnement, des
   affaires économiques et de santé (tendance du scénario + mesures). -/
@@ -422,6 +424,23 @@ def emploiMaximal (s : Etat) (fricPb : Int) : Int := s.actifs * (10000 - fricPb)
 
 /-- Recettes du tourisme international, M€ (exportations de voyages). -/
 def recettesTourisme (s : Etat) : Int := s.touristesMilliers * s.depenseParTouriste / 1000
+
+/-- Accidents du travail avec arrêt dans l'année. -/
+def accidentsTravail (s : Etat) : Int := s.emploi.total * s.tauxAccidentsPdm / 10000
+
+/-- Coût annuel des accidents du travail (indemnités, soins, rentes), M€,
+pour un coût unitaire donné en €. -/
+def coutAccidentsTravail (s : Etat) (coutUnitaire : Int) : Int :=
+  s.accidentsTravail * coutUnitaire / 1000000
+
+/-- Journées de travail perdues par accidents, milliers. -/
+def joursPerdusAccidents (s : Etat) (joursParAccident : Int) : Int :=
+  s.accidentsTravail * joursParAccident / 1000
+
+/-- Décès au travail dans l'année, pour une létalité donnée en décès pour
+10 000 accidents. -/
+def decesTravail (s : Etat) (letalitePdm : Int) : Int :=
+  s.accidentsTravail * letalitePdm / 10000
 
 /-- Balance commerciale (biens et services), M€. -/
 def balanceCommerciale (s : Etat) : Int := s.exportations - s.importations
