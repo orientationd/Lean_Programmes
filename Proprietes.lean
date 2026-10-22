@@ -13,6 +13,7 @@ fichier thématique) + une ligne ici.
 namespace Proprietes
 
 def toutes : List Modele.Propriete :=
-  [deficit, dette, chomage, emissions, deficit2035, dette2035, air, bornes2035, emploisAnnonces]
+  [deficit, dette, chomage, emissions, deficit2035, dette2035, air, bornes2035, emploisAnnonces,
+   balanceCourante]
 
 end Proprietes

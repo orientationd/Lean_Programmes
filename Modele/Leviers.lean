@@ -132,7 +132,10 @@ d'Okun (le chômage baisse de `okun × dPib / PIB`), au bénéfice de `cible`. -
 def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Etat :=
   let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
   let dEmploi := if s.pib = 0 then 0 else s.actifs * dPib * H.eco.okunPm / (s.pib * 1000)
-  ajouterEmploi H cible dEmploi { s.ajouterRecettesProrata dRecettes with pib := s.pib + dPib }
+  ajouterEmploi H cible dEmploi
+    { s.ajouterRecettesProrata dRecettes with
+      pib := s.pib + dPib
+      importations := s.importations + appliquerPm dPib H.eco.contenuImportDemandePm }
 
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
 multiplicateur, puis `chocPib`. -/
@@ -216,6 +219,9 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- achat versé une fois ; parc électrique et décès évités dès l'année 0
   | .remplacementVehicules r, s =>
       { s with dette := s.dette + r.cout / 1000000
+               importations := s.importations + r.importsInitialesCts / 100000000
+               variationImportsAnnuelle := s.variationImportsAnnuelle
+                 - r.nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
                parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
                decesPollutionAir := s.decesPollutionAir
                  - r.nombre * H.energie.decesEvitesParMillionVehicules / 1000000 }

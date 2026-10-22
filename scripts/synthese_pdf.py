@@ -819,7 +819,10 @@ def section_budget(D: Donnees) -> list:
              "santé, famille et chômage, enseignement, affaires économiques, défense, sécurité et "
              "justice, logement et environnement, culture, charge d'intérêts, services généraux). "
              "Chaque mesure est imputée à sa fonction ; les dépenses tendancielles croissent au même "
-             "rythme hors intérêts, le surcoût du vieillissement allant aux retraites. Le tableau "
+             "rythme hors intérêts, moins les gains de robotisation (0,2 %/an sur les services "
+             "généraux, les affaires économiques et la santé), et le vieillissement renchérit les "
+             "retraites (185 M€ par point de base de plus de 65 ans) et la santé (20 M€, les plus de "
+             "65 ans consommant deux fois la moyenne). Le tableau "
              f"décompose, pour chaque programme, l'écart de déficit en {a1} par rapport au tendanciel "
              "en écarts de recettes (par prélèvement) et de dépenses (par fonction)."),
            png(structure_fonctions(D))]
@@ -885,6 +888,40 @@ def section_heures(D: Donnees) -> list:
     out.append(P("PIB par heure en euros courants (le PIB du modèle est nominal). Durée du travail : "
                  "OCDE, heures annuelles par personne en emploi ; la durée tendancielle est supposée "
                  "constante.", "note"))
+    return out
+
+
+def section_commerce(D: Donnees) -> list:
+    a0, a1 = D.annees[0], D.annees[-1]
+    e0 = D.traj("central", None)[0]
+    out = [P("Commerce extérieur et balance des paiements", "h1"),
+           P("Exportations et importations de biens et services suivent le PIB nominal ; s'y "
+             "ajoutent le contenu en importations des mesures de demande (30 %), la facture "
+             "énergétique selon le prix du Brent, le carburant évité et les véhicules importés des "
+             "mesures automobiles, et les recettes touristiques. Le solde courant ajoute les revenus "
+             f"nets du reste du monde (−5,3 Md€ en {a0}). La propriété « balance courante non dégradée » "
+             "compare le solde courant du programme, en part du PIB, à celui du tendanciel.")]
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: e["balanceCourantePb"] / 100,
+                               "Solde des transactions courantes (% du PIB), scénario central", 1, NBSP + "%")))
+    ent = [f"{a1}, scénario central", "Exportations (Md€)", "Importations (Md€)", "Balance commerciale",
+           "Solde courant (Md€)", "Solde courant (% PIB)"]
+    rows = [[f"Situation de départ ({a0})", md(e0["exportations"]), md(e0["importations"]),
+             signe(e0["balanceCommerciale"] / 1000, 1), signe(e0["balanceCourante"] / 1000, 1),
+             signe(e0["balanceCourantePb"] / 100, 2) + NBSP + "%"]]
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        rows.append([nom, md(e["exportations"]), md(e["importations"]), signe(e["balanceCommerciale"] / 1000, 1),
+                     signe(e["balanceCourante"] / 1000, 1), signe(e["balanceCourantePb"] / 100, 2) + NBSP + "%"])
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.28, 0.14, 0.14, 0.15, 0.15, 0.14]))
+    eh, ec = D.fin("petrole-haut", None), D.fin("central", None)
+    out.append(P(f"Un Brent à {D.brent('petrole-haut')} $ dégrade le solde courant tendanciel de "
+                 f"{nombre((ec['balanceCourante'] - eh['balanceCourante']) / 1000, 0)} Md€ en {a1} "
+                 "(facture énergétique de 60 Md€ au prix de référence, proportionnelle au prix). "
+                 "Les programmes d'économies améliorent le solde courant par moindres importations ; "
+                 "les programmes de relance le dégradent. Source de départ : Banque de France, "
+                 "balance des paiements, cumul 12 mois à septembre 2025.", "note"))
     return out
 
 
@@ -1093,6 +1130,11 @@ def section_annexes(D: Donnees) -> list:
         "Offre de travail : le PIB suit le volume d'heures travaillées (emploi × durée) à "
         "l'élasticité de 65 %, pour les mesures d'âge de départ, de SMIC et de durée du travail ; "
         "le capital et la productivité tendancielle ne sont pas modélisés séparément.",
+        "Vieillissement et robotisation : le surcoût des plus de 65 ans est réparti entre retraites "
+        "et santé ; la robotisation réduit la croissance de trois fonctions de dépense (tendance 0,2 %/an, "
+        "plus les mesures), sans effet modélisé sur l'emploi public.",
+        "Commerce extérieur : élasticité unitaire des échanges au PIB nominal, pas de compétitivité-prix "
+        "ni de taux de change ; les revenus nets du reste du monde sont constants.",
         "Moteurs : les paramètres du moteur « offre » (demi-multiplicateur sur les économies, "
         "0,1 point de croissance par point de prélèvements obligatoires) sont des ordres de "
         "grandeur à sourcer ; ils encadrent la lecture « demande » plutôt qu'ils ne la remplacent.",
@@ -1179,6 +1221,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_heures(D)
     story.append(CondPageBreak(120 * mm))
     story += section_main_doeuvre(D)
+    story.append(CondPageBreak(120 * mm))
+    story += section_commerce(D)
     story.append(PageBreak())
     story += section_budget(D)
     story.append(PageBreak())

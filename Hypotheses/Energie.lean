@@ -25,7 +25,9 @@ def sources : List String := [
   "INSEE, Note de conjoncture décembre 2025 : Brent figé à 63 $ au premier semestre 2026",
   "Électrification : ≈ 350 000 voitures électriques neuves par an (PFA, immatriculations 2025, ordre de grandeur) ; bornes : ≈ 30 000 points publics ouverts par an (Avere-France, baromètre 2025)",
   "Décès évités : 40 000 décès/an attribuables aux PM2,5 (Santé publique France, 2021) ; le trafic routier pèse ≈ 15 % des PM2,5 primaires (Citepa), dont la moitié à l'échappement ; rapporté à 39 millions de voitures : ≈ 90 décès/an par million de véhicules remplacés (hypothèse de calcul, à affiner)",
-  "Infrastructure : 1 point de recharge public pour 10 véhicules électriques (recommandation AFIR / objectif français de 400 000 points, hypothèse)"]
+  "Infrastructure : 1 point de recharge public pour 10 véhicules électriques (recommandation AFIR / objectif français de 400 000 points, hypothèse)",
+  "Gain commercial par véhicule remplacé : 770 L × valeur à l'import du carburant (0,45 / 0,56 / 0,78 €/L selon le Brent) − 1 870 kWh × 60 €/MWh d'électricité non exportée (sous-modèle automobile)",
+  "Facture énergétique importée : ≈ 60 Md€ en 2024 (Douanes, Le chiffre du commerce extérieur), supposée proportionnelle au prix du Brent"]
 
 def bas : Energie where
   id := "petrole-bas"
@@ -37,6 +39,8 @@ def bas : Energie where
   bornesTendanciellesMilliers := 30
   decesEvitesParMillionVehicules := 90
   vehiculesParBorne := 10
+  gainCommercialParVehiculeEuros := 238
+  factureEnergetiqueMeur := 60000
   sources := sources
 
 def central : Energie where
@@ -49,6 +53,8 @@ def central : Energie where
   bornesTendanciellesMilliers := 30
   decesEvitesParMillionVehicules := 90
   vehiculesParBorne := 10
+  gainCommercialParVehiculeEuros := 319
+  factureEnergetiqueMeur := 60000
   sources := sources
 
 def haut : Energie where
@@ -61,6 +67,8 @@ def haut : Energie where
   bornesTendanciellesMilliers := 30
   decesEvitesParMillionVehicules := 90
   vehiculesParBorne := 10
+  gainCommercialParVehiculeEuros := 488
+  factureEnergetiqueMeur := 60000
   sources := sources
 
 def toutes : List Energie := [bas, central, haut]

@@ -308,14 +308,17 @@ def total (v : ParFonction) : Int :=
     + v.securiteJustice + v.logementEnvironnement + v.culture + v.interets + v.fonctionnement
     + v.nonVentile
 
-/-- Toutes les fonctions sauf la charge d'intérêts croissent du même taux (pb). -/
-def croitrePrimaires (v : ParFonction) (tauxPb : Int) : ParFonction :=
+/-- Toutes les fonctions sauf la charge d'intérêts croissent du taux `tauxPb` ;
+les fonctions automatisables (services généraux, affaires économiques,
+santé) croissent de `robotisationPb` de moins. -/
+def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) : ParFonction :=
   let g (x : Int) := x + appliquerPb x tauxPb
-  { retraites := g v.retraites, sante := g v.sante, famille := g v.famille
-    enseignement := g v.enseignement, affairesEconomiques := g v.affairesEconomiques
+  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb)
+  { retraites := g v.retraites, sante := r v.sante, famille := g v.famille
+    enseignement := g v.enseignement, affairesEconomiques := r v.affairesEconomiques
     defense := g v.defense, securiteJustice := g v.securiteJustice
     logementEnvironnement := g v.logementEnvironnement, culture := g v.culture
-    interets := v.interets, fonctionnement := g v.fonctionnement, nonVentile := g v.nonVentile }
+    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := g v.nonVentile }
 
 end ParFonction
 

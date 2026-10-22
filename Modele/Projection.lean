@@ -34,8 +34,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- appliqué à la dette de fin d'année précédente (effet boule de neige)
   let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
   let interets := s.dette * taux / 10000
-  let depensesF := ((s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb)
+  let surcoutSante :=
+    (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutSanteParPbPlus65
+      / (H.horizon : Int)
+  let depensesF := (((s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb)
     |>.ajouter .retraites surcoutVieillissement)
+    |>.ajouter .sante surcoutSante)
     |>.ajouter .interets (interets - s.depensesF.interets)
   let depenses := depensesF.total
   -- population active : tendance hors migrations + part active du solde migratoire
@@ -73,6 +77,10 @@ def etatDepart (H : Scenario) : Etat :=
   -- effet (pb du PIB par tranche de 10 $) × écart de prix / 10 $, sans arrondi intermédiaire
   let dPib := s.pib * H.energie.effetPibPar10DollarsPb
     * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / 100000
+  -- facture énergétique importée proportionnelle au prix du Brent
+  let dImports := H.energie.factureEnergetiqueMeur
+    * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / H.energie.prixReferenceDollars
+  let s := { s with importations := s.importations + dImports, robotisationPb := H.eco.robotisationTendanciellePb }
   chocPib H none dPib s
 
 /-- `f` appliquée `n` fois. -/
