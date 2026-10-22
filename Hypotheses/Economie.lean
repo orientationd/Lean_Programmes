@@ -15,6 +15,16 @@ IFRAP), soit 570 à 740 M€ par mois ; valeur centrale retenue (auparavant
 (INSEE, comptes nationaux, ≈ 65 %), prise comme élasticité du PIB au
 volume d'heures travaillées à capital donné. `tauxISPb` = 2 500 : taux
 normal de l'IS de 25 % depuis 2022.
+`coutParPbPlus65` = 185 M€ : 410 Md€ de retraites pour 22,2 % de plus de
+65 ans, soit 185 M€ par point de base de part ; `coutSanteParPbPlus65`
+= 20 M€ : les plus de 65 ans consomment environ deux fois la dépense de
+santé moyenne (DREES, comptes de la santé), soit 247 Md€ × (2 − 1) /
+(1 + 0,222) × 10⁻⁴ ≈ 20 M€ par point de base.
+`contenuImportDemandePm` = 300 : contenu en importations de la demande
+intérieure ≈ 30 % (INSEE, tableaux entrées-sorties).
+`robotisationTendanciellePb` = 20 : gains de productivité de 0,2 %/an sur
+les dépenses de fonctionnement, d'affaires économiques et de santé
+(hypothèse ; la productivité des services publics est mal mesurée).
 `tauxMarginalPb` : taux auquel la dette nouvelle et refinancée est émise
 (OAT 10 ans autour de 3,3 % fin 2025, hypothèse) ; `deriveTauxPb` : le
 taux apparent (1,87 % en 2025, INSEE) y converge d'environ 20 pb par an,
@@ -45,7 +55,10 @@ def centrale : Economie where
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
-  coutParPbPlus65 := 180
+  coutParPbPlus65 := 185
+  coutSanteParPbPlus65 := 20
+  contenuImportDemandePm := 300
+  robotisationTendanciellePb := 20
   baisseEmissionsPm := 30
   sources := ["À COMPLÉTER"]
 
@@ -66,7 +79,10 @@ def croissanceBasse : Economie where
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
-  coutParPbPlus65 := 180
+  coutParPbPlus65 := 185
+  coutSanteParPbPlus65 := 20
+  contenuImportDemandePm := 300
+  robotisationTendanciellePb := 20
   baisseEmissionsPm := 20
   sources := ["À COMPLÉTER"]
 
@@ -87,7 +103,10 @@ def croissanceHaute : Economie where
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
-  coutParPbPlus65 := 180
+  coutParPbPlus65 := 185
+  coutSanteParPbPlus65 := 20
+  contenuImportDemandePm := 300
+  robotisationTendanciellePb := 20
   baisseEmissionsPm := 40
   sources := ["À COMPLÉTER"]
 

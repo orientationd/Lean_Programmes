@@ -1,4 +1,5 @@
 import Programmes
+import Moteurs
 import Lean.Data.Json
 
 /-!
@@ -72,7 +73,7 @@ def evaluer (M : Moteur) (p : Programme) (H : Scenario) : Evaluation :=
 def engagementTenu (p : Programme) (e : Engagement) : Bool :=
   decide (p.Verifie e.moteur e.scenario e.propriete)
 
-def moteurs : List Moteur := Hypotheses.Moteurs.tous
+def moteurs : List Moteur := Moteurs.tous
 def standard : Moteur := Hypotheses.Moteurs.standard
 
 /-- Contrats des mesures : (mesure, titre). Ils sont prouvés par
@@ -165,6 +166,13 @@ def etatJson (s : Etat) : Json :=
     ("heuresParEmploi", toJson s.heuresParEmploi),
     ("emploisEtp", toJson s.emploisEtp),
     ("emploisAnnonces", toJson s.emploisAnnonces),
+    ("touristesMilliers", toJson s.touristesMilliers),
+    ("depenseParTouriste", toJson s.depenseParTouriste),
+    ("recettesTourisme", toJson s.recettesTourisme),
+    ("exportations", toJson s.exportations), ("importations", toJson s.importations),
+    ("balanceCommerciale", toJson s.balanceCommerciale),
+    ("balanceCourante", toJson s.balanceCourante), ("balanceCourantePb", toJson s.balanceCourantePb),
+    ("robotisationPb", toJson s.robotisationPb),
     ("migrationAnnuelleMilliers", toJson s.migrationAnnuelleMilliers),
 
     ("heuresTotalesMillions", toJson s.heuresTotales),

@@ -85,6 +85,13 @@ structure Energie where
   /-- Véhicules électriques par point de recharge public, cible
   d'infrastructure suffisante. -/
   vehiculesParBorne : Int
+  /-- Amélioration annuelle de la balance commerciale par voiture thermique
+  remplacée par une électrique, € (carburant importé évité moins
+  électricité non exportée). -/
+  gainCommercialParVehiculeEuros : Int
+  /-- Facture énergétique importée au prix de référence, M€/an ; elle varie
+  proportionnellement au prix du Brent. -/
+  factureEnergetiqueMeur : Int
   sources : List String
   deriving Repr
 
@@ -123,8 +130,16 @@ structure Economie where
   elasticitePibHeuresPm : Int
   /-- Taux normal de l'impôt sur les sociétés en vigueur, pb (`2500` = 25 %). -/
   tauxISPb : Int
-  /-- Surcoût annuel de dépenses (M€) par pb de part des 65 ans et plus. -/
+  /-- Surcoût annuel de retraites (M€) par pb de part des 65 ans et plus. -/
   coutParPbPlus65 : Int
+  /-- Surcoût annuel de dépenses de santé (M€) par pb de part des 65 ans et
+  plus (les plus de 65 ans consomment environ deux fois la moyenne). -/
+  coutSanteParPbPlus65 : Int
+  /-- Contenu en importations d'un supplément de demande intérieure, pm. -/
+  contenuImportDemandePm : Int
+  /-- Gains tendanciels de productivité par robotisation des services
+  automatisables, pb par an (voir `ParFonction.croitrePrimaires`). -/
+  robotisationTendanciellePb : Int
   /-- Baisse tendancielle annuelle des émissions, pm. -/
   baisseEmissionsPm : Int
   sources : List String
@@ -159,25 +174,38 @@ namespace Scenario
 def id (H : Scenario) : String :=
   s!"{H.demo.id}/{H.natalite.id}/{H.eco.id}/{H.energie.id}/{H.droit.id}"
 
-/-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
-*juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
-décision du modèle commun. -/
-abbrev Valide (H : Scenario) : Prop :=
+/-- Bornes sur la situation de départ. -/
+abbrev ValideReference (H : Scenario) : Prop :=
   0 < H.reference.etat.pib ∧ 0 < H.reference.populationMilliers ∧
   0 < H.reference.etat.actifs ∧ H.reference.etat.emploiTotal ≤ H.reference.etat.actifs ∧
   H.reference.etat.emploi.Positif ∧
+  0 ≤ H.reference.etat.tauxApparentPb ∧ 0 ≤ H.reference.etat.chargeInterets ∧
+  0 ≤ H.reference.etat.exportations ∧ 0 ≤ H.reference.etat.importations ∧
+  0 ≤ H.reference.etat.touristesMilliers ∧ 0 ≤ H.reference.etat.depenseParTouriste ∧
+  0 ≤ H.reference.etat.decesPollutionAir ∧ 0 ≤ H.reference.etat.parcElectriqueMilliers ∧
+  0 ≤ H.reference.etat.bornesMilliers ∧ 0 < H.reference.etat.heuresParEmploi
+
+/-- Bornes sur l'axe économique. -/
+abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.chomageFrictionnelPb ∧ H.eco.chomageFrictionnelPb < 10000 ∧
-  0 ≤ H.demo.partPlus65Pb ∧ H.demo.partPlus65Pb ≤ 10000 ∧
   -1000 ≤ H.eco.croissancePb ∧ H.eco.croissancePb ≤ 2000 ∧
   -1000 ≤ H.eco.croissanceDepensesPb ∧ H.eco.croissanceDepensesPb ≤ 2000 ∧
   0 ≤ H.eco.okunPm ∧ H.eco.okunPm ≤ 2000 ∧
   0 ≤ H.eco.multiplicateurPm ∧ H.eco.multiplicateurPm ≤ 3000 ∧
   0 ≤ H.eco.fuiteFiscalePm ∧ H.eco.fuiteFiscalePm ≤ 1000 ∧
-  0 ≤ H.eco.elasticiteChomageSmicPm ∧
-  0 ≤ H.eco.economieParMoisRetraite ∧
+  0 ≤ H.eco.elasticiteChomageSmicPm ∧ 0 ≤ H.eco.economieParMoisRetraite ∧
   0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧ 0 ≤ H.eco.deriveTauxPb ∧
-  0 ≤ H.reference.etat.tauxApparentPb ∧ 0 ≤ H.reference.etat.chargeInterets ∧
   0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
+  0 ≤ H.eco.coutSanteParPbPlus65 ∧
+  0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧
+  0 ≤ H.eco.robotisationTendanciellePb ∧ H.eco.robotisationTendanciellePb ≤ 500 ∧
+  0 ≤ H.eco.actifsParMoisAgeLegal ∧
+  0 ≤ H.eco.elasticitePibHeuresPm ∧ H.eco.elasticitePibHeuresPm ≤ 1000 ∧
+  0 < H.eco.tauxISPb ∧ H.eco.tauxISPb ≤ 10000
+
+/-- Bornes sur les axes démographie, natalité, énergie et droit. -/
+abbrev ValideAxes (H : Scenario) : Prop :=
+  0 ≤ H.demo.partPlus65Pb ∧ H.demo.partPlus65Pb ≤ 10000 ∧
   0 ≤ H.demo.decesMilliers ∧ -2000 ≤ H.demo.croissanceActifsPb ∧ H.demo.croissanceActifsPb ≤ 2000 ∧
   0 ≤ H.demo.partActiveMigrantsPm ∧ H.demo.partActiveMigrantsPm ≤ 1000 ∧
   0 ≤ H.natalite.naissancesMilliers ∧ 0 < H.natalite.icfCentiemes ∧
@@ -185,13 +213,22 @@ abbrev Valide (H : Scenario) : Prop :=
   H.energie.effetPibPar10DollarsPb ≤ 0 ∧ -2000 ≤ H.energie.effetPibPar10DollarsPb ∧
   0 ≤ H.energie.electrificationTendancielleMilliers ∧ 0 ≤ H.energie.bornesTendanciellesMilliers ∧
   0 ≤ H.energie.decesEvitesParMillionVehicules ∧ 0 < H.energie.vehiculesParBorne ∧
-  0 ≤ H.reference.etat.decesPollutionAir ∧ 0 ≤ H.reference.etat.parcElectriqueMilliers ∧
-  0 ≤ H.reference.etat.bornesMilliers ∧
-  0 ≤ H.eco.actifsParMoisAgeLegal ∧
-  0 ≤ H.eco.elasticitePibHeuresPm ∧ H.eco.elasticitePibHeuresPm ≤ 1000 ∧
-  0 < H.eco.tauxISPb ∧ H.eco.tauxISPb ≤ 10000 ∧ 0 < H.reference.etat.heuresParEmploi ∧
+  0 ≤ H.energie.factureEnergetiqueMeur ∧
   0 < H.droit.plafondDeficitPb ∧ 0 < H.droit.plafondEmissionsMt ∧
   1 ≤ H.horizon ∧ H.horizon ≤ 20
+
+/-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
+*juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
+décision du modèle commun. -/
+abbrev Valide (H : Scenario) : Prop :=
+  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes
+
+-- Instances nommées : la conjonction complète dépasse la profondeur de
+-- recherche d'instances si on la laisse se décomposer atome par atome.
+instance (H : Scenario) : Decidable H.ValideReference := inferInstance
+instance (H : Scenario) : Decidable H.ValideEco := inferInstance
+instance (H : Scenario) : Decidable H.ValideAxes := inferInstance
+instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario
 

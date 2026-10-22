@@ -56,10 +56,36 @@ def main() -> int:
             if not re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?", c):
                 erreurs.append(f"{x} : compte GitHub invalide dans PROPRIETAIRES : {c}")
 
+    # Moteurs contribués : même discipline (dossier, id, import, registre, propriétaires).
+    moteurs = sorted(d for d in (RACINE / "Moteurs").iterdir() if d.is_dir()) \
+        if (RACINE / "Moteurs").is_dir() else []
+    reg_m = (RACINE / "Moteurs.lean").read_text(encoding="utf-8") if (RACINE / "Moteurs.lean").exists() else ""
+    for d in moteurs:
+        x = d.name
+        if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", x):
+            erreurs.append(f"Moteurs/{x} : le nom de dossier doit être un identifiant Lean ASCII")
+            continue
+        f = d / "Moteur.lean"
+        if not f.exists():
+            erreurs.append(f"Moteurs/{x} : Moteur.lean manquant")
+            continue
+        if not re.search(rf'\bid\s*:=\s*"{re.escape(x)}"', f.read_text(encoding="utf-8")):
+            erreurs.append(f'Moteurs/{x} : Moteur.lean doit déclarer id := "{x}"')
+        if f"import Moteurs.{x}.Moteur" not in reg_m:
+            erreurs.append(f"Moteurs/{x} : import manquant dans Moteurs.lean")
+        if not re.search(rf"\b{re.escape(x)}\.moteur\b", reg_m.split("def contribues", 1)[-1]):
+            erreurs.append(f"Moteurs/{x} : absent de Moteurs.contribues")
+        proprietaires = d / "PROPRIETAIRES"
+        comptes = [l.split("#", 1)[0].strip().lstrip("@")
+                   for l in proprietaires.read_text(encoding="utf-8").splitlines()] \
+            if proprietaires.exists() else []
+        if not [c for c in comptes if c]:
+            erreurs.append(f"Moteurs/{x} : PROPRIETAIRES absent ou vide")
+
     for e in erreurs:
         print(f"ERREUR : {e}", file=sys.stderr)
     if not erreurs:
-        print(f"Registre OK : {len(dossiers)} programmes.")
+        print(f"Registre OK : {len(dossiers)} programmes, {len(moteurs)} moteurs contribués.")
     return 1 if erreurs else 0
 
 

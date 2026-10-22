@@ -35,12 +35,8 @@ from pathlib import Path
 # commentaire de PR (voir .github/workflows/commentaire-pr.yml).
 OUTILLAGE = {"Rapport.lean", "Audit.lean"}
 
-# Seules ces bibliothèques peuvent être importées hors outillage : celles du
-# socle, plus les bibliothèques contribuées déclarées dans lakefile.toml
-# (dont les clés sont verrouillées ci-dessous) et dont le nom figure ici.
-# Ni `Lean`, ni `Std`, ni `Init` explicite : aucun accès au méta-niveau.
-BIBLIOTHEQUES = ("Modele", "Hypotheses", "Proprietes", "Moteurs", "Programmes", "Engagements")
-IMPORTS_AUTORISES = re.compile(r"(" + "|".join(BIBLIOTHEQUES) + r")(\.[A-Za-z0-9_]+)*")
+# Seules ces bibliothèques peuvent être importées hors outillage.
+IMPORTS_AUTORISES = re.compile(r"(Modele|Hypotheses|Proprietes|Moteurs|Programmes|Engagements)(\.[A-Za-z0-9_]+)*")
 
 # Mots-clés et identifiants interdits (après retrait des commentaires et chaînes).
 INTERDITS = {

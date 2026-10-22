@@ -2,16 +2,29 @@
 # et dette publics, chômage, actifs, emploi par secteur, impôts et taxes,
 # sensibilité au prix du pétrole et à la natalité).
 #
-# Tourne sur main (code déjà relu) et à la demande, jamais sur les PR : la
-# synthèse ne conditionne pas la fusion et coûte des minutes de CI. Le PDF
-# est publié en artefact « synthese ».
+# Tourne sur main (code déjà relu), à la demande (paramètres `moteur` et
+# `programmes` pour une synthèse personnalisée) et sur les PR qui touchent
+# un moteur contribué (son auteur obtient sa synthèse en artefact). Jamais
+# de secret ni d'écriture : le code de la PR ne peut rien falsifier d'autre
+# que son propre PDF. Artefact « synthese ».
 
 name: Synthèse PDF
 
 on:
   push:
     branches: [main]
+  pull_request:
+    paths: ["Moteurs/**", "Moteurs.lean"]
   workflow_dispatch:
+    inputs:
+      moteur:
+        description: "Identifiant du moteur au centre de la synthèse (vide : moteur standard)"
+        required: false
+        default: ""
+      programmes:
+        description: "Identifiants de programmes à inclure, séparés par des virgules (vide : tous)"
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -47,7 +60,7 @@ jobs:
       - name: Compiler et exporter les trajectoires
         run: |
           mkdir -p out
-          lake build Programmes
+          lake build Programmes Moteurs
           lake env lean --run Rapport.lean --json out/rapport.json --md out/rapport.md \
             --synthese out/synthese.json
 
@@ -56,15 +69,28 @@ jobs:
           python-version: "3.12"
 
       - name: Mettre en page le PDF
+        env:
+          MOTEUR: ${{ github.event.inputs.moteur }}
+          PROGRAMMES: ${{ github.event.inputs.programmes }}
         run: |
           python -m pip install --quiet matplotlib==3.11.2 reportlab==5.0.1
           python scripts/synthese_pdf.py out/synthese.json out/synthese.pdf --commit "$GITHUB_SHA"
+          # Synthèse personnalisée : moteur et programmes choisis au lancement…
+          if [ -n "$MOTEUR" ] || [ -n "$PROGRAMMES" ]; then
+            python scripts/synthese_pdf.py out/synthese.json "out/synthese-personnalisee.pdf" \
+              --commit "$GITHUB_SHA" ${MOTEUR:+--moteur "$MOTEUR"} ${PROGRAMMES:+--programmes "$PROGRAMMES"}
+          fi
+          # …et une synthèse centrée sur chaque moteur contribué.
+          for d in Moteurs/*/; do
+            m=$(basename "$d")
+            python scripts/synthese_pdf.py out/synthese.json "out/synthese-$m.pdf" --commit "$GITHUB_SHA" --moteur "$m"
+          done
 
       - name: Publier la synthèse (artefact)
         uses: actions/upload-artifact@v4
         with:
           name: synthese
           path: |
-            out/synthese.pdf
+            out/synthese*.pdf
             out/synthese.json
           retention-days: 90

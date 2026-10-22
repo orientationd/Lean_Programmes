@@ -130,6 +130,30 @@ Montpellier-Perpignan (≈ 30 Md€ sur dix ans, 80 % d'argent public
 français). Emplois dans la construction ; les gains de temps de parcours
 et les délais de justice ne sont pas modélisés.
 
+### O-12 — Qualité d'accueil des touristes
+
+Six zones de rénovation de qualité, dont Le Grau-du-Roi : 150 M€/an par
+zone pendant dix ans (0,9 Md€/an, emplois dans la construction). Le
+sous-modèle touristique suit le nombre de visiteurs internationaux (100 M
+en 2024) et la dépense par touriste (710 €, soit 71 Md€ de recettes) ;
+la mesure les relève de +2 % et +3 % (variantes faible et forte), soit
+≈ 3,6 Md€/an de recettes supplémentaires, entrant dans le PIB à 80 %
+(contenu en valeur ajoutée nationale). Ces élasticités sont des
+hypothèses à étayer avec Atout France ; le nombre de nuitées n'est pas
+distingué du nombre de visiteurs.
+
+### O-13 — Conduite autonome et indemnisation des taxis
+
+Autorisation de la conduite autonome (FSD). Les ≈ 60 000 titulaires d'une
+licence de taxi sont indemnisés jusqu'à leur retraite : 25 000 €/an en
+moyenne, soit 1,5 Md€/an au départ (montant gardé constant, par prudence,
+alors qu'il décroît avec les départs). L'automatisation du transport de
+personnes est traduite en +0,05 % de PIB et −20 000 emplois de chauffeurs
+(levier `automatisation` ; variante large +0,15 %, −60 000). Hypothèses à
+étayer : nombre de licences actives (préfectures), revenu moyen des
+chauffeurs (Insee, Observatoire du T3P), part du transport de personnes
+dans le PIB.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).
