@@ -444,7 +444,11 @@ PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee":
                "chomage-non-degrade": "Chômage non dégradé", "emissions-plafond": "Émissions sous plafond",
                "deficit-3pct-2035": "Déficit < 3 % 2035", "dette-stabilisee-2035": "Dette stable 2035",
                "air-non-degrade": "Air non dégradé", "bornes-suffisantes-2035": "Bornes 2035",
-               "emplois-annonces-realisables": "Emplois annoncés"}
+               "emplois-annonces-realisables": "Emplois annoncés",
+               "balance-courante-non-degradee": "Solde courant", "accidents-travail-norme-ue": "Accidents du travail",
+               "ue-deficit-3pct": "UE : déficit 3 %", "ue-ajustement-0-5": "UE : ajust. 0,5 pt",
+               "ue-dette-1pt": "UE : dette −1 pt", "ue-climat-2030": "UE : climat 2030",
+               "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant"}
 
 
 def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool = False) -> Table:
@@ -452,7 +456,7 @@ def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool =
     de scénarios où la propriété tient, sous un moteur."""
     n = D.d["nbScenarios"]
     mid = moteur or D.standard
-    props = D.props
+    props = [q for q in D.props if not q["id"].startswith("ue-")]   # les propriétés UE ont leur page
     ent = [f"Programme (sur {n} scénarios)"] + [PROPS_COURT.get(q["id"], q["titre"]) for q in props]
 
     def cellule(p, q):
@@ -925,6 +929,67 @@ def section_commerce(D: Donnees) -> list:
     return out
 
 
+def section_accidents(D: Donnees) -> list:
+    a0, a1 = D.annees[0], D.annees[-1]
+    var = D.var["central"]
+    cu, jours, let, ue = var["coutParAccidentEuros"], var["joursPerdusParAccident"], var["letaliteAccidentsPdm"], var["tauxAccidentsUEPdm"]
+    e0 = D.traj("central", None)[0]
+    out = [P("Accidents du travail", "h1"),
+           P(f"Le modèle suit le taux d'accidents du travail avec arrêt ({nombre(e0['tauxAccidentsPdm'])} pour "
+             f"10 000 emplois en {a0}, CNAM ; moyenne de l'Union : ≈ {nombre(ue)}, Eurostat). Chaque accident "
+             f"coûte {nombre(cu)} € aux finances publiques (branche AT-MP), fait perdre {nombre(jours)} journées de "
+             f"travail, et {nombre(let / 100, 2)} % des accidents sont mortels. Une mesure de prévention réduit "
+             "le taux : les accidents évités allègent la dépense (fonction famille-chômage), rendent des heures "
+             "au PIB et évitent des décès. Propriété « accidents du travail à la norme UE ».")]
+    ent = [f"{a1}, scénario central", "Taux (pour 10 000)", "Accidents / an", "Coût (Md€)",
+           "Journées perdues (M)", "Décès / an", "Norme UE"]
+
+    def ligne(nom, e, statut):
+        acc = e["accidentsTravail"]
+        return [nom, nombre(e["tauxAccidentsPdm"]), nombre(acc), nombre(acc * cu / 1e9, 1),
+                nombre(acc * jours / 1e6, 1), nombre(acc * let / 10000), statut]
+
+    rows = [ligne(f"Situation de départ ({a0})", e0, "")]
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        rows.append(ligne(nom, e, "" if pid is None else ("✓" if e["tauxAccidentsPdm"] <= ue else "✗")))
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.28, 0.12, 0.13, 0.11, 0.14, 0.11, 0.11], surligner_premiere=True))
+    out.append(P("Sources : Assurance maladie — Risques professionnels, rapport annuel 2023 (564 000 accidents "
+                 "avec arrêt, 759 décès, 13,5 Md€) ; Eurostat, accidents du travail 2022. Le coût unitaire "
+                 "inclut une part de maladies professionnelles ; le coût pour les entreprises et les victimes "
+                 "n'est pas compté.", "note"))
+    return out
+
+
+def section_europe(D: Donnees) -> list:
+    n = D.d["nbScenarios"]
+    textes = D.d["textesEuropeens"]
+    props = [q for q in D.props if q["id"].startswith("ue-")]
+    out = [P("Textes européens : les programmes les respectent-ils ?", "h1"),
+           P("Chaque règle européenne est traduite en un critère vérifiable sur la trajectoire (simplification "
+             "assumée, écrite avec la référence juridique). Le tableau donne, pour chaque programme et sous le "
+             f"moteur « {echap(D.nom_moteur(D.standard))} », le statut au scénario central (✓/✗) et le nombre de "
+             f"scénarios sur {n} où le critère est respecté. Le tendanciel lui-même ne respecte aucun des critères "
+             "budgétaires : la question est si le programme fait mieux.")]
+    rows = [[P(f"<b>{echap(t['titre'])}</b><br/>{echap(t['reference'])}", "cell"),
+             P(echap(t["critere"]), "cell")] for t in textes]
+    out.append(tableau(["Texte", "Critère vérifié"], rows, [0.55, 0.45], droite_des=9))
+    out.append(Spacer(1, 6))
+    ent = ["Programme"] + [PROPS_COURT.get(q["id"], q["titre"]).replace("UE : ", "") for q in props]
+    rows = []
+    for p in D.progs:
+        r = [nom_court(p["nom"])]
+        for q in props:
+            ok = p["central"][D.standard][q["id"]]
+            r.append(f"{'✓' if ok else '✗'}  {p['matrice'][D.standard][q['id']]}/{n}")
+        rows.append(r)
+    out.append(tableau(ent, rows, [0.22] + [0.78 / len(props)] * len(props)))
+    out.append(P("Les critères datés (2030, 2035) sont évalués à leur année ; les autres à l'horizon du "
+                 "scénario. Les propriétés européennes figurent aussi dans la matrice complète du rapport.", "note"))
+    return out
+
+
 def section_main_doeuvre(D: Donnees) -> list:
     """Population active, immigration, emplois annoncés : la promesse tient-elle dans les bras disponibles ?"""
     a0, a1 = D.annees[0], D.annees[-1]
@@ -1223,6 +1288,10 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_main_doeuvre(D)
     story.append(CondPageBreak(120 * mm))
     story += section_commerce(D)
+    story.append(CondPageBreak(120 * mm))
+    story += section_accidents(D)
+    story.append(PageBreak())
+    story += section_europe(D)
     story.append(PageBreak())
     story += section_budget(D)
     story.append(PageBreak())

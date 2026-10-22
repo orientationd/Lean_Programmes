@@ -154,6 +154,26 @@ personnes est traduite en +0,05 % de PIB et −20 000 emplois de chauffeurs
 chauffeurs (Insee, Observatoire du T3P), part du transport de personnes
 dans le PIB.
 
+### O-14 — Accidents du travail : rejoindre la moyenne européenne
+
+Des partenaires d'accompagnement (application des normes, prévention),
+financés par 500 M€/an de fonds dédiés de l'État, pour ramener le taux
+d'accidents du travail avec arrêt de 190 à 110 pour 10 000 emplois, la
+moyenne de l'Union (Eurostat). Le sous-modèle chiffre les accidents
+évités (≈ 235 000 par an à terme), leur coût pour les finances publiques
+(24 000 € chacun, branche AT-MP), les journées de travail rendues au PIB
+(70 par accident) et les décès évités (13 pour 10 000 accidents).
+Propriété « accidents du travail à la norme UE ». Variantes : fonds
+doublés ; objectif à moitié atteint.
+
+### O-15 — Logiciel libre dans l'État
+
+Migration de tous les logiciels et postes de l'État vers le libre :
+900 M€ de migration (comptés en une fois) puis 400 M€/an d'économies de
+licences à partir de la quatrième année (mesure en deux temps, O-15 et
+O-15b). Montants : hypothèses à documenter avec la DINUM (accords-cadres
+en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

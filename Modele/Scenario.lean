@@ -140,6 +140,16 @@ structure Economie where
   /-- Gains tendanciels de productivité par robotisation des services
   automatisables, pb par an (voir `ParFonction.croitrePrimaires`). -/
   robotisationTendanciellePb : Int
+  /-- Coût moyen d'un accident du travail avec arrêt pour les finances
+  publiques (indemnités journalières, soins, rentes), €. -/
+  coutParAccidentEuros : Int
+  /-- Journées de travail perdues par accident avec arrêt. -/
+  joursPerdusParAccident : Int
+  /-- Décès pour 10 000 accidents du travail avec arrêt. -/
+  letaliteAccidentsPdm : Int
+  /-- Taux d'accidents du travail de la moyenne de l'Union européenne, pour
+  10 000 personnes en emploi (norme visée par certaines mesures). -/
+  tauxAccidentsUEPdm : Int
   /-- Baisse tendancielle annuelle des émissions, pm. -/
   baisseEmissionsPm : Int
   sources : List String
@@ -183,7 +193,8 @@ abbrev ValideReference (H : Scenario) : Prop :=
   0 ≤ H.reference.etat.exportations ∧ 0 ≤ H.reference.etat.importations ∧
   0 ≤ H.reference.etat.touristesMilliers ∧ 0 ≤ H.reference.etat.depenseParTouriste ∧
   0 ≤ H.reference.etat.decesPollutionAir ∧ 0 ≤ H.reference.etat.parcElectriqueMilliers ∧
-  0 ≤ H.reference.etat.bornesMilliers ∧ 0 < H.reference.etat.heuresParEmploi
+  0 ≤ H.reference.etat.bornesMilliers ∧ 0 < H.reference.etat.heuresParEmploi ∧
+  0 ≤ H.reference.etat.tauxAccidentsPdm
 
 /-- Bornes sur l'axe économique. -/
 abbrev ValideEco (H : Scenario) : Prop :=
@@ -199,6 +210,8 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.coutSanteParPbPlus65 ∧
   0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧
   0 ≤ H.eco.robotisationTendanciellePb ∧ H.eco.robotisationTendanciellePb ≤ 500 ∧
+  0 ≤ H.eco.coutParAccidentEuros ∧ 0 ≤ H.eco.joursPerdusParAccident ∧
+  0 ≤ H.eco.letaliteAccidentsPdm ∧ 0 < H.eco.tauxAccidentsUEPdm ∧
   0 ≤ H.eco.actifsParMoisAgeLegal ∧
   0 ≤ H.eco.elasticitePibHeuresPm ∧ H.eco.elasticitePibHeuresPm ≤ 1000 ∧
   0 < H.eco.tauxISPb ∧ H.eco.tauxISPb ≤ 10000
