@@ -7,6 +7,7 @@ import Programmes.PCF.Programme
 import Programmes.RN.Programme
 import Programmes.LR.Programme
 import Programmes.Horizons.Programme
+import Programmes.Renaissance.Programme
 
 /-!
 # Registre des programmes
@@ -34,7 +35,8 @@ def tous : List Modele.Programme := [
   PCF.programme,
   RN.programme,
   LR.programme,
-  Horizons.programme
+  Horizons.programme,
+  Renaissance.programme
 ]
 
 end Programmes

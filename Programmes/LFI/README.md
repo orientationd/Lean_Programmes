@@ -29,9 +29,37 @@ et du chap. 8 § 8) :
 | L-10 Retraite à 60 ans après 40 annuités | −48 mois d'âge légal (coût selon l'hypothèse du scénario ; les 40 annuités ne sont pas modélisées) |
 | L-11 SMIC à 1 600 € net | +11,0 % (conversion net/brut, voir `source`) |
 
-Le reste de *L'Avenir en commun* (32 h, impôt sur le revenu à 14 tranches,
-ISF climatique, garantie d'autonomie…) n'est pas encore transcrit :
-contributions bienvenues.
+**Budget rectificatif 2027** (14 octobre 2026, [Public Sénat](https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027),
+[France Épargne](https://www.france-epargne.fr/news/melenchon-presente-un-contre-budget-2027-1064-milliards-de-recettes-25-milliards-pour-la-dette)) :
+106,4 Md€ de recettes, 81,7 Md€ de dépenses, 25 Md€ de réduction du
+déficit la première année. Postes détaillés par les sources :
+
+| Mesure | Levier |
+|---|---|
+| L-12 ISF climatique | +10 Md€ |
+| L-13 Suppression de la flat tax | +9 Md€ d'IR |
+| L-14 Taxe Zucman | +15 Md€ |
+| L-15 Droits de succession | +20 Md€ |
+| L-16 Rabot des niches fiscales | +22 Md€ (moitié IS, moitié autres : hypothèse) |
+| L-17 Rachats d'actions, transactions financières | +7,5 Md€ |
+| L-18 Rémunération des agents publics | +17 Md€, tertiaire non marchand |
+| L-19 Garantie d'autonomie (1 337 €/mois) | +9,5 Md€ |
+| L-20 Action climatique | +10 Md€, construction |
+| L-21 Indexation des pensions et prestations, APL +10 % | +8 Md€ |
+| L-22 Cantines gratuites | +3,6 Md€ |
+| L-23 Hôpital, 10 000 postes | +3 Md€ |
+| L-24 Assurance chômage | +3 Md€ |
+| L-25 10 000 enseignants | +0,5 Md€ |
+
+Non détaillés par les sources : taxe sur les cryptoactifs, réforme de
+l'IS, taxe à 15 % sur les géants du numérique (≈ 22,9 Md€ de recettes) et
+≈ 18 Md€ de dépenses. Le budget rectificatif chiffre le retour à 62 ans
+(9 Md€) ; le programme vise 60 ans et c'est cet objectif qui est modélisé.
+
+Le reste de *L'Avenir en commun* (32 h, 14 tranches d'IR, 200 000
+logements publics par an, 700 000 rénovations, plan de 200 Md€, 10 000
+places d'EHPAD, 500 000 places de crèche, conscription de neuf mois) n'a
+pas de montant annuel public dans les sources lues.
 
 ## Ce qui ne l'est pas, faute de montant dans la source
 
