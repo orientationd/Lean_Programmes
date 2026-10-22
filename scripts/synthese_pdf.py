@@ -810,54 +810,162 @@ def structure_fonctions(D: Donnees):
     return fig
 
 
-def section_budget(D: Donnees) -> list:
-    """Décomposition fine du déficit : recettes par impôt et dépenses par
-    fonction, programme contre tendanciel en fin de période."""
+GROUPES_CONTRIB = [("Charge d'intérêts", ["interets"]), ("Retraites", ["retraites"]),
+                   ("Santé", ["sante"]), ("Autres dépenses primaires", None), ("Recettes", "recettes")]
+
+
+def contributions(e0: dict, e1: dict, D: Donnees) -> list[dict]:
+    """Décomposition exacte de la variation du ratio déficit/PIB entre deux
+    états, en points de PIB. Pour chaque poste x (dépense : signe +, recette :
+    signe −) on a l'identité
+        Δ(x/Y) = (x1 − x0)/Y1  +  x0·(1/Y1 − 1/Y0)
+                 (volume)         (dénominateur)
+    et la somme des contributions est exactement Δ(déficit/Y) puisque
+    déficit = Σ dépenses par fonction − Σ impôts − autres recettes."""
+    y0, y1 = e0["pib"], e1["pib"]
+
+    def terme(cle, nom, x0, x1, s):
+        vol = s * (x1 - x0) / y1 * 100
+        den = s * x0 * (1 / y1 - 1 / y0) * 100
+        return {"cle": cle, "nom": nom, "ecart": s * (x1 - x0), "volume": vol, "denominateur": den,
+                "contribution": vol + den}
+
+    out = []
+    for f in D.fonctions:
+        out.append(terme(f["id"], "Dépenses : " + FONCTIONS_COURT.get(f["id"], f["nom"]),
+                         e0["depensesParFonction"][f["id"]], e1["depensesParFonction"][f["id"]], 1))
+    for i in D.impots:
+        out.append(terme("impot:" + i["id"], "Recettes : " + i["nom"], e0["impots"][i["id"]],
+                         e1["impots"][i["id"]], -1))
+    out.append(terme("autresRecettes", "Recettes non fiscales", e0["autresRecettes"], e1["autresRecettes"], -1))
+    return out
+
+
+def deficit_pct(e: dict) -> float:
+    return (e["depenses"] - e["recettes"]) / e["pib"] * 100
+
+
+def regrouper(contribs: list[dict]) -> list[float]:
+    """Agrège les contributions selon GROUPES_CONTRIB (somme exacte conservée)."""
+    vals = []
+    for _nom, cles in GROUPES_CONTRIB:
+        if cles == "recettes":
+            vals.append(sum(c["contribution"] for c in contribs if c["cle"].startswith("impot:")
+                            or c["cle"] == "autresRecettes"))
+        elif cles is None:
+            pris = {k for _n, ks in GROUPES_CONTRIB if isinstance(ks, list) for k in ks}
+            vals.append(sum(c["contribution"] for c in contribs
+                            if not c["cle"].startswith("impot:") and c["cle"] != "autresRecettes"
+                            and c["cle"] not in pris))
+        else:
+            vals.append(sum(c["contribution"] for c in contribs if c["cle"] in cles))
+    return vals
+
+
+def barres_contributions(D: Donnees):
+    """Deux panneaux : variation du déficit sur la période (tendanciel et
+    programmes) et écart au tendanciel en fin de période (programmes),
+    décomposés en contributions exactes (points de PIB)."""
     a0, a1 = D.annees[0], D.annees[-1]
+    base1 = D.fin("central", None)
+    panneaux = [
+        (f"Variation {a0} → {a1}", D.lignes(),
+         lambda pid: contributions(D.traj("central", pid)[0], D.fin("central", pid), D)),
+        (f"Écart au tendanciel {a1}", [(p["id"], nom_court(p["nom"])) for p in D.progs],
+         lambda pid: contributions(base1, D.fin("central", pid), D)),
+    ]
+    n = len(D.lignes())
+    fig, axes = figure(0.26 * n + 1.3, 1, 2)
+    couleurs = [SERIES[6], SERIES[1], SERIES[3], SERIES[0], SERIES[2]]
+    for ax, (titre, lignes, calc) in zip(axes, panneaux):
+        for k, (pid, _nom) in enumerate(lignes):
+            vals = regrouper(calc(pid))
+            pos = neg = 0.0
+            for (gnom, _), v, c in zip(GROUPES_CONTRIB, vals, couleurs):
+                gauche = pos if v >= 0 else neg + v
+                ax.barh(k, abs(v), left=gauche, height=0.62, color=c, zorder=3,
+                        label=gnom if (k == 0 and ax is axes[0]) else None)
+                if v >= 0:
+                    pos += v
+                else:
+                    neg += v
+            total = sum(vals)
+            ax.plot([total, total], [k - 0.42, k + 0.42], color=INK, lw=1.4, zorder=4,
+                    label="Total (= Δ déficit/PIB)" if (k == 0 and ax is axes[0]) else None)
+        ax.set_yticks(range(len(lignes)), [nom for _, nom in lignes])
+        ax.set_ylim(n - 0.5, -0.5)
+        ax.tick_params(axis="y", labelcolor=INK2, labelsize=7.2)
+        ax.grid(axis="y", visible=False)
+        ax.grid(axis="x", visible=True)
+        ax.axvline(0, color=BASE, lw=0.8, zorder=2)
+        ax.xaxis.set_major_formatter(fmt_axe(1, NBSP + "pt"))
+        ax.xaxis.set_major_locator(MaxNLocator(5))
+        ax.set_xlabel("points de PIB", fontsize=7, color=INK2)
+        ax.set_title(titre, fontsize=8, loc="left")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="outside lower left", ncol=3, handlelength=1.0)
+    return fig
+
+
+def tableau_contributions(e0: dict, e1: dict, D: Donnees, libelle0: str, libelle1: str) -> Table:
+    cs = contributions(e0, e1, D)
+    d0, d1 = deficit_pct(e0), deficit_pct(e1)
+    rows = [[libelle0, md(e0["depenses"] - e0["recettes"], 1), "", "", nombre(d0, 3)]]
+    for c in cs:
+        rows.append([c["nom"], signe(c["ecart"] / 1000, 1), signe(c["volume"], 3),
+                     signe(c["denominateur"], 3), signe(c["contribution"], 3)])
+    rows.append(["Somme des contributions", signe(sum(c["ecart"] for c in cs) / 1000, 1),
+                 signe(sum(c["volume"] for c in cs), 3), signe(sum(c["denominateur"] for c in cs), 3),
+                 signe(sum(c["contribution"] for c in cs), 3)])
+    rows.append([libelle1, md(e1["depenses"] - e1["recettes"], 1), "", "", nombre(d1, 3)])
+    var_pib = signe((e1["pib"] - e0["pib"]) * 100 / e0["pib"], 2)
+    rows.append([f"Contrôle : Δ(déficit/PIB) − Σ contributions (PIB {var_pib}{NBSP}%)", "", "", "",
+                 f"{(d1 - d0) - sum(c['contribution'] for c in cs):.1e}"])
+    return tableau(["Poste (déficit creusé = +)", "Md€", "Volume", "Dénominateur", "Total (pt)"], rows,
+                   [0.46, 0.13, 0.13, 0.14, 0.14])
+
+
+def section_budget(D: Donnees) -> list:
+    """Décomposition exacte du déficit : identité comptable en points de PIB,
+    poste par poste, sans seuil ni regroupement."""
+    a0, a1 = D.annees[0], D.annees[-1]
+    base0, base1 = D.traj("central", None)[0], D.fin("central", None)
     out = [P("Décomposition du budget et du déficit", "h1"),
-           P("Les dépenses publiques sont suivies par fonction (nomenclature COFOG agrégée : retraites, "
-             "santé, famille et chômage, enseignement, affaires économiques, défense, sécurité et "
-             "justice, logement et environnement, culture, charge d'intérêts, services généraux). "
-             "Chaque mesure est imputée à sa fonction ; les dépenses tendancielles croissent au même "
-             "rythme hors intérêts, moins les gains de robotisation (0,2 %/an sur les services "
-             "généraux, les affaires économiques et la santé), et le vieillissement renchérit les "
-             "retraites (185 M€ par point de base de plus de 65 ans) et la santé (20 M€, les plus de "
-             "65 ans consommant deux fois la moyenne). Le tableau "
-             f"décompose, pour chaque programme, l'écart de déficit en {a1} par rapport au tendanciel "
-             "en écarts de recettes (par prélèvement) et de dépenses (par fonction)."),
-           png(structure_fonctions(D))]
-    base = D.fin("central", None)
-    fs = [f for f in D.fonctions if base["depensesParFonction"][f["id"]] > 0 or any(
-        D.fin("central", p["id"])["depensesParFonction"][f["id"]] != 0 for p in D.progs)]
-    lignes = [("Déficit tendanciel", None)]
-    rows_all = []
+           P("Les dépenses publiques sont suivies par fonction (nomenclature COFOG agrégée) et les "
+             "recettes par prélèvement. Le déficit vaut, par construction du modèle, "
+             "Σ dépenses par fonction − Σ impôts − recettes non fiscales ; son ratio au PIB se "
+             "décompose donc <i>exactement</i> entre postes. Pour chaque poste x, de signe + pour "
+             "une dépense et − pour une recette, la variation du ratio entre deux états (Y₀, Y₁) "
+             "s'écrit Δ(x/Y) = (x₁ − x₀)/Y₁ + x₀·(1/Y₁ − 1/Y₀) : le premier terme est l'effet "
+             "volume (variation du poste rapportée au PIB d'arrivée), le second l'effet "
+             "dénominateur (variation du PIB appliquée au poste de départ). La somme des "
+             "contributions est égale à la variation du ratio de déficit, à l'arrondi flottant "
+             "près, ce que la ligne de contrôle vérifie dans chaque tableau. Aucun poste n'est "
+             "omis ni seuillé ; les totaux sont calculés avant arrondi d'affichage."),
+           png(structure_fonctions(D)),
+           png(barres_contributions(D)),
+           P("Lecture : chaque barre empile les contributions signées (à droite les postes qui "
+             "creusent le déficit, à gauche ceux qui le réduisent) ; le trait noir marque leur "
+             "somme, égale à la variation du ratio déficit/PIB. Le panneau de gauche décompose la "
+             f"dérive {a0} → {a1} de chaque trajectoire ; celui de droite décompose l'écart de "
+             f"chaque programme au tendanciel en {a1}. « Autres dépenses primaires » regroupe les "
+             "fonctions hors intérêts, retraites et santé ; « Recettes » somme tous les prélèvements "
+             "et les recettes non fiscales.", "note")]
+    out += [CondPageBreak(70 * mm), P(f"Tendanciel : variation {a0} → {a1}", "h2"),
+            tableau_contributions(base0, base1, D, f"Déficit {a0}", f"Déficit {a1}")]
     for p in D.progs:
-        e = D.fin("central", p["id"])
-        rows = [[f"Déficit tendanciel {a1}", md(base["depenses"] - base["recettes"], 1),
-                 pct_pb(base["deficitPb"])]]
-        for i in D.impots:
-            d = e["impots"][i["id"]] - base["impots"][i["id"]]
-            if abs(d) >= 50:
-                rows.append([f"Recettes : {i['nom']}", signe(-d / 1000, 1), ""])
-        d = e["autresRecettes"] - base["autresRecettes"]
-        if abs(d) >= 50:
-            rows.append(["Recettes non fiscales", signe(-d / 1000, 1), ""])
-        for f in fs:
-            d = e["depensesParFonction"][f["id"]] - base["depensesParFonction"][f["id"]]
-            if abs(d) >= 50:
-                rows.append([f"Dépenses : {FONCTIONS_COURT.get(f['id'], f['nom'])}", signe(d / 1000, 1), ""])
-        d_pib = e["pib"] - base["pib"]
-        rows.append([f"Déficit du programme {a1}", md(e["depenses"] - e["recettes"], 1), pct_pb(e["deficitPb"])])
-        rows.append([f"dont effet du PIB sur le ratio (PIB {signe(d_pib * 100 / base['pib'], 2)}{NBSP}%)", "",
-                     signe((e["deficitPb"] - base["deficitPb"]) / 100
-                           - ((e["depenses"] - e["recettes"]) - (base["depenses"] - base["recettes"])) * 100 / base["pib"], 2)])
-        t = tableau(["Écart au tendanciel (Md€ ; déficit creusé = +)", "Md€", "% du PIB"], rows,
-                    [0.6, 0.2, 0.2])
-        out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), t]))
-    out.append(P("Scénario central, moteur « " + echap(D.nom_moteur(D.standard)) + " ». Les recettes "
-                 "incluent l'effet d'activité (au prorata des prélèvements) et les rendements des "
-                 "mesures nets de fuite fiscale ; la charge d'intérêts reflète la dette accumulée. "
-                 "La dernière ligne isole la part de l'écart de ratio due au dénominateur.", "note"))
+        e0, e1 = D.traj("central", p["id"])[0], D.fin("central", p["id"])
+        nom = echap(nom_court(p["nom"]))
+        out += [CondPageBreak(70 * mm), P(f"{nom} : variation {a0} → {a1}", "h2"),
+                tableau_contributions(e0, e1, D, f"Déficit {a0}", f"Déficit {a1}"),
+                CondPageBreak(70 * mm), P(f"{nom} : écart au tendanciel en {a1}", "h2"),
+                tableau_contributions(base1, e1, D, f"Déficit tendanciel {a1}", f"Déficit du programme {a1}")]
+    out.append(P("Scénario central, moteur « " + echap(D.nom_moteur(D.standard)) + " ». Md€ : variation "
+                 "du poste en niveau (signée comme sa contribution). Volume, dénominateur et total en "
+                 "points de PIB, trois décimales. Le ratio de déficit affiché ici est le quotient exact "
+                 "déficit/PIB ; la valeur « deficitPb » du modèle Lean en est la troncature entière en "
+                 "points de base (division entière), d'où un écart possible inférieur à 0,01 point avec "
+                 "les autres sections.", "note"))
     return out
 
 
