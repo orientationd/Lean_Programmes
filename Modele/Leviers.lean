@@ -84,6 +84,21 @@ inductive Levier where
   /-- Déploiement de points de recharge publics : `bornesParAn` par an à
   `coutParBorne` € (dépense annuelle, emplois dans la construction). -/
   | deploiementBornes (bornesParAn : Int) (coutParBorne : Int)
+  /-- Dépense nouvelle, M€/an, imputée à une fonction de la nomenclature
+  COFOG (les emplois vont au secteur de la fonction). `depense` seul va
+  dans « non ventilé ». -/
+  | depenseSur (fonction : Fonction) (montant : Int)
+  /-- Économie, M€/an, sur une fonction identifiée. -/
+  | economieSur (fonction : Fonction) (montant : Int)
+  /-- Durée du travail : variation des heures annuelles par emploi, pm
+  (`-86` : 35 h → 32 h). Le PIB suit le volume d'heures à l'élasticité du
+  scénario, sans effet d'Okun sur l'emploi. -/
+  | dureeTravail (variationPm : Int)
+  /-- Taux normal de l'impôt sur les sociétés porté à `tauxPb`, avec un
+  retour d'assiette : `retourAssiettePm` de la perte statique est
+  récupérée par les bénéfices rapatriés ou relocalisés (entreprises
+  revenues ou nouvellement implantées). -/
+  | impotSocietes (tauxPb : Int) (retourAssiettePm : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -106,14 +121,27 @@ multiplicateur, puis `chocPib`. -/
 def effetDemande (H : Scenario) (cible : Option Secteur) (impulsion : Int) (s : Etat) : Etat :=
   chocPib H cible (appliquerPm impulsion H.eco.multiplicateurPm) s
 
-/-- Dépense nouvelle (partagée par plusieurs leviers). -/
-def appliquerDepense (H : Scenario) (cible : Option Secteur) (montant : Int) (s : Etat) : Etat :=
-  effetDemande H cible montant { s with depenses := s.depenses + montant }
+/-- Dépense nouvelle sur une fonction (partagée par plusieurs leviers). -/
+def appliquerDepense (H : Scenario) (cible : Option Secteur) (f : Fonction) (montant : Int)
+    (s : Etat) : Etat :=
+  effetDemande H cible montant { s with depensesF := s.depensesF.ajouter f montant }
 
 /-- Économie de dépense : l'impulsion négative est pondérée par le moteur. -/
-def appliquerEconomie (M : Moteur) (H : Scenario) (montant : Int) (s : Etat) : Etat :=
+def appliquerEconomie (M : Moteur) (H : Scenario) (f : Fonction) (montant : Int) (s : Etat) : Etat :=
   effetDemande H none (-(appliquerPm montant M.multiplicateurEconomiesPm))
-    { s with depenses := s.depenses - montant }
+    { s with depensesF := s.depensesF.ajouter f (-montant) }
+
+/-- Choc d'offre de travail : variation du volume d'heures (pm) → PIB à
+l'élasticité du scénario, recettes au prorata, sans effet d'Okun. -/
+def chocHeures (H : Scenario) (variationPm : Int) (s : Etat) : Etat :=
+  let dPib := s.pib * variationPm * H.eco.elasticitePibHeuresPm / 1000000
+  let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
+  { s.ajouterRecettesProrata dRecettes with pib := s.pib + dPib }
+
+/-- Variation du PIB induite par `dEmploi` personnes en emploi de plus (ou
+de moins), à durée du travail inchangée. -/
+def chocEmploi (H : Scenario) (dEmploi : Int) (s : Etat) : Etat :=
+  if s.emploiTotal = 0 then s else chocHeures H (dEmploi * 1000 / s.emploiTotal) s
 
 /-- Prélèvement nouveau (rendement statique `r`, négatif pour une baisse) sur
 l'impôt `i`. Le rendement est réduit de la fuite fiscale ; l'impulsion de
@@ -126,27 +154,41 @@ def appliquerPrelevement (M : Moteur) (H : Scenario) (i : Impot) (r : Int) (s : 
 
 /-- Interprétation d'un levier sous un moteur et un scénario. -/
 def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
-  | .depense m, s => appliquerDepense H none m s
-  | .economie m, s => appliquerEconomie M H m s
+  | .depense m, s => appliquerDepense H none .nonVentile m s
+  | .economie m, s => appliquerEconomie M H .nonVentile m s
+  | .depenseSur f m, s => appliquerDepense H f.secteur f m s
+  | .economieSur f m, s => appliquerEconomie M H f m s
   | .prelevement r, s => appliquerPrelevement M H .autres r s
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
-      appliquerDepense H none (e * s.populationMilliers / 1000) s
-  -- le chômage augmente de `hausse × élasticité` : autant d'emplois en moins
+      appliquerDepense H none .famille (e * s.populationMilliers / 1000) s
+  -- le chômage augmente de `hausse × élasticité` : autant d'emplois en moins,
+  -- et autant d'heures en moins dans le PIB
   | .revalorisationSmic h, s =>
-      ajouterEmploi H none (-(s.actifs * h * H.eco.elasticiteChomageSmicPm / 10000000))
-        { s with smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h }
+      let dEmploi := -(s.actifs * h * H.eco.elasticiteChomageSmicPm / 10000000)
+      chocEmploi H dEmploi (ajouterEmploi H none dEmploi
+        { s with smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h })
   -- les actifs supplémentaires trouvent un emploi au taux de chômage courant
+  -- et produisent à la durée du travail en vigueur
   | .ageLegal d, s =>
       let dActifs := d * H.eco.actifsParMoisAgeLegal
       let dEmploi := if s.actifs = 0 then 0 else dActifs * s.emploiTotal / s.actifs
-      { s with
-        ageLegalMois := s.ageLegalMois + d
-        depenses := s.depenses - d * H.eco.economieParMoisRetraite
-        actifs := s.actifs + dActifs
-        emploi := s.emploi.repartir dEmploi none }
+      chocEmploi H dEmploi
+        { s with
+          ageLegalMois := s.ageLegalMois + d
+          depensesF := s.depensesF.ajouter .retraites (-(d * H.eco.economieParMoisRetraite))
+          actifs := s.actifs + dActifs
+          emploi := s.emploi.repartir dEmploi none }
+  | .dureeTravail v, s =>
+      chocHeures H v { s with heuresParEmploi := s.heuresParEmploi + appliquerPm s.heuresParEmploi v }
+  -- IS : perte statique au prorata des taux, retour d'assiette, impulsion de demande
+  | .impotSocietes taux retour, s =>
+      let statique := s.impots.impotSocietes * (taux - H.eco.tauxISPb) / H.eco.tauxISPb
+      let rendement := statique - appliquerPm statique retour
+      effetDemande H none (-(appliquerPm statique M.multiplicateurPrelevementsPm))
+        { s with impots := s.impots.ajouter .impotSocietes rendement }
   | .transition r c, s =>
-      appliquerDepense H none c { s with emissionsMt := s.emissionsMt - r }
+      appliquerDepense H none .logementEnvironnement c { s with emissionsMt := s.emissionsMt - r }
   -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
   -- logement (rattrapage induit) demanderait un indicateur et une hypothèse
   -- de comportement des communes : évolution du modèle commun, à discuter
@@ -160,13 +202,13 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                decesPollutionAir := s.decesPollutionAir
                  - r.nombre * H.energie.decesEvitesParMillionVehicules / 1000000 }
   | .prelevementSur i r, s => appliquerPrelevement M H i r s
-  | .depenseSecteur sec m, s => appliquerDepense H (some sec) m s
+  | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
   | .aideAchatElectrique n prime, s =>
-      appliquerDepense H none (n * prime / 1000000)
+      appliquerDepense H none .logementEnvironnement (n * prime / 1000000)
         { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }
   | .deploiementBornes n cout, s =>
-      appliquerDepense H (some .construction) (n * cout / 1000000)
+      appliquerDepense H (some .construction) .affairesEconomiques (n * cout / 1000000)
         { s with bornesAnnuellesMilliers := s.bornesAnnuellesMilliers + n / 1000 }
 
 end Modele

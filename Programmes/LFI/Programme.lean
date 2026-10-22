@@ -106,28 +106,28 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .autres 7500] },
   { id := "L-18", titre := "Rémunération des agents publics"
     source := s!"{budget} : 17 Md€/an"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 17000] },
+    leviers := [.depenseSur .fonctionnement 17000] },
   { id := "L-19", titre := "Garantie d'autonomie de 1 337 €/mois pour les jeunes"
     source := s!"{budget} : 9,5 Md€/an"
-    leviers := [.depense 9500] },
+    leviers := [.depenseSur .famille 9500] },
   { id := "L-20", titre := "Action climatique"
     source := s!"{budget} : 10 Md€/an ; réduction d'émissions non chiffrée par la source, emplois dans la construction (hypothèse)"
-    leviers := [.depenseSecteur .construction 10000] },
+    leviers := [.depenseSur .logementEnvironnement 10000] },
   { id := "L-21", titre := "Indexation des pensions et prestations, APL +10 %"
     source := s!"{budget} : 8 Md€/an"
-    leviers := [.depense 8000] },
+    leviers := [.depenseSur .famille 8000] },
   { id := "L-22", titre := "Gratuité des cantines"
     source := s!"{budget} : 3,6 Md€/an"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 3600] },
+    leviers := [.depenseSur .enseignement 3600] },
   { id := "L-23", titre := "Plan d'urgence hospitalier, 10 000 postes"
     source := s!"{budget} : 3 Md€/an"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 3000] },
+    leviers := [.depenseSur .sante 3000] },
   { id := "L-24", titre := "Assurance chômage"
     source := s!"{budget} : 3 Md€/an"
-    leviers := [.depense 3000] },
+    leviers := [.depenseSur .famille 3000] },
   { id := "L-25", titre := "10 000 postes d'enseignants"
     source := s!"{budget} : 0,5 Md€/an"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 500] }
+    leviers := [.depenseSur .enseignement 500] }
 ]
 
 def programme : Programme where

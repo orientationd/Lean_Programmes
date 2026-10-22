@@ -36,16 +36,16 @@ def mesures : List Mesure := [
     leviers := [.prelevement 25000] },
   { id := "P-05", titre := "Suppression des doublons entre l'État et les collectivités"
     source := s!"{site}, chap. 18 « Achever la décentralisation » : économie de « plus de 7,5 Mds € »"
-    leviers := [.economie 7500] },
+    leviers := [.economieSur .fonctionnement 7500] },
   { id := "P-06", titre := "Taxe de 1 €/kg sur les emballages non recyclables, affectée au recyclage"
     source := s!"{site}, chap. 7 : taxe de 1 €/kg pour financer le recyclage « à hauteur de 500 M€/an »"
-    leviers := [.prelevement 500, .depense 500] },
+    leviers := [.prelevement 500, .depenseSur .logementEnvironnement 500] },
   { id := "P-07", titre := "Loi intégrale contre les violences sexistes et sexuelles"
     source := s!"{site}, chap. 13 : « mobiliser 2,6 milliards d'euros par an ». Traité comme dépense nouvelle ; à réduire de la part déjà engagée si la source la précise"
-    leviers := [.depense 2600] },
+    leviers := [.depenseSur .securiteJustice 2600] },
   { id := "P-08", titre := "Aide humanitaire d'urgence portée à 1 Md€ par an"
     source := s!"{site}, chap. 19 : de 500 M€ en 2025 à 1 Md€ par an, soit +500 M€/an"
-    leviers := [.depense 500] }
+    leviers := [.depenseSur .fonctionnement 500] }
 ]
 
 def programme : Programme where

@@ -51,6 +51,15 @@ ou décaissements différés. Les mesures automobiles ont leurs leviers :
 `aideAchatElectrique véhiculesParAn primeEuros` (parc électrique, décès
 évités) et `deploiementBornes bornesParAn coûtParBorne`.
 
+Préférer `depenseSur fonction montant` et `economieSur fonction montant`
+(nomenclature COFOG agrégée : retraites, santé, famille, enseignement,
+affaires économiques, défense, sécurité-justice, logement-environnement,
+culture, fonctionnement) à `depense` / `economie`, qui vont dans « non
+ventilé » : la synthèse décompose le déficit par fonction. Durée du
+travail : `dureeTravail variationPm` (le PIB suit le volume d'heures).
+Taux de l'IS : `impotSocietes tauxPb retourAssiettePm`, avec un
+coefficient de retour d'assiette explicite.
+
 Tous les programmes sont évalués sous tous les **moteurs**
 (`Hypotheses/Moteurs.lean` : « demande » et « offre ») ; un engagement
 précise son moteur (`Engagement.sous Moteurs.standard H q`). Une propriété

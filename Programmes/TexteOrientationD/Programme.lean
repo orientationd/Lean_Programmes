@@ -90,13 +90,15 @@ def pretEPR2Total : Int := 6067
 /-! ## O-07 à O-11 — Hypothèses de chiffrage -/
 
 /-- Impôt sur les sociétés au taux le plus bas de l'UE : 9 % (Hongrie), contre
-25 % en France. Rendement statique : 58,9 Md€ × (1 − 9/25) = −37,7 Md€ ;
-le modèle y applique sa fuite fiscale (ici, un retour d'assiette) et le
-moteur « offre » un surcroît de croissance. -/
-def baisseIS : Int := -37700
-
-/-- Variante : taux irlandais de 12,5 % : 58,9 × (1 − 12,5/25) = −29,5 Md€. -/
-def baisseISIrlande : Int := -29450
+25 % en France. Le levier `impotSocietes` calcule la perte statique au
+prorata des taux (58,9 Md€ × (1 − 9/25) = −37,7 Md€) puis applique un
+**coefficient de retour d'assiette** : part de la perte récupérée grâce aux
+bénéfices rapatriés et aux sociétés qui reviennent ou s'implantent. Valeur
+centrale 30 % (hypothèse : élasticité de l'assiette de l'IS au taux de
+l'ordre de 1, littérature Devereux-Griffith / OCDE, pour un pays de la
+taille de la France) ; variantes 0 %, 60 % et taux irlandais. -/
+def tauxISCible : Int := 900
+def retourAssiette : Int := 300
 
 /-- Démission indemnisée six mois, une fois tous les cinq ans. Hypothèse :
 1,9 million de démissions de CDI par an (DARES, ordre de grandeur), 20 %
@@ -161,7 +163,7 @@ def mesures : List Mesure := [
   { id := "O-03"
     titre := "Attributions de logements sociaux vérifiables par preuve à divulgation nulle de connaissance"
     source := "Texte Orientation D, mesure 3 ; chiffrage provisoire (hypothèses) : 20 M€ de développement, 5 M€/an d'exploitation ; effet sur l'immobilier non modélisé"
-    leviers := [.depensePonctuelle 20, .depense 5]
+    leviers := [.depensePonctuelle 20, .depenseSur .logementEnvironnement 5]
     contrats := [
       { titre := "Dès qu'un candidat est éligible, la règle publiée désigne un attributaire"
         enonce := ∀ cs : List Candidat, (∃ c ∈ cs, c.eligible = true) → ∃ a, choisir cs = some a
@@ -211,27 +213,29 @@ def mesures : List Mesure := [
 
   { id := "O-08"
     titre := "Impôt sur les sociétés au taux le plus bas de l'Union européenne (9 %)"
-    source := s!"Texte Orientation D, mesure 8 ; taux : Hongrie 9 %, Irlande 12,5 % (Commission européenne, Taxation trends 2025) ; rendement statique {baisseIS} M€/an sur 58,9 Md€ d'IS 2025"
-    leviers := [.prelevementSur .impotSocietes baisseIS]
+    source := s!"Texte Orientation D, mesure 8 ; taux : Hongrie 9 %, Irlande 12,5 % (Commission européenne, Taxation trends 2025) ; perte statique −37,7 Md€/an sur 58,9 Md€ d'IS 2025, retour d'assiette {retourAssiette / 10} % (voir `retourAssiette`)"
+    leviers := [.impotSocietes tauxISCible retourAssiette]
     variantes := [
-      { nom := "taux irlandais de 12,5 %", leviers := [.prelevementSur .impotSocietes baisseISIrlande] }] },
+      { nom := "aucun retour d'assiette", leviers := [.impotSocietes tauxISCible 0] },
+      { nom := "retour d'assiette de 60 %", leviers := [.impotSocietes tauxISCible 600] },
+      { nom := "taux irlandais de 12,5 %, retour de 30 %", leviers := [.impotSocietes 1250 retourAssiette] }] },
 
   { id := "O-09"
     titre := "La démission ouvre des droits au chômage : six mois d'indemnités, une fois tous les cinq ans"
     source := s!"Texte Orientation D, mesure 9 ; chiffrage : hypothèse de recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois × 6 : {coutDemission} M€/an"
-    leviers := [.depense coutDemission]
+    leviers := [.depenseSur .famille coutDemission]
     variantes := [
-      { nom := "recours de 40 % (6 Md€/an)", leviers := [.depense 6000] }] },
+      { nom := "recours de 40 % (6 Md€/an)", leviers := [.depenseSur .famille 6000] }] },
 
   { id := "O-10"
     titre := "Moyens pour la justice : réduction des délais, prud'hommes en priorité"
     source := "Texte Orientation D, mesure 10 ; +300 M€/an (hypothèse : +3 % du budget de la justice, greffiers et juges départiteurs) ; effet sur les délais non modélisé"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 300] },
+    leviers := [.depenseSur .securiteJustice 300] },
 
   { id := "O-11"
     titre := "Financement des lignes nouvelles Lyon-Turin, Bordeaux-Toulouse et Montpellier-Perpignan"
     source := s!"Texte Orientation D, mesure 11 ; ≈ 30 Md€ sur dix ans dont 80 % d'argent public français : {lignesNouvelles} M€/an (hypothèses, voir `lignesNouvelles`)"
-    leviers := [.depenseSecteur .construction lignesNouvelles] }
+    leviers := [.depenseSur .affairesEconomiques lignesNouvelles] }
 ]
 
 def programme : Programme where

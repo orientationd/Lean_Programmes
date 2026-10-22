@@ -41,16 +41,16 @@ def pretEPR : Int := 5055
 def mesures : List Mesure := [
   { id := "PC-01", titre := "Investissement ferroviaire supplémentaire"
     source := s!"{plan}, B.1 Transports, p. 15 : « 10 milliards d'euros par an » ; trafic voyageurs × 2,6, part du rail en longue distance de 10 à 40 % d'ici 2045"
-    leviers := [.depenseSecteur .construction 10000] },
+    leviers := [.depenseSur .affairesEconomiques 10000] },
   { id := "PC-02", titre := "Réseau cyclable : 100 000 km de voies"
     source := s!"{plan}, B.1 Transports, p. 14 : « 1 milliard d'euros par an » ; part modale du vélo de 1 à 6 %"
-    leviers := [.depenseSecteur .construction 1000] },
+    leviers := [.depenseSur .affairesEconomiques 1000] },
   { id := "PC-03", titre := "Rénovation thermique du parc de logements privés"
     source := s!"{plan}, B.2 Logement, p. 22 : « 10 milliards d'euros d'argent public seront investis chaque année », complétés par 15 Md€/an de prêts à taux zéro (banques et Action logement, non imputés) ; 900 000 rénovations moyennes et 264 000 profondes par an dès 2032"
-    leviers := [.depenseSecteur .construction 10000] },
+    leviers := [.depenseSur .logementEnvironnement 10000] },
   { id := "PC-04", titre := "Rénovation du parc de bâtiments publics"
     source := s!"{plan}, B.2 Logement, p. 22 : « 7 milliards d'euros par an »"
-    leviers := [.depenseSecteur .construction 7000] },
+    leviers := [.depenseSur .logementEnvironnement 7000] },
   { id := "PC-05", titre := "Rénovation du parc social"
     source := s!"{plan}, B.2 Logement, p. 22 : « jusqu'à 8 milliards d'euros par an », financeur non précisé (bailleurs sociaux hors administrations publiques) : non imputé"
     leviers := [] },

@@ -116,6 +116,11 @@ structure Economie where
   deriveTauxPb : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
+  /-- Élasticité du PIB au volume d'heures travaillées, pm (`650` : part du
+  travail dans la valeur ajoutée). -/
+  elasticitePibHeuresPm : Int
+  /-- Taux normal de l'impôt sur les sociétés en vigueur, pb (`2500` = 25 %). -/
+  tauxISPb : Int
   /-- Surcoût annuel de dépenses (M€) par pb de part des 65 ans et plus. -/
   coutParPbPlus65 : Int
   /-- Baisse tendancielle annuelle des émissions, pm. -/
@@ -180,6 +185,8 @@ abbrev Valide (H : Scenario) : Prop :=
   0 ≤ H.reference.etat.decesPollutionAir ∧ 0 ≤ H.reference.etat.parcElectriqueMilliers ∧
   0 ≤ H.reference.etat.bornesMilliers ∧
   0 ≤ H.eco.actifsParMoisAgeLegal ∧
+  0 ≤ H.eco.elasticitePibHeuresPm ∧ H.eco.elasticitePibHeuresPm ≤ 1000 ∧
+  0 < H.eco.tauxISPb ∧ H.eco.tauxISPb ≤ 10000 ∧ 0 < H.reference.etat.heuresParEmploi ∧
   0 < H.droit.plafondDeficitPb ∧ 0 < H.droit.plafondEmissionsMt ∧
   1 ≤ H.horizon ∧ H.horizon ≤ 20
 

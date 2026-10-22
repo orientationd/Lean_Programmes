@@ -30,22 +30,25 @@ def mesures : List Mesure := [
     leviers := [.ageLegal (-24)] },
   { id := "E-03", titre := "Plan national d'adaptation au changement climatique"
     source := s!"{projet} : « 7 milliards d'euros par an d'ici 2032 » ; emplois dans la construction"
-    leviers := [.depenseSecteur .construction 7000] },
+    leviers := [.depenseSur .logementEnvironnement 7000] },
   { id := "E-04", titre := "Loi intégrale contre les violences sexistes et sexuelles"
     source := s!"{projet} : « dotée de 3 milliards d'euros » (traités comme dépense annuelle nouvelle)"
-    leviers := [.depense 3000] },
+    leviers := [.depenseSur .securiteJustice 3000] },
   { id := "E-05", titre := "Taxe Zucman : 2 % du patrimoine au-delà de 100 M€"
     source := s!"{projet}, p. 66 ; rendement non chiffré par la source : 15 Md€/an retenus (chiffrage du budget rectificatif LFI 2027 pour la même mesure, hypothèse)"
     leviers := [.prelevementSur .autres 15000] },
   { id := "E-06", titre := "Justice : 9 000 magistrats, 10 000 greffiers, 7 000 attachés de justice sur dix ans"
     source := s!"{projet} ; conversion : 26 000 postes × 60 000 € = 1,56 Md€/an en régime de croisière (hypothèse de coût unitaire)"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 1560] },
+    leviers := [.depenseSur .securiteJustice 1560] },
   { id := "E-07", titre := "Enseignants : +15 % de salaire en cinq ans ; recherche publique : +10 %"
     source := s!"{projet} ; conversion : masse salariale enseignante ≈ 60 Md€ × 15 % = 9 Md€, recherche publique ≈ 10 Md€ × 10 % = 1 Md€ (hypothèses)"
-    leviers := [.depenseSecteur .tertiaireNonMarchand 10000] },
+    leviers := [.depenseSur .enseignement 10000] },
   { id := "E-08", titre := "AAH augmentée de 250 € par mois"
     source := s!"{projet} ; conversion : 1,3 million d'allocataires × 250 € × 12 = 3,9 Md€/an (hypothèse)"
-    leviers := [.depense 3900] }
+    leviers := [.depenseSur .famille 3900] },
+  { id := "E-09", titre := "32 heures sans perte de salaire dans les métiers pénibles ou de nuit"
+    source := s!"{projet}, p. 57 ; conversion : −8,6 % d'heures pour 15 % des salariés (métiers exposés, hypothèse) → −1,3 % d'heures par emploi"
+    leviers := [.dureeTravail (-13)] }
 ]
 
 def programme : Programme where

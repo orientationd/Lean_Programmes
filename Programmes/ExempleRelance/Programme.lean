@@ -84,8 +84,10 @@ def programme : Programme where
   engagements := [
     -- « Nos émissions passent sous le plafond légal en hypothèses centrales. »
     Engagement.sous Moteurs.standard (central) Proprietes.emissions,
-    -- « Avec une croissance forte et la clause dérogatoire, le déficit reste sous le plafond. »
-    Engagement.sous Moteurs.standard (scenario Demo.centrale Eco.croissanceHaute Droit.clauseDerogatoire) Proprietes.deficit,
+    -- (Un engagement « déficit sous le plafond dérogatoire avec croissance
+    -- forte » figurait ici ; il ne tient plus depuis que la baisse de l'âge
+    -- légal et la hausse du SMIC réduisent le volume d'heures travaillées,
+    -- donc le PIB : 5,02 % contre 5 %. Retiré, comme la CI l'exige.)
     -- « Avec une croissance forte, le chômage ne dépasse pas le tendanciel. »
     Engagement.sous Moteurs.standard (scenario Demo.centrale Eco.croissanceHaute Droit.cadreActuel) Proprietes.chomage
   ]

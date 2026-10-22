@@ -162,6 +162,11 @@ def etatJson (s : Etat) : Json :=
     ("pibParHabitant", toJson s.pibParHabitant),
     ("autresRecettes", toJson s.autresRecettes),
     ("chargeInterets", toJson s.chargeInterets),
+    ("heuresParEmploi", toJson s.heuresParEmploi),
+    ("heuresTotalesMillions", toJson s.heuresTotales),
+    ("heuresParHabitant", toJson s.heuresParHabitant),
+    ("pibParHeure", toJson s.pibParHeure),
+    ("depensesParFonction", Json.mkObj <| Fonction.tous.map fun f => (f.id, toJson (s.depensesF.get f))),
     ("tauxApparentPb", toJson s.tauxApparentPb),
     ("soldePrimaire", toJson s.soldePrimaire),
     ("decesPollutionAir", toJson s.decesPollutionAir),
@@ -257,6 +262,8 @@ def rapportSyntheseJson : Json :=
       Json.mkObj [("id", toJson x.id), ("nom", toJson x.nom)]),
     ("impots", Json.arr <| Impot.tous.toArray.map fun i =>
       Json.mkObj [("id", toJson i.id), ("nom", toJson i.nom)]),
+    ("fonctions", Json.arr <| Fonction.tous.toArray.map fun f =>
+      Json.mkObj [("id", toJson f.id), ("nom", toJson f.nom)]),
     ("proprietes", Json.arr <| Proprietes.toutes.toArray.map fun q =>
       Json.mkObj [("id", toJson q.id), ("titre", toJson q.titre),
         ("description", toJson q.description), ("annee", toJson q.annee)]),

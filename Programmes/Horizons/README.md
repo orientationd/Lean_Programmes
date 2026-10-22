@@ -14,14 +14,13 @@
 |---|---|
 | H-01 Âge légal à 65 ans, 45 annuités | +12 mois (un tiers de salariés exemptés : non modélisé) |
 | H-02 250 000 fonctionnaires non remplacés sur cinq ans | −15,6 Md€ (conversion : 62 500 € par poste et par an) |
-| H-03 Fonds unique d'adaptation au changement climatique | +2 Md€/an, construction |
+| H-03 Fonds unique d'adaptation au changement climatique | +2 Md€/an, logement-environnement |
+| H-04 Deux heures supplémentaires par semaine exonérées | +1,7 % d'heures par emploi (recours 30 %, hypothèse), −0,3 Md€ de cotisations |
 
 ## Non modélisé, faute de montant dans les sources
 
 * Assurance chômage : durée maximale ramenée de 18 à 12 mois (moins de
   50 ans).
-* Exonération de cotisations pour deux heures supplémentaires par semaine
-  (gain annoncé : environ 1 000 €/an au SMIC).
 * Allocation familiale unique de 350 €/mois dès le premier enfant,
   dégressive avec l'impôt sur le revenu ; réduction d'impôt d'environ
   3 000 € pour les familles actives.
