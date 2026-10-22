@@ -488,17 +488,19 @@ def section_resume(D: Donnees, meta) -> list:
                 + "." if D.personnalisee else ""))]
     out.append(P(f"Indicateurs en {a1}, scénario central", "h2"))
     ent = ["Programme", "PIB (Md€)", "Écart de PIB", "Déficit public", "Dette", "Chômage",
-           "Actifs (millions)", "Prélèv. oblig."]
+           "Actifs (M)", "Prélèv. oblig.", "Solde courant"]
     rows = []
     for pid, nom in D.lignes():
         e = D.fin("central", pid)
         ecart = "—" if pid is None else signe((e["pib"] - base["pib"]) * 100 / base["pib"], 2) + NBSP + "%"
         rows.append([nom, md(e["pib"]), ecart, pct_pb(e["deficitPb"]), pct_pb(e["dettePb"], 0),
-                     pct_pb(e["chomagePb"]), nombre(e["actifs"] / 1e6, 2), pct_pb(po_pb(e))])
-    out.append(tableau(ent, rows, [0.27, 0.095, 0.1, 0.1, 0.085, 0.09, 0.13, 0.13],
+                     pct_pb(e["chomagePb"]), nombre(e["actifs"] / 1e6, 2), pct_pb(po_pb(e)),
+                     signe(e["balanceCourantePb"] / 100, 1) + NBSP + "%"])
+    out.append(tableau(ent, rows, [0.24, 0.09, 0.095, 0.095, 0.08, 0.085, 0.085, 0.11, 0.12],
                        surligner_premiere=True))
-    out.append(P("Déficit, dette et prélèvements obligatoires (impôts et cotisations sociales) en % "
-                 "du PIB. Écart de PIB : par rapport au tendanciel, même année, même scénario.", "note"))
+    out.append(P("Déficit, dette, prélèvements obligatoires (impôts et cotisations sociales) et solde des "
+                 "transactions courantes en % du PIB. Écart de PIB : par rapport au tendanciel, même "
+                 "année, même scénario.", "note"))
 
     def ext(cle, variante="central"):
         vals = sorted((cle(D.fin(variante, p["id"])), nom_court(p["nom"])) for p in D.progs)
@@ -759,8 +761,9 @@ def section_effets(D: Donnees) -> list:
            png(barres_effets(D))]
     nm = len(D.moteurs)
     ent = ["Mesure"] + [f"PIB — {m['nom']}" for m in D.moteurs] \
-        + [f"Déficit — {D.nom_moteur(D.standard)}", f"Emplois — {D.nom_moteur(D.standard)}"]
-    larg = [0.42 if nm <= 2 else 0.34] + [(0.58 if nm <= 2 else 0.66) / (nm + 2)] * (nm + 2)
+        + [f"Déficit — {D.nom_moteur(D.standard)}", f"Emplois — {D.nom_moteur(D.standard)}",
+           "Solde courant (Md€)"]
+    larg = [0.40 if nm <= 2 else 0.31] + [(0.60 if nm <= 2 else 0.69) / (nm + 3)] * (nm + 3)
     for p in D.progs:
         par = {(e["moteur"], e["mesure"]): e for e in p["effetsMesures"]}
         rows = []
@@ -769,11 +772,14 @@ def section_effets(D: Donnees) -> list:
             st = par[(D.standard, m["id"])]
             rows.append([f"{m['id']} {court_nom(m['titre'], 70)}"]
                         + [signe(e["pibPb"] / 100, 2) + NBSP + "%" for e in es]
-                        + [signe(st["deficitPb"] / 100, 2), signe(st["emplois"], 0)])
+                        + [signe(st["deficitPb"] / 100, 2), signe(st["emplois"], 0),
+                           signe(st.get("balanceCourante", 0) / 1000, 1)])
         tot = {e["moteur"]: e for e in p["effetTotal"]}
+        e_t = D.fin("central", p["id"])
         rows.append(["Programme complet"]
                     + [signe(tot[mid]["pibPb"] / 100, 2) + NBSP + "%" for mid in mids]
-                    + [signe(tot[D.standard]["deficitPb"] / 100, 2), signe(tot[D.standard]["emplois"], 0)])
+                    + [signe(tot[D.standard]["deficitPb"] / 100, 2), signe(tot[D.standard]["emplois"], 0),
+                       signe((e_t["balanceCourante"] - D.fin("central", None)["balanceCourante"]) / 1000, 1)])
         out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), tableau(ent, rows, larg)]))
     out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). Les mesures d'âge de "
                  "départ, de SMIC et de durée du travail agissent sur le PIB par le volume d'heures ; "
@@ -906,6 +912,9 @@ def section_commerce(D: Donnees) -> list:
              f"nets du reste du monde (−5,3 Md€ en {a0}). La propriété « balance courante non dégradée » "
              "compare le solde courant du programme, en part du PIB, à celui du tendanciel.")]
     for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: e["balanceCommerciale"] / 1000,
+                               "Balance commerciale, biens et services (Md€), scénario central", 0, "")))
+    for g in D.groupes:
         out.append(png(courbes(D, g, lambda e: e["balanceCourantePb"] / 100,
                                "Solde des transactions courantes (% du PIB), scénario central", 1, NBSP + "%")))
     ent = [f"{a1}, scénario central", "Exportations (Md€)", "Importations (Md€)", "Balance commerciale",
@@ -919,6 +928,20 @@ def section_commerce(D: Donnees) -> list:
                      signe(e["balanceCourante"] / 1000, 1), signe(e["balanceCourantePb"] / 100, 2) + NBSP + "%"])
     out.append(Spacer(1, 3))
     out.append(tableau(ent, rows, [0.28, 0.14, 0.14, 0.15, 0.15, 0.14]))
+    # contributions : écart d'exportations et d'importations au tendanciel, par programme
+    ent2 = [f"Écart au tendanciel {a1} (Md€)", "Exportations", "Importations", "Balance commerciale",
+            "Solde courant", "dont tourisme (export.)"]
+    rows2 = []
+    base = D.fin("central", None)
+    for p in D.progs:
+        e = D.fin("central", p["id"])
+        rows2.append([nom_court(p["nom"]), signe((e["exportations"] - base["exportations"]) / 1000, 1),
+                      signe((e["importations"] - base["importations"]) / 1000, 1),
+                      signe((e["balanceCommerciale"] - base["balanceCommerciale"]) / 1000, 1),
+                      signe((e["balanceCourante"] - base["balanceCourante"]) / 1000, 1),
+                      signe((e["recettesTourisme"] - base["recettesTourisme"]) / 1000, 1)])
+    out.append(Spacer(1, 6))
+    out.append(tableau(ent2, rows2, [0.3, 0.13, 0.13, 0.16, 0.13, 0.15]))
     eh, ec = D.fin("petrole-haut", None), D.fin("central", None)
     out.append(P(f"Un Brent à {D.brent('petrole-haut')} $ dégrade le solde courant tendanciel de "
                  f"{nombre((ec['balanceCourante'] - eh['balanceCourante']) / 1000, 0)} Md€ en {a1} "
@@ -1286,9 +1309,9 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_heures(D)
     story.append(CondPageBreak(120 * mm))
     story += section_main_doeuvre(D)
-    story.append(CondPageBreak(120 * mm))
+    story.append(PageBreak())
     story += section_commerce(D)
-    story.append(CondPageBreak(120 * mm))
+    story.append(PageBreak())
     story += section_accidents(D)
     story.append(PageBreak())
     story += section_europe(D)
