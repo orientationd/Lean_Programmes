@@ -142,6 +142,18 @@ la mesure les relève de +2 % et +3 % (variantes faible et forte), soit
 hypothèses à étayer avec Atout France ; le nombre de nuitées n'est pas
 distingué du nombre de visiteurs.
 
+### O-13 — Conduite autonome et indemnisation des taxis
+
+Autorisation de la conduite autonome (FSD). Les ≈ 60 000 titulaires d'une
+licence de taxi sont indemnisés jusqu'à leur retraite : 25 000 €/an en
+moyenne, soit 1,5 Md€/an au départ (montant gardé constant, par prudence,
+alors qu'il décroît avec les départs). L'automatisation du transport de
+personnes est traduite en +0,05 % de PIB et −20 000 emplois de chauffeurs
+(levier `automatisation` ; variante large +0,15 %, −60 000). Hypothèses à
+étayer : nombre de licences actives (préfectures), revenu moyen des
+chauffeurs (Insee, Observatoire du T3P), part du transport de personnes
+dans le PIB.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

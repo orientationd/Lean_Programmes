@@ -79,6 +79,11 @@ def reference2026 : Reference where
     emploisAnnonces := 0
     touristesMilliers := 100000    -- 100 millions de visiteurs internationaux en 2024 (Atout France)
     depenseParTouriste := 710      -- 71 Md€ de recettes du tourisme international 2024 / 100 M (Banque de France)
+    exportations := 980000         -- biens et services ≈ 33 % du PIB (INSEE, ordre de grandeur)
+    importations := 985200         -- exportations − solde biens et services (−64,4 + 59,2 = −5,2 Md€, BdF, 12 mois à sept. 2025)
+    revenusNets := -5300           -- revenus primaires et secondaires nets (BdF, 12 mois à sept. 2025) ; solde courant −10,5 Md€
+    variationImportsAnnuelle := 0
+    robotisationPb := 0
     decesPollutionAir := 40000     -- décès attribuables aux PM2,5 (Santé publique France, 2021)
     parcElectriqueMilliers := 1600 -- voitures 100 % électriques en circulation fin 2025 (Avere-France, ordre de grandeur)
     bornesMilliers := 175          -- points de recharge ouverts au public fin 2025 (Avere-France, ordre de grandeur)
@@ -96,6 +101,7 @@ def reference2026 : Reference where
     "Avere-France, baromètres 2025 : parc électrique et points de recharge publics (ordres de grandeur, à préciser)",
     "INSEE, dépenses des administrations publiques par fonction (COFOG), 2023 : parts appliquées au total 2025",
     "OCDE, heures annuelles travaillées par personne en emploi, France 2023 : 1 494 h",
-    "Atout France, bilan 2024 : 100 millions de visiteurs internationaux ; Banque de France, balance des paiements 2024 : 71 Md€ de recettes de voyages"]
+    "Atout France, bilan 2024 : 100 millions de visiteurs internationaux ; Banque de France, balance des paiements 2024 : 71 Md€ de recettes de voyages",
+    "Banque de France, balance des paiements de septembre 2025 (cumul 12 mois) : biens −64,4 Md€, services +59,2 Md€, revenus −5,3 Md€, transactions courantes −10,5 Md€"]
 
 end Hypotheses

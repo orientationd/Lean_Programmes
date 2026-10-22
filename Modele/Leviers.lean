@@ -117,6 +117,14 @@ inductive Levier where
   ajoutée nationale (80 %). -/
   | accueilTouristique (zones : Int) (coutParZone : Int) (hausseTouristesPm : Int)
       (hausseDepensePm : Int)
+  /-- Robotisation accélérée des services automatisables : `gainPb` de
+  moins de croissance des dépenses de fonctionnement, d'affaires
+  économiques et de santé chaque année, en plus de la tendance. -/
+  | robotisation (gainPb : Int)
+  /-- Automatisation d'une activité (véhicules autonomes, caisses…) :
+  gain de productivité `gainPibPm` sur le niveau du PIB (sans effet
+  d'Okun) et `emploisSupprimes` personnes en moins dans l'emploi. -/
+  | automatisation (gainPibPm : Int) (emploisSupprimes : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -132,7 +140,10 @@ d'Okun (le chômage baisse de `okun × dPib / PIB`), au bénéfice de `cible`. -
 def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Etat :=
   let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
   let dEmploi := if s.pib = 0 then 0 else s.actifs * dPib * H.eco.okunPm / (s.pib * 1000)
-  ajouterEmploi H cible dEmploi { s.ajouterRecettesProrata dRecettes with pib := s.pib + dPib }
+  ajouterEmploi H cible dEmploi
+    { s.ajouterRecettesProrata dRecettes with
+      pib := s.pib + dPib
+      importations := s.importations + appliquerPm dPib H.eco.contenuImportDemandePm }
 
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
 multiplicateur, puis `chocPib`. -/
@@ -216,6 +227,9 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- achat versé une fois ; parc électrique et décès évités dès l'année 0
   | .remplacementVehicules r, s =>
       { s with dette := s.dette + r.cout / 1000000
+               importations := s.importations + r.importsInitialesCts / 100000000
+               variationImportsAnnuelle := s.variationImportsAnnuelle
+                 - r.nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
                parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
                decesPollutionAir := s.decesPollutionAir
                  - r.nombre * H.energie.decesEvitesParMillionVehicules / 1000000 }
@@ -227,7 +241,14 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let s₁ := appliquerDepense H (some .construction) .affairesEconomiques (zones * cout) s
       let s₂ := { s₁ with touristesMilliers := s₁.touristesMilliers + appliquerPm s₁.touristesMilliers hT
                           depenseParTouriste := s₁.depenseParTouriste + appliquerPm s₁.depenseParTouriste hD }
-      chocPib H none (appliquerPm (s₂.recettesTourisme - s₁.recettesTourisme) 800) s₂
+      let dExport := s₂.recettesTourisme - s₁.recettesTourisme
+      chocPib H none (appliquerPm dExport 800) { s₂ with exportations := s₂.exportations + dExport }
+  | .robotisation g, s => { s with robotisationPb := s.robotisationPb + g }
+  | .automatisation g emplois, s =>
+      let s' := ajouterEmploi H none (-emplois) s
+      let dPib := appliquerPm s'.pib g
+      let dRecettes := if s'.pib = 0 then 0 else dPib * s'.recettes / s'.pib
+      { s'.ajouterRecettesProrata dRecettes with pib := s'.pib + dPib }
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)

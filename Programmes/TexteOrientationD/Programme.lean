@@ -37,6 +37,8 @@ Trois mesures :
 * **O-12** — qualité d'accueil des touristes : six zones de rénovation de
   qualité (dont Le Grau-du-Roi), pour accroître la dépense par touriste et
   le nombre de nuitées.
+* **O-13** — autorisation de la conduite autonome (FSD), avec indemnisation
+  des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -124,6 +126,15 @@ visiteurs internationaux et +3 % de dépense par touriste, soit ≈ +3,6 Md€/a
 de recettes touristiques sur 71 Md€. -/
 def zonesTouristiques : Int := 6
 def coutParZone : Int := 150
+
+/-- Conduite autonome : ≈ 60 000 licences de taxi en France (dont 20 000 à
+Paris). Indemnisation jusqu'à la retraite : 25 000 €/an en moyenne
+(hypothèse : perte de revenu et de valeur de licence lissée), soit 1,5 Md€/an
+au départ, décroissant avec les départs en retraite (non modélisé : montant
+constant, prudent). Automatisation du transport de personnes : +0,05 % de
+PIB (hypothèse : 0,3 % de PIB pour taxis, VTC et livraison, 15 % de gain
+de coût) et 20 000 emplois de chauffeurs en moins. -/
+def indemnisationTaxis : Int := 1500
 
 /-! ## Mesures -/
 
@@ -255,13 +266,20 @@ def mesures : List Mesure := [
     leviers := [.accueilTouristique zonesTouristiques coutParZone 20 30]
     variantes := [
       { nom := "effet faible : +1 % de visiteurs, +1 % de dépense", leviers := [.accueilTouristique zonesTouristiques coutParZone 10 10] },
-      { nom := "effet fort : +4 % de visiteurs, +5 % de dépense", leviers := [.accueilTouristique zonesTouristiques coutParZone 40 50] }] }
+      { nom := "effet fort : +4 % de visiteurs, +5 % de dépense", leviers := [.accueilTouristique zonesTouristiques coutParZone 40 50] }] },
+
+  { id := "O-13"
+    titre := "Autorisation de la conduite autonome (FSD) ; indemnisation des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite"
+    source := s!"Texte Orientation D, mesure 13 ; {indemnisationTaxis} M€/an d'indemnisation (60 000 licences × 25 000 €, hypothèse), +0,05 % de PIB et −20 000 emplois de chauffeurs (hypothèses, voir `indemnisationTaxis`)"
+    leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 5 20000]
+    variantes := [
+      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

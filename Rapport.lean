@@ -169,6 +169,10 @@ def etatJson (s : Etat) : Json :=
     ("touristesMilliers", toJson s.touristesMilliers),
     ("depenseParTouriste", toJson s.depenseParTouriste),
     ("recettesTourisme", toJson s.recettesTourisme),
+    ("exportations", toJson s.exportations), ("importations", toJson s.importations),
+    ("balanceCommerciale", toJson s.balanceCommerciale),
+    ("balanceCourante", toJson s.balanceCourante), ("balanceCourantePb", toJson s.balanceCourantePb),
+    ("robotisationPb", toJson s.robotisationPb),
     ("migrationAnnuelleMilliers", toJson s.migrationAnnuelleMilliers),
 
     ("heuresTotalesMillions", toJson s.heuresTotales),

@@ -46,3 +46,18 @@ def dette2035 : Propriete :=
     DetteStabiliseeEn2035 (annee := some 10)
 
 end Proprietes
+
+namespace Proprietes
+open Modele
+
+/-- Le solde des transactions courantes, en part du PIB, n'est pas pire qu'au
+tendanciel (produit en croix). -/
+abbrev BalanceCouranteNonDegradee (_H : Scenario) (a s : Etat) : Prop :=
+  a.balanceCourante * s.pib ≤ s.balanceCourante * a.pib
+
+def balanceCourante : Propriete :=
+  .mk' "balance-courante-non-degradee" "Balance courante non dégradée"
+    "À l'horizon, le solde des transactions courantes rapporté au PIB n'est pas inférieur à celui du tendanciel."
+    BalanceCouranteNonDegradee
+
+end Proprietes

@@ -308,14 +308,17 @@ def total (v : ParFonction) : Int :=
     + v.securiteJustice + v.logementEnvironnement + v.culture + v.interets + v.fonctionnement
     + v.nonVentile
 
-/-- Toutes les fonctions sauf la charge d'intérêts croissent du même taux (pb). -/
-def croitrePrimaires (v : ParFonction) (tauxPb : Int) : ParFonction :=
+/-- Toutes les fonctions sauf la charge d'intérêts croissent du taux `tauxPb` ;
+les fonctions automatisables (services généraux, affaires économiques,
+santé) croissent de `robotisationPb` de moins. -/
+def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) : ParFonction :=
   let g (x : Int) := x + appliquerPb x tauxPb
-  { retraites := g v.retraites, sante := g v.sante, famille := g v.famille
-    enseignement := g v.enseignement, affairesEconomiques := g v.affairesEconomiques
+  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb)
+  { retraites := g v.retraites, sante := r v.sante, famille := g v.famille
+    enseignement := g v.enseignement, affairesEconomiques := r v.affairesEconomiques
     defense := g v.defense, securiteJustice := g v.securiteJustice
     logementEnvironnement := g v.logementEnvironnement, culture := g v.culture
-    interets := v.interets, fonctionnement := g v.fonctionnement, nonVentile := g v.nonVentile }
+    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := g v.nonVentile }
 
 end ParFonction
 
@@ -366,6 +369,19 @@ structure Etat where
   touristesMilliers : Int
   /-- Dépense moyenne d'un touriste international pendant son séjour, €. -/
   depenseParTouriste : Int
+  /-- Exportations de biens et services, M€ (recettes touristiques comprises). -/
+  exportations : Int
+  /-- Importations de biens et services, M€. -/
+  importations : Int
+  /-- Revenus primaires et secondaires nets reçus du reste du monde, M€. -/
+  revenusNets : Int
+  /-- Variation d'importations due aux mesures, M€ par an (flux porté par la
+  projection ; négatif = carburant évité…). -/
+  variationImportsAnnuelle : Int
+  /-- Gains de productivité par robotisation et automatisation des services,
+  pb par an : réduisent la croissance des dépenses de fonctionnement, des
+  affaires économiques et de santé (tendance du scénario + mesures). -/
+  robotisationPb : Int
   /-- Décès annuels attribuables à la pollution de l'air (particules fines). -/
   decesPollutionAir : Int
   /-- Parc de voitures électriques, milliers. -/
@@ -406,6 +422,15 @@ def emploiMaximal (s : Etat) (fricPb : Int) : Int := s.actifs * (10000 - fricPb)
 
 /-- Recettes du tourisme international, M€ (exportations de voyages). -/
 def recettesTourisme (s : Etat) : Int := s.touristesMilliers * s.depenseParTouriste / 1000
+
+/-- Balance commerciale (biens et services), M€. -/
+def balanceCommerciale (s : Etat) : Int := s.exportations - s.importations
+
+/-- Solde des transactions courantes (balance des paiements), M€. -/
+def balanceCourante (s : Etat) : Int := s.balanceCommerciale + s.revenusNets
+
+/-- Solde courant en pb du PIB. -/
+def balanceCourantePb (s : Etat) : Int := ratioPb s.balanceCourante s.pib
 
 /-- Heures travaillées par habitant et par an. -/
 def heuresParHabitant (s : Etat) : Int :=
