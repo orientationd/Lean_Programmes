@@ -1,6 +1,6 @@
 import Programmes.ExempleRelance.Programme
 import Programmes.ExempleConsolidation.Programme
-import Programmes.texte_orientation_d.Programme
+import Programmes.TexteOrientationD.Programme
 import Programmes.LFI.Programme
 import Programmes.PS.Programme
 import Programmes.PCF.Programme
@@ -8,6 +8,7 @@ import Programmes.RN.Programme
 import Programmes.LR.Programme
 import Programmes.Horizons.Programme
 import Programmes.Renaissance.Programme
+import Programmes.Ecologistes.Programme
 
 /-!
 # Registre des programmes
@@ -29,14 +30,15 @@ namespace Programmes
 def tous : List Modele.Programme := [
   ExempleRelance.programme,
   ExempleConsolidation.programme,
-  texte_orientation_d.programme,
+  TexteOrientationD.programme,
   LFI.programme,
   PS.programme,
   PCF.programme,
   RN.programme,
   LR.programme,
   Horizons.programme,
-  Renaissance.programme
+  Renaissance.programme,
+  Ecologistes.programme
 ]
 
 end Programmes

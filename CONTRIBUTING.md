@@ -17,7 +17,7 @@ le dossier (voir README, « Propriété des programmes »).
 
 1. Copier `Programmes/ExempleRelance/` vers `Programmes/<Nom>/`. `<Nom>` est
    un identifiant Lean ASCII : lettres, chiffres et `_`, commençant par une
-   lettre (ex. `texte_orientation_d`).
+   lettre (ex. `TexteOrientationD`).
 2. Mettre son compte GitHub dans `Programmes/<Nom>/PROPRIETAIRES`, un compte
    par ligne. La PR doit être ouverte depuis l'un de ces comptes.
 3. Dans `Programme.lean` : remplacer le namespace et `id := "<Nom>"`,

@@ -695,6 +695,67 @@ def points_moteurs(D: Donnees, champs):
     return fig
 
 
+def barres_effets(D: Donnees):
+    """Écart de PIB en 2035 dû à chaque programme, sous les deux moteurs."""
+    progs = D.progs
+    fig, ax = figure(0.3 * len(progs) + 0.9)
+    pas = 0.8 / max(1, len(D.moteurs))
+    couleurs = [SERIES[0], SERIES[1]]
+    for j, (m, c) in enumerate(zip(D.moteurs, couleurs)):
+        vals = [next(e["pibPb"] for e in p["effetTotal"] if e["moteur"] == m["id"]) / 100 for p in progs]
+        ys = [i + (j - (len(D.moteurs) - 1) / 2) * pas for i in range(len(progs))]
+        ax.barh(ys, vals, height=pas * 0.84, color=c, label=f"Moteur « {m['nom']} »", zorder=3)
+    ax.set_yticks(range(len(progs)), [nom_court(p["nom"]) for p in progs])
+    ax.set_ylim(len(progs) - 0.5, -0.5)
+    ax.tick_params(axis="y", labelcolor=INK2, labelsize=7.5)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", visible=True)
+    ax.axvline(0, color=BASE, lw=0.8, zorder=2)
+    ax.xaxis.set_major_formatter(fmt_axe(1, NBSP + "%"))
+    ax.set_title(f"Écart de PIB au tendanciel en {D.annees[-1]}, programme complet, scénario central")
+    legende(fig, ncol=2)
+    return fig
+
+
+def section_effets(D: Donnees) -> list:
+    a1 = D.annees[-1]
+    mids = [m["id"] for m in D.moteurs]
+    out = [P("Effet de chaque mesure sur la croissance", "h1"),
+           P(f"Chaque mesure est appliquée seule, projetée jusqu'en {a1} au scénario central, et "
+             "comparée au tendanciel : écart de PIB (en % du PIB tendanciel), de déficit (en points "
+             "de PIB) et d'emploi. Les effets ne s'additionnent pas exactement (interactions, arrondis). "
+             "Sous le moteur « demande », une dépense accroît le PIB par le multiplicateur et une "
+             "économie le réduit d'autant ; sous le moteur « offre », une économie pèse moitié moins "
+             "et une baisse de prélèvements relève la croissance potentielle."),
+           png(barres_effets(D))]
+    ent = ["Mesure"] + [f"PIB {m['nom'][:3].lower()}." for m in D.moteurs] \
+        + [f"Déficit {m['nom'][:3].lower()}." for m in D.moteurs] + ["Emplois dem.", "Emplois off."]
+    larg = [0.46, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09]
+    for p in D.progs:
+        par = {(e["moteur"], e["mesure"]): e for e in p["effetsMesures"]}
+        rows = []
+        for m in p["mesures"]:
+            es = [par[(mid, m["id"])] for mid in mids]
+            rows.append([f"{m['id']} {court_nom(m['titre'], 70)}"]
+                        + [signe(e["pibPb"] / 100, 2) + NBSP + "%" for e in es]
+                        + [signe(e["deficitPb"] / 100, 2) for e in es]
+                        + [signe(e["emplois"], 0) for e in es])
+        tot = {e["moteur"]: e for e in p["effetTotal"]}
+        rows.append(["Programme complet"]
+                    + [signe(tot[mid]["pibPb"] / 100, 2) + NBSP + "%" for mid in mids]
+                    + [signe(tot[mid]["deficitPb"] / 100, 2) for mid in mids]
+                    + [signe(tot[mid]["emplois"], 0) for mid in mids])
+        out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), tableau(ent, rows, larg)]))
+    out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). La population active "
+                 "n'entre pas dans le PIB du modèle : une mesure d'âge de départ joue sur l'emploi et le "
+                 "solde, pas sur l'activité (limite connue, voir annexe C).", "note"))
+    return out
+
+
+def court_nom(nom: str, n: int = 34) -> str:
+    return nom if len(nom) <= n else nom[: n - 1] + "…"
+
+
 def section_moteurs(D: Donnees) -> list:
     a1 = D.annees[-1]
     out = [P("Moteurs : deux lectures des mêmes mesures", "h1"),
@@ -858,6 +919,9 @@ def section_annexes(D: Donnees) -> list:
         "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "
         "de la même façon sur tous les programmes et sur le tendanciel ; il ne change pas les "
         "écarts entre eux.",
+        "Offre de travail : la population active et l'emploi n'entrent pas dans le PIB du modèle "
+        "(pas de fonction de production) ; une mesure d'âge de départ change l'emploi et le solde, "
+        "pas l'activité. C'est la prochaine évolution naturelle du socle.",
         "Moteurs : les paramètres du moteur « offre » (demi-multiplicateur sur les économies, "
         "0,1 point de croissance par point de prélèvements obligatoires) sont des ordres de "
         "grandeur à sourcer ; ils encadrent la lecture « demande » plutôt qu'ils ne la remplacent.",
@@ -939,6 +1003,8 @@ def construire(d: dict, sortie: Path, commit: str | None) -> None:
     story += section_natalite(D)
     story.append(PageBreak())
     story += section_air(D)
+    story.append(PageBreak())
+    story += section_effets(D)
     story.append(PageBreak())
     story += section_moteurs(D)
     story.append(CondPageBreak(120 * mm))

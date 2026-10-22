@@ -223,6 +223,24 @@ def horizonSynthese : Nat := 10
 
 def sourcesJson (l : List String) : Json := toJson l
 
+/-- Effet d'une mesure prise isolément : le programme réduit à cette seule
+mesure, projeté `n` années sous le scénario central, comparé au tendanciel
+et au programme complet. Mesure la contribution de chaque mesure à la
+croissance, au solde et à l'emploi. -/
+def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
+  let H := Hypotheses.central
+  let seul : Programme := { p with mesures := [m] }
+  let a := tendancielA M H n
+  let s := seul.resultatA M H n
+  Json.mkObj [
+    ("mesure", toJson m.id), ("moteur", toJson M.id),
+    ("pibPb", toJson (ratioPb (s.pib - a.pib) a.pib)),
+    ("deficitPb", toJson (s.deficitPb - a.deficitPb)),
+    ("dettePb", toJson (s.dettePb - a.dettePb)),
+    ("emplois", toJson (s.emploiTotal - a.emploiTotal)),
+    ("recettes", toJson (s.recettes - a.recettes)),
+    ("depenses", toJson (s.depenses - a.depenses))]
+
 def rapportSyntheseJson : Json :=
   let annee0 := Hypotheses.reference2026.annee
   let scens := Hypotheses.tous
@@ -248,6 +266,15 @@ def rapportSyntheseJson : Json :=
         ("mesures", Json.arr <| p.mesures.toArray.map fun m =>
           Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("debut", toJson m.debut)]),
         ("contrats", toJson ((contrats p).map fun (m, t) => s!"{m} — {t}")),
+        -- effet de chaque mesure seule, à l'horizon de la synthèse, par moteur
+        ("effetsMesures", Json.arr <| (moteurs.toArray.flatMap fun M =>
+          p.mesures.toArray.map fun m => effetMesure M p m horizonSynthese)),
+        ("effetTotal", Json.arr <| moteurs.toArray.map fun M =>
+          let H := Hypotheses.central
+          let a := tendancielA M H horizonSynthese
+          let s := p.resultatA M H horizonSynthese
+          Json.mkObj [("moteur", toJson M.id), ("pibPb", toJson (ratioPb (s.pib - a.pib) a.pib)),
+            ("deficitPb", toJson (s.deficitPb - a.deficitPb)), ("emplois", toJson (s.emploiTotal - a.emploiTotal))]),
         ("engagements", Json.arr <| p.engagements.toArray.map fun e =>
           Json.mkObj [("moteur", toJson e.moteur.id), ("scenario", toJson e.scenario.id),
             ("propriete", toJson e.propriete.id), ("tenu", toJson (engagementTenu p e))]),
