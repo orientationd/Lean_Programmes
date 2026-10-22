@@ -38,7 +38,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     |>.ajouter .retraites surcoutVieillissement)
     |>.ajouter .interets (interets - s.depensesF.interets)
   let depenses := depensesF.total
+  -- population active : tendance hors migrations + part active du solde migratoire
+  let solde := H.demo.soldeMigratoireMilliers + s.migrationAnnuelleMilliers
   let actifs := s.actifs + appliquerPb s.actifs H.demo.croissanceActifsPb
+    + appliquerPm (solde * 1000) H.demo.partActiveMigrantsPm
   -- emploi : suit la population active à chômage constant, puis loi d'Okun
   -- (le chômage baisse de `okun × (croissance − seuil)`)
   let emploiSuivi := if s.actifs = 0 then 0 else s.emploiTotal * actifs / s.actifs
@@ -54,7 +57,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
-      - H.demo.decesMilliers + H.demo.soldeMigratoireMilliers
+      - H.demo.decesMilliers + solde
     actifs := actifs
     parcElectriqueMilliers := s.parcElectriqueMilliers + dParc
     bornesMilliers := s.bornesMilliers + H.energie.bornesTendanciellesMilliers + s.bornesAnnuellesMilliers

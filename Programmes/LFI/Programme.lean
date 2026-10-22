@@ -55,7 +55,7 @@ def page : String :=
 def mesures : List Mesure := [
   { id := "L-01", titre := "Nouvelles lignes de production"
     source := s!"{page} : État 100 M€/an, pôle public bancaire et autres 200 M€/an"
-    leviers := [.depenseSecteur .industrie 100] },
+    leviers := [.depenseSecteur .industrie 100, .annonceEmplois 40000] },
   { id := "L-02", titre := "Service public de la location abordable"
     source := s!"{page} : État 300 M€/an, pôle public bancaire et autres 700 M€/an ; parc public de 1,4 million de véhicules d'ici 2032"
     leviers := [.depenseSecteur .tertiaireMarchand 300] },
@@ -121,13 +121,13 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .enseignement 3600] },
   { id := "L-23", titre := "Plan d'urgence hospitalier, 10 000 postes"
     source := s!"{budget} : 3 Md€/an"
-    leviers := [.depenseSur .sante 3000] },
+    leviers := [.depenseSur .sante 3000, .annonceEmplois 10000] },
   { id := "L-24", titre := "Assurance chômage"
     source := s!"{budget} : 3 Md€/an"
     leviers := [.depenseSur .famille 3000] },
   { id := "L-25", titre := "10 000 postes d'enseignants"
     source := s!"{budget} : 0,5 Md€/an"
-    leviers := [.depenseSur .enseignement 500] }
+    leviers := [.depenseSur .enseignement 500, .annonceEmplois 10000] }
 ]
 
 def programme : Programme where

@@ -61,6 +61,10 @@ logements publics par an, 700 000 rénovations, plan de 200 Md€, 10 000
 places d'EHPAD, 500 000 places de crèche, conscription de neuf mois) n'a
 pas de montant annuel public dans les sources lues.
 
+Objectifs d'emplois annoncés (levier déclaratif `annonceEmplois`, vérifié
+par la propriété « emplois annoncés réalisables ») : plus de 40 000 emplois
+pour le plan automobile, 10 000 soignants, 10 000 enseignants.
+
 ## Ce qui ne l'est pas, faute de montant dans la source
 
 * Sanctions des flottes d'entreprises : seuil d'achat électrique porté à

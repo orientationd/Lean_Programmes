@@ -14,6 +14,7 @@ porte un montant.
 | Mesure | Levier |
 |---|---|
 | RE-01 « Droit au brut » : baisse des cotisations salariales (jusqu'à 250 € net/mois au salaire médian) | −40 Md€/an de cotisations (RMC, 6 octobre 2026) |
+| RE-02 Réforme de l'assurance chômage | objectif déclaré de 100 000 emplois (vérifié par la propriété « emplois annoncés réalisables ») |
 
 Le financement annoncé (« économies sur les dépenses sociales ») n'a pas
 de montant : le modèle montre donc le coût brut de la mesure.
@@ -22,8 +23,7 @@ de montant : le modèle montre donc le coût brut de la mesure.
 
 * Retraite universelle par points (« un euro cotisé ouvre les mêmes
   droits »), sans âge légal, part de capitalisation.
-* « Frein d'urgence » et année blanche sur les dépenses sociales ; réforme
-  de l'assurance chômage (« 100 000 emplois »).
+* « Frein d'urgence » et année blanche sur les dépenses sociales.
 * 13e mois pour tous ; suppression du plafond de 220 heures
   supplémentaires ; « Constitution du travail ».
 * Mutuelle publique à 1 €/jour ; quotas d'immigration votés par le

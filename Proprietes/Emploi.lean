@@ -15,3 +15,20 @@ def chomage : Propriete :=
     ChomageNonDegrade
 
 end Proprietes
+
+namespace Proprietes
+open Modele
+
+/-- Les emplois annoncés par le programme tiennent dans sa population active :
+emploi tendanciel + emplois annoncés ≤ actifs du programme × (1 − chômage
+frictionnel). Un programme qui promet plus d'emplois qu'il n'y a de bras
+(immigration comprise) échoue ici. -/
+abbrev EmploisAnnoncesRealisables (H : Scenario) (a s : Etat) : Prop :=
+  a.emploiTotal + s.emploisAnnonces ≤ s.emploiMaximal H.eco.chomageFrictionnelPb
+
+def emploisAnnonces : Propriete :=
+  .mk' "emplois-annonces-realisables" "Emplois annoncés réalisables"
+    "À l'horizon, l'emploi tendanciel augmenté des emplois que le programme annonce créer ne dépasse pas la population active du programme (politique migratoire comprise) au chômage frictionnel."
+    EmploisAnnoncesRealisables
+
+end Proprietes

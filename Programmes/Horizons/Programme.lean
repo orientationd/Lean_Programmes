@@ -34,7 +34,10 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .logementEnvironnement 2000] },
   { id := "H-04", titre := "Deux heures supplémentaires par semaine exonérées de cotisations"
     source := s!"{emission} : gain d'environ 1 000 €/an au SMIC ; conversion : +2 h sur 35 h = +5,7 % pour les salariés qui les font, recours supposé de 30 % → +1,7 % d'heures par emploi ; exonération : 0,3 Md€/an (hypothèse)"
-    leviers := [.dureeTravail 17, .prelevementSur .cotisations (-300)] }
+    leviers := [.dureeTravail 17, .prelevementSur .cotisations (-300)] },
+  { id := "H-05", titre := "Immigration légale divisée par deux en cinq ans"
+    source := s!"{emission} : « largement inférieur à 200 000 » titres par an ; conversion : solde migratoire réduit de 90 000 par an (moitié du solde 2025 de 176 000, hypothèse : les titres ne sont pas le solde)"
+    leviers := [.migration (-90)] }
 ]
 
 def programme : Programme where

@@ -16,6 +16,7 @@
 | H-02 250 000 fonctionnaires non remplacés sur cinq ans | −15,6 Md€ (conversion : 62 500 € par poste et par an) |
 | H-03 Fonds unique d'adaptation au changement climatique | +2 Md€/an, logement-environnement |
 | H-04 Deux heures supplémentaires par semaine exonérées | +1,7 % d'heures par emploi (recours 30 %, hypothèse), −0,3 Md€ de cotisations |
+| H-05 Immigration légale divisée par deux | solde migratoire −90 000 par an (hypothèse de conversion) ; population et population active suivent |
 
 ## Non modélisé, faute de montant dans les sources
 
@@ -25,8 +26,8 @@
   dégressive avec l'impôt sur le revenu ; réduction d'impôt d'environ
   3 000 € pour les familles actives.
 * Retraite par capitalisation ; « la moitié de l'effort » sur les
-  dépenses sociales, sans montant total ; division par deux de
-  l'immigration légale ; vingtaine d'ordonnances en juillet 2027.
+  dépenses sociales, sans montant total ; vingtaine d'ordonnances en
+  juillet 2027.
 
 Dès qu'un chiffrage est publié, ces propositions pourront être ajoutées
 par PR.

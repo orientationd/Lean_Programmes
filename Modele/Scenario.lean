@@ -42,9 +42,11 @@ structure Demographie where
   decesMilliers : Int
   /-- Solde migratoire par an, milliers. -/
   soldeMigratoireMilliers : Int
-  /-- Évolution tendancielle de la population active, pb par an (hors effet
-  des mesures sur l'âge légal). -/
+  /-- Évolution tendancielle de la population active **hors migrations**, pb
+  par an (vieillissement, taux d'activité ; hors effet des mesures). -/
   croissanceActifsPb : Int
+  /-- Part du solde migratoire qui entre dans la population active, pm. -/
+  partActiveMigrantsPm : Int
   sources : List String
   deriving Repr
 
@@ -177,6 +179,7 @@ abbrev Valide (H : Scenario) : Prop :=
   0 ≤ H.reference.etat.tauxApparentPb ∧ 0 ≤ H.reference.etat.chargeInterets ∧
   0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
   0 ≤ H.demo.decesMilliers ∧ -2000 ≤ H.demo.croissanceActifsPb ∧ H.demo.croissanceActifsPb ≤ 2000 ∧
+  0 ≤ H.demo.partActiveMigrantsPm ∧ H.demo.partActiveMigrantsPm ≤ 1000 ∧
   0 ≤ H.natalite.naissancesMilliers ∧ 0 < H.natalite.icfCentiemes ∧
   0 < H.energie.prixBrentDollars ∧ 0 < H.energie.prixReferenceDollars ∧
   H.energie.effetPibPar10DollarsPb ≤ 0 ∧ -2000 ≤ H.energie.effetPibPar10DollarsPb ∧
