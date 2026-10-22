@@ -135,6 +135,7 @@ class Donnees:
         self.secteurs = d["secteurs"]
         self.impots = d["impots"]
         self.moteurs = d["moteurs"]
+        self.fonctions = d["fonctions"]
         self.standard = d["moteurStandard"]
         self.props = d["proprietes"]
 
@@ -746,14 +747,121 @@ def section_effets(D: Donnees) -> list:
                     + [signe(tot[mid]["deficitPb"] / 100, 2) for mid in mids]
                     + [signe(tot[mid]["emplois"], 0) for mid in mids])
         out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), tableau(ent, rows, larg)]))
-    out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). La population active "
-                 "n'entre pas dans le PIB du modèle : une mesure d'âge de départ joue sur l'emploi et le "
-                 "solde, pas sur l'activité (limite connue, voir annexe C).", "note"))
+    out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). Les mesures d'âge de "
+                 "départ, de SMIC et de durée du travail agissent sur le PIB par le volume d'heures ; "
+                 "les économies et dépenses par l'effet de demande du moteur.", "note"))
     return out
 
 
 def court_nom(nom: str, n: int = 34) -> str:
     return nom if len(nom) <= n else nom[: n - 1] + "…"
+
+
+FONCTIONS_COURT = {"retraites": "Retraites", "sante": "Santé", "famille": "Famille, chômage, exclusion",
+                   "enseignement": "Enseignement, recherche", "affairesEconomiques": "Affaires éco., transports",
+                   "defense": "Défense", "securiteJustice": "Sécurité, justice",
+                   "logementEnvironnement": "Logement, environnement", "culture": "Culture, sport",
+                   "interets": "Charge d'intérêts", "fonctionnement": "Services généraux, coll., UE",
+                   "nonVentile": "Non ventilé"}
+
+
+def structure_fonctions(D: Donnees):
+    e = D.traj("central", None)[0]
+    fs = sorted(D.fonctions, key=lambda f: e["depensesParFonction"][f["id"]], reverse=True)
+    fs = [f for f in fs if e["depensesParFonction"][f["id"]] > 0]
+    vals = [e["depensesParFonction"][f["id"]] / 1000 for f in fs]
+    fig, ax = figure(2.5)
+    ax.barh(range(len(fs)), vals, height=0.58, color=SERIES[0], zorder=3)
+    ax.set_yticks(range(len(fs)), [FONCTIONS_COURT.get(f["id"], f["nom"]) for f in fs])
+    ax.set_ylim(len(fs) - 0.5, -0.5)
+    ax.tick_params(axis="y", labelcolor=INK2, labelsize=7.2)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", visible=True)
+    for k, v in enumerate(vals):
+        ax.annotate(nombre(v, 0), (v, k), xytext=(3, 0), textcoords="offset points",
+                    va="center", fontsize=6.8, color=INK2)
+    ax.set_xlim(0, max(vals) * 1.1)
+    ax.xaxis.set_major_formatter(fmt_axe(0, ""))
+    ax.set_title(f"Dépenses publiques par fonction en {D.annees[0]} (Md€, nomenclature COFOG agrégée)")
+    return fig
+
+
+def section_budget(D: Donnees) -> list:
+    """Décomposition fine du déficit : recettes par impôt et dépenses par
+    fonction, programme contre tendanciel en fin de période."""
+    a0, a1 = D.annees[0], D.annees[-1]
+    out = [P("Décomposition du budget et du déficit", "h1"),
+           P("Les dépenses publiques sont suivies par fonction (nomenclature COFOG agrégée : retraites, "
+             "santé, famille et chômage, enseignement, affaires économiques, défense, sécurité et "
+             "justice, logement et environnement, culture, charge d'intérêts, services généraux). "
+             "Chaque mesure est imputée à sa fonction ; les dépenses tendancielles croissent au même "
+             "rythme hors intérêts, le surcoût du vieillissement allant aux retraites. Le tableau "
+             f"décompose, pour chaque programme, l'écart de déficit en {a1} par rapport au tendanciel "
+             "en écarts de recettes (par prélèvement) et de dépenses (par fonction)."),
+           png(structure_fonctions(D))]
+    base = D.fin("central", None)
+    fs = [f for f in D.fonctions if base["depensesParFonction"][f["id"]] > 0 or any(
+        D.fin("central", p["id"])["depensesParFonction"][f["id"]] != 0 for p in D.progs)]
+    lignes = [("Déficit tendanciel", None)]
+    rows_all = []
+    for p in D.progs:
+        e = D.fin("central", p["id"])
+        rows = [[f"Déficit tendanciel {a1}", md(base["depenses"] - base["recettes"], 1),
+                 pct_pb(base["deficitPb"])]]
+        for i in D.impots:
+            d = e["impots"][i["id"]] - base["impots"][i["id"]]
+            if abs(d) >= 50:
+                rows.append([f"Recettes : {i['nom']}", signe(-d / 1000, 1), ""])
+        d = e["autresRecettes"] - base["autresRecettes"]
+        if abs(d) >= 50:
+            rows.append(["Recettes non fiscales", signe(-d / 1000, 1), ""])
+        for f in fs:
+            d = e["depensesParFonction"][f["id"]] - base["depensesParFonction"][f["id"]]
+            if abs(d) >= 50:
+                rows.append([f"Dépenses : {FONCTIONS_COURT.get(f['id'], f['nom'])}", signe(d / 1000, 1), ""])
+        d_pib = e["pib"] - base["pib"]
+        rows.append([f"Déficit du programme {a1}", md(e["depenses"] - e["recettes"], 1), pct_pb(e["deficitPb"])])
+        rows.append([f"dont effet du PIB sur le ratio (PIB {signe(d_pib * 100 / base['pib'], 2)}{NBSP}%)", "",
+                     signe((e["deficitPb"] - base["deficitPb"]) / 100
+                           - ((e["depenses"] - e["recettes"]) - (base["depenses"] - base["recettes"])) * 100 / base["pib"], 2)])
+        t = tableau(["Écart au tendanciel (Md€ ; déficit creusé = +)", "Md€", "% du PIB"], rows,
+                    [0.6, 0.2, 0.2])
+        out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), t]))
+    out.append(P("Scénario central, moteur « " + echap(D.nom_moteur(D.standard)) + " ». Les recettes "
+                 "incluent l'effet d'activité (au prorata des prélèvements) et les rendements des "
+                 "mesures nets de fuite fiscale ; la charge d'intérêts reflète la dette accumulée. "
+                 "La dernière ligne isole la part de l'écart de ratio due au dénominateur.", "note"))
+    return out
+
+
+def section_heures(D: Donnees) -> list:
+    a0, a1 = D.annees[0], D.annees[-1]
+    e0 = D.traj("central", None)[0]
+    out = [P("Heures travaillées et productivité", "h1"),
+           P(f"Volume annuel d'heures travaillées (personnes en emploi × durée effective, "
+             f"{nombre(e0['heuresParEmploi'])} h par emploi en {a0}, OCDE), heures par habitant et PIB par "
+             "heure travaillée. Les mesures sur l'âge de départ, le SMIC et la durée du travail "
+             "changent le volume d'heures, et le PIB suit à l'élasticité du scénario (65 %, part du "
+             "travail dans la valeur ajoutée) ; les effets de demande modifient le PIB par heure.")]
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: e["heuresTotalesMillions"] / 1000,
+                               "Heures travaillées (milliards d'heures par an), scénario central", 1, "")))
+    ent = [f"{a1}, scénario central", "Heures par emploi", "Heures par habitant", "Heures totales (Md h)",
+           "PIB par heure (€)", "Écart d'heures au tendanciel"]
+    base = D.fin("central", None)
+    rows = [[f"Situation de départ ({a0})", nombre(e0["heuresParEmploi"]), nombre(e0["heuresParHabitant"]),
+             nombre(e0["heuresTotalesMillions"] / 1000, 2), nombre(e0["pibParHeure"]), "—"]]
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        rows.append([nom, nombre(e["heuresParEmploi"]), nombre(e["heuresParHabitant"]),
+                     nombre(e["heuresTotalesMillions"] / 1000, 2), nombre(e["pibParHeure"]),
+                     "—" if pid is None else signe((e["heuresTotalesMillions"] - base["heuresTotalesMillions"]) * 100 / base["heuresTotalesMillions"], 2) + NBSP + "%"])
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.28, 0.13, 0.14, 0.15, 0.14, 0.16]))
+    out.append(P("PIB par heure en euros courants (le PIB du modèle est nominal). Durée du travail : "
+                 "OCDE, heures annuelles par personne en emploi ; la durée tendancielle est supposée "
+                 "constante.", "note"))
+    return out
 
 
 def section_moteurs(D: Donnees) -> list:
@@ -919,9 +1027,9 @@ def section_annexes(D: Donnees) -> list:
         "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "
         "de la même façon sur tous les programmes et sur le tendanciel ; il ne change pas les "
         "écarts entre eux.",
-        "Offre de travail : la population active et l'emploi n'entrent pas dans le PIB du modèle "
-        "(pas de fonction de production) ; une mesure d'âge de départ change l'emploi et le solde, "
-        "pas l'activité. C'est la prochaine évolution naturelle du socle.",
+        "Offre de travail : le PIB suit le volume d'heures travaillées (emploi × durée) à "
+        "l'élasticité de 65 %, pour les mesures d'âge de départ, de SMIC et de durée du travail ; "
+        "le capital et la productivité tendancielle ne sont pas modélisés séparément.",
         "Moteurs : les paramètres du moteur « offre » (demi-multiplicateur sur les économies, "
         "0,1 point de croissance par point de prélèvements obligatoires) sont des ordres de "
         "grandeur à sourcer ; ils encadrent la lecture « demande » plutôt qu'ils ne la remplacent.",
@@ -1003,6 +1111,10 @@ def construire(d: dict, sortie: Path, commit: str | None) -> None:
     story += section_natalite(D)
     story.append(PageBreak())
     story += section_air(D)
+    story.append(PageBreak())
+    story += section_heures(D)
+    story.append(PageBreak())
+    story += section_budget(D)
     story.append(PageBreak())
     story += section_effets(D)
     story.append(PageBreak())

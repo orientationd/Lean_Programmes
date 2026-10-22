@@ -206,6 +206,119 @@ def repartir (v : ParImpot) (d : Int) : ParImpot :=
 
 end ParImpot
 
+/-! ## Fonctions de dépense (nomenclature COFOG agrégée) -/
+
+inductive Fonction where
+  | retraites | sante | famille | enseignement | affairesEconomiques | defense
+  | securiteJustice | logementEnvironnement | culture | interets | fonctionnement | nonVentile
+  deriving Repr, DecidableEq, Inhabited
+
+namespace Fonction
+
+def tous : List Fonction :=
+  [.retraites, .sante, .famille, .enseignement, .affairesEconomiques, .defense,
+   .securiteJustice, .logementEnvironnement, .culture, .interets, .fonctionnement, .nonVentile]
+
+def nom : Fonction → String
+  | .retraites => "Retraites"
+  | .sante => "Santé"
+  | .famille => "Famille, chômage, exclusion, handicap"
+  | .enseignement => "Enseignement et recherche"
+  | .affairesEconomiques => "Affaires économiques, transports"
+  | .defense => "Défense"
+  | .securiteJustice => "Sécurité et justice"
+  | .logementEnvironnement => "Logement, environnement, transition"
+  | .culture => "Culture, sport, loisirs"
+  | .interets => "Charge d'intérêts"
+  | .fonctionnement => "Services généraux, collectivités, UE"
+  | .nonVentile => "Non ventilé"
+
+def id : Fonction → String
+  | .retraites => "retraites"
+  | .sante => "sante"
+  | .famille => "famille"
+  | .enseignement => "enseignement"
+  | .affairesEconomiques => "affairesEconomiques"
+  | .defense => "defense"
+  | .securiteJustice => "securiteJustice"
+  | .logementEnvironnement => "logementEnvironnement"
+  | .culture => "culture"
+  | .interets => "interets"
+  | .fonctionnement => "fonctionnement"
+  | .nonVentile => "nonVentile"
+
+/-- Secteur qui reçoit les emplois d'une dépense de cette fonction (sinon :
+au prorata des secteurs). -/
+def secteur : Fonction → Option Secteur
+  | .sante | .enseignement | .defense | .securiteJustice | .culture => some .tertiaireNonMarchand
+  | .logementEnvironnement => some .construction
+  | _ => none
+
+end Fonction
+
+/-- Un montant par fonction, M€. -/
+structure ParFonction where
+  retraites : Int
+  sante : Int
+  famille : Int
+  enseignement : Int
+  affairesEconomiques : Int
+  defense : Int
+  securiteJustice : Int
+  logementEnvironnement : Int
+  culture : Int
+  interets : Int
+  fonctionnement : Int
+  nonVentile : Int
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParFonction
+
+def get (v : ParFonction) : Fonction → Int
+  | .retraites => v.retraites
+  | .sante => v.sante
+  | .famille => v.famille
+  | .enseignement => v.enseignement
+  | .affairesEconomiques => v.affairesEconomiques
+  | .defense => v.defense
+  | .securiteJustice => v.securiteJustice
+  | .logementEnvironnement => v.logementEnvironnement
+  | .culture => v.culture
+  | .interets => v.interets
+  | .fonctionnement => v.fonctionnement
+  | .nonVentile => v.nonVentile
+
+def ajouter (v : ParFonction) (f : Fonction) (d : Int) : ParFonction :=
+  match f with
+  | .retraites => { v with retraites := v.retraites + d }
+  | .sante => { v with sante := v.sante + d }
+  | .famille => { v with famille := v.famille + d }
+  | .enseignement => { v with enseignement := v.enseignement + d }
+  | .affairesEconomiques => { v with affairesEconomiques := v.affairesEconomiques + d }
+  | .defense => { v with defense := v.defense + d }
+  | .securiteJustice => { v with securiteJustice := v.securiteJustice + d }
+  | .logementEnvironnement => { v with logementEnvironnement := v.logementEnvironnement + d }
+  | .culture => { v with culture := v.culture + d }
+  | .interets => { v with interets := v.interets + d }
+  | .fonctionnement => { v with fonctionnement := v.fonctionnement + d }
+  | .nonVentile => { v with nonVentile := v.nonVentile + d }
+
+def total (v : ParFonction) : Int :=
+  v.retraites + v.sante + v.famille + v.enseignement + v.affairesEconomiques + v.defense
+    + v.securiteJustice + v.logementEnvironnement + v.culture + v.interets + v.fonctionnement
+    + v.nonVentile
+
+/-- Toutes les fonctions sauf la charge d'intérêts croissent du même taux (pb). -/
+def croitrePrimaires (v : ParFonction) (tauxPb : Int) : ParFonction :=
+  let g (x : Int) := x + appliquerPb x tauxPb
+  { retraites := g v.retraites, sante := g v.sante, famille := g v.famille
+    enseignement := g v.enseignement, affairesEconomiques := g v.affairesEconomiques
+    defense := g v.defense, securiteJustice := g v.securiteJustice
+    logementEnvironnement := g v.logementEnvironnement, culture := g v.culture
+    interets := v.interets, fonctionnement := g v.fonctionnement, nonVentile := g v.nonVentile }
+
+end ParFonction
+
 /-! ## État -/
 
 structure Etat where
@@ -215,10 +328,9 @@ structure Etat where
   impots : ParImpot
   /-- Recettes non fiscales (ventes, revenus de la propriété…), M€. -/
   autresRecettes : Int
-  /-- Dépenses des administrations publiques, M€, charge d'intérêts comprise. -/
-  depenses : Int
-  /-- Intérêts versés sur la dette, M€ (inclus dans `depenses`). -/
-  chargeInterets : Int
+  /-- Dépenses des administrations publiques par fonction, M€, charge
+  d'intérêts comprise (fonction `interets`). -/
+  depensesF : ParFonction
   /-- Taux d'intérêt apparent de la dette (intérêts / dette de l'année
   précédente), pb. Il converge vers le taux marginal du scénario au rythme
   du refinancement. -/
@@ -241,6 +353,8 @@ structure Etat where
   actifs : Int
   /-- Personnes en emploi, par secteur. -/
   emploi : ParSecteur
+  /-- Durée annuelle effective du travail par personne en emploi, heures. -/
+  heuresParEmploi : Int
   /-- Décès annuels attribuables à la pollution de l'air (particules fines). -/
   decesPollutionAir : Int
   /-- Parc de voitures électriques, milliers. -/
@@ -258,6 +372,24 @@ namespace Etat
 
 /-- Recettes des administrations publiques, M€. -/
 def recettes (s : Etat) : Int := s.impots.total + s.autresRecettes
+
+/-- Dépenses des administrations publiques, M€, charge d'intérêts comprise. -/
+def depenses (s : Etat) : Int := s.depensesF.total
+
+/-- Intérêts versés sur la dette, M€. -/
+def chargeInterets (s : Etat) : Int := s.depensesF.interets
+
+/-- Heures travaillées dans l'année, millions d'heures. -/
+def heuresTotales (s : Etat) : Int := s.emploi.total * s.heuresParEmploi / 1000000
+
+/-- PIB par heure travaillée, €. -/
+def pibParHeure (s : Etat) : Int :=
+  if s.heuresTotales ≤ 0 then 0 else s.pib * 1000000 / (s.emploi.total * s.heuresParEmploi / 1000)
+    / 1000
+
+/-- Heures travaillées par habitant et par an. -/
+def heuresParHabitant (s : Etat) : Int :=
+  if s.populationMilliers ≤ 0 then 0 else s.emploi.total * s.heuresParEmploi / (s.populationMilliers * 1000)
 
 /-- Déficit public, M€ (positif = déficit). -/
 def deficit (s : Etat) : Int := s.depenses - s.recettes

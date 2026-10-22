@@ -106,12 +106,14 @@ début de carrière, part des métiers exposés).
 
 ### O-08 — Impôt sur les sociétés au taux le plus bas de l'UE
 
-Taux hongrois de 9 % (variante : taux irlandais de 12,5 %). Rendement
-statique −37,7 Md€/an sur 58,9 Md€ d'IS 2025 ; le modèle applique sa
-fuite fiscale (retour d'assiette) et, sous le moteur « offre », un
-surcroît de croissance lié à la baisse des prélèvements. L'effet
-d'attractivité (relocalisation de bases fiscales) n'est pas modélisé
-au-delà de cela.
+Taux hongrois de 9 %. Le levier `impotSocietes` calcule la perte statique
+au prorata des taux (−37,7 Md€/an sur 58,9 Md€ d'IS 2025) puis applique
+un **coefficient de retour d'assiette** : la part de cette perte récupérée
+grâce aux bénéfices rapatriés et aux sociétés qui reviennent ou
+s'implantent. Valeur centrale 30 % (hypothèse fondée sur une élasticité
+de l'assiette au taux de l'ordre de 1) ; variantes 0 %, 60 % et taux
+irlandais de 12,5 %. Sous le moteur « offre », la baisse des prélèvements
+relève en outre la croissance.
 
 ### O-09 — Démission indemnisée
 

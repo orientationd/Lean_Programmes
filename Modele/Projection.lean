@@ -34,9 +34,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- appliqué à la dette de fin d'année précédente (effet boule de neige)
   let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
   let interets := s.dette * taux / 10000
-  let primaires := s.depensesPrimaires
-  let depenses :=
-    primaires + appliquerPb primaires H.eco.croissanceDepensesPb + surcoutVieillissement + interets
+  let depensesF := ((s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb)
+    |>.ajouter .retraites surcoutVieillissement)
+    |>.ajouter .interets (interets - s.depensesF.interets)
+  let depenses := depensesF.total
   let actifs := s.actifs + appliquerPb s.actifs H.demo.croissanceActifsPb
   -- emploi : suit la population active à chômage constant, puis loi d'Okun
   -- (le chômage baisse de `okun × (croissance − seuil)`)
@@ -48,8 +49,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     pib := pib
     impots := impots
     autresRecettes := autresRecettes
-    depenses := depenses
-    chargeInterets := interets
+    depensesF := depensesF
     tauxApparentPb := taux
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm

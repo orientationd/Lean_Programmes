@@ -15,7 +15,7 @@ open Modele
 def mesures : List Mesure := [
   { id := "C-01", titre := "Revue des dépenses de fonctionnement"
     source := "Exemple fictif, §1"
-    leviers := [.economie 35000] },
+    leviers := [.economieSur .fonctionnement 35000] },
   { id := "C-02", titre := "Recul de l'âge légal à 65 ans"
     source := "Exemple fictif, §2"
     leviers := [.ageLegal 12] },
@@ -27,7 +27,7 @@ def mesures : List Mesure := [
     leviers := [.transition 12 6000] },
   { id := "C-05", titre := "Sous-indexation temporaire des prestations"
     source := "Exemple fictif, §5"
-    leviers := [.economie 10000] }
+    leviers := [.economieSur .famille 10000] }
 ]
 
 open Hypotheses in

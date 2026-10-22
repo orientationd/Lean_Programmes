@@ -22,11 +22,12 @@ La source ne publie pas de chiffrage global.
 | E-06 Justice : 26 000 postes sur dix ans | — | +1,56 Md€ (60 000 € par poste, hypothèse) |
 | E-07 Salaires des enseignants +15 %, chercheurs +10 % | — | +10 Md€ (hypothèses de masse salariale) |
 | E-08 AAH +250 €/mois | — | +3,9 Md€ (1,3 million d'allocataires, hypothèse) |
+| E-09 32 heures dans les métiers pénibles ou de nuit | p. 57 | −1,3 % d'heures par emploi (15 % des salariés, hypothèse) |
 
 ## Non modélisé, faute de montant dans les sources lues
 
 * Garantie d'autonomie à 50 % du SMIC net dès 18 ans, en remplacement du
-  RSA ; 32 heures dans les métiers pénibles ou de nuit ; congé climatique.
+  RSA ; congé climatique.
 * ISF climatique, tranche d'IR à 60 % au-delà de 250 000 €, CSG
   progressive, TVA verte, TTF à 0,7 %, taxe sur les billets d'avion,
   héritage (deux tranches supplémentaires), suppression des exonérations

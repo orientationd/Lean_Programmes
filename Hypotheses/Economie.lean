@@ -11,6 +11,10 @@ pour 24 mois selon les chiffres gouvernementaux de la réforme de 2023 (via
 IFRAP), soit 570 à 740 M€ par mois ; valeur centrale retenue (auparavant
 1 500 M€, valeur provisoire surestimée).
 `elasticiteChomageSmicPm` reste une valeur jouet, à sourcer.
+`elasticitePibHeuresPm` = 650 : part du travail dans la valeur ajoutée
+(INSEE, comptes nationaux, ≈ 65 %), prise comme élasticité du PIB au
+volume d'heures travaillées à capital donné. `tauxISPb` = 2 500 : taux
+normal de l'IS de 25 % depuis 2022.
 `tauxMarginalPb` : taux auquel la dette nouvelle et refinancée est émise
 (OAT 10 ans autour de 3,3 % fin 2025, hypothèse) ; `deriveTauxPb` : le
 taux apparent (1,87 % en 2025, INSEE) y converge d'environ 20 pb par an,
@@ -39,6 +43,8 @@ def centrale : Economie where
   tauxMarginalPb := 330
   deriveTauxPb := 20
   actifsParMoisAgeLegal := 30000
+  elasticitePibHeuresPm := 650
+  tauxISPb := 2500
   coutParPbPlus65 := 180
   baisseEmissionsPm := 30
   sources := ["À COMPLÉTER"]
@@ -58,6 +64,8 @@ def croissanceBasse : Economie where
   tauxMarginalPb := 380
   deriveTauxPb := 25
   actifsParMoisAgeLegal := 30000
+  elasticitePibHeuresPm := 650
+  tauxISPb := 2500
   coutParPbPlus65 := 180
   baisseEmissionsPm := 20
   sources := ["À COMPLÉTER"]
@@ -77,6 +85,8 @@ def croissanceHaute : Economie where
   tauxMarginalPb := 300
   deriveTauxPb := 20
   actifsParMoisAgeLegal := 30000
+  elasticitePibHeuresPm := 650
+  tauxISPb := 2500
   coutParPbPlus65 := 180
   baisseEmissionsPm := 40
   sources := ["À COMPLÉTER"]
