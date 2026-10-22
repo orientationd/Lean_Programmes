@@ -60,6 +60,11 @@ travail : `dureeTravail variationPm` (le PIB suit le volume d'heures).
 Taux de l'IS : `impotSocietes tauxPb retourAssiettePm`, avec un
 coefficient de retour d'assiette explicite.
 
+Objectifs d'emplois et immigration : `annonceEmplois n` enregistre un
+objectif déclaré (sans effet sur le modèle ; la propriété « emplois
+annoncés réalisables » vérifie qu'il tient dans la population active),
+`migration deltaMilliersParAn` modifie le solde migratoire.
+
 Tous les programmes sont évalués sous tous les **moteurs**
 (`Hypotheses/Moteurs.lean` : « demande » et « offre ») ; un engagement
 précise son moteur (`Engagement.sous Moteurs.standard H q`). Une propriété

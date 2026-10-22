@@ -99,6 +99,15 @@ inductive Levier where
   récupérée par les bénéfices rapatriés ou relocalisés (entreprises
   revenues ou nouvellement implantées). -/
   | impotSocietes (tauxPb : Int) (retourAssiettePm : Int)
+  /-- Politique migratoire : écart de solde migratoire net, milliers par an
+  (négatif = moins d'entrées). Population et population active suivent
+  (part active des migrants du scénario). -/
+  | migration (deltaMilliersParAn : Int)
+  /-- Objectif d'emplois annoncé par le programme pour cette mesure
+  (personnes). Déclaratif : n'agit pas sur le modèle, mais la propriété
+  « emplois annoncés réalisables » vérifie que la somme des objectifs tient
+  dans la population active du programme. -/
+  | annonceEmplois (emplois : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -204,6 +213,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .prelevementSur i r, s => appliquerPrelevement M H i r s
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
+  | .migration d, s => { s with migrationAnnuelleMilliers := s.migrationAnnuelleMilliers + d }
+  | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)
         { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }

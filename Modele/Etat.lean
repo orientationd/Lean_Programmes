@@ -355,6 +355,13 @@ structure Etat where
   emploi : ParSecteur
   /-- Durée annuelle effective du travail par personne en emploi, heures. -/
   heuresParEmploi : Int
+  /-- Écart de solde migratoire dû aux mesures, milliers par an (flux porté
+  par la projection, positif = plus d'entrées nettes). -/
+  migrationAnnuelleMilliers : Int
+  /-- Emplois que le programme annonce créer (objectif déclaré, cumulé),
+  personnes. Sans effet sur le modèle : sert à vérifier que l'objectif
+  tient dans la population active. -/
+  emploisAnnonces : Int
   /-- Décès annuels attribuables à la pollution de l'air (particules fines). -/
   decesPollutionAir : Int
   /-- Parc de voitures électriques, milliers. -/
@@ -386,6 +393,12 @@ def heuresTotales (s : Etat) : Int := s.emploi.total * s.heuresParEmploi / 10000
 def pibParHeure (s : Etat) : Int :=
   if s.heuresTotales ≤ 0 then 0 else s.pib * 1000000 / (s.emploi.total * s.heuresParEmploi / 1000)
     / 1000
+
+/-- Emplois en équivalent temps plein (1 607 h), personnes. -/
+def emploisEtp (s : Etat) : Int := s.emploi.total * s.heuresParEmploi / 1607
+
+/-- Emploi maximal compatible avec le chômage frictionnel `fricPb`, personnes. -/
+def emploiMaximal (s : Etat) (fricPb : Int) : Int := s.actifs * (10000 - fricPb) / 10000
 
 /-- Heures travaillées par habitant et par an. -/
 def heuresParHabitant (s : Etat) : Int :=

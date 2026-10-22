@@ -22,7 +22,10 @@ open Modele
 def mesures : List Mesure := [
   { id := "RE-01", titre := "« Droit au brut » : baisse des cotisations salariales, jusqu'à 250 € net par mois au salaire médian"
     source := "G. Attal, RMC, 6 octobre 2026 : coût estimé 40 Md€/an, financement non précisé ; imputé aux cotisations sociales"
-    leviers := [.prelevementSur .cotisations (-40000)] }
+    leviers := [.prelevementSur .cotisations (-40000)] },
+  { id := "RE-02", titre := "Réforme de l'assurance chômage « qui incite au travail »"
+    source := "attalpresident.fr/programme (via Votons 2027) : « 100 000 emplois supplémentaires » ; sans montant : seul l'objectif d'emplois est enregistré"
+    leviers := [.annonceEmplois 100000] }
 ]
 
 def programme : Programme where

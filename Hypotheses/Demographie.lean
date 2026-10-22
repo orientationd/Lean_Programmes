@@ -16,10 +16,12 @@ def centrale : Demographie where
   partPlus65Pb := 2350
   decesMilliers := 651
   soldeMigratoireMilliers := 176
-  croissanceActifsPb := 10
+  croissanceActifsPb := -23        -- hors migrations : +0,1 %/an au total − 176 000 × 60 % ≈ −73 000/an
+  partActiveMigrantsPm := 600
   sources := [
     "Décès 651 000 et solde migratoire +176 000 en 2025 (INSEE, bilan démographique 2025)",
-    "Population active : +0,1 %/an, ordre de grandeur de la projection INSEE 2022 hors réforme (30 194 milliers en 2030) ; l'effet de l'âge légal passe par les mesures",
+    "Population active : +0,1 %/an au total, ordre de grandeur de la projection INSEE 2022 hors réforme (30 194 milliers en 2030) ; l'effet de l'âge légal passe par les mesures",
+    "Part active des migrants : ≈ 60 % du solde migratoire en âge de travailler et actif (INSEE, immigrés et descendants d'immigrés, 2023 : taux d'activité des immigrés 15-64 ans ≈ 68 %, part des 15-64 ans dans les entrées ≈ 85 %)",
     "Part des 65 ans et plus à l'horizon : hypothèse (22,2 % au 1er janvier 2026)"]
 
 def vieillissementRapide : Demographie where
@@ -28,7 +30,8 @@ def vieillissementRapide : Demographie where
   partPlus65Pb := 2450
   decesMilliers := 670
   soldeMigratoireMilliers := 140
-  croissanceActifsPb := 0
+  croissanceActifsPb := -26        -- hors migrations : population active stable − 140 000 × 60 %
+  partActiveMigrantsPm := 600
   sources := ["Variante : hypothèses à sourcer (projections de population INSEE 2021-2070)"]
 
 def toutes : List Demographie := [centrale, vieillissementRapide]

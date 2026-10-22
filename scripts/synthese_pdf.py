@@ -864,6 +864,45 @@ def section_heures(D: Donnees) -> list:
     return out
 
 
+def section_main_doeuvre(D: Donnees) -> list:
+    """Population active, immigration, emplois annoncés : la promesse tient-elle dans les bras disponibles ?"""
+    a0, a1 = D.annees[0], D.annees[-1]
+    var = D.var["central"]
+    fr = var["chomageFrictionnelPb"]
+    base = D.fin("central", None)
+    e0 = D.traj("central", None)[0]
+    out = [P("Population active, immigration et emplois annoncés", "h1"),
+           P("Un programme ne peut pas créer plus d'emplois qu'il n'y a de personnes pour les occuper. "
+             "La population active suit la démographie hors migrations (vieillissement, taux "
+             f"d'activité), le solde migratoire ({nombre(var['soldeMigratoireMilliers'])} 000 par an, dont "
+             f"{nombre(var['partActiveMigrantsPm'] / 10)}{NBSP}% d'actifs) corrigé de la politique migratoire du "
+             "programme, et l'âge de départ. L'emploi maximal est celui qu'autorise le chômage frictionnel "
+             f"({pct_pb(fr)}). La propriété « emplois annoncés réalisables » exige que l'emploi tendanciel plus "
+             "les emplois que le programme annonce créer tiennent sous ce maximum.")]
+    ent = [f"{a1}, scénario central", "Actifs (M)", "Solde migr. /an", "Emploi max. (M)", "Emplois annoncés",
+           "Marge (milliers)", "ETP (M)", "Réalisable"]
+    rows = [[f"Situation de départ ({a0})", nombre(e0["actifs"] / 1e6, 2), nombre(var["soldeMigratoireMilliers"] * 1000),
+             nombre(e0["actifs"] * (10000 - fr) / 1e10, 2), "—",
+             nombre((e0["actifs"] * (10000 - fr) // 10000 - e0["emploiTotal"]) / 1000), nombre(e0["emploisEtp"] / 1e6, 2), ""]]
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        maxi = e["actifs"] * (10000 - fr) // 10000
+        marge = maxi - base["emploiTotal"] - e["emploisAnnonces"]
+        rows.append([nom, nombre(e["actifs"] / 1e6, 2),
+                     nombre((var["soldeMigratoireMilliers"] + e["migrationAnnuelleMilliers"]) * 1000),
+                     nombre(maxi / 1e6, 2), nombre(e["emploisAnnonces"]) if e["emploisAnnonces"] else "—",
+                     signe(marge / 1000, 0), nombre(e["emploisEtp"] / 1e6, 2),
+                     "" if pid is None else ("✓" if marge >= 0 else "✗")])
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.25, 0.09, 0.11, 0.11, 0.12, 0.11, 0.09, 0.12], surligner_premiere=True))
+    out.append(P("Marge = emploi maximal du programme − emploi tendanciel − emplois annoncés. Une marge "
+                 "négative signifie que le programme repose sur plus de bras qu'il n'en aura : il lui "
+                 "faudrait relever le taux d'activité, l'immigration ou l'âge de départ. ETP : équivalents "
+                 "temps plein à 1 607 h. Les emplois annoncés sont ceux que les programmes déclarent "
+                 "(levier `annonceEmplois`) ; ils n'agissent pas sur le modèle.", "note"))
+    return out
+
+
 def section_moteurs(D: Donnees) -> list:
     a1 = D.annees[-1]
     out = [P("Moteurs : deux lectures des mêmes mesures", "h1"),
@@ -1113,6 +1152,8 @@ def construire(d: dict, sortie: Path, commit: str | None) -> None:
     story += section_air(D)
     story.append(PageBreak())
     story += section_heures(D)
+    story.append(CondPageBreak(120 * mm))
+    story += section_main_doeuvre(D)
     story.append(PageBreak())
     story += section_budget(D)
     story.append(PageBreak())

@@ -75,6 +75,8 @@ def reference2026 : Reference where
     actifs := 31834000             -- population active BIT 2025 (INSEE)
     emploi := emploi2025           -- chômage BIT 7,9 % fin 2025 (INSEE)
     heuresParEmploi := 1494        -- heures annuelles par personne en emploi, 2023 (OCDE)
+    migrationAnnuelleMilliers := 0
+    emploisAnnonces := 0
     decesPollutionAir := 40000     -- décès attribuables aux PM2,5 (Santé publique France, 2021)
     parcElectriqueMilliers := 1600 -- voitures 100 % électriques en circulation fin 2025 (Avere-France, ordre de grandeur)
     bornesMilliers := 175          -- points de recharge ouverts au public fin 2025 (Avere-France, ordre de grandeur)

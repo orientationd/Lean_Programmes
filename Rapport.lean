@@ -163,6 +163,10 @@ def etatJson (s : Etat) : Json :=
     ("autresRecettes", toJson s.autresRecettes),
     ("chargeInterets", toJson s.chargeInterets),
     ("heuresParEmploi", toJson s.heuresParEmploi),
+    ("emploisEtp", toJson s.emploisEtp),
+    ("emploisAnnonces", toJson s.emploisAnnonces),
+    ("migrationAnnuelleMilliers", toJson s.migrationAnnuelleMilliers),
+
     ("heuresTotalesMillions", toJson s.heuresTotales),
     ("heuresParHabitant", toJson s.heuresParHabitant),
     ("pibParHeure", toJson s.pibParHeure),
@@ -302,6 +306,9 @@ def rapportSyntheseJson : Json :=
         ("effetPibPar10DollarsPb", toJson H.energie.effetPibPar10DollarsPb),
         ("decesEvitesParMillionVehicules", toJson H.energie.decesEvitesParMillionVehicules),
         ("vehiculesParBorne", toJson H.energie.vehiculesParBorne),
+        ("chomageFrictionnelPb", toJson H.eco.chomageFrictionnelPb),
+        ("soldeMigratoireMilliers", toJson H.demo.soldeMigratoireMilliers),
+        ("partActiveMigrantsPm", toJson H.demo.partActiveMigrantsPm),
         ("moteurs", Json.mkObj <| moteurs.map fun M =>
           (M.id, Json.mkObj [
             ("tendanciel", Json.arr <| (trajectoire M H horizonSynthese (etatDepart H)).toArray.map etatJson),
