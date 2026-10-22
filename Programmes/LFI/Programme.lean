@@ -6,11 +6,19 @@ import Proprietes
 # La France insoumise — Mélenchon 2027 (extraits)
 
 Transcription **partielle et non officielle** de melenchon2027.fr
-(consulté le 21 octobre 2026) : le plan d'investissement productif
-« Automobile » (L-01 à L-09) et deux mesures phares de *L'Avenir en
-commun* 2025 (L-10 retraite à 60 ans, L-11 SMIC à 1 600 € net). Les
-mesures automobiles reprennent chacune une ligne du tableau « Les
-investissements supplémentaires », en millions d'euros par an.
+(consulté le 21 octobre 2026) et du « budget rectificatif » 2027 présenté
+par J.-L. Mélenchon et É. Coquerel le 14 octobre 2026 (Public Sénat,
+France Épargne) : le plan d'investissement productif « Automobile »
+(L-01 à L-09), deux mesures phares de *L'Avenir en commun* 2025 (L-10
+retraite à 60 ans, L-11 SMIC à 1 600 € net) et les recettes et dépenses
+chiffrées du budget rectificatif (L-12 à L-25 : 83,5 Md€ de recettes et
+54,6 Md€ de dépenses détaillées, sur 106,4 et 81,7 annoncés). Les mesures
+automobiles reprennent chacune une ligne du tableau « Les investissements
+supplémentaires », en millions d'euros par an.
+
+Le budget rectificatif 2027 retient le retour à 62 ans (9 Md€) ; le
+programme vise 60 ans : c'est l'objectif du programme qui est modélisé
+(L-10), sa première étape étant comprise dedans.
 
 Seule la colonne **État** est imputée aux dépenses publiques. La colonne
 « pôle public bancaire et autres » relève d'acteurs hors administrations
@@ -38,6 +46,9 @@ namespace Programmes.LFI
 open Modele
 
 /-- Référence commune des mesures. -/
+def budget : String :=
+  "Budget rectificatif 2027 de LFI, 14 octobre 2026 (Public Sénat, France Épargne)"
+
 def page : String :=
   "melenchon2027.fr/programme/plans-investissement/automobile, tableau « Les investissements supplémentaires »"
 
@@ -74,13 +85,55 @@ def mesures : List Mesure := [
     leviers := [.ageLegal (-48)] },
   { id := "L-11", titre := "SMIC porté à 1 600 € net"
     source := "L'Avenir en commun 2025 (melenchon2027.fr, « SMIC à 1600 € net »). Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +11,0 %"
-    leviers := [.revalorisationSmic 1100] }
+    leviers := [.revalorisationSmic 1100] },
+  { id := "L-12", titre := "ISF climatique"
+    source := s!"{budget} : 10 Md€/an"
+    leviers := [.prelevementSur .autres 10000] },
+  { id := "L-13", titre := "Suppression de la flat tax (PFU)"
+    source := s!"{budget} : 9 Md€/an, imputés à l'impôt sur le revenu"
+    leviers := [.prelevementSur .ir 9000] },
+  { id := "L-14", titre := "Taxe Zucman sur les patrimoines de plus de 100 M€"
+    source := s!"{budget} : 15 Md€/an"
+    leviers := [.prelevementSur .autres 15000] },
+  { id := "L-15", titre := "Réforme des droits de succession (exonération sous 150 000 €, barème sur l'ensemble des transmissions reçues)"
+    source := s!"{budget} : 20 Md€/an"
+    leviers := [.prelevementSur .autres 20000] },
+  { id := "L-16", titre := "Rabot des niches fiscales (pacte Dutreil, crédit d'impôt recherche…)"
+    source := s!"{budget} : 22 Md€/an, imputés pour moitié à l'IS et pour moitié aux autres impôts (répartition : hypothèse)"
+    leviers := [.prelevementSur .impotSocietes 11000, .prelevementSur .autres 11000] },
+  { id := "L-17", titre := "Taxes sur les rachats d'actions et les transactions financières"
+    source := s!"{budget} : 7,5 Md€/an"
+    leviers := [.prelevementSur .autres 7500] },
+  { id := "L-18", titre := "Rémunération des agents publics"
+    source := s!"{budget} : 17 Md€/an"
+    leviers := [.depenseSecteur .tertiaireNonMarchand 17000] },
+  { id := "L-19", titre := "Garantie d'autonomie de 1 337 €/mois pour les jeunes"
+    source := s!"{budget} : 9,5 Md€/an"
+    leviers := [.depense 9500] },
+  { id := "L-20", titre := "Action climatique"
+    source := s!"{budget} : 10 Md€/an ; réduction d'émissions non chiffrée par la source, emplois dans la construction (hypothèse)"
+    leviers := [.depenseSecteur .construction 10000] },
+  { id := "L-21", titre := "Indexation des pensions et prestations, APL +10 %"
+    source := s!"{budget} : 8 Md€/an"
+    leviers := [.depense 8000] },
+  { id := "L-22", titre := "Gratuité des cantines"
+    source := s!"{budget} : 3,6 Md€/an"
+    leviers := [.depenseSecteur .tertiaireNonMarchand 3600] },
+  { id := "L-23", titre := "Plan d'urgence hospitalier, 10 000 postes"
+    source := s!"{budget} : 3 Md€/an"
+    leviers := [.depenseSecteur .tertiaireNonMarchand 3000] },
+  { id := "L-24", titre := "Assurance chômage"
+    source := s!"{budget} : 3 Md€/an"
+    leviers := [.depense 3000] },
+  { id := "L-25", titre := "10 000 postes d'enseignants"
+    source := s!"{budget} : 0,5 Md€/an"
+    leviers := [.depenseSecteur .tertiaireNonMarchand 500] }
 ]
 
 def programme : Programme where
   id := "LFI"
   nom := "La France insoumise — Mélenchon 2027 (extraits)"
-  description := "Transcription partielle et non officielle : plan d'investissement productif « Automobile » (1,37 Md€/an de dépenses de l'État, 3,1 Md€/an du pôle public bancaire et d'autres acteurs), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025)."
+  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025), recettes (83,5 Md€ détaillées sur 106,4) et dépenses (54,6 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026."
   mainteneurs := ["@orientationd"]
   source := "https://melenchon2027.fr/programme/plans-investissement/automobile/ (consulté le 21 octobre 2026)"
   mesures := mesures
