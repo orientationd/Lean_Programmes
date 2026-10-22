@@ -40,10 +40,10 @@ def programme : Programme where
   mesures := mesures
   engagements :=
     -- « Sous TOUTES les hypothèses du dépôt, le ratio dette/PIB est meilleur qu'au tendanciel. »
-    tous.map (fun H => ⟨H, Proprietes.dette⟩) ++
+    tous.map (fun H => Engagement.sous Moteurs.standard (H) Proprietes.dette) ++
     -- « Avec une croissance forte et la clause dérogatoire, le déficit respecte le plafond. »
     -- (L'engagement initial visait le cadre actuel ; il ne tient plus depuis
     -- que le modèle compte la charge d'intérêts : 3,09 % contre 3 %.)
-    [⟨scenario Demo.centrale Eco.croissanceHaute Droit.clauseDerogatoire, Proprietes.deficit⟩]
+    [Engagement.sous Moteurs.standard (scenario Demo.centrale Eco.croissanceHaute Droit.clauseDerogatoire) Proprietes.deficit]
 
 end Programmes.ExempleConsolidation

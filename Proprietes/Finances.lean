@@ -23,3 +23,26 @@ def dette : Propriete :=
     DetteNonDegradee
 
 end Proprietes
+
+namespace Proprietes
+open Modele
+
+/-- Déficit public sous 3 % du PIB, dix ans après le départ (2035). -/
+abbrev DeficitSous3En2035 (_H : Scenario) (_tendanciel s : Etat) : Prop :=
+  100 * s.deficit ≤ 3 * s.pib
+
+def deficit2035 : Propriete :=
+  .mk' "deficit-3pct-2035" "Déficit sous 3 % en 2035"
+    "Dix ans après le départ, le déficit public ne dépasse pas 3 % du PIB (critère de Maastricht), quel que soit le cadre juridique."
+    DeficitSous3En2035 (annee := some 10)
+
+/-- Dette/PIB en 2035 au plus égale à celle de départ (produit en croix). -/
+abbrev DetteStabiliseeEn2035 (H : Scenario) (_tendanciel s : Etat) : Prop :=
+  s.dette * H.reference.etat.pib ≤ H.reference.etat.dette * s.pib
+
+def dette2035 : Propriete :=
+  .mk' "dette-stabilisee-2035" "Dette/PIB stabilisée en 2035"
+    "Dix ans après le départ, le ratio dette/PIB n'est pas supérieur à celui de l'année de départ."
+    DetteStabiliseeEn2035 (annee := some 10)
+
+end Proprietes

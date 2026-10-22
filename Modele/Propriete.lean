@@ -21,6 +21,9 @@ structure Propriete where
   /-- `tient H tendanciel avecProgramme` -/
   tient : Scenario → Etat → Etat → Prop
   dec : ∀ H a b, Decidable (tient H a b)
+  /-- Année d'évaluation, comptée depuis l'année de départ ; `none` =
+  horizon du scénario. Permet « déficit sous 3 % en 2035 ». -/
+  annee : Option Nat := none
 
 instance (p : Propriete) (H : Scenario) (a b : Etat) : Decidable (p.tient H a b) :=
   p.dec H a b
@@ -28,8 +31,12 @@ instance (p : Propriete) (H : Scenario) (a b : Etat) : Decidable (p.tient H a b)
 /-- Constructeur qui infère l'instance de décidabilité. -/
 def Propriete.mk' (id titre description : String)
     (tient : Scenario → Etat → Etat → Prop)
-    [inst : ∀ H a b, Decidable (tient H a b)] : Propriete :=
-  ⟨id, titre, description, tient, inst⟩
+    [inst : ∀ H a b, Decidable (tient H a b)] (annee : Option Nat := none) : Propriete :=
+  ⟨id, titre, description, tient, inst, annee⟩
+
+/-- Année à laquelle la propriété est évaluée sous le scénario `H`. -/
+def Propriete.horizon (p : Propriete) (H : Scenario) : Nat :=
+  p.annee.getD H.horizon
 
 /-- Évaluation calculable (utilisée par le rapport). -/
 def Propriete.evaluer (p : Propriete) (H : Scenario) (a b : Etat) : Bool :=

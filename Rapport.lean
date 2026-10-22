@@ -58,19 +58,22 @@ def fmtCoef (pm : Int) : String :=
 /-! ## Calculs -/
 
 structure Evaluation where
+  moteur : Moteur
   scenario : Scenario
   tendanciel : Etat
   avec : Etat
+  /-- Chaque propriété est évaluée à son année propre (`Propriete.horizon`). -/
   resultats : List (Propriete × Bool)
 
-def evaluer (p : Programme) (H : Scenario) : Evaluation :=
-  let a := tendanciel H
-  let s := p.resultat H
-  { scenario := H, tendanciel := a, avec := s
-    resultats := Proprietes.toutes.map fun q => (q, q.evaluer H a s) }
+def evaluer (M : Moteur) (p : Programme) (H : Scenario) : Evaluation :=
+  { moteur := M, scenario := H, tendanciel := tendanciel M H, avec := p.resultat M H
+    resultats := Proprietes.toutes.map fun q => (q, decide (p.Verifie M H q)) }
 
 def engagementTenu (p : Programme) (e : Engagement) : Bool :=
-  e.propriete.evaluer e.scenario (tendanciel e.scenario) (p.resultat e.scenario)
+  decide (p.Verifie e.moteur e.scenario e.propriete)
+
+def moteurs : List Moteur := Hypotheses.Moteurs.tous
+def standard : Moteur := Hypotheses.Moteurs.standard
 
 /-- Contrats des mesures : (mesure, titre). Ils sont prouvés par
 construction : un contrat faux empêche la compilation. -/
@@ -161,13 +164,18 @@ def etatJson (s : Etat) : Json :=
     ("chargeInterets", toJson s.chargeInterets),
     ("tauxApparentPb", toJson s.tauxApparentPb),
     ("soldePrimaire", toJson s.soldePrimaire),
+    ("decesPollutionAir", toJson s.decesPollutionAir),
+    ("parcElectriqueMilliers", toJson s.parcElectriqueMilliers),
+    ("bornesMilliers", toJson s.bornesMilliers),
     ("operationsFinancieres", toJson s.operationsFinancieres),
     ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
     ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]
 
 def rapportJson : Json :=
   Json.mkObj [
-    ("version", toJson (1 : Nat)),
+    ("version", toJson (2 : Nat)),
+    ("moteurs", Json.arr <| moteurs.toArray.map fun M =>
+      Json.mkObj [("id", toJson M.id), ("nom", toJson M.nom), ("description", toJson M.description)]),
     ("scenarios", Json.arr <| Hypotheses.tous.toArray.map fun H =>
       Json.mkObj [("id", toJson H.id), ("demo", toJson H.demo.id),
         ("natalite", toJson H.natalite.id), ("eco", toJson H.eco.id),
@@ -175,20 +183,20 @@ def rapportJson : Json :=
         ("horizon", toJson H.horizon)]),
     ("proprietes", Json.arr <| Proprietes.toutes.toArray.map fun q =>
       Json.mkObj [("id", toJson q.id), ("titre", toJson q.titre),
-        ("description", toJson q.description)]),
+        ("description", toJson q.description), ("annee", toJson q.annee)]),
     ("programmes", Json.arr <| Programmes.tous.toArray.map fun p =>
       Json.mkObj [
         ("id", toJson p.id), ("nom", toJson p.nom),
         ("nbMesures", toJson p.mesures.length),
-        ("evaluations", Json.arr <| Hypotheses.tous.toArray.map fun H =>
-          let ev := evaluer p H
+        ("evaluations", Json.arr <| (moteurs.toArray.flatMap fun M => Hypotheses.tous.toArray.map fun H =>
+          let ev := evaluer M p H
           Json.mkObj [
-            ("scenario", toJson H.id),
+            ("moteur", toJson M.id), ("scenario", toJson H.id),
             ("tendanciel", etatJson ev.tendanciel),
             ("programme", etatJson ev.avec),
-            ("proprietes", Json.mkObj <| ev.resultats.map fun (q, b) => (q.id, toJson b))]),
+            ("proprietes", Json.mkObj <| ev.resultats.map fun (q, b) => (q.id, toJson b))])),
         ("engagements", Json.arr <| p.engagements.toArray.map fun e =>
-          Json.mkObj [("scenario", toJson e.scenario.id),
+          Json.mkObj [("moteur", toJson e.moteur.id), ("scenario", toJson e.scenario.id),
             ("propriete", toJson e.propriete.id),
             ("tenu", toJson (engagementTenu p e))]),
         ("contrats", Json.arr <| (contrats p).toArray.map fun (m, t) =>
@@ -215,6 +223,24 @@ def horizonSynthese : Nat := 10
 
 def sourcesJson (l : List String) : Json := toJson l
 
+/-- Effet d'une mesure prise isolément : le programme réduit à cette seule
+mesure, projeté `n` années sous le scénario central, comparé au tendanciel
+et au programme complet. Mesure la contribution de chaque mesure à la
+croissance, au solde et à l'emploi. -/
+def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
+  let H := Hypotheses.central
+  let seul : Programme := { p with mesures := [m] }
+  let a := tendancielA M H n
+  let s := seul.resultatA M H n
+  Json.mkObj [
+    ("mesure", toJson m.id), ("moteur", toJson M.id),
+    ("pibPb", toJson (ratioPb (s.pib - a.pib) a.pib)),
+    ("deficitPb", toJson (s.deficitPb - a.deficitPb)),
+    ("dettePb", toJson (s.dettePb - a.dettePb)),
+    ("emplois", toJson (s.emploiTotal - a.emploiTotal)),
+    ("recettes", toJson (s.recettes - a.recettes)),
+    ("depenses", toJson (s.depenses - a.depenses))]
+
 def rapportSyntheseJson : Json :=
   let annee0 := Hypotheses.reference2026.annee
   let scens := Hypotheses.tous
@@ -224,24 +250,41 @@ def rapportSyntheseJson : Json :=
     ("annees", toJson ((List.range (horizonSynthese + 1)).map (annee0 + ·))),
     ("horizonProprietes", toJson Hypotheses.horizon),
     ("nbScenarios", toJson scens.length),
+    ("moteurs", Json.arr <| moteurs.toArray.map fun M =>
+      Json.mkObj [("id", toJson M.id), ("nom", toJson M.nom), ("description", toJson M.description)]),
+    ("moteurStandard", toJson standard.id),
     ("secteurs", Json.arr <| Secteur.tous.toArray.map fun x =>
       Json.mkObj [("id", toJson x.id), ("nom", toJson x.nom)]),
     ("impots", Json.arr <| Impot.tous.toArray.map fun i =>
       Json.mkObj [("id", toJson i.id), ("nom", toJson i.nom)]),
     ("proprietes", Json.arr <| Proprietes.toutes.toArray.map fun q =>
-      Json.mkObj [("id", toJson q.id), ("titre", toJson q.titre)]),
+      Json.mkObj [("id", toJson q.id), ("titre", toJson q.titre),
+        ("description", toJson q.description), ("annee", toJson q.annee)]),
     ("programmes", Json.arr <| Programmes.tous.toArray.map fun p =>
       Json.mkObj [("id", toJson p.id), ("nom", toJson p.nom),
         ("description", toJson p.description), ("nbMesures", toJson p.mesures.length),
         ("mesures", Json.arr <| p.mesures.toArray.map fun m =>
           Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("debut", toJson m.debut)]),
         ("contrats", toJson ((contrats p).map fun (m, t) => s!"{m} — {t}")),
+        -- effet de chaque mesure seule, à l'horizon de la synthèse, par moteur
+        ("effetsMesures", Json.arr <| (moteurs.toArray.flatMap fun M =>
+          p.mesures.toArray.map fun m => effetMesure M p m horizonSynthese)),
+        ("effetTotal", Json.arr <| moteurs.toArray.map fun M =>
+          let H := Hypotheses.central
+          let a := tendancielA M H horizonSynthese
+          let s := p.resultatA M H horizonSynthese
+          Json.mkObj [("moteur", toJson M.id), ("pibPb", toJson (ratioPb (s.pib - a.pib) a.pib)),
+            ("deficitPb", toJson (s.deficitPb - a.deficitPb)), ("emplois", toJson (s.emploiTotal - a.emploiTotal))]),
         ("engagements", Json.arr <| p.engagements.toArray.map fun e =>
-          Json.mkObj [("scenario", toJson e.scenario.id), ("propriete", toJson e.propriete.id),
-            ("tenu", toJson (engagementTenu p e))]),
-        ("matrice", Json.mkObj <| Proprietes.toutes.map fun q =>
-          (q.id, toJson (scens.filter fun H =>
-            q.evaluer H (tendanciel H) (p.resultat H)).length))]),
+          Json.mkObj [("moteur", toJson e.moteur.id), ("scenario", toJson e.scenario.id),
+            ("propriete", toJson e.propriete.id), ("tenu", toJson (engagementTenu p e))]),
+        -- par moteur : nombre de scénarios où chaque propriété tient, et statut au scénario central
+        ("matrice", Json.mkObj <| moteurs.map fun M =>
+          (M.id, Json.mkObj <| Proprietes.toutes.map fun q =>
+            (q.id, toJson (scens.filter fun H => decide (p.Verifie M H q)).length))),
+        ("central", Json.mkObj <| moteurs.map fun M =>
+          (M.id, Json.mkObj <| Proprietes.toutes.map fun q =>
+            (q.id, toJson (decide (p.Verifie M Hypotheses.central q)))))]),
     ("variantes", Json.arr <| Hypotheses.variantesSynthese.toArray.map fun (vid, nom, H) =>
       Json.mkObj [("id", toJson vid), ("nom", toJson nom), ("scenario", toJson H.id),
         ("natalite", toJson H.natalite.description), ("energie", toJson H.energie.description),
@@ -250,9 +293,13 @@ def rapportSyntheseJson : Json :=
         ("prixBrentDollars", toJson H.energie.prixBrentDollars),
         ("prixReferenceDollars", toJson H.energie.prixReferenceDollars),
         ("effetPibPar10DollarsPb", toJson H.energie.effetPibPar10DollarsPb),
-        ("tendanciel", Json.arr <| (trajectoire H horizonSynthese (etatDepart H)).toArray.map etatJson),
-        ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
-          (p.id, Json.arr <| (p.trajectoire H horizonSynthese 0 (etatDepart H)).toArray.map etatJson))]),
+        ("decesEvitesParMillionVehicules", toJson H.energie.decesEvitesParMillionVehicules),
+        ("vehiculesParBorne", toJson H.energie.vehiculesParBorne),
+        ("moteurs", Json.mkObj <| moteurs.map fun M =>
+          (M.id, Json.mkObj [
+            ("tendanciel", Json.arr <| (trajectoire M H horizonSynthese (etatDepart H)).toArray.map etatJson),
+            ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
+              (p.id, Json.arr <| (p.trajectoire M H horizonSynthese 0 (etatDepart H)).toArray.map etatJson))]))]),
     ("hypotheses", Json.mkObj [
       ("reference", Json.mkObj [("description", toJson Hypotheses.reference2026.description),
         ("sources", sourcesJson Hypotheses.reference2026.sources)]),
@@ -293,37 +340,38 @@ def rapportMarkdown : String := Id.run do
   -- Engagements
   out := out.push "## Engagements revendiqués"
   out := out.push ""
-  out := out.push (ligne ["Programme", "Scénario", "Propriété", "Tenu"])
-  out := out.push (separateur 4)
+  out := out.push (ligne ["Programme", "Moteur", "Scénario", "Propriété", "Tenu"])
+  out := out.push (separateur 5)
   let tousIds := scens.map (·.id)
   for p in Programmes.tous do
-    for q in props do
-      let es := p.engagements.filter (·.propriete.id == q.id)
-      let couverts := (es.map (·.scenario.id)).eraseDups
-      if !es.isEmpty && tousIds.all couverts.contains then
-        -- engagement universel : une seule ligne
-        let casses := es.filter fun e => !engagementTenu p e
-        let detail := if casses.isEmpty then coche true
-          else s!"{coche false} ({", ".intercalate (casses.map (·.scenario.id))})"
-        out := out.push (ligne [p.id, s!"**tous** ({nS})", q.id, detail])
-      else
-        for e in es do
-          out := out.push (ligne [p.id, e.scenario.id, q.id, coche (engagementTenu p e)])
+    for M in moteurs do
+      for q in props do
+        let es := p.engagements.filter fun e => e.propriete.id == q.id && e.moteur.id == M.id
+        let couverts := (es.map (·.scenario.id)).eraseDups
+        if !es.isEmpty && tousIds.all couverts.contains then
+          -- engagement universel : une seule ligne
+          let casses := es.filter fun e => !engagementTenu p e
+          let detail := if casses.isEmpty then coche true
+            else s!"{coche false} ({", ".intercalate (casses.map (·.scenario.id))})"
+          out := out.push (ligne [p.id, M.id, s!"**tous** ({nS})", q.id, detail])
+        else
+          for e in es do
+            out := out.push (ligne [p.id, M.id, e.scenario.id, q.id, coche (engagementTenu p e)])
   out := out.push ""
 
-  -- Synthèse
-  out := out.push "## Synthèse : scénarios où la propriété tient"
-  out := out.push ""
-  out := out.push (ligne ("Programme" :: props.map (·.id)))
-  out := out.push (separateur (props.length + 1))
-  for p in Programmes.tous do
-    let evs := scens.map (evaluer p)
-    let cellules := props.map fun q =>
-      let n := (evs.filter fun ev =>
-        ev.resultats.any fun (q', b) => q'.id == q.id && b).length
-      s!"{n}/{nS}"
-    out := out.push (ligne (p.id :: cellules))
-  out := out.push ""
+  -- Synthèse par moteur
+  for M in moteurs do
+    out := out.push s!"## Synthèse, moteur « {M.nom} » : scénarios où la propriété tient"
+    out := out.push ""
+    out := out.push M.description
+    out := out.push ""
+    out := out.push (ligne ("Programme" :: props.map (·.id)))
+    out := out.push (separateur (props.length + 1))
+    for p in Programmes.tous do
+      let cellules := props.map fun q =>
+        s!"{(scens.filter fun H => decide (p.Verifie M H q)).length}/{nS}"
+      out := out.push (ligne (p.id :: cellules))
+    out := out.push ""
 
   -- Détail par programme
   for p in Programmes.tous do
@@ -331,22 +379,22 @@ def rapportMarkdown : String := Id.run do
     out := out.push ""
     out := out.push p.description
     out := out.push ""
-    out := out.push "<details><summary>Propriétés par scénario</summary>"
+    out := out.push s!"<details><summary>Propriétés par scénario (moteur « {standard.nom} »)</summary>"
     out := out.push ""
     out := out.push (ligne ("Scénario" :: props.map (·.id)))
     out := out.push (separateur (props.length + 1))
     for H in scens do
-      let ev := evaluer p H
+      let ev := evaluer standard p H
       out := out.push (ligne (H.id :: ev.resultats.map fun (_, b) => coche b))
     out := out.push ""
     out := out.push "</details>"
     out := out.push ""
-    out := out.push "<details><summary>Indicateurs à l'horizon (tendanciel → programme)</summary>"
+    out := out.push s!"<details><summary>Indicateurs à l'horizon, moteur « {standard.nom} » (tendanciel → programme)</summary>"
     out := out.push ""
     out := out.push (ligne ["Scénario", "Déficit % PIB", "Dette % PIB", "Chômage %", "Émissions Mt"])
     out := out.push (separateur 5)
     for H in scens do
-      let ev := evaluer p H
+      let ev := evaluer standard p H
       let a := ev.tendanciel
       let s := ev.avec
       out := out.push (ligne [H.id,

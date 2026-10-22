@@ -1,4 +1,5 @@
 import Modele.Scenario
+import Modele.Moteur
 import Modele.Logement
 import Modele.Automobile
 
@@ -76,6 +77,13 @@ inductive Levier where
   déroule hors des administrations publiques et n'est pas modélisée (choix
   prudent), pas plus que les remboursements au-delà de l'horizon. -/
   | pretEtat (montantAnnuel : Int)
+  /-- Aide à l'achat de voitures électriques : `vehiculesParAn` véhicules
+  aidés par an à `primeEuros` chacun. Dépense annuelle ; le parc électrique
+  croît d'autant chaque année (effet d'aubaine non modélisé). -/
+  | aideAchatElectrique (vehiculesParAn : Int) (primeEuros : Int)
+  /-- Déploiement de points de recharge publics : `bornesParAn` par an à
+  `coutParBorne` € (dépense annuelle, emplois dans la construction). -/
+  | deploiementBornes (bornesParAn : Int) (coutParBorne : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -102,20 +110,26 @@ def effetDemande (H : Scenario) (cible : Option Secteur) (impulsion : Int) (s : 
 def appliquerDepense (H : Scenario) (cible : Option Secteur) (montant : Int) (s : Etat) : Etat :=
   effetDemande H cible montant { s with depenses := s.depenses + montant }
 
-/-- Prélèvement nouveau (rendement statique `r`, négatif pour une baisse) sur
-l'impôt `i`. Le rendement est réduit de la fuite fiscale ; le multiplicateur
-fiscal est pris égal à la moitié du multiplicateur de dépense. -/
-def appliquerPrelevement (H : Scenario) (i : Impot) (r : Int) (s : Etat) : Etat :=
-  let rendement := r - appliquerPm r H.eco.fuiteFiscalePm
-  effetDemande H none (-(r / 2)) { s with impots := s.impots.ajouter i rendement }
+/-- Économie de dépense : l'impulsion négative est pondérée par le moteur. -/
+def appliquerEconomie (M : Moteur) (H : Scenario) (montant : Int) (s : Etat) : Etat :=
+  effetDemande H none (-(appliquerPm montant M.multiplicateurEconomiesPm))
+    { s with depenses := s.depenses - montant }
 
-/-- Interprétation d'un levier sous un scénario. -/
-def Levier.appliquer (H : Scenario) : Levier → Etat → Etat
+/-- Prélèvement nouveau (rendement statique `r`, négatif pour une baisse) sur
+l'impôt `i`. Le rendement est réduit de la fuite fiscale ; l'impulsion de
+demande est pondérée par le moteur (moitié du multiplicateur de dépense dans
+le moteur standard). -/
+def appliquerPrelevement (M : Moteur) (H : Scenario) (i : Impot) (r : Int) (s : Etat) : Etat :=
+  let rendement := r - appliquerPm r H.eco.fuiteFiscalePm
+  effetDemande H none (-(appliquerPm r M.multiplicateurPrelevementsPm))
+    { s with impots := s.impots.ajouter i rendement }
+
+/-- Interprétation d'un levier sous un moteur et un scénario. -/
+def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depense m, s => appliquerDepense H none m s
-  | .economie m, s =>
-      effetDemande H none (-m) { s with depenses := s.depenses - m }
-  | .prelevement r, s => appliquerPrelevement H .autres r s
-  | .baissePrelevement c, s => appliquerPrelevement H .autres (-c) s
+  | .economie m, s => appliquerEconomie M H m s
+  | .prelevement r, s => appliquerPrelevement M H .autres r s
+  | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
       appliquerDepense H none (e * s.populationMilliers / 1000) s
   -- le chômage augmente de `hausse × élasticité` : autant d'emplois en moins
@@ -139,9 +153,20 @@ def Levier.appliquer (H : Scenario) : Levier → Etat → Etat
   -- en issue.
   | .amendeSRU _, s => s
   | .depensePonctuelle m, s => { s with dette := s.dette + m }
-  | .remplacementVehicules r, s => { s with dette := s.dette + r.cout / 1000000 }
-  | .prelevementSur i r, s => appliquerPrelevement H i r s
+  -- achat versé une fois ; parc électrique et décès évités dès l'année 0
+  | .remplacementVehicules r, s =>
+      { s with dette := s.dette + r.cout / 1000000
+               parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
+               decesPollutionAir := s.decesPollutionAir
+                 - r.nombre * H.energie.decesEvitesParMillionVehicules / 1000000 }
+  | .prelevementSur i r, s => appliquerPrelevement M H i r s
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
+  | .aideAchatElectrique n prime, s =>
+      appliquerDepense H none (n * prime / 1000000)
+        { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }
+  | .deploiementBornes n cout, s =>
+      appliquerDepense H (some .construction) (n * cout / 1000000)
+        { s with bornesAnnuellesMilliers := s.bornesAnnuellesMilliers + n / 1000 }
 
 end Modele

@@ -134,13 +134,19 @@ class Donnees:
         self.groupes = [self.progs[i:i + taille] for i in range(0, len(self.progs), taille)]
         self.secteurs = d["secteurs"]
         self.impots = d["impots"]
+        self.moteurs = d["moteurs"]
+        self.standard = d["moteurStandard"]
+        self.props = d["proprietes"]
 
-    def traj(self, variante: str, prog: str | None) -> list[dict]:
-        v = self.var[variante]
+    def traj(self, variante: str, prog: str | None, moteur: str | None = None) -> list[dict]:
+        v = self.var[variante]["moteurs"][moteur or self.standard]
         return v["tendanciel"] if prog is None else v["programmes"][prog]
 
-    def fin(self, variante: str, prog: str | None) -> dict:
-        return self.traj(variante, prog)[-1]
+    def fin(self, variante: str, prog: str | None, moteur: str | None = None) -> dict:
+        return self.traj(variante, prog, moteur)[-1]
+
+    def nom_moteur(self, mid: str) -> str:
+        return next(m["nom"] for m in self.moteurs if m["id"] == mid)
 
     def brent(self, variante: str) -> int:
         return self.var[variante]["prixBrentDollars"]
@@ -422,13 +428,23 @@ def puces(items):
 # Sections
 # ---------------------------------------------------------------------------
 
-def table_proprietes(D: Donnees) -> Table:
+def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool = False) -> Table:
+    """Par programme et propriété : statut au scénario central (✓/✗) et nombre
+    de scénarios où la propriété tient, sous un moteur."""
     n = D.d["nbScenarios"]
-    props = D.d["proprietes"]
+    mid = moteur or D.standard
+    props = D.props
     ent = [f"Programme (sur {n} scénarios)"] + [q["titre"] for q in props]
-    rows = [[nom_court(p["nom"])] + [f"{p['matrice'][q['id']]} / {n}" for q in props]
-            for p in D.progs]
-    return tableau(ent, rows, [0.32] + [0.68 / len(props)] * len(props))
+
+    def cellule(p, q):
+        nb = p["matrice"][mid][q["id"]]
+        if not avec_central:
+            return f"{nb} / {n}"
+        ok = p["central"][mid][q["id"]]
+        return f"{'✓' if ok else '✗'}  {nb}/{n}"
+
+    rows = [[nom_court(p["nom"])] + [cellule(p, q) for q in props] for p in D.progs]
+    return tableau(ent, rows, [0.2] + [0.8 / len(props)] * len(props))
 
 
 def section_resume(D: Donnees, meta) -> list:
@@ -485,11 +501,12 @@ def section_resume(D: Donnees, meta) -> list:
         "et le PIB par habitant : les enfants nés d'ici là n'arrivent pas sur le marché du travail "
         "avant l'horizon.",
     ])
-    out.append(P("Propriétés partagées", "h2"))
-    out.append(table_proprietes(D))
-    out.append(P(f"Nombre de scénarios (démographie × économie × pétrole × cadre juridique) où la "
-                 f"propriété tient, à l'horizon de {D.d['horizonProprietes']} ans. Détail page "
-                 "« Propriétés et engagements ».", "note"))
+    out.append(P(f"Propriétés partagées, moteur « {D.nom_moteur(D.standard)} »", "h2"))
+    out.append(table_proprietes(D, avec_central=True))
+    out.append(P(f"✓/✗ : statut au scénario central ; puis nombre de scénarios (démographie × "
+                 f"économie × pétrole × cadre juridique) où la propriété tient, à l'horizon de "
+                 f"{D.d['horizonProprietes']} ans ou à l'année propre à la propriété (2035). "
+                 "Résultats sous l'autre moteur : page « Moteurs ».", "note"))
     out.append(P("Comment lire ce document", "h2"))
     out += puces([
         "Chaque programme est une liste de mesures traduites en leviers communs (dépense, "
@@ -653,6 +670,158 @@ def section_natalite(D: Donnees) -> list:
     return out
 
 
+def points_moteurs(D: Donnees, champs):
+    """Valeur en 2035 selon le moteur : un point par moteur et par ligne."""
+    lignes = D.lignes()
+    fig, axes = figure(0.24 * len(lignes) + 0.9, 1, len(champs), sharey=True)
+    couleurs = [SERIES[0], SERIES[1]]
+    for ax, (champ, titre, dec, suffixe, tr) in zip(axes, champs):
+        for k, (pid, _nom) in enumerate(lignes):
+            vals = [tr(D.fin("central", pid, m["id"])[champ]) for m in D.moteurs]
+            ax.plot([min(vals), max(vals)], [k, k], color=BASE, lw=1.2, zorder=2)
+            for m, val, c in zip(D.moteurs, vals, couleurs):
+                ax.plot([val], [k], "o", ms=5.5, color=c, mec="white", mew=1.0, zorder=3,
+                        label=f"Moteur « {m['nom']} »" if k == 0 else None)
+        ax.set_title(titre, fontsize=8)
+        ax.grid(axis="y", visible=False)
+        ax.grid(axis="x", visible=True)
+        ax.xaxis.set_major_formatter(fmt_axe(dec, suffixe))
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.set_ylim(len(lignes) - 0.5, -0.5)
+    axes[0].set_yticks(range(len(lignes)), [n for _, n in lignes])
+    axes[0].tick_params(axis="y", labelcolor=INK2, labelsize=7.2)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="outside lower left", ncol=2, handlelength=1.0)
+    return fig
+
+
+def barres_effets(D: Donnees):
+    """Écart de PIB en 2035 dû à chaque programme, sous les deux moteurs."""
+    progs = D.progs
+    fig, ax = figure(0.3 * len(progs) + 0.9)
+    pas = 0.8 / max(1, len(D.moteurs))
+    couleurs = [SERIES[0], SERIES[1]]
+    for j, (m, c) in enumerate(zip(D.moteurs, couleurs)):
+        vals = [next(e["pibPb"] for e in p["effetTotal"] if e["moteur"] == m["id"]) / 100 for p in progs]
+        ys = [i + (j - (len(D.moteurs) - 1) / 2) * pas for i in range(len(progs))]
+        ax.barh(ys, vals, height=pas * 0.84, color=c, label=f"Moteur « {m['nom']} »", zorder=3)
+    ax.set_yticks(range(len(progs)), [nom_court(p["nom"]) for p in progs])
+    ax.set_ylim(len(progs) - 0.5, -0.5)
+    ax.tick_params(axis="y", labelcolor=INK2, labelsize=7.5)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", visible=True)
+    ax.axvline(0, color=BASE, lw=0.8, zorder=2)
+    ax.xaxis.set_major_formatter(fmt_axe(1, NBSP + "%"))
+    ax.set_title(f"Écart de PIB au tendanciel en {D.annees[-1]}, programme complet, scénario central")
+    legende(fig, ncol=2)
+    return fig
+
+
+def section_effets(D: Donnees) -> list:
+    a1 = D.annees[-1]
+    mids = [m["id"] for m in D.moteurs]
+    out = [P("Effet de chaque mesure sur la croissance", "h1"),
+           P(f"Chaque mesure est appliquée seule, projetée jusqu'en {a1} au scénario central, et "
+             "comparée au tendanciel : écart de PIB (en % du PIB tendanciel), de déficit (en points "
+             "de PIB) et d'emploi. Les effets ne s'additionnent pas exactement (interactions, arrondis). "
+             "Sous le moteur « demande », une dépense accroît le PIB par le multiplicateur et une "
+             "économie le réduit d'autant ; sous le moteur « offre », une économie pèse moitié moins "
+             "et une baisse de prélèvements relève la croissance potentielle."),
+           png(barres_effets(D))]
+    ent = ["Mesure"] + [f"PIB {m['nom'][:3].lower()}." for m in D.moteurs] \
+        + [f"Déficit {m['nom'][:3].lower()}." for m in D.moteurs] + ["Emplois dem.", "Emplois off."]
+    larg = [0.46, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09]
+    for p in D.progs:
+        par = {(e["moteur"], e["mesure"]): e for e in p["effetsMesures"]}
+        rows = []
+        for m in p["mesures"]:
+            es = [par[(mid, m["id"])] for mid in mids]
+            rows.append([f"{m['id']} {court_nom(m['titre'], 70)}"]
+                        + [signe(e["pibPb"] / 100, 2) + NBSP + "%" for e in es]
+                        + [signe(e["deficitPb"] / 100, 2) for e in es]
+                        + [signe(e["emplois"], 0) for e in es])
+        tot = {e["moteur"]: e for e in p["effetTotal"]}
+        rows.append(["Programme complet"]
+                    + [signe(tot[mid]["pibPb"] / 100, 2) + NBSP + "%" for mid in mids]
+                    + [signe(tot[mid]["deficitPb"] / 100, 2) for mid in mids]
+                    + [signe(tot[mid]["emplois"], 0) for mid in mids])
+        out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), tableau(ent, rows, larg)]))
+    out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). La population active "
+                 "n'entre pas dans le PIB du modèle : une mesure d'âge de départ joue sur l'emploi et le "
+                 "solde, pas sur l'activité (limite connue, voir annexe C).", "note"))
+    return out
+
+
+def court_nom(nom: str, n: int = 34) -> str:
+    return nom if len(nom) <= n else nom[: n - 1] + "…"
+
+
+def section_moteurs(D: Donnees) -> list:
+    a1 = D.annees[-1]
+    out = [P("Moteurs : deux lectures des mêmes mesures", "h1"),
+           P("Le dépôt évalue chaque programme sous plusieurs moteurs, c'est-à-dire plusieurs jeux "
+             "de règles d'interprétation des leviers, avec les mêmes hypothèses de scénario. "
+             + " ".join(f"<b>{echap(m['nom'])}</b> : {echap(m['description'].lower())}." for m in D.moteurs)
+             + " Les autres sections de ce document utilisent le moteur « "
+             + echap(D.nom_moteur(D.standard)) + " ».")]
+    champs = [("deficitPb", f"Déficit {a1} (% PIB)", 1, NBSP + "%", lambda v: v / 100),
+              ("dettePb", f"Dette {a1} (% PIB)", 0, NBSP + "%", lambda v: v / 100),
+              ("chomagePb", f"Chômage {a1} (%)", 1, NBSP + "%", lambda v: v / 100)]
+    out.append(png(points_moteurs(D, champs)))
+    ent = [f"{a1}, scénario central"]
+    for m in D.moteurs:
+        ent += [f"PIB {m['nom'][:3].lower()}. (Md€)", f"Déficit {m['nom'][:3].lower()}.",
+                f"Dette {m['nom'][:3].lower()}.", f"Chôm. {m['nom'][:3].lower()}."]
+    rows = []
+    for pid, nom in D.lignes():
+        r = [nom]
+        for m in D.moteurs:
+            e = D.fin("central", pid, m["id"])
+            r += [md(e["pib"]), pct_pb(e["deficitPb"]), pct_pb(e["dettePb"], 0), pct_pb(e["chomagePb"])]
+        rows.append(r)
+    nb = 4 * len(D.moteurs)
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.24] + [0.76 / nb] * nb, surligner_premiere=True))
+    out.append(P("Déficit et dette en % du PIB, chômage en % des actifs. « dem. » : moteur Demande ; "
+                 "« off. » : moteur Offre. L'écart entre moteurs mesure la sensibilité d'un programme "
+                 "aux hypothèses de mécanisme, indépendamment des hypothèses de scénario.", "note"))
+    return out
+
+
+def section_air(D: Donnees) -> list:
+    a0, a1 = D.annees[0], D.annees[-1]
+    out = [P("Voitures électriques, bornes et qualité de l'air", "h1"),
+           P("Le parc de voitures électriques croît tendanciellement et avec les mesures d'aide à "
+             "l'achat ou de remplacement. Chaque million de voitures thermiques remplacées évite "
+             f"{nombre(D.var['central']['decesEvitesParMillionVehicules'])} décès par an attribuables aux particules fines (hypothèse de calcul : Santé publique "
+             "France, Citepa). La propriété « bornes suffisantes » exige un point de recharge public "
+             "pour dix véhicules électriques en 2035.")]
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: e["decesPollutionAir"],
+                               "Décès annuels attribuables à la pollution de l'air, scénario central",
+                               0, "")))
+    ent = [f"{a1}, scénario central", "Parc électrique (milliers)", "Bornes publiques (milliers)",
+           "Véhicules par borne", "Décès pollution de l'air", "Décès évités / an"]
+    base = D.fin("central", None)
+    rows = []
+    e0 = D.traj("central", None)[0]
+    rows.append([f"Situation de départ ({a0})", nombre(e0["parcElectriqueMilliers"]), nombre(e0["bornesMilliers"]),
+                 nombre(e0["parcElectriqueMilliers"] / max(1, e0["bornesMilliers"]), 1),
+                 nombre(e0["decesPollutionAir"]), "—"])
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        rows.append([nom, nombre(e["parcElectriqueMilliers"]), nombre(e["bornesMilliers"]),
+                     nombre(e["parcElectriqueMilliers"] / max(1, e["bornesMilliers"]), 1),
+                     nombre(e["decesPollutionAir"]),
+                     "—" if pid is None else signe(base["decesPollutionAir"] - e["decesPollutionAir"], 0)])
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.28, 0.15, 0.15, 0.13, 0.15, 0.14]))
+    out.append(P("Décès évités : par rapport au tendanciel, même année. Le parc et les bornes de "
+                 f"départ sont des ordres de grandeur (Avere-France, fin {a0}) ; l'effet d'aubaine des "
+                 "primes et les émissions hors échappement (pneus, freins) ne sont pas modélisés.", "note"))
+    return out
+
+
 def section_proprietes(D: Donnees) -> list:
     d = D.d
     n = d["nbScenarios"]
@@ -662,7 +831,14 @@ def section_proprietes(D: Donnees) -> list:
              "Une propriété est un critère partagé ; un engagement est une propriété qu'un programme "
              "revendique sous un ou plusieurs scénarios, vérifiée par le noyau Lean à chaque "
              "modification du dépôt."),
-           table_proprietes(D), Spacer(1, 4), P("Engagements revendiqués", "h2")]
+           ]
+    for m in D.moteurs:
+        out += [P(f"Moteur « {m['nom']} » — {echap(m['description'])}", "h2"),
+                table_proprietes(D, m["id"], avec_central=True)]
+    out += [P("✓/✗ : statut au scénario central, puis nombre de scénarios où la propriété tient. "
+              "Les propriétés datées (2035) sont évaluées dix ans après le départ, les autres à "
+              "l'horizon du scénario.", "note"),
+            Spacer(1, 4), P("Engagements revendiqués", "h2")]
     rows = []
     for p in D.progs:
         groupes: OrderedDict[str, list] = OrderedDict()
@@ -670,17 +846,18 @@ def section_proprietes(D: Donnees) -> list:
             groupes.setdefault(e["propriete"], []).append(e)
         for prop, es in groupes.items():
             tenus = sum(1 for e in es if e["tenu"])
+            mot = D.nom_moteur(es[0].get("moteur", D.standard))
             if len(es) == n:
                 scen, statut = f"tous les scénarios ({n})", f"tenu ({tenus}/{n})" if tenus == n else f"NON TENU ({tenus}/{n})"
-                rows.append([nom_court(p["nom"]), prop, scen, statut])
+                rows.append([nom_court(p["nom"]), prop, mot, scen, statut])
             else:
                 for e in es:
-                    rows.append([nom_court(p["nom"]), prop,
+                    rows.append([nom_court(p["nom"]), prop, mot,
                                  P(echap(e["scenario"].replace("/", " / ")), "cell"),
                                  "tenu" if e["tenu"] else "NON TENU"])
     if rows:
-        out.append(tableau(["Programme", "Propriété", "Scénario", "Statut"], rows,
-                           [0.22, 0.18, 0.46, 0.14], droite_des=3))
+        out.append(tableau(["Programme", "Propriété", "Moteur", "Scénario", "Statut"], rows,
+                           [0.2, 0.17, 0.1, 0.41, 0.12], droite_des=4))
     else:
         out.append(P("Aucun engagement déclaré.", "note"))
     out.append(P("Contrats de mesure", "h2"))
@@ -742,6 +919,12 @@ def section_annexes(D: Donnees) -> list:
         "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "
         "de la même façon sur tous les programmes et sur le tendanciel ; il ne change pas les "
         "écarts entre eux.",
+        "Offre de travail : la population active et l'emploi n'entrent pas dans le PIB du modèle "
+        "(pas de fonction de production) ; une mesure d'âge de départ change l'emploi et le solde, "
+        "pas l'activité. C'est la prochaine évolution naturelle du socle.",
+        "Moteurs : les paramètres du moteur « offre » (demi-multiplicateur sur les économies, "
+        "0,1 point de croissance par point de prélèvements obligatoires) sont des ordres de "
+        "grandeur à sourcer ; ils encadrent la lecture « demande » plutôt qu'ils ne la remplacent.",
         "Programmes réels : transcriptions partielles et non officielles, limitées aux mesures "
         "chiffrées dans la source ; toute erreur se signale par une issue sur le dépôt.",
     ])
@@ -818,6 +1001,12 @@ def construire(d: dict, sortie: Path, commit: str | None) -> None:
     story += section_petrole(D)
     story.append(CondPageBreak(120 * mm))
     story += section_natalite(D)
+    story.append(PageBreak())
+    story += section_air(D)
+    story.append(PageBreak())
+    story += section_effets(D)
+    story.append(PageBreak())
+    story += section_moteurs(D)
     story.append(CondPageBreak(120 * mm))
     story += section_proprietes(D)
     story += section_annexes(D)

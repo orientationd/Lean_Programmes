@@ -3,7 +3,7 @@ import Hypotheses
 import Proprietes
 
 /-!
-# Programme « texte_orientation_d »
+# Programme « Texte Orientation D »
 
 Programme de orientation_d. Seuls les comptes listés dans `PROPRIETAIRES`
 peuvent modifier ce dossier : la CI refuse toute autre PR (contrôle d'accès
@@ -21,11 +21,24 @@ Trois mesures :
   sous-modèle d'attribution.
 * **O-04** — construction de six EPR2, au niveau du programme
   gouvernemental en cours, financée comme lui par un prêt de l'État.
+* **O-05** — prime à l'achat d'une voiture électrique pour 300 000 ménages
+  par an ; **O-06** — 50 000 points de recharge publics par an : effets sur
+  le parc électrique, les bornes nécessaires et la mortalité liée aux
+  particules fines.
+* **O-07** — fin de l'âge légal de départ : seule compte la durée cotisée
+  (seuil actuel, 172 trimestres), réduite selon la pénibilité.
+* **O-08** — impôt sur les sociétés au taux le plus bas de l'Union
+  européenne.
+* **O-09** — la démission ouvre des droits au chômage (six mois, une fois
+  tous les cinq ans).
+* **O-10** — moyens pour la justice, prud'hommes en priorité.
+* **O-11** — financement des lignes nouvelles Lyon-Turin, Bordeaux-Toulouse
+  et Montpellier-Perpignan.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
 
-namespace Programmes.texte_orientation_d
+namespace Programmes.TexteOrientationD
 open Modele
 
 /-! ## O-01 — Remplacement des 10 000 voitures les plus polluantes -/
@@ -74,12 +87,36 @@ def pretEPR2 : Int := 3033
 /-- Variante : l'État prête la totalité du coût de construction. -/
 def pretEPR2Total : Int := 6067
 
+/-! ## O-07 à O-11 — Hypothèses de chiffrage -/
+
+/-- Impôt sur les sociétés au taux le plus bas de l'UE : 9 % (Hongrie), contre
+25 % en France. Rendement statique : 58,9 Md€ × (1 − 9/25) = −37,7 Md€ ;
+le modèle y applique sa fuite fiscale (ici, un retour d'assiette) et le
+moteur « offre » un surcroît de croissance. -/
+def baisseIS : Int := -37700
+
+/-- Variante : taux irlandais de 12,5 % : 58,9 × (1 − 12,5/25) = −29,5 Md€. -/
+def baisseISIrlande : Int := -29450
+
+/-- Démission indemnisée six mois, une fois tous les cinq ans. Hypothèse :
+1,9 million de démissions de CDI par an (DARES, ordre de grandeur), 20 %
+donnent lieu à indemnisation, 1 300 € par mois pendant 6 mois :
+≈ 3,0 Md€/an. Effet sur le chômage non modélisé. -/
+def coutDemission : Int := 3000
+
+/-- Lignes nouvelles : accès français au Lyon-Turin (≈ 10 Md€), Bordeaux-
+Toulouse et Bordeaux-Dax (14,3 Md€ en valeur 2020), Montpellier-Perpignan
+(≈ 6 Md€) : ≈ 30 Md€ sur dix ans, dont 80 % portés par l'État, les
+collectivités et SNCF Réseau (administrations publiques), le reste par
+l'Union européenne : 2,4 Md€/an. Hypothèses d'ordre de grandeur. -/
+def lignesNouvelles : Int := 2400
+
 /-! ## Mesures -/
 
 def mesures : List Mesure := [
   { id := "O-01"
     titre := "Remplacement gratuit par l'État des 10 000 voitures les plus polluantes"
-    source := "texte_orientation_d, mesure 1 ; prix unitaire et part importée : hypothèses (voir Programme.lean)"
+    source := "Texte Orientation D, mesure 1 ; prix unitaire et part importée : hypothèses (voir Programme.lean)"
     leviers := [.remplacementVehicules remplacement]
     variantes := [
       { nom := "véhicules fabriqués en France"
@@ -96,7 +133,7 @@ def mesures : List Mesure := [
 
   { id := "O-02"
     titre := "Amendes SRU proportionnelles à la part de logements sociaux manquants"
-    source := "texte_orientation_d, mesure 2 ; remplace la majoration préfectorale discrétionnaire (CCH L.302-9-1)"
+    source := "Texte Orientation D, mesure 2 ; remplace la majoration préfectorale discrétionnaire (CCH L.302-9-1)"
     leviers := [.amendeSRU baremeSRU]
     variantes := [
       { nom := "plafond actuel (5 %)", leviers := [.amendeSRU baremeSRUPlafondActuel] },
@@ -123,7 +160,7 @@ def mesures : List Mesure := [
 
   { id := "O-03"
     titre := "Attributions de logements sociaux vérifiables par preuve à divulgation nulle de connaissance"
-    source := "texte_orientation_d, mesure 3 ; chiffrage provisoire (hypothèses) : 20 M€ de développement, 5 M€/an d'exploitation ; effet sur l'immobilier non modélisé"
+    source := "Texte Orientation D, mesure 3 ; chiffrage provisoire (hypothèses) : 20 M€ de développement, 5 M€/an d'exploitation ; effet sur l'immobilier non modélisé"
     leviers := [.depensePonctuelle 20, .depense 5]
     contrats := [
       { titre := "Dès qu'un candidat est éligible, la règle publiée désigne un attributaire"
@@ -147,19 +184,62 @@ def mesures : List Mesure := [
 
   { id := "O-04"
     titre := "Construction de six EPR2, au niveau du programme gouvernemental"
-    source := "texte_orientation_d, mesure 4 ; programme gouvernemental : devis EDF du 18 décembre 2025 (72,8 Md€₂₀₂₀ pour 6 EPR2), accord État-EDF du 19 juin 2025 (prêt de l'État ≥ 50 %, CfD 100 €/MWh), première mise en service 2038. Effets hors horizon : production, CfD, remboursements"
+    source := "Texte Orientation D, mesure 4 ; programme gouvernemental : devis EDF du 18 décembre 2025 (72,8 Md€₂₀₂₀ pour 6 EPR2), accord État-EDF du 19 juin 2025 (prêt de l'État ≥ 50 %, CfD 100 €/MWh), première mise en service 2038. Effets hors horizon : production, CfD, remboursements"
     leviers := [.pretEtat pretEPR2]
     debut := 2  -- décision finale d'investissement fin 2026, premiers décaissements 2027
     variantes := [
-      { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] }
+      { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] },
+
+  { id := "O-05"
+    titre := "Prime de 4 000 € à l'achat d'une voiture électrique, 300 000 ménages par an"
+    source := "Texte Orientation D, mesure 5 ; montant et nombre : hypothèses (bonus écologique 2025 : 2 000 à 4 000 € selon le revenu, ≈ 300 000 électriques neuves par an) ; 1,2 Md€/an"
+    leviers := [.aideAchatElectrique 300000 4000]
+    variantes := [
+      { nom := "prime de 6 000 €, 400 000 ménages (2,4 Md€/an)", leviers := [.aideAchatElectrique 400000 6000] }] },
+
+  { id := "O-06"
+    titre := "50 000 points de recharge publics supplémentaires par an"
+    source := "Texte Orientation D, mesure 6 ; coût moyen 8 000 € par point, accélérée et normale confondues (hypothèse, programme Advenir) ; 0,4 Md€/an"
+    leviers := [.deploiementBornes 50000 8000] },
+
+  { id := "O-07"
+    titre := "Fin de l'âge légal : départ à la durée cotisée (172 trimestres), réduite selon la pénibilité"
+    source := "Texte Orientation D, mesure 7. Conversion : le modèle ne connaît qu'un âge moyen de départ ; sans borne d'âge, les carrières commencées avant 21 ans partent avant 64 ans et la réduction pour pénibilité avance encore les métiers exposés : âge moyen de départ supposé avancé de 6 mois (hypothèse à étayer avec le COR), coût et actifs selon l'hypothèse économique du scénario"
+    leviers := [.ageLegal (-6)]
+    variantes := [
+      { nom := "âge moyen avancé de 12 mois (pénibilité large)", leviers := [.ageLegal (-12)] }] },
+
+  { id := "O-08"
+    titre := "Impôt sur les sociétés au taux le plus bas de l'Union européenne (9 %)"
+    source := s!"Texte Orientation D, mesure 8 ; taux : Hongrie 9 %, Irlande 12,5 % (Commission européenne, Taxation trends 2025) ; rendement statique {baisseIS} M€/an sur 58,9 Md€ d'IS 2025"
+    leviers := [.prelevementSur .impotSocietes baisseIS]
+    variantes := [
+      { nom := "taux irlandais de 12,5 %", leviers := [.prelevementSur .impotSocietes baisseISIrlande] }] },
+
+  { id := "O-09"
+    titre := "La démission ouvre des droits au chômage : six mois d'indemnités, une fois tous les cinq ans"
+    source := s!"Texte Orientation D, mesure 9 ; chiffrage : hypothèse de recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois × 6 : {coutDemission} M€/an"
+    leviers := [.depense coutDemission]
+    variantes := [
+      { nom := "recours de 40 % (6 Md€/an)", leviers := [.depense 6000] }] },
+
+  { id := "O-10"
+    titre := "Moyens pour la justice : réduction des délais, prud'hommes en priorité"
+    source := "Texte Orientation D, mesure 10 ; +300 M€/an (hypothèse : +3 % du budget de la justice, greffiers et juges départiteurs) ; effet sur les délais non modélisé"
+    leviers := [.depenseSecteur .tertiaireNonMarchand 300] },
+
+  { id := "O-11"
+    titre := "Financement des lignes nouvelles Lyon-Turin, Bordeaux-Toulouse et Montpellier-Perpignan"
+    source := s!"Texte Orientation D, mesure 11 ; ≈ 30 Md€ sur dix ans dont 80 % d'argent public français : {lignesNouvelles} M€/an (hypothèses, voir `lignesNouvelles`)"
+    leviers := [.depenseSecteur .construction lignesNouvelles] }
 ]
 
 def programme : Programme where
-  id := "texte_orientation_d"
-  nom := "texte_orientation_d"
-  description := "Programme de orientation_d : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2 financés par prêt de l'État."
+  id := "TexteOrientationD"
+  nom := "Texte Orientation D"
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
 
-end Programmes.texte_orientation_d
+end Programmes.TexteOrientationD

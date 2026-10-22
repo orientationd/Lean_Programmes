@@ -17,7 +17,7 @@ le dossier (voir README, « Propriété des programmes »).
 
 1. Copier `Programmes/ExempleRelance/` vers `Programmes/<Nom>/`. `<Nom>` est
    un identifiant Lean ASCII : lettres, chiffres et `_`, commençant par une
-   lettre (ex. `texte_orientation_d`).
+   lettre (ex. `TexteOrientationD`).
 2. Mettre son compte GitHub dans `Programmes/<Nom>/PROPRIETAIRES`, un compte
    par ligne. La PR doit être ouverte depuis l'un de ces comptes.
 3. Dans `Programme.lean` : remplacer le namespace et `id := "<Nom>"`,
@@ -47,7 +47,15 @@ d'une répartition au prorata. Un financement par prêt ou prise de
 participation de l'État (EDF, nationalisation) est un `pretEtat` : il
 pèse sur la dette, pas sur le déficit. Une mesure qui n'entre en vigueur
 qu'après l'année de départ porte `debut := n` (années) : montée en charge
-ou décaissements différés.
+ou décaissements différés. Les mesures automobiles ont leurs leviers :
+`aideAchatElectrique véhiculesParAn primeEuros` (parc électrique, décès
+évités) et `deploiementBornes bornesParAn coûtParBorne`.
+
+Tous les programmes sont évalués sous tous les **moteurs**
+(`Hypotheses/Moteurs.lean` : « demande » et « offre ») ; un engagement
+précise son moteur (`Engagement.sous Moteurs.standard H q`). Une propriété
+peut viser une année précise (`annee := some 10` : 2035) plutôt que
+l'horizon du scénario.
 
 ### 2. Proposer une hypothèse
 

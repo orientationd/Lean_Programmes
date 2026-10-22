@@ -15,12 +15,16 @@ s'accumulent dans la dette, dont la charge d'intérêts suit.
 
 namespace Modele
 
-/-- Une année de projection tendancielle. -/
-def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
-  let pib := s.pib + appliquerPb s.pib H.eco.croissancePb
+/-- Une année de projection sous un moteur. -/
+def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
+  -- effet d'offre (moteur) : prélèvements obligatoires au-dessus du niveau
+  -- de départ → croissance amputée ; en dessous → croissance accrue
+  let croissance := H.eco.croissancePb
+    - appliquerPm (s.prelevementsPb - H.reference.etat.prelevementsPb) M.elasticiteCroissancePoPm
+  let pib := s.pib + appliquerPb s.pib croissance
   -- assiettes supposées proportionnelles au PIB nominal (élasticité unitaire)
-  let impots := s.impots.croitre H.eco.croissancePb
-  let autresRecettes := s.autresRecettes + appliquerPb s.autresRecettes H.eco.croissancePb
+  let impots := s.impots.croitre croissance
+  let autresRecettes := s.autresRecettes + appliquerPb s.autresRecettes croissance
   let recettes := impots.total + autresRecettes
   -- vieillissement : le surcoût total à l'horizon est réparti sur les années
   let surcoutVieillissement :=
@@ -37,7 +41,9 @@ def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
   -- emploi : suit la population active à chômage constant, puis loi d'Okun
   -- (le chômage baisse de `okun × (croissance − seuil)`)
   let emploiSuivi := if s.actifs = 0 then 0 else s.emploiTotal * actifs / s.actifs
-  let dOkun := actifs * (H.eco.croissancePb - H.eco.seuilOkunPb) * H.eco.okunPm / 10000000
+  let dOkun := actifs * (croissance - H.eco.seuilOkunPb) * H.eco.okunPm / 10000000
+  -- transports : parc électrique, bornes, décès évités par la baisse des particules
+  let dParc := H.energie.electrificationTendancielleMilliers + s.electrificationAnnuelleMilliers
   let s' : Etat := { s with
     pib := pib
     impots := impots
@@ -49,7 +55,11 @@ def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - H.demo.decesMilliers + H.demo.soldeMigratoireMilliers
-    actifs := actifs }
+    actifs := actifs
+    parcElectriqueMilliers := s.parcElectriqueMilliers + dParc
+    bornesMilliers := s.bornesMilliers + H.energie.bornesTendanciellesMilliers + s.bornesAnnuellesMilliers
+    decesPollutionAir := max 0 (s.decesPollutionAir
+      - dParc * H.energie.decesEvitesParMillionVehicules / 1000) }
   ajouterEmploi H none (emploiSuivi - s.emploiTotal + dOkun) s'
 
 /-- Situation de départ du scénario : la référence observée, après le choc
@@ -66,17 +76,25 @@ def iterer (f : Etat → Etat) : Nat → Etat → Etat
   | 0, s => s
   | n + 1, s => iterer f n (f s)
 
+/-- Projette un état de départ sur `n` années. -/
+def projeterN (M : Moteur) (H : Scenario) (n : Nat) (s : Etat) : Etat :=
+  iterer (anneeSuivante M H) n s
+
 /-- Projette un état de départ jusqu'à l'horizon du scénario. -/
-def projeter (H : Scenario) (s : Etat) : Etat :=
-  iterer (anneeSuivante H) H.horizon s
+def projeter (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
+  projeterN M H H.horizon s
 
 /-- États successifs sur `n` années, état de départ compris (`n + 1` états). -/
-def trajectoire (H : Scenario) : Nat → Etat → List Etat
+def trajectoire (M : Moteur) (H : Scenario) : Nat → Etat → List Etat
   | 0, s => [s]
-  | n + 1, s => s :: trajectoire H n (anneeSuivante H s)
+  | n + 1, s => s :: trajectoire M H n (anneeSuivante M H s)
+
+/-- Situation sans programme après `n` années. -/
+def tendancielA (M : Moteur) (H : Scenario) (n : Nat) : Etat :=
+  projeterN M H n (etatDepart H)
 
 /-- Situation à l'horizon sans aucun programme. -/
-def tendanciel (H : Scenario) : Etat :=
-  projeter H (etatDepart H)
+def tendanciel (M : Moteur) (H : Scenario) : Etat :=
+  tendancielA M H H.horizon
 
 end Modele

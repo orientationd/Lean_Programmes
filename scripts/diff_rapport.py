@@ -19,7 +19,7 @@ SOCLE = ("Modele/", "Modele.lean", "Hypotheses/", "Hypotheses.lean",
          "Proprietes/", "Proprietes.lean", "lakefile.toml", "lean-toolchain")
 INDICATEURS = [("deficitPb", "Déficit % PIB", True), ("dettePb", "Dette % PIB", True),
                ("chomagePb", "Chômage %", True), ("emissionsMt", "Émissions Mt", False),
-               ("actifs", "Actifs", False)]
+               ("actifs", "Actifs", False), ("decesPollutionAir", "Décès pollution", False)]
 MAX_LIGNES = 30
 
 
@@ -38,22 +38,27 @@ def fmt(v: int, pb: bool) -> str:
     return f"{signe}{a // 100},{a % 100:02d}"
 
 
+def cle(ev: dict) -> str:
+    """Scénario préfixé du moteur (les rapports antérieurs à la version 2 n'en ont pas)."""
+    return f"{ev.get('moteur', 'demande')}:{ev['scenario']}"
+
+
 def index_cellules(r: dict) -> dict:
     out = {}
     for p in r.get("programmes", []):
         for ev in p["evaluations"]:
             for prop, ok in ev["proprietes"].items():
-                out[(p["id"], ev["scenario"], prop)] = ok
+                out[(p["id"], cle(ev), prop)] = ok
     return out
 
 
 def index_indicateurs(r: dict) -> dict:
-    return {(p["id"], ev["scenario"]): ev["programme"]
+    return {(p["id"], cle(ev)): ev["programme"]
             for p in r.get("programmes", []) for ev in p["evaluations"]}
 
 
 def index_engagements(r: dict) -> dict:
-    return {(p["id"], e["scenario"], e["propriete"]): e["tenu"]
+    return {(p["id"], cle(e), e["propriete"]): e["tenu"]
             for p in r.get("programmes", []) for e in p["engagements"]}
 
 
@@ -128,7 +133,7 @@ def nouveautes(base: dict, pr: dict) -> list[str]:
     nb_scen = len(pr.get("scenarios", []))
 
     nouveaux_s = ids(pr, "scenarios") - ids(base, "scenarios")
-    lignes = [f"| {p['id']} | {ev['scenario']} | "
+    lignes = [f"| {p['id']} | {cle(ev)} | "
               + " | ".join("✅" if ev["proprietes"].get(q) else "❌" for q in props) + " |"
               for p in pr["programmes"] if p["id"] in ids(base, "programmes")
               for ev in p["evaluations"] if ev["scenario"] in nouveaux_s]
@@ -140,8 +145,10 @@ def nouveautes(base: dict, pr: dict) -> list[str]:
         if len(lignes) > MAX_LIGNES:
             out.append(f"| … | {len(lignes) - MAX_LIGNES} de plus | " + " | ".join("" for _ in props) + " |")
 
+    nb_mot = max(1, len(pr.get("moteurs", [])) or 1)
+
     def tenues(p: dict, q: str) -> str:
-        return f"{sum(1 for ev in p['evaluations'] if ev['proprietes'].get(q))}/{nb_scen}"
+        return f"{sum(1 for ev in p['evaluations'] if ev['proprietes'].get(q))}/{nb_scen * nb_mot}"
 
     nouveaux_p = [p for p in pr["programmes"] if p["id"] not in ids(base, "programmes")]
     if nouveaux_p:
@@ -166,10 +173,10 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
     if out[-1] != "":
         out.append("")
 
-    for cle, nom in (("programmes", "Programmes"), ("scenarios", "Scénarios"),
-                     ("proprietes", "Propriétés")):
-        ajout = sorted(ids(pr, cle) - ids(base, cle))
-        retrait = sorted(ids(base, cle) - ids(pr, cle))
+    for k, nom in (("programmes", "Programmes"), ("moteurs", "Moteurs"),
+                   ("scenarios", "Scénarios"), ("proprietes", "Propriétés")):
+        ajout = sorted(ids(pr, k) - ids(base, k))
+        retrait = sorted(ids(base, k) - ids(pr, k))
         if ajout:
             out.append(f"- {nom} ajoutés : " + ", ".join(f"`{x}`" for x in ajout))
         if retrait:
@@ -224,7 +231,8 @@ def diff(base: dict, pr: dict, fichiers: list[str]) -> str:
     if pr.get("erreurs"):
         out += ["", "### ⛔ Erreurs de registre", ""] + [f"- {e}" for e in pr["erreurs"]]
 
-    axes_changes = any(ids(pr, c) != ids(base, c) for c in ("scenarios", "programmes", "proprietes"))
+    axes_changes = any(ids(pr, c) != ids(base, c)
+                       for c in ("scenarios", "programmes", "proprietes", "moteurs"))
     if not (changes or lignes or casses or pr.get("erreurs")) and len(out) <= 3:
         out.append("Aucun changement d'évaluation.")
     elif not (changes or lignes or casses or pr.get("erreurs")) and axes_changes:

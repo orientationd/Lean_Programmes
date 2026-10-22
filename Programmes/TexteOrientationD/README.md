@@ -1,4 +1,4 @@
-# texte_orientation_d
+# Texte Orientation D
 
 Programme de orientation_d. Seuls les comptes listés dans `PROPRIETAIRES`
 peuvent modifier ce dossier.
@@ -83,11 +83,59 @@ et emplois d'EDF et de ses fournisseurs, réduction d'émissions.
 Sources : [communiqué EDF du 18 décembre 2025](https://www.edf.fr/en/the-edf-group/dedicated-sections/journalists/all-press-releases/edf-shares-its-forecasted-cost-estimate-of-the-epr2-programme-for-eu728bn),
 [accord État-EDF, AFP, 19 juin 2025](https://www.connaissancedesenergies.org/afp/edf-et-letat-francais-parviennent-un-accord-pour-financer-la-relance-du-nucleaire-250619).
 
+### O-05 et O-06 — Prime à l'électrique et points de recharge
+
+O-05 : prime de 4 000 € pour 300 000 achats de voitures électriques par
+an (1,2 Md€/an ; variante 6 000 € × 400 000). O-06 : 50 000 points de
+recharge publics par an à 8 000 € (0,4 Md€/an, emplois dans la
+construction). Le modèle commun en déduit le parc électrique, les décès
+évités par la baisse des particules fines (90 par million de véhicules
+remplacés, hypothèse documentée dans `Hypotheses/Energie.lean`) et vérifie
+la propriété « un point de recharge public pour dix véhicules en 2035 ».
+Montants : hypothèses à arbitrer.
+
+### O-07 — Retraite à la durée cotisée, sans âge légal
+
+La notion d'âge légal disparaît : on part dès que la durée cotisée atteint
+le seuil actuel (172 trimestres), réduit selon la pénibilité. Le modèle
+commun ne connaît qu'un âge moyen de départ : la mesure est traduite en un
+avancement moyen de 6 mois (variante : 12 mois), dont le coût et l'effet
+sur la population active suivent l'hypothèse économique du scénario.
+Hypothèse à étayer avec les données du COR (distribution des âges de
+début de carrière, part des métiers exposés).
+
+### O-08 — Impôt sur les sociétés au taux le plus bas de l'UE
+
+Taux hongrois de 9 % (variante : taux irlandais de 12,5 %). Rendement
+statique −37,7 Md€/an sur 58,9 Md€ d'IS 2025 ; le modèle applique sa
+fuite fiscale (retour d'assiette) et, sous le moteur « offre », un
+surcroît de croissance lié à la baisse des prélèvements. L'effet
+d'attractivité (relocalisation de bases fiscales) n'est pas modélisé
+au-delà de cela.
+
+### O-09 — Démission indemnisée
+
+Six mois d'indemnités, une fois tous les cinq ans. Coût estimé 3 Md€/an
+(recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois) ;
+variante 6 Md€. Effets sur la mobilité professionnelle et le chômage non
+modélisés.
+
+### O-10 et O-11 — Justice, lignes nouvelles
+
++300 M€/an pour la justice (prud'hommes en priorité) ; 2,4 Md€/an pour
+les lignes nouvelles Lyon-Turin (accès français), Bordeaux-Toulouse et
+Montpellier-Perpignan (≈ 30 Md€ sur dix ans, 80 % d'argent public
+français). Emplois dans la construction ; les gains de temps de parcours
+et les délais de justice ne sont pas modélisés.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).
 * Valeurs électriques (consommation, prix à l'export) à sourcer (RTE).
 * Chiffrage de O-03 et éventuelle hypothèse d'effet sur l'immobilier.
+* Distribution des âges de départ sans borne d'âge (O-07, COR) ; coût réel
+  de la démission indemnisée (O-09, Unédic) ; calendrier des lignes
+  nouvelles (O-11).
 * Taux du prêt bonifié et calendrier réel des décaissements (O-04), dès
   la décision finale d'investissement.
 * Panel SRU réel (inventaire SRU par commune) à la place des communes

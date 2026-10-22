@@ -1,6 +1,7 @@
 import Modele.Unites
 import Modele.Etat
 import Modele.Scenario
+import Modele.Moteur
 import Modele.Logement
 import Modele.Automobile
 import Modele.Attribution

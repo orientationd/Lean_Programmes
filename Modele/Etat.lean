@@ -241,6 +241,17 @@ structure Etat where
   actifs : Int
   /-- Personnes en emploi, par secteur. -/
   emploi : ParSecteur
+  /-- Décès annuels attribuables à la pollution de l'air (particules fines). -/
+  decesPollutionAir : Int
+  /-- Parc de voitures électriques, milliers. -/
+  parcElectriqueMilliers : Int
+  /-- Points de recharge ouverts au public, milliers. -/
+  bornesMilliers : Int
+  /-- Électrification supplémentaire du parc due aux mesures, milliers de
+  véhicules par an (flux porté par la projection). -/
+  electrificationAnnuelleMilliers : Int
+  /-- Bornes supplémentaires dues aux mesures, milliers par an. -/
+  bornesAnnuellesMilliers : Int
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
@@ -250,6 +261,9 @@ def recettes (s : Etat) : Int := s.impots.total + s.autresRecettes
 
 /-- Déficit public, M€ (positif = déficit). -/
 def deficit (s : Etat) : Int := s.depenses - s.recettes
+
+/-- Taux de prélèvements obligatoires, pb du PIB. -/
+def prelevementsPb (s : Etat) : Int := ratioPb s.impots.total s.pib
 
 /-- Dépenses hors charge d'intérêts, M€. -/
 def depensesPrimaires (s : Etat) : Int := s.depenses - s.chargeInterets

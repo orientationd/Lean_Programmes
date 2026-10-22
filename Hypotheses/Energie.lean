@@ -1,7 +1,7 @@
 import Modele
 
 /-!
-# Axe énergie : prix du pétrole
+# Axe énergie et transports : prix du pétrole, électrification, air
 
 Prix du Brent appliqué comme un choc de niveau sur le PIB de départ, pour le
 tendanciel comme pour chaque programme : −0,25 % de PIB par tranche de
@@ -22,7 +22,10 @@ open Modele
 
 def sources : List String := [
   "INSEE, Note de conjoncture mars 2019, éclairage pétrole : +10 $ → −0,2 à −0,3 % de PIB",
-  "INSEE, Note de conjoncture décembre 2025 : Brent figé à 63 $ au premier semestre 2026"]
+  "INSEE, Note de conjoncture décembre 2025 : Brent figé à 63 $ au premier semestre 2026",
+  "Électrification : ≈ 350 000 voitures électriques neuves par an (PFA, immatriculations 2025, ordre de grandeur) ; bornes : ≈ 30 000 points publics ouverts par an (Avere-France, baromètre 2025)",
+  "Décès évités : 40 000 décès/an attribuables aux PM2,5 (Santé publique France, 2021) ; le trafic routier pèse ≈ 15 % des PM2,5 primaires (Citepa), dont la moitié à l'échappement ; rapporté à 39 millions de voitures : ≈ 90 décès/an par million de véhicules remplacés (hypothèse de calcul, à affiner)",
+  "Infrastructure : 1 point de recharge public pour 10 véhicules électriques (recommandation AFIR / objectif français de 400 000 points, hypothèse)"]
 
 def bas : Energie where
   id := "petrole-bas"
@@ -30,6 +33,10 @@ def bas : Energie where
   prixBrentDollars := 50
   prixReferenceDollars := 63
   effetPibPar10DollarsPb := -25
+  electrificationTendancielleMilliers := 350
+  bornesTendanciellesMilliers := 30
+  decesEvitesParMillionVehicules := 90
+  vehiculesParBorne := 10
   sources := sources
 
 def central : Energie where
@@ -38,6 +45,10 @@ def central : Energie where
   prixBrentDollars := 63
   prixReferenceDollars := 63
   effetPibPar10DollarsPb := -25
+  electrificationTendancielleMilliers := 350
+  bornesTendanciellesMilliers := 30
+  decesEvitesParMillionVehicules := 90
+  vehiculesParBorne := 10
   sources := sources
 
 def haut : Energie where
@@ -46,6 +57,10 @@ def haut : Energie where
   prixBrentDollars := 100
   prixReferenceDollars := 63
   effetPibPar10DollarsPb := -25
+  electrificationTendancielleMilliers := 350
+  bornesTendanciellesMilliers := 30
+  decesEvitesParMillionVehicules := 90
+  vehiculesParBorne := 10
   sources := sources
 
 def toutes : List Energie := [bas, central, haut]
