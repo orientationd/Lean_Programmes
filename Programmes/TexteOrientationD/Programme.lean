@@ -44,6 +44,10 @@ Trois mesures :
   de l'État ; objectif : la moyenne de l'Union européenne.
 * **O-15** — passage au logiciel libre pour tous les logiciels de l'État et
   tous ses ordinateurs.
+* **O-20** à **O-23** — économies et recettes : aide à l'apprentissage
+  recentrée, commande publique, médicaments et dispositifs avec une agence
+  française du médicament qui produit les références en rupture, lutte
+  contre la fraude et le travail dissimulé.
 * **O-16** à **O-19** — universités : reprise de la dette et apurement des
   déficits, reconstruction aux normes de campus dégradés (Nanterre,
   Toulouse, Montpellier, Grenoble), Parcoursup pour les étudiants
@@ -179,6 +183,29 @@ d'enseignants-chercheurs annoncés. -/
 def deficitsUniversites : Int := 500
 def reconstructionCampus : Int := 500
 def placesSansFac : Int := 315
+
+/-- Économies et recettes. Apprentissage : 6 Md€ d'aides à l'embauche
+d'apprentis, dont la moitié pour des niveaux bac+3 et plus et dans de
+grandes entreprises (Cour des comptes, 2025) ; recentrage sur l'infra-bac et
+les PME : 2 Md€/an. Commande publique : centrales d'achat, standardisation,
+lutte contre les ententes ; 3 Md€/an (hypothèse médiane des estimations,
+Autorité de la concurrence, IGF). Médicaments et dispositifs : génériques,
+biosimilaires, prix des innovations, pertinence des prescriptions, 2 Md€/an
+(Assurance maladie, rapport charges et produits 2025) ; l'agence française
+du médicament qui produit les références en rupture coûte 300 M€/an
+(hypothèse : établissement pharmaceutique public de taille moyenne,
+investissement initial de 500 M€). Fraude et travail dissimulé (BTP,
+restauration, services à la personne) : manque à gagner de cotisations
+estimé entre 6 et 8 Md€ par an (Haut Conseil du financement de la
+protection sociale, 2024) ; récupération de 2 Md€/an de cotisations et 1 Md€
+de TVA, montée en charge sur deux ans. -/
+def economieApprentissage : Int := 2000
+def economieCommandePublique : Int := 3000
+def economieMedicament : Int := 2000
+def coutAgenceMedicament : Int := 300
+def investissementAgence : Int := 500
+def fraudeCotisations : Int := 2000
+def fraudeTVA : Int := 1000
 
 /-! ## Mesures -/
 
@@ -356,13 +383,35 @@ def mesures : List Mesure := [
   { id := "O-19"
     titre := "Ouverture de places pour tous les bacheliers sans affectation"
     source := s!"Texte Orientation D, mesure 19 ; ≈ 10 000 bacheliers sans proposition par an (SIES, Parcoursup 2025) × 3 ans × 10 500 € : {placesSansFac} M€/an ; 2 000 postes d'enseignants-chercheurs annoncés"
-    leviers := [.depenseSur .enseignement placesSansFac, .annonceEmplois 2000] }
+    leviers := [.depenseSur .enseignement placesSansFac, .annonceEmplois 2000] },
+
+  { id := "O-20"
+    titre := "Aide à l'apprentissage réservée aux niveaux infra-bac et aux PME"
+    source := s!"Texte Orientation D, mesure 20 ; Cour des comptes, « L'aide exceptionnelle à l'apprentissage », 2025 : 6 Md€ dont la moitié pour des bac+3 et plus ; économie retenue {economieApprentissage} M€/an"
+    leviers := [.economieSur .famille economieApprentissage] },
+
+  { id := "O-21"
+    titre := "Commande publique : centrales d'achat, standardisation, lutte contre les ententes"
+    source := s!"Texte Orientation D, mesure 21 ; {economieCommandePublique} M€/an (hypothèse médiane : Autorité de la concurrence sur les ententes, IGF sur la mutualisation des achats) ; répartie sur les services généraux"
+    leviers := [.economieSur .fonctionnement economieCommandePublique] },
+
+  { id := "O-22"
+    titre := "Médicaments et dispositifs : génériques, biosimilaires, prix, pertinence ; agence française du médicament produisant les références en rupture"
+    source := s!"Texte Orientation D, mesure 22 ; économies {economieMedicament} M€/an (Assurance maladie, charges et produits 2025) ; agence publique : {investissementAgence} M€ d'investissement puis {coutAgenceMedicament} M€/an de fonctionnement (hypothèses) ; 1 500 emplois industriels annoncés"
+    leviers := [.economieSur .sante economieMedicament, .depensePonctuelle investissementAgence,
+                .depenseSur .sante coutAgenceMedicament, .annonceEmplois 1500] },
+
+  { id := "O-23"
+    titre := "Lutte contre la fraude et le travail dissimulé (BTP, restauration, services à la personne)"
+    source := s!"Texte Orientation D, mesure 23 ; HCFiPS 2024 : 6 à 8 Md€ de cotisations éludées par an ; récupération de {fraudeCotisations} M€ de cotisations et {fraudeTVA} M€ de TVA par an, en régime de croisière la troisième année ; le modèle applique sa fuite fiscale à ces recettes"
+    leviers := [.prelevementSur .cotisations fraudeCotisations, .prelevementSur .tva fraudeTVA]
+    debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places)."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude)."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

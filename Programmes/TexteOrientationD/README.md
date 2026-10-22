@@ -192,6 +192,26 @@ en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
   postes d'enseignants-chercheurs annoncés (vérifiés par la propriété
   « emplois annoncés réalisables »).
 
+### O-20 à O-23 — Économies et recettes
+
+* **O-20** Aide à l'apprentissage réservée à l'infra-bac et aux PME :
+  −2 Md€/an (Cour des comptes 2025 : 6 Md€ dont la moitié pour des bac+3
+  et plus).
+* **O-21** Commande publique (centrales d'achat, standardisation,
+  ententes) : −3 Md€/an sur les services généraux (hypothèse médiane).
+* **O-22** Médicaments et dispositifs : −2 Md€/an (génériques,
+  biosimilaires, prix, pertinence ; Assurance maladie 2025) ; création
+  d'une agence française du médicament qui produit les références en
+  rupture : 500 M€ d'investissement puis 300 M€/an, 1 500 emplois
+  annoncés (hypothèses).
+* **O-23** Fraude et travail dissimulé (BTP, restauration, services à la
+  personne) : +2 Md€ de cotisations et +1 Md€ de TVA par an à partir de la
+  troisième année (HCFiPS 2024 : 6 à 8 Md€ éludés), nets de la fuite
+  fiscale du modèle.
+
+Ensemble : ≈ 9,7 Md€/an d'amélioration brute du solde en régime de
+croisière.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).
