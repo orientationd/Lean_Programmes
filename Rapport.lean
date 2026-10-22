@@ -258,7 +258,10 @@ def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
     ("dettePb", toJson (s.dettePb - a.dettePb)),
     ("emplois", toJson (s.emploiTotal - a.emploiTotal)),
     ("recettes", toJson (s.recettes - a.recettes)),
-    ("depenses", toJson (s.depenses - a.depenses))]
+    ("depenses", toJson (s.depenses - a.depenses)),
+    ("exportations", toJson (s.exportations - a.exportations)),
+    ("importations", toJson (s.importations - a.importations)),
+    ("balanceCourante", toJson (s.balanceCourante - a.balanceCourante))]
 
 def rapportSyntheseJson : Json :=
   let annee0 := Hypotheses.reference2026.annee
