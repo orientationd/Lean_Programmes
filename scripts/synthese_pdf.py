@@ -495,8 +495,9 @@ def section_resume(D: Donnees, meta) -> list:
         "Chaque programme est une liste de mesures traduites en leviers communs (dépense, "
         "prélèvement, âge légal, SMIC…). Le modèle en calcule les effets sous chaque jeu "
         "d'hypothèses ; aucun programme n'apporte ses propres élasticités.",
-        f"Les mesures sont supposées appliquées dès {a0} (année 0), puis la projection les "
-        "porte jusqu'à l'horizon : les écarts au tendanciel sont des effets de niveau durables.",
+        f"Les mesures sont appliquées à leur année d'entrée en vigueur ({a0} sauf mention), puis "
+        "la projection les porte jusqu'à l'horizon : les écarts au tendanciel sont des effets de "
+        "niveau durables, charge d'intérêts comprise.",
         "Le déficit présenté est celui des administrations publiques au sens de Maastricht ; le "
         "modèle, volontairement simple, ne sépare pas le budget de l'État (limites en annexe C). "
         "Les programmes « Exemple » sont fictifs ; les autres sont des transcriptions partielles "
@@ -777,6 +778,17 @@ def construire(d: dict, sortie: Path, commit: str | None) -> None:
         D, "Dette publique", "Dette au sens de Maastricht, en % du PIB.",
         lambda e: e["dettePb"] / 100, "Dette publique (% du PIB), scénario central", 0,
         NBSP + "%", lambda v: pct_pb(v, 1), valeur_table=lambda e: e["dettePb"])
+    story.append(CondPageBreak(110 * mm))
+    story += section_courbe(
+        D, "Charge d'intérêts",
+        "Intérêts versés sur la dette, en Md€. Le taux apparent part de son niveau de 2025 et "
+        "converge vers le taux marginal du scénario au rythme du refinancement : plus la dette "
+        "monte, plus les intérêts pèsent sur le déficit de l'année suivante (effet boule de neige). "
+        "Le tendanciel est une trajectoire « à politique inchangée », sans aucune consolidation.",
+        lambda e: e["chargeInterets"] / 1000, "Charge d'intérêts (Md€), scénario central", 0, "",
+        lambda v: md(v, 1), valeur_table=lambda e: e["chargeInterets"],
+        note="Tableau en Md€. Les opérations financières (prêts de l'État) alourdissent la dette, "
+             "donc les intérêts, sans entrer dans le déficit primaire.")
     story.append(CondPageBreak(110 * mm))
     story += section_courbe(
         D, "Chômage", "Taux de chômage au sens du BIT, en % de la population active.",

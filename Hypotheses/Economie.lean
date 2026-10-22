@@ -11,6 +11,10 @@ pour 24 mois selon les chiffres gouvernementaux de la réforme de 2023 (via
 IFRAP), soit 570 à 740 M€ par mois ; valeur centrale retenue (auparavant
 1 500 M€, valeur provisoire surestimée).
 `elasticiteChomageSmicPm` reste une valeur jouet, à sourcer.
+`tauxMarginalPb` : taux auquel la dette nouvelle et refinancée est émise
+(OAT 10 ans autour de 3,3 % fin 2025, hypothèse) ; `deriveTauxPb` : le
+taux apparent (1,87 % en 2025, INSEE) y converge d'environ 20 pb par an,
+rythme de renouvellement du stock (maturité moyenne ≈ 8,5 ans, AFT).
 
 C'est l'axe le plus disputé : multiplicateur, élasticités et fuite fiscale
 déterminent l'essentiel des écarts entre programmes. D'où trois variantes
@@ -32,6 +36,8 @@ def centrale : Economie where
   fuiteFiscalePm := 200
   elasticiteChomageSmicPm := 100
   economieParMoisRetraite := 650
+  tauxMarginalPb := 330
+  deriveTauxPb := 20
   actifsParMoisAgeLegal := 30000
   coutParPbPlus65 := 180
   baisseEmissionsPm := 30
@@ -49,6 +55,8 @@ def croissanceBasse : Economie where
   fuiteFiscalePm := 350
   elasticiteChomageSmicPm := 150
   economieParMoisRetraite := 650
+  tauxMarginalPb := 380
+  deriveTauxPb := 25
   actifsParMoisAgeLegal := 30000
   coutParPbPlus65 := 180
   baisseEmissionsPm := 20
@@ -66,6 +74,8 @@ def croissanceHaute : Economie where
   fuiteFiscalePm := 100
   elasticiteChomageSmicPm := 50
   economieParMoisRetraite := 650
+  tauxMarginalPb := 300
+  deriveTauxPb := 20
   actifsParMoisAgeLegal := 30000
   coutParPbPlus65 := 180
   baisseEmissionsPm := 40

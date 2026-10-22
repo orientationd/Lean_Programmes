@@ -149,6 +149,7 @@ def mesures : List Mesure := [
     titre := "Construction de six EPR2, au niveau du programme gouvernemental"
     source := "texte_orientation_d, mesure 4 ; programme gouvernemental : devis EDF du 18 décembre 2025 (72,8 Md€₂₀₂₀ pour 6 EPR2), accord État-EDF du 19 juin 2025 (prêt de l'État ≥ 50 %, CfD 100 €/MWh), première mise en service 2038. Effets hors horizon : production, CfD, remboursements"
     leviers := [.pretEtat pretEPR2]
+    debut := 2  -- décision finale d'investissement fin 2026, premiers décaissements 2027
     variantes := [
       { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] }
 ]
