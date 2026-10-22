@@ -4,8 +4,8 @@
 Usage :
     python3 -I scripts/controle_acces.py EVENEMENT.json [RACINE_BASE]
 
-Règle : un fichier sous `Programmes/<X>/` ne peut être ajouté, modifié,
-renommé ou supprimé que par un propriétaire de `<X>`.
+Règle : un fichier sous `Programmes/<X>/` ou `Moteurs/<X>/` ne peut être
+ajouté, modifié, renommé ou supprimé que par un propriétaire de `<X>`.
 
 * `<X>` existe sur la branche de base : l'auteur de la PR doit figurer dans
   `Programmes/<X>/PROPRIETAIRES` **de la base**. Une PR ne peut donc pas
@@ -19,7 +19,7 @@ concernés ici : ils relèvent de la revue des mainteneurs.
 `EVENEMENT.json` est produit par `.github/workflows/acces-programmes.yml` :
     {"auteur": "login",
      "fichiers": [{"filename": "...", "previous_filename": null, "status": "modified"}],
-     "proprietaires_tete": {"X": "contenu de Programmes/X/PROPRIETAIRES dans la PR" | null}}
+     "proprietaires_tete": {"Programmes/X": "contenu de Programmes/X/PROPRIETAIRES dans la PR" | null}}
 
 `RACINE_BASE` est un checkout de la branche de base (défaut : `.`). Le
 script ne lit que des données : il n'exécute rien de la PR.
@@ -35,7 +35,7 @@ import sys
 from pathlib import Path
 
 RE_COMPTE = re.compile(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?")
-RE_PROGRAMME = re.compile(r"^Programmes/([^/]+)/")
+RE_PROGRAMME = re.compile(r"^(Programmes|Moteurs)/([^/]+)/")
 
 
 def lire_proprietaires(texte: str | None) -> set[str]:
@@ -53,9 +53,10 @@ def programmes_touches(fichiers: list[dict]) -> dict[str, list[str]]:
     for f in fichiers:
         for chemin in (f.get("filename"), f.get("previous_filename")):
             if chemin and (m := RE_PROGRAMME.match(chemin)):
-                touches.setdefault(m.group(1), [])
-                if chemin not in touches[m.group(1)]:
-                    touches[m.group(1)].append(chemin)
+                cle = f"{m.group(1)}/{m.group(2)}"
+                touches.setdefault(cle, [])
+                if chemin not in touches[cle]:
+                    touches[cle].append(chemin)
     return touches
 
 
@@ -66,12 +67,12 @@ def controler(evenement: dict, base: Path) -> tuple[bool, list[str]]:
     lignes = [f"### Contrôle d'accès aux programmes", "",
               f"Auteur de la PR : `@{evenement['auteur']}`", ""]
     if not touches:
-        return True, lignes + ["Aucun dossier de programme modifié."]
+        return True, lignes + ["Aucun dossier de programme ni de moteur modifié."]
 
-    lignes += ["| Programme | Statut | Propriétaires | Accès |", "| --- | --- | --- | --- |"]
+    lignes += ["| Dossier | Statut | Propriétaires | Accès |", "| --- | --- | --- | --- |"]
     ok = True
     for x in sorted(touches):
-        dossier_base = base / "Programmes" / x
+        dossier_base = base / x
         if dossier_base.is_dir():
             fichier = dossier_base / "PROPRIETAIRES"
             proprietaires = lire_proprietaires(
@@ -90,11 +91,11 @@ def controler(evenement: dict, base: Path) -> tuple[bool, list[str]]:
         lignes.append("Accès autorisé.")
     else:
         lignes += [
-            "**Accès refusé.** Un dossier `Programmes/<X>/` ne se modifie que par ses "
-            "propriétaires (`Programmes/<X>/PROPRIETAIRES`). Pour proposer une "
-            "modification au programme de quelqu'un d'autre, ouvrez une issue ou "
-            "soumettez-la à l'un de ses propriétaires. Pour créer un programme, "
-            "listez votre compte dans son fichier `PROPRIETAIRES`."]
+            "**Accès refusé.** Un dossier `Programmes/<X>/` ou `Moteurs/<X>/` ne se "
+            "modifie que par ses propriétaires (fichier `PROPRIETAIRES` du dossier). Pour "
+            "proposer une modification au programme ou au moteur de quelqu'un d'autre, ouvrez "
+            "une issue ou soumettez-la à l'un de ses propriétaires. Pour créer un programme ou "
+            "un moteur, listez votre compte dans son fichier `PROPRIETAIRES`."]
     return ok, lignes
 
 

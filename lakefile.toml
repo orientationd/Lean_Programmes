@@ -1,6 +1,6 @@
 name = "programmes"
 version = "0.1.0"
-defaultTargets = ["Modele", "Hypotheses", "Proprietes", "Programmes", "Engagements"]
+defaultTargets = ["Modele", "Hypotheses", "Proprietes", "Moteurs", "Programmes", "Engagements"]
 
 [leanOptions]
 autoImplicit = false
@@ -18,6 +18,10 @@ name = "Hypotheses"
 # Propriétés partagées, évaluées pour chaque programme sous chaque scénario.
 [[lean_lib]]
 name = "Proprietes"
+
+# Un dossier par moteur contribué + registre (Moteurs.lean).
+[[lean_lib]]
+name = "Moteurs"
 
 # Un dossier par programme + registre (Programmes.lean).
 [[lean_lib]]

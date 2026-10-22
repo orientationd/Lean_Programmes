@@ -130,6 +130,18 @@ Montpellier-Perpignan (≈ 30 Md€ sur dix ans, 80 % d'argent public
 français). Emplois dans la construction ; les gains de temps de parcours
 et les délais de justice ne sont pas modélisés.
 
+### O-12 — Qualité d'accueil des touristes
+
+Six zones de rénovation de qualité, dont Le Grau-du-Roi : 150 M€/an par
+zone pendant dix ans (0,9 Md€/an, emplois dans la construction). Le
+sous-modèle touristique suit le nombre de visiteurs internationaux (100 M
+en 2024) et la dépense par touriste (710 €, soit 71 Md€ de recettes) ;
+la mesure les relève de +2 % et +3 % (variantes faible et forte), soit
+≈ 3,6 Md€/an de recettes supplémentaires, entrant dans le PIB à 80 %
+(contenu en valeur ajoutée nationale). Ces élasticités sont des
+hypothèses à étayer avec Atout France ; le nombre de nuitées n'est pas
+distingué du nombre de visiteurs.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

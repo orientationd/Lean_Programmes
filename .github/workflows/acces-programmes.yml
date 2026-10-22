@@ -1,5 +1,5 @@
-# Contrôle d'accès : un dossier Programmes/<X>/ ne peut être modifié que par
-# les comptes listés dans Programmes/<X>/PROPRIETAIRES (lu sur la branche
+# Contrôle d'accès : un dossier Programmes/<X>/ ou Moteurs/<X>/ ne peut être
+# modifié que par les comptes listés dans son fichier PROPRIETAIRES (lu sur la branche
 # de base ; pour un nouveau programme, dans la PR, et il doit nommer
 # l'auteur). Règles détaillées : scripts/controle_acces.py.
 #
@@ -51,8 +51,8 @@ jobs:
             const programmes = new Set();
             for (const f of fichiers) {
               for (const p of [f.filename, f.previous_filename]) {
-                const m = p && /^Programmes\/([^/]+)\//.exec(p);
-                if (m) programmes.add(m[1]);
+                const m = p && /^(Programmes|Moteurs)\/([^/]+)\//.exec(p);
+                if (m) programmes.add(`${m[1]}/${m[2]}`);
               }
             }
             // PROPRIETAIRES tel que proposé par la PR (utile pour un nouveau
@@ -66,7 +66,7 @@ jobs:
               for (const s of sources) {
                 try {
                   const { data } = await github.rest.repos.getContent(
-                    { ...s, path: `Programmes/${x}/PROPRIETAIRES`, ref: pr.head.sha });
+                    { ...s, path: `${x}/PROPRIETAIRES`, ref: pr.head.sha });
                   if (!Array.isArray(data) && data.content !== undefined) {
                     tete[x] = Buffer.from(data.content, data.encoding).toString('utf8');
                   }

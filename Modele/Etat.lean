@@ -362,6 +362,10 @@ structure Etat where
   personnes. Sans effet sur le modèle : sert à vérifier que l'objectif
   tient dans la population active. -/
   emploisAnnonces : Int
+  /-- Touristes internationaux accueillis dans l'année, milliers. -/
+  touristesMilliers : Int
+  /-- Dépense moyenne d'un touriste international pendant son séjour, €. -/
+  depenseParTouriste : Int
   /-- Décès annuels attribuables à la pollution de l'air (particules fines). -/
   decesPollutionAir : Int
   /-- Parc de voitures électriques, milliers. -/
@@ -399,6 +403,9 @@ def emploisEtp (s : Etat) : Int := s.emploi.total * s.heuresParEmploi / 1607
 
 /-- Emploi maximal compatible avec le chômage frictionnel `fricPb`, personnes. -/
 def emploiMaximal (s : Etat) (fricPb : Int) : Int := s.actifs * (10000 - fricPb) / 10000
+
+/-- Recettes du tourisme international, M€ (exportations de voyages). -/
+def recettesTourisme (s : Etat) : Int := s.touristesMilliers * s.depenseParTouriste / 1000
 
 /-- Heures travaillées par habitant et par an. -/
 def heuresParHabitant (s : Etat) : Int :=

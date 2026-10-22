@@ -59,6 +59,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - H.demo.decesMilliers + solde
     actifs := actifs
+    depenseParTouriste := s.depenseParTouriste + appliquerPb s.depenseParTouriste croissance
     parcElectriqueMilliers := s.parcElectriqueMilliers + dParc
     bornesMilliers := s.bornesMilliers + H.energie.bornesTendanciellesMilliers + s.bornesAnnuellesMilliers
     decesPollutionAir := max 0 (s.decesPollutionAir

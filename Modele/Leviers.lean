@@ -108,6 +108,15 @@ inductive Levier where
   « emplois annoncés réalisables » vérifie que la somme des objectifs tient
   dans la population active du programme. -/
   | annonceEmplois (emplois : Int)
+  /-- Programme de qualité d'accueil touristique : `zones` zones de
+  rénovation à `coutParZone` M€/an chacune (dépense d'affaires
+  économiques, emplois dans la construction), qui relèvent la
+  fréquentation de `hausseTouristesPm` et la dépense par touriste de
+  `hausseDepensePm`. Le surcroît de recettes touristiques est une demande
+  extérieure : il entre dans le PIB au prorata de son contenu en valeur
+  ajoutée nationale (80 %). -/
+  | accueilTouristique (zones : Int) (coutParZone : Int) (hausseTouristesPm : Int)
+      (hausseDepensePm : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -214,6 +223,11 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
   | .migration d, s => { s with migrationAnnuelleMilliers := s.migrationAnnuelleMilliers + d }
+  | .accueilTouristique zones cout hT hD, s =>
+      let s₁ := appliquerDepense H (some .construction) .affairesEconomiques (zones * cout) s
+      let s₂ := { s₁ with touristesMilliers := s₁.touristesMilliers + appliquerPm s₁.touristesMilliers hT
+                          depenseParTouriste := s₁.depenseParTouriste + appliquerPm s₁.depenseParTouriste hD }
+      chocPib H none (appliquerPm (s₂.recettesTourisme - s₁.recettesTourisme) 800) s₂
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)

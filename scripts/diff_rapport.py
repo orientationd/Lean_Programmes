@@ -110,6 +110,8 @@ def perimetre(fichiers: list[str]) -> list[str]:
     socle = sorted({f for f in fichiers if f.startswith(SOCLE)})
     progs = sorted({f.split("/")[1] for f in fichiers
                     if f.startswith("Programmes/") and f.count("/") >= 2})
+    mots = sorted({f.split("/")[1] for f in fichiers
+                   if f.startswith("Moteurs/") and f.count("/") >= 2})
     if socle:
         lignes.append("> ⚠️ **Cette PR modifie le socle commun** (modèle, hypothèses ou "
                       "propriétés) : elle change l'évaluation de **tous** les programmes "
@@ -120,6 +122,11 @@ def perimetre(fichiers: list[str]) -> list[str]:
         if lignes:
             lignes.append("")
         lignes.append("Programmes modifiés : " + ", ".join(f"`{p}`" for p in progs))
+    if mots:
+        if lignes:
+            lignes.append("")
+        lignes.append("Moteurs contribués modifiés : " + ", ".join(f"`{m}`" for m in mots)
+                      + " (l'évaluation de tous les programmes sous ce moteur change ; les autres moteurs sont inchangés)")
     return lignes
 
 

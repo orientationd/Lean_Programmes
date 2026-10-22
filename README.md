@@ -49,7 +49,13 @@ Un **moteur** (`Hypotheses/Moteurs.lean`) est un jeu de règles
 d'interprétation des leviers : « demande » (effets de demande permanents
 et symétriques) et « offre » (économies à demi-multiplicateur, effet des
 prélèvements obligatoires sur la croissance). Tous les programmes sont
-évalués sous tous les moteurs ; un engagement précise le sien. Une
+évalués sous tous les moteurs ; un engagement précise le sien. Toute
+personne autorisée peut **ajouter son moteur** dans `Moteurs/<Nom>/`
+(même contrôle d'accès que les programmes : fichier `PROPRIETAIRES`),
+l'enregistrer dans `Moteurs.lean`, et obtenir une **synthèse
+personnalisée** centrée dessus (`scripts/synthese_pdf.py --moteur <Nom>
+[--programmes A,B]`, ou le workflow « Synthèse PDF » avec ses paramètres ;
+une PR qui touche `Moteurs/` produit l'artefact automatiquement). Une
 propriété peut viser une année précise (« déficit sous 3 % en 2035 ») ou
 l'horizon du scénario.
 
@@ -82,7 +88,8 @@ hypothèse ajoutée plus tard par n'importe qui.
 | `Modele/` | état, unités, axes d'hypothèses, moteurs, leviers, projection, propriétés, programmes (types), sous-modèles SRU, automobile, attribution |
 | `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes |
 | `Proprietes/` | propriétés partagées, registre `Proprietes.toutes` |
-| `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` |
+| `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` + `PROPRIETAIRES` |
+| `Moteurs/<Nom>/`, `Moteurs.lean` | moteurs contribués (`Moteur.lean` + `PROPRIETAIRES`) et leur registre |
 | `Programmes.lean` | registre `Programmes.tous` |
 | `Engagements.lean` | preuve que tous les engagements sont tenus |
 | `Rapport.lean` | exécutable `rapport` : JSON + Markdown, export `--synthese` |

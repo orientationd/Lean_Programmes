@@ -122,11 +122,17 @@ def nom_court(nom: str) -> str:
 
 
 class Donnees:
-    def __init__(self, d: dict):
+    def __init__(self, d: dict, moteur: str | None = None, programmes: list[str] | None = None):
         self.d = d
         self.annees = d["annees"]
         self.var = {v["id"]: v for v in d["variantes"]}
         self.progs = d["programmes"]
+        if programmes:
+            inconnus = [x for x in programmes if x not in {p["id"] for p in self.progs}]
+            if inconnus:
+                raise SystemExit(f"Programmes inconnus : {', '.join(inconnus)}")
+            self.progs = [p for p in self.progs if p["id"] in programmes]
+        self.personnalisee = bool(moteur or programmes)
         # la couleur suit le programme (ordre du registre), jamais son rang
         self.couleur = {p["id"]: SERIES[i % len(SERIES)] for i, p in enumerate(self.progs)}
         nb = -(-len(self.progs) // PAR_FIGURE) or 1            # groupes de tailles équilibrées
@@ -137,6 +143,11 @@ class Donnees:
         self.moteurs = d["moteurs"]
         self.fonctions = d["fonctions"]
         self.standard = d["moteurStandard"]
+        if moteur:
+            if moteur not in {m["id"] for m in self.moteurs}:
+                raise SystemExit(f"Moteur inconnu : {moteur} (disponibles : "
+                                 + ", ".join(m["id"] for m in self.moteurs) + ")")
+            self.standard = moteur     # le moteur choisi devient celui des courbes et tableaux
         self.props = d["proprietes"]
 
     def traj(self, variante: str, prog: str | None, moteur: str | None = None) -> list[dict]:
@@ -429,13 +440,20 @@ def puces(items):
 # Sections
 # ---------------------------------------------------------------------------
 
+PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee": "Dette non dégradée",
+               "chomage-non-degrade": "Chômage non dégradé", "emissions-plafond": "Émissions sous plafond",
+               "deficit-3pct-2035": "Déficit < 3 % 2035", "dette-stabilisee-2035": "Dette stable 2035",
+               "air-non-degrade": "Air non dégradé", "bornes-suffisantes-2035": "Bornes 2035",
+               "emplois-annonces-realisables": "Emplois annoncés"}
+
+
 def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool = False) -> Table:
     """Par programme et propriété : statut au scénario central (✓/✗) et nombre
     de scénarios où la propriété tient, sous un moteur."""
     n = D.d["nbScenarios"]
     mid = moteur or D.standard
     props = D.props
-    ent = [f"Programme (sur {n} scénarios)"] + [q["titre"] for q in props]
+    ent = [f"Programme (sur {n} scénarios)"] + [PROPS_COURT.get(q["id"], q["titre"]) for q in props]
 
     def cellule(p, q):
         nb = p["matrice"][mid][q["id"]]
@@ -451,13 +469,19 @@ def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool =
 def section_resume(D: Donnees, meta) -> list:
     a0, a1 = D.annees[0], D.annees[-1]
     base = D.fin("central", None)
-    out = [P("Synthèse des programmes", "titre"),
+    titre = "Synthèse des programmes" if not D.personnalisee else \
+        f"Synthèse personnalisée — moteur « {D.nom_moteur(D.standard)} »"
+    out = [P(titre, "titre"),
            P(f"Projections {a0}–{a1} sous hypothèses partagées : PIB, finances publiques, "
              f"emploi par secteur, impôts et taxes, sensibilité au prix du pétrole et à la natalité.",
              "soustitre"),
            P(f"Généré le {meta['date']} à partir du dépôt <b>orientationd/Lean_Programmes</b>"
              f"{meta['commit']}. Tous les chiffres sont calculés par le modèle commun du dépôt, "
-             f"le même pour chaque programme ; ce document ne fait que les mettre en forme.")]
+             f"le même pour chaque programme ; ce document ne fait que les mettre en forme."
+             + (f" <b>Synthèse personnalisée</b> : courbes et tableaux sous le moteur « "
+                f"{echap(D.nom_moteur(D.standard))} » ({echap(next(m['description'] for m in D.moteurs if m['id'] == D.standard))})"
+                + (f", {len(D.progs)} programme(s) sélectionné(s)" if len(D.progs) < len(D.d['programmes']) else "")
+                + "." if D.personnalisee else ""))]
     out.append(P(f"Indicateurs en {a1}, scénario central", "h2"))
     ent = ["Programme", "PIB (Md€)", "Écart de PIB", "Déficit public", "Dette", "Chômage",
            "Actifs (millions)", "Prélèv. oblig."]
@@ -675,7 +699,7 @@ def points_moteurs(D: Donnees, champs):
     """Valeur en 2035 selon le moteur : un point par moteur et par ligne."""
     lignes = D.lignes()
     fig, axes = figure(0.24 * len(lignes) + 0.9, 1, len(champs), sharey=True)
-    couleurs = [SERIES[0], SERIES[1]]
+    couleurs = SERIES[:len(D.moteurs)]
     for ax, (champ, titre, dec, suffixe, tr) in zip(axes, champs):
         for k, (pid, _nom) in enumerate(lignes):
             vals = [tr(D.fin("central", pid, m["id"])[champ]) for m in D.moteurs]
@@ -701,7 +725,7 @@ def barres_effets(D: Donnees):
     progs = D.progs
     fig, ax = figure(0.3 * len(progs) + 0.9)
     pas = 0.8 / max(1, len(D.moteurs))
-    couleurs = [SERIES[0], SERIES[1]]
+    couleurs = SERIES[:len(D.moteurs)]
     for j, (m, c) in enumerate(zip(D.moteurs, couleurs)):
         vals = [next(e["pibPb"] for e in p["effetTotal"] if e["moteur"] == m["id"]) / 100 for p in progs]
         ys = [i + (j - (len(D.moteurs) - 1) / 2) * pas for i in range(len(progs))]
@@ -714,7 +738,7 @@ def barres_effets(D: Donnees):
     ax.axvline(0, color=BASE, lw=0.8, zorder=2)
     ax.xaxis.set_major_formatter(fmt_axe(1, NBSP + "%"))
     ax.set_title(f"Écart de PIB au tendanciel en {D.annees[-1]}, programme complet, scénario central")
-    legende(fig, ncol=2)
+    legende(fig, ncol=3)
     return fig
 
 
@@ -729,23 +753,23 @@ def section_effets(D: Donnees) -> list:
              "économie le réduit d'autant ; sous le moteur « offre », une économie pèse moitié moins "
              "et une baisse de prélèvements relève la croissance potentielle."),
            png(barres_effets(D))]
-    ent = ["Mesure"] + [f"PIB {m['nom'][:3].lower()}." for m in D.moteurs] \
-        + [f"Déficit {m['nom'][:3].lower()}." for m in D.moteurs] + ["Emplois dem.", "Emplois off."]
-    larg = [0.46, 0.09, 0.09, 0.09, 0.09, 0.09, 0.09]
+    nm = len(D.moteurs)
+    ent = ["Mesure"] + [f"PIB — {m['nom']}" for m in D.moteurs] \
+        + [f"Déficit — {D.nom_moteur(D.standard)}", f"Emplois — {D.nom_moteur(D.standard)}"]
+    larg = [0.42 if nm <= 2 else 0.34] + [(0.58 if nm <= 2 else 0.66) / (nm + 2)] * (nm + 2)
     for p in D.progs:
         par = {(e["moteur"], e["mesure"]): e for e in p["effetsMesures"]}
         rows = []
         for m in p["mesures"]:
             es = [par[(mid, m["id"])] for mid in mids]
+            st = par[(D.standard, m["id"])]
             rows.append([f"{m['id']} {court_nom(m['titre'], 70)}"]
                         + [signe(e["pibPb"] / 100, 2) + NBSP + "%" for e in es]
-                        + [signe(e["deficitPb"] / 100, 2) for e in es]
-                        + [signe(e["emplois"], 0) for e in es])
+                        + [signe(st["deficitPb"] / 100, 2), signe(st["emplois"], 0)])
         tot = {e["moteur"]: e for e in p["effetTotal"]}
         rows.append(["Programme complet"]
                     + [signe(tot[mid]["pibPb"] / 100, 2) + NBSP + "%" for mid in mids]
-                    + [signe(tot[mid]["deficitPb"] / 100, 2) for mid in mids]
-                    + [signe(tot[mid]["emplois"], 0) for mid in mids])
+                    + [signe(tot[D.standard]["deficitPb"] / 100, 2), signe(tot[D.standard]["emplois"], 0)])
         out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), tableau(ent, rows, larg)]))
     out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). Les mesures d'âge de "
                  "départ, de SMIC et de durée du travail agissent sur le PIB par le volume d'heures ; "
@@ -917,21 +941,21 @@ def section_moteurs(D: Donnees) -> list:
     out.append(png(points_moteurs(D, champs)))
     ent = [f"{a1}, scénario central"]
     for m in D.moteurs:
-        ent += [f"PIB {m['nom'][:3].lower()}. (Md€)", f"Déficit {m['nom'][:3].lower()}.",
-                f"Dette {m['nom'][:3].lower()}.", f"Chôm. {m['nom'][:3].lower()}."]
+        ent += [f"Déficit — {m['nom']}", f"Dette — {m['nom']}", f"Chômage — {m['nom']}"]
     rows = []
     for pid, nom in D.lignes():
         r = [nom]
         for m in D.moteurs:
             e = D.fin("central", pid, m["id"])
-            r += [md(e["pib"]), pct_pb(e["deficitPb"]), pct_pb(e["dettePb"], 0), pct_pb(e["chomagePb"])]
+            r += [pct_pb(e["deficitPb"]), pct_pb(e["dettePb"], 0), pct_pb(e["chomagePb"])]
         rows.append(r)
-    nb = 4 * len(D.moteurs)
+    nb = 3 * len(D.moteurs)
     out.append(Spacer(1, 3))
     out.append(tableau(ent, rows, [0.24] + [0.76 / nb] * nb, surligner_premiere=True))
-    out.append(P("Déficit et dette en % du PIB, chômage en % des actifs. « dem. » : moteur Demande ; "
-                 "« off. » : moteur Offre. L'écart entre moteurs mesure la sensibilité d'un programme "
-                 "aux hypothèses de mécanisme, indépendamment des hypothèses de scénario.", "note"))
+    out.append(P("Déficit et dette en % du PIB, chômage en % des actifs. L'écart entre moteurs mesure "
+                 "la sensibilité d'un programme aux hypothèses de mécanisme, indépendamment des "
+                 "hypothèses de scénario. Les moteurs contribués (dossier `Moteurs/`) s'ajoutent "
+                 "aux deux moteurs du socle.", "note"))
     return out
 
 
@@ -1080,8 +1104,9 @@ def section_annexes(D: Donnees) -> list:
 
 # ---------------------------------------------------------------------------
 
-def construire(d: dict, sortie: Path, commit: str | None) -> None:
-    D = Donnees(d)
+def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = None,
+               programmes: list[str] | None = None) -> None:
+    D = Donnees(d, moteur, programmes)
     meta = {"date": dt.date.today().strftime("%d/%m/%Y"),
             "commit": f" (version {commit[:7]})" if commit else ""}
     a0, a1 = D.annees[0], D.annees[-1]
@@ -1176,7 +1201,8 @@ def construire(d: dict, sortie: Path, commit: str | None) -> None:
 
     doc = SimpleDocTemplate(str(sortie), pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                             topMargin=16 * mm, bottomMargin=17 * mm,
-                            title="Synthèse des programmes", author="orientation_d",
+                            title=("Synthèse des programmes" if not D.personnalisee
+                                   else f"Synthèse personnalisée ({D.standard})"), author="orientation_d",
                             subject=f"Projections {a0}–{a1} sous hypothèses partagées")
     doc.build(story, onFirstPage=pied, onLaterPages=pied)
 
@@ -1187,12 +1213,15 @@ def main() -> int:
     ap.add_argument("entree", help="JSON produit par Rapport.lean --synthese")
     ap.add_argument("sortie", help="PDF à écrire")
     ap.add_argument("--commit", default=os.environ.get("GITHUB_SHA"))
+    ap.add_argument("--moteur", help="identifiant du moteur au centre de la synthèse (courbes, tableaux)")
+    ap.add_argument("--programmes", help="identifiants de programmes à inclure, séparés par des virgules")
     a = ap.parse_args()
     d = json.loads(Path(a.entree).read_text(encoding="utf-8"))
     if d.get("version") != 1:
         print(f"Version de synthèse inattendue : {d.get('version')}", file=sys.stderr)
         return 1
-    construire(d, Path(a.sortie), a.commit)
+    construire(d, Path(a.sortie), a.commit, a.moteur,
+               [x.strip() for x in a.programmes.split(",") if x.strip()] if a.programmes else None)
     print(f"Synthèse PDF écrite : {a.sortie}")
     return 0
 

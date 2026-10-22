@@ -93,7 +93,7 @@ jobs:
           git worktree add -q "$RUNNER_TEMP/base" "$BASE_SHA"
           # La base peut ne pas compiler (premier commit, toolchain cassée…) :
           # dans ce cas le diff présente tout comme nouveau.
-          ( cd "$RUNNER_TEMP/base" && lake build Programmes \
+          ( cd "$RUNNER_TEMP/base" && lake build \
               && lake env lean --run Rapport.lean --json "$GITHUB_WORKSPACE/out/base.json" --md /dev/null ) \
             || echo "::warning::La base ne produit pas de rapport ; diff calculé contre un rapport vide."
 
@@ -101,7 +101,7 @@ jobs:
       # suivante), ce qui évite de compiler tout le dépôt en C (~60 s).
       - name: Compiler le modèle, les hypothèses, les propriétés et les programmes
         id: compilation
-        run: lake build Programmes
+        run: lake build Programmes Moteurs
 
       - name: Calculer la matrice d'évaluation
         id: rapport
