@@ -83,6 +83,17 @@ et emplois d'EDF et de ses fournisseurs, réduction d'émissions.
 Sources : [communiqué EDF du 18 décembre 2025](https://www.edf.fr/en/the-edf-group/dedicated-sections/journalists/all-press-releases/edf-shares-its-forecasted-cost-estimate-of-the-epr2-programme-for-eu728bn),
 [accord État-EDF, AFP, 19 juin 2025](https://www.connaissancedesenergies.org/afp/edf-et-letat-francais-parviennent-un-accord-pour-financer-la-relance-du-nucleaire-250619).
 
+### O-05 et O-06 — Prime à l'électrique et points de recharge
+
+O-05 : prime de 4 000 € pour 300 000 achats de voitures électriques par
+an (1,2 Md€/an ; variante 6 000 € × 400 000). O-06 : 50 000 points de
+recharge publics par an à 8 000 € (0,4 Md€/an, emplois dans la
+construction). Le modèle commun en déduit le parc électrique, les décès
+évités par la baisse des particules fines (90 par million de véhicules
+remplacés, hypothèse documentée dans `Hypotheses/Energie.lean`) et vérifie
+la propriété « un point de recharge public pour dix véhicules en 2035 ».
+Montants : hypothèses à arbitrer.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

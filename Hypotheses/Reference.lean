@@ -56,7 +56,12 @@ def reference2026 : Reference where
     ageLegalMois := 768            -- repère provisoire : 64 ans
     populationMilliers := 69100    -- population au 1er janvier 2026 (INSEE, bilan démographique 2025)
     actifs := 31834000             -- population active BIT 2025 (INSEE)
-    emploi := emploi2025 }         -- chômage BIT 7,9 % fin 2025 (INSEE)
+    emploi := emploi2025           -- chômage BIT 7,9 % fin 2025 (INSEE)
+    decesPollutionAir := 40000     -- décès attribuables aux PM2,5 (Santé publique France, 2021)
+    parcElectriqueMilliers := 1600 -- voitures 100 % électriques en circulation fin 2025 (Avere-France, ordre de grandeur)
+    bornesMilliers := 175          -- points de recharge ouverts au public fin 2025 (Avere-France, ordre de grandeur)
+    electrificationAnnuelleMilliers := 0
+    bornesAnnuellesMilliers := 0 }
   populationMilliers := 69100
   partPlus65Pb := 2220             -- 22,2 % au 1er janvier 2026 (INSEE)
   sources := [
@@ -64,6 +69,8 @@ def reference2026 : Reference where
     "INSEE, Bilan démographique 2025, Insee Première n°2087 (13 janvier 2026)",
     "INSEE, population active 2025 ; emploi salarié et non salarié par activité 2024",
     "DGCL, note sur les taux de fiscalité directe locale 2025",
-    "Ministère de la Transition écologique : TICPE 2022 (via Journal de l'Automobile, mars 2024)"]
+    "Ministère de la Transition écologique : TICPE 2022 (via Journal de l'Automobile, mars 2024)",
+    "Santé publique France, Impact de la pollution de l'air ambiant sur la mortalité en France (2021) : 40 000 décès/an attribuables aux PM2,5",
+    "Avere-France, baromètres 2025 : parc électrique et points de recharge publics (ordres de grandeur, à préciser)"]
 
 end Hypotheses

@@ -58,12 +58,18 @@ structure Mesure where
   immédiate). Une mesure dont le début dépasse l'horizon n'a aucun effet. -/
   debut : Nat := 0
 
-def Mesure.appliquer (H : Scenario) (m : Mesure) (s : Etat) : Etat :=
-  m.leviers.foldl (fun s l => l.appliquer H s) s
+def Mesure.appliquer (M : Moteur) (H : Scenario) (m : Mesure) (s : Etat) : Etat :=
+  m.leviers.foldl (fun s l => l.appliquer M H s) s
 
 structure Engagement where
   scenario : Scenario
   propriete : Propriete
+  /-- Moteur sous lequel l'engagement est revendiqué. -/
+  moteur : Moteur
+
+/-- Engagement sous le moteur donné. -/
+def Engagement.sous (M : Moteur) (H : Scenario) (q : Propriete) : Engagement :=
+  ⟨H, q, M⟩
 
 structure Programme where
   /-- Identifiant = nom du dossier dans `Programmes/`. -/
@@ -80,35 +86,48 @@ structure Programme where
 namespace Programme
 
 /-- Applique les mesures qui entrent en vigueur l'année `t`. -/
-def appliquerAnnee (p : Programme) (H : Scenario) (t : Nat) (s : Etat) : Etat :=
-  (p.mesures.filter (·.debut == t)).foldl (fun s m => m.appliquer H s) s
+def appliquerAnnee (p : Programme) (M : Moteur) (H : Scenario) (t : Nat) (s : Etat) : Etat :=
+  (p.mesures.filter (·.debut == t)).foldl (fun s m => m.appliquer M H s) s
 
 /-- Situation de départ après application des mesures immédiates. -/
-def etatInitial (p : Programme) (H : Scenario) : Etat :=
-  p.appliquerAnnee H 0 (etatDepart H)
+def etatInitial (p : Programme) (M : Moteur) (H : Scenario) : Etat :=
+  p.appliquerAnnee M H 0 (etatDepart H)
 
 /-- Projection sur `n` années à partir de l'année `t` : mesures de l'année,
 puis une année de projection. -/
-def projeterDepuis (p : Programme) (H : Scenario) : Nat → Nat → Etat → Etat
-  | 0, t, s => p.appliquerAnnee H t s
-  | n + 1, t, s => p.projeterDepuis H n (t + 1) (anneeSuivante H (p.appliquerAnnee H t s))
+def projeterDepuis (p : Programme) (M : Moteur) (H : Scenario) : Nat → Nat → Etat → Etat
+  | 0, t, s => p.appliquerAnnee M H t s
+  | n + 1, t, s =>
+    p.projeterDepuis M H n (t + 1) (anneeSuivante M H (p.appliquerAnnee M H t s))
 
 /-- États successifs sur `n` années (`n + 1` états), mesures appliquées à
 leur année d'entrée en vigueur. -/
-def trajectoire (p : Programme) (H : Scenario) : Nat → Nat → Etat → List Etat
-  | 0, t, s => [p.appliquerAnnee H t s]
+def trajectoire (p : Programme) (M : Moteur) (H : Scenario) : Nat → Nat → Etat → List Etat
+  | 0, t, s => [p.appliquerAnnee M H t s]
   | n + 1, t, s =>
-    let s' := p.appliquerAnnee H t s
-    s' :: p.trajectoire H n (t + 1) (anneeSuivante H s')
+    let s' := p.appliquerAnnee M H t s
+    s' :: p.trajectoire M H n (t + 1) (anneeSuivante M H s')
+
+/-- Situation avec le programme après `n` années. -/
+def resultatA (p : Programme) (M : Moteur) (H : Scenario) (n : Nat) : Etat :=
+  p.projeterDepuis M H n 0 (etatDepart H)
 
 /-- Situation à l'horizon avec le programme. -/
-def resultat (p : Programme) (H : Scenario) : Etat :=
-  p.projeterDepuis H H.horizon 0 (etatDepart H)
+def resultat (p : Programme) (M : Moteur) (H : Scenario) : Etat :=
+  p.resultatA M H H.horizon
+
+/-- La propriété `q` tient pour le programme sous le moteur et le scénario,
+à l'année propre à la propriété (horizon du scénario par défaut). -/
+def Verifie (p : Programme) (M : Moteur) (H : Scenario) (q : Propriete) : Prop :=
+  q.tient H (tendancielA M H (q.horizon H)) (p.resultatA M H (q.horizon H))
+
+instance (p : Programme) (M : Moteur) (H : Scenario) (q : Propriete) :
+    Decidable (p.Verifie M H q) :=
+  inferInstanceAs (Decidable (q.tient H _ _))
 
 /-- Tous les engagements revendiqués sont tenus. -/
 def EngagementsTenus (p : Programme) : Prop :=
-  ∀ e ∈ p.engagements,
-    e.propriete.tient e.scenario (tendanciel e.scenario) (p.resultat e.scenario)
+  ∀ e ∈ p.engagements, p.Verifie e.moteur e.scenario e.propriete
 
 instance (p : Programme) : Decidable p.EngagementsTenus :=
   inferInstanceAs (Decidable (∀ e ∈ p.engagements, _))

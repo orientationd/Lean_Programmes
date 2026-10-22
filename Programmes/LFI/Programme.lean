@@ -60,8 +60,8 @@ def mesures : List Mesure := [
     source := s!"{page} : État 300 M€/an, pôle public bancaire et autres 700 M€/an ; parc public de 1,4 million de véhicules d'ici 2032"
     leviers := [.depenseSecteur .tertiaireMarchand 300] },
   { id := "L-03", titre := "Aides à l'achat électrique et local"
-    source := s!"{page} : État 200 M€/an, pôle public bancaire et autres 200 M€/an"
-    leviers := [.depenseSecteur .industrie 200] },
+    source := s!"{page} : État 200 M€/an, pôle public bancaire et autres 200 M€/an ; conversion : 50 000 véhicules aidés par an à 4 000 € (hypothèse de prime unitaire)"
+    leviers := [.aideAchatElectrique 50000 4000] },
   { id := "L-04", titre := "Sous-traitance et équipementiers (Fonds Avenir Automobile)"
     source := s!"{page} : État 200 M€/an, pôle public bancaire et autres 800 M€/an"
     leviers := [.depenseSecteur .industrie 200] },

@@ -21,6 +21,10 @@ Trois mesures :
   sous-modèle d'attribution.
 * **O-04** — construction de six EPR2, au niveau du programme
   gouvernemental en cours, financée comme lui par un prêt de l'État.
+* **O-05** — prime à l'achat d'une voiture électrique pour 300 000 ménages
+  par an ; **O-06** — 50 000 points de recharge publics par an : effets sur
+  le parc électrique, les bornes nécessaires et la mortalité liée aux
+  particules fines.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -151,13 +155,25 @@ def mesures : List Mesure := [
     leviers := [.pretEtat pretEPR2]
     debut := 2  -- décision finale d'investissement fin 2026, premiers décaissements 2027
     variantes := [
-      { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] }
+      { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] },
+
+  { id := "O-05"
+    titre := "Prime de 4 000 € à l'achat d'une voiture électrique, 300 000 ménages par an"
+    source := "texte_orientation_d, mesure 5 ; montant et nombre : hypothèses (bonus écologique 2025 : 2 000 à 4 000 € selon le revenu, ≈ 300 000 électriques neuves par an) ; 1,2 Md€/an"
+    leviers := [.aideAchatElectrique 300000 4000]
+    variantes := [
+      { nom := "prime de 6 000 €, 400 000 ménages (2,4 Md€/an)", leviers := [.aideAchatElectrique 400000 6000] }] },
+
+  { id := "O-06"
+    titre := "50 000 points de recharge publics supplémentaires par an"
+    source := "texte_orientation_d, mesure 6 ; coût moyen 8 000 € par point, accélérée et normale confondues (hypothèse, programme Advenir) ; 0,4 Md€/an"
+    leviers := [.deploiementBornes 50000 8000] }
 ]
 
 def programme : Programme where
   id := "texte_orientation_d"
   nom := "texte_orientation_d"
-  description := "Programme de orientation_d : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2 financés par prêt de l'État."
+  description := "Programme de orientation_d : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2 financés par prêt de l'État, prime à l'électrique et points de recharge."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

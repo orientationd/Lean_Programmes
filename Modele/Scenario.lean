@@ -72,6 +72,17 @@ structure Energie where
   prixReferenceDollars : Int
   /-- Effet sur le niveau du PIB de +10 $ par baril, pb (négatif). -/
   effetPibPar10DollarsPb : Int
+  /-- Électrification tendancielle du parc automobile, milliers de
+  véhicules par an. -/
+  electrificationTendancielleMilliers : Int
+  /-- Ouverture tendancielle de points de recharge publics, milliers par an. -/
+  bornesTendanciellesMilliers : Int
+  /-- Décès annuels évités par million de voitures thermiques remplacées par
+  des électriques (particules fines à l'échappement). -/
+  decesEvitesParMillionVehicules : Int
+  /-- Véhicules électriques par point de recharge public, cible
+  d'infrastructure suffisante. -/
+  vehiculesParBorne : Int
   sources : List String
   deriving Repr
 
@@ -164,6 +175,10 @@ abbrev Valide (H : Scenario) : Prop :=
   0 ≤ H.natalite.naissancesMilliers ∧ 0 < H.natalite.icfCentiemes ∧
   0 < H.energie.prixBrentDollars ∧ 0 < H.energie.prixReferenceDollars ∧
   H.energie.effetPibPar10DollarsPb ≤ 0 ∧ -2000 ≤ H.energie.effetPibPar10DollarsPb ∧
+  0 ≤ H.energie.electrificationTendancielleMilliers ∧ 0 ≤ H.energie.bornesTendanciellesMilliers ∧
+  0 ≤ H.energie.decesEvitesParMillionVehicules ∧ 0 < H.energie.vehiculesParBorne ∧
+  0 ≤ H.reference.etat.decesPollutionAir ∧ 0 ≤ H.reference.etat.parcElectriqueMilliers ∧
+  0 ≤ H.reference.etat.bornesMilliers ∧
   0 ≤ H.eco.actifsParMoisAgeLegal ∧
   0 < H.droit.plafondDeficitPb ∧ 0 < H.droit.plafondEmissionsMt ∧
   1 ≤ H.horizon ∧ H.horizon ≤ 20

@@ -26,7 +26,7 @@ d'hypothèses partagées, avec une CI qui vérifie à chaque PR :
    │  scénarios    │──► projection ◄── leviers ◄── Programmes/X │
    └───────────────┘         │                └───────────────────┘
                              ▼
-     matrice  programme × scénario × propriété   (lake exe rapport)
+     matrice  programme × moteur × scénario × propriété   (lake exe rapport)
      engagements prouvés                          (Engagements.lean)
 ```
 
@@ -44,6 +44,14 @@ Trois choix structurants :
    coefficients en pour mille (`Modele/Unites.lean`). Chaque propriété se
    décide par `decide +kernel` : pas de Mathlib, pas de flottants. La CI
    complète, rejeu des preuves compris, tient en deux minutes environ.
+
+Un **moteur** (`Hypotheses/Moteurs.lean`) est un jeu de règles
+d'interprétation des leviers : « demande » (effets de demande permanents
+et symétriques) et « offre » (économies à demi-multiplicateur, effet des
+prélèvements obligatoires sur la croissance). Tous les programmes sont
+évalués sous tous les moteurs ; un engagement précise le sien. Une
+propriété peut viser une année précise (« déficit sous 3 % en 2035 ») ou
+l'horizon du scénario.
 
 ## Engagements, contrats et évaluation
 
@@ -71,7 +79,7 @@ hypothèse ajoutée plus tard par n'importe qui.
 
 | Chemin | Rôle |
 |---|---|
-| `Modele/` | état, unités, axes d'hypothèses, leviers, projection, propriétés, programmes (types), sous-modèle communal SRU |
+| `Modele/` | état, unités, axes d'hypothèses, moteurs, leviers, projection, propriétés, programmes (types), sous-modèles SRU, automobile, attribution |
 | `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes |
 | `Proprietes/` | propriétés partagées, registre `Proprietes.toutes` |
 | `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` |

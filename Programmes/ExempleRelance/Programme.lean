@@ -83,11 +83,11 @@ def programme : Programme where
   mesures := mesures
   engagements := [
     -- « Nos émissions passent sous le plafond légal en hypothèses centrales. »
-    ⟨central, Proprietes.emissions⟩,
+    Engagement.sous Moteurs.standard (central) Proprietes.emissions,
     -- « Avec une croissance forte et la clause dérogatoire, le déficit reste sous le plafond. »
-    ⟨scenario Demo.centrale Eco.croissanceHaute Droit.clauseDerogatoire, Proprietes.deficit⟩,
+    Engagement.sous Moteurs.standard (scenario Demo.centrale Eco.croissanceHaute Droit.clauseDerogatoire) Proprietes.deficit,
     -- « Avec une croissance forte, le chômage ne dépasse pas le tendanciel. »
-    ⟨scenario Demo.centrale Eco.croissanceHaute Droit.cadreActuel, Proprietes.chomage⟩
+    Engagement.sous Moteurs.standard (scenario Demo.centrale Eco.croissanceHaute Droit.cadreActuel) Proprietes.chomage
   ]
 
 end Programmes.ExempleRelance
