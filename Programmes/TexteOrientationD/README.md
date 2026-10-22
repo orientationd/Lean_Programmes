@@ -174,6 +174,24 @@ licences à partir de la quatrième année (mesure en deux temps, O-15 et
 O-15b). Montants : hypothèses à documenter avec la DINUM (accords-cadres
 en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
 
+### O-16 à O-19 — Universités
+
+* **O-16** Reprise de la dette et apurement des déficits : les universités
+  sont déjà dans le périmètre des administrations publiques, la reprise de
+  leur dette est donc neutre sur la dette et le solde consolidés ;
+  l'apurement de leurs déficits de fonctionnement coûte ≈ 500 M€/an
+  (hypothèse, Cour des comptes 2025).
+* **O-17** Reconstruction aux normes (démolition puis construction) des
+  campus de Nanterre, Toulouse, Montpellier et Grenoble : 4 × 1 Md€ sur
+  huit ans à partir de 2027, soit 500 M€/an d'investissement (emplois dans
+  la construction), montant gardé constant au-delà par prudence.
+* **O-18** Parcoursup ouvert aux étudiants étrangers à nombre d'admis
+  constant : sans effet budgétaire, pour mémoire.
+* **O-19** Places pour les bacheliers sans affectation : ≈ 10 000 par an,
+  trois années de licence, 10 500 € par étudiant : 315 M€/an et 2 000
+  postes d'enseignants-chercheurs annoncés (vérifiés par la propriété
+  « emplois annoncés réalisables »).
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

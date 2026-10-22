@@ -44,6 +44,11 @@ Trois mesures :
   de l'État ; objectif : la moyenne de l'Union européenne.
 * **O-15** — passage au logiciel libre pour tous les logiciels de l'État et
   tous ses ordinateurs.
+* **O-16** à **O-19** — universités : reprise de la dette et apurement des
+  déficits, reconstruction aux normes de campus dégradés (Nanterre,
+  Toulouse, Montpellier, Grenoble), Parcoursup pour les étudiants
+  étrangers à nombre constant, places pour les bacheliers sans
+  affectation.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -157,6 +162,23 @@ après une migration de 900 M€ (formation, adaptation, matériel) étalée sur
 trois ans et comptée en une fois dans la dette, par prudence. -/
 def economieLibre : Int := 400
 def coutMigrationLibre : Int := 900
+
+/-- Universités. Reprise de la dette : les universités sont des organismes
+divers d'administration centrale, déjà consolidés dans la dette publique ;
+la reprise par l'État est un transfert interne, neutre sur le solde et la
+dette des administrations publiques. Ce qui coûte, c'est l'apurement des
+déficits de fonctionnement : ≈ 60 universités en déficit en 2024, pour
+environ 500 M€/an (hypothèse ; Cour des comptes, situation financière des
+universités, 2025). Reconstruction : quatre campus démolis puis rebâtis aux
+normes, 1 Md€ chacun (hypothèse : opérations campus comparables, Jussieu
+≈ 2 Md€), étalés sur huit ans à partir de 2027 : 500 M€/an. Places pour les
+bacheliers sans affectation : ≈ 10 000 par an sans proposition en fin de
+procédure Parcoursup (SIES), trois années de licence, 10 500 € par
+étudiant et par an (dépense moyenne, MESR) : 315 M€/an, et 2 000 postes
+d'enseignants-chercheurs annoncés. -/
+def deficitsUniversites : Int := 500
+def reconstructionCampus : Int := 500
+def placesSansFac : Int := 315
 
 /-! ## Mesures -/
 
@@ -313,13 +335,34 @@ def mesures : List Mesure := [
     titre := "Logiciel libre : économies de licences en régime de croisière"
     source := "Texte Orientation D, mesure 15 (suite) ; entrée en vigueur la quatrième année"
     leviers := [.economieSur .fonctionnement economieLibre]
-    debut := 3 }
+    debut := 3 },
+
+  { id := "O-16"
+    titre := "Reprise de la dette des universités et apurement de leurs déficits"
+    source := s!"Texte Orientation D, mesure 16 ; la reprise de dette est un transfert interne aux administrations publiques (neutre) ; apurement des déficits : {deficitsUniversites} M€/an (hypothèse, Cour des comptes 2025 : ≈ 60 universités en déficit)"
+    leviers := [.depenseSur .enseignement deficitsUniversites] },
+
+  { id := "O-17"
+    titre := "Reconstruction aux normes des universités de Nanterre, Toulouse, Montpellier et Grenoble (démolition puis construction)"
+    source := s!"Texte Orientation D, mesure 17 ; 4 × 1 Md€ sur huit ans à partir de 2027 : {reconstructionCampus} M€/an d'investissement (hypothèse), emplois dans la construction ; le modèle garde la dépense constante au-delà des huit ans (prudent)"
+    leviers := [.investissement .enseignement reconstructionCampus]
+    debut := 2 },
+
+  { id := "O-18"
+    titre := "Parcoursup ouvert aux étudiants étrangers, à nombre d'admis constant"
+    source := "Texte Orientation D, mesure 18 ; à effectifs constants, sans effet budgétaire : procédure d'admission unifiée (remplace Études en France pour les candidats hors UE) ; enregistrée pour mémoire"
+    leviers := [] },
+
+  { id := "O-19"
+    titre := "Ouverture de places pour tous les bacheliers sans affectation"
+    source := s!"Texte Orientation D, mesure 19 ; ≈ 10 000 bacheliers sans proposition par an (SIES, Parcoursup 2025) × 3 ans × 10 500 € : {placesSansFac} M€/an ; 2 000 postes d'enseignants-chercheurs annoncés"
+    leviers := [.depenseSur .enseignement placesSansFac, .annonceEmplois 2000] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places)."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
