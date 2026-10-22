@@ -8,8 +8,9 @@ Le même moteur projette le tendanciel et chaque programme :
 * `tendanciel H = projeter H (situation de départ)`
 * `avecProgramme H = projeter H (situation de départ + mesures)`
 
-Les mesures sont appliquées en année 0 puis portées par la projection : leurs
-effets sur le solde s'accumulent donc naturellement dans la dette.
+Les mesures sont appliquées l'année de leur entrée en vigueur (`Mesure.debut`,
+0 par défaut) puis portées par la projection : leurs effets sur le solde
+s'accumulent dans la dette, dont la charge d'intérêts suit.
 -/
 
 namespace Modele
@@ -25,8 +26,13 @@ def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
   let surcoutVieillissement :=
     (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutParPbPlus65
       / (H.horizon : Int)
+  -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
+  -- appliqué à la dette de fin d'année précédente (effet boule de neige)
+  let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
+  let interets := s.dette * taux / 10000
+  let primaires := s.depensesPrimaires
   let depenses :=
-    s.depenses + appliquerPb s.depenses H.eco.croissanceDepensesPb + surcoutVieillissement
+    primaires + appliquerPb primaires H.eco.croissanceDepensesPb + surcoutVieillissement + interets
   let actifs := s.actifs + appliquerPb s.actifs H.demo.croissanceActifsPb
   -- emploi : suit la population active à chômage constant, puis loi d'Okun
   -- (le chômage baisse de `okun × (croissance − seuil)`)
@@ -37,6 +43,8 @@ def anneeSuivante (H : Scenario) (s : Etat) : Etat :=
     impots := impots
     autresRecettes := autresRecettes
     depenses := depenses
+    chargeInterets := interets
+    tauxApparentPb := taux
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers

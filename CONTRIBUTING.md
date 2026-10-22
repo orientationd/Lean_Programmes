@@ -45,7 +45,9 @@ Quand la source précise l'impôt visé ou le secteur aidé, préférer
 alors recettes et emplois au bon poste au lieu de « autres impôts » ou
 d'une répartition au prorata. Un financement par prêt ou prise de
 participation de l'État (EDF, nationalisation) est un `pretEtat` : il
-pèse sur la dette, pas sur le déficit.
+pèse sur la dette, pas sur le déficit. Une mesure qui n'entre en vigueur
+qu'après l'année de départ porte `debut := n` (années) : montée en charge
+ou décaissements différés.
 
 ### 2. Proposer une hypothèse
 

@@ -158,6 +158,9 @@ def etatJson (s : Etat) : Json :=
     ("emploiTotal", toJson s.emploiTotal),
     ("pibParHabitant", toJson s.pibParHabitant),
     ("autresRecettes", toJson s.autresRecettes),
+    ("chargeInterets", toJson s.chargeInterets),
+    ("tauxApparentPb", toJson s.tauxApparentPb),
+    ("soldePrimaire", toJson s.soldePrimaire),
     ("operationsFinancieres", toJson s.operationsFinancieres),
     ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
     ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]
@@ -231,7 +234,7 @@ def rapportSyntheseJson : Json :=
       Json.mkObj [("id", toJson p.id), ("nom", toJson p.nom),
         ("description", toJson p.description), ("nbMesures", toJson p.mesures.length),
         ("mesures", Json.arr <| p.mesures.toArray.map fun m =>
-          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre)]),
+          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("debut", toJson m.debut)]),
         ("contrats", toJson ((contrats p).map fun (m, t) => s!"{m} — {t}")),
         ("engagements", Json.arr <| p.engagements.toArray.map fun e =>
           Json.mkObj [("scenario", toJson e.scenario.id), ("propriete", toJson e.propriete.id),
@@ -249,7 +252,7 @@ def rapportSyntheseJson : Json :=
         ("effetPibPar10DollarsPb", toJson H.energie.effetPibPar10DollarsPb),
         ("tendanciel", Json.arr <| (trajectoire H horizonSynthese (etatDepart H)).toArray.map etatJson),
         ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
-          (p.id, Json.arr <| (trajectoire H horizonSynthese (p.etatInitial H)).toArray.map etatJson))]),
+          (p.id, Json.arr <| (p.trajectoire H horizonSynthese 0 (etatDepart H)).toArray.map etatJson))]),
     ("hypotheses", Json.mkObj [
       ("reference", Json.mkObj [("description", toJson Hypotheses.reference2026.description),
         ("sources", sourcesJson Hypotheses.reference2026.sources)]),

@@ -215,8 +215,14 @@ structure Etat where
   impots : ParImpot
   /-- Recettes non fiscales (ventes, revenus de la propriété…), M€. -/
   autresRecettes : Int
-  /-- Dépenses des administrations publiques, M€. -/
+  /-- Dépenses des administrations publiques, M€, charge d'intérêts comprise. -/
   depenses : Int
+  /-- Intérêts versés sur la dette, M€ (inclus dans `depenses`). -/
+  chargeInterets : Int
+  /-- Taux d'intérêt apparent de la dette (intérêts / dette de l'année
+  précédente), pb. Il converge vers le taux marginal du scénario au rythme
+  du refinancement. -/
+  tauxApparentPb : Int
   /-- Dette publique, M€. -/
   dette : Int
   /-- Opérations financières annuelles des administrations publiques (prêts,
@@ -244,6 +250,12 @@ def recettes (s : Etat) : Int := s.impots.total + s.autresRecettes
 
 /-- Déficit public, M€ (positif = déficit). -/
 def deficit (s : Etat) : Int := s.depenses - s.recettes
+
+/-- Dépenses hors charge d'intérêts, M€. -/
+def depensesPrimaires (s : Etat) : Int := s.depenses - s.chargeInterets
+
+/-- Solde primaire, M€ (positif = excédent). -/
+def soldePrimaire (s : Etat) : Int := s.recettes - s.depensesPrimaires
 
 /-- Déficit en pb du PIB. -/
 def deficitPb (s : Etat) : Int := ratioPb s.deficit s.pib

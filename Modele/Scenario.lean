@@ -98,6 +98,11 @@ structure Economie where
   elasticiteChomageSmicPm : Int
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
   economieParMoisRetraite : Int
+  /-- Taux d'intérêt marginal sur la dette nouvelle et refinancée, pb. -/
+  tauxMarginalPb : Int
+  /-- Hausse annuelle maximale du taux apparent vers le taux marginal, pb
+  (rythme de refinancement du stock). -/
+  deriveTauxPb : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
   /-- Surcoût annuel de dépenses (M€) par pb de part des 65 ans et plus. -/
@@ -152,6 +157,8 @@ abbrev Valide (H : Scenario) : Prop :=
   0 ≤ H.eco.fuiteFiscalePm ∧ H.eco.fuiteFiscalePm ≤ 1000 ∧
   0 ≤ H.eco.elasticiteChomageSmicPm ∧
   0 ≤ H.eco.economieParMoisRetraite ∧
+  0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧ 0 ≤ H.eco.deriveTauxPb ∧
+  0 ≤ H.reference.etat.tauxApparentPb ∧ 0 ≤ H.reference.etat.chargeInterets ∧
   0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
   0 ≤ H.demo.decesMilliers ∧ -2000 ≤ H.demo.croissanceActifsPb ∧ H.demo.croissanceActifsPb ≤ 2000 ∧
   0 ≤ H.natalite.naissancesMilliers ∧ 0 < H.natalite.icfCentiemes ∧

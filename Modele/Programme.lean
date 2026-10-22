@@ -54,6 +54,9 @@ structure Mesure where
   contrats : List Contrat := []
   /-- Variantes comparées dans le rapport (voir `Variante`). -/
   variantes : List Variante := []
+  /-- Année d'entrée en vigueur, comptée depuis l'année de départ (0 =
+  immédiate). Une mesure dont le début dépasse l'horizon n'a aucun effet. -/
+  debut : Nat := 0
 
 def Mesure.appliquer (H : Scenario) (m : Mesure) (s : Etat) : Etat :=
   m.leviers.foldl (fun s l => l.appliquer H s) s
@@ -76,13 +79,31 @@ structure Programme where
 
 namespace Programme
 
-/-- Situation de départ après application des mesures. -/
+/-- Applique les mesures qui entrent en vigueur l'année `t`. -/
+def appliquerAnnee (p : Programme) (H : Scenario) (t : Nat) (s : Etat) : Etat :=
+  (p.mesures.filter (·.debut == t)).foldl (fun s m => m.appliquer H s) s
+
+/-- Situation de départ après application des mesures immédiates. -/
 def etatInitial (p : Programme) (H : Scenario) : Etat :=
-  p.mesures.foldl (fun s m => m.appliquer H s) (etatDepart H)
+  p.appliquerAnnee H 0 (etatDepart H)
+
+/-- Projection sur `n` années à partir de l'année `t` : mesures de l'année,
+puis une année de projection. -/
+def projeterDepuis (p : Programme) (H : Scenario) : Nat → Nat → Etat → Etat
+  | 0, t, s => p.appliquerAnnee H t s
+  | n + 1, t, s => p.projeterDepuis H n (t + 1) (anneeSuivante H (p.appliquerAnnee H t s))
+
+/-- États successifs sur `n` années (`n + 1` états), mesures appliquées à
+leur année d'entrée en vigueur. -/
+def trajectoire (p : Programme) (H : Scenario) : Nat → Nat → Etat → List Etat
+  | 0, t, s => [p.appliquerAnnee H t s]
+  | n + 1, t, s =>
+    let s' := p.appliquerAnnee H t s
+    s' :: p.trajectoire H n (t + 1) (anneeSuivante H s')
 
 /-- Situation à l'horizon avec le programme. -/
 def resultat (p : Programme) (H : Scenario) : Etat :=
-  projeter H (p.etatInitial H)
+  p.projeterDepuis H H.horizon 0 (etatDepart H)
 
 /-- Tous les engagements revendiqués sont tenus. -/
 def EngagementsTenus (p : Programme) : Prop :=

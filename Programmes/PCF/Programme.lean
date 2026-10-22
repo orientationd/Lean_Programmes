@@ -32,8 +32,9 @@ def plan : String := "Empreinte 2050 (PCF, 6 novembre 2023)"
 /-- Coût du programme gouvernemental de 6 EPR2 : 72,8 Md€ (euros 2020),
 devis EDF du 18 décembre 2025, dont au moins la moitié financée par un prêt
 de l'État (accord État-EDF, juin 2025). Hypothèse : même coût unitaire et
-même schéma de financement pour les 20 EPR2 du plan, prêt versé de 2027 à
-2050 (24 ans) : 72 800 / 6 × 20 / 2 / 24 ≈ 5 055 M€/an. Les 12 SMR ne sont
+même schéma de financement pour les 20 EPR2 du plan, prêt versé de 2027
+(année 2 de la projection) à 2050, soit 24 ans : 72 800 / 6 × 20 / 2 / 24
+≈ 5 055 M€/an. Les 12 SMR ne sont
 pas chiffrés. -/
 def pretEPR : Int := 5055
 
@@ -61,7 +62,8 @@ def mesures : List Mesure := [
     leviers := [.transition 14 0] },
   { id := "PC-08", titre := "Programme nucléaire : 20 EPR2 et 12 SMR d'ici 2050"
     source := s!"Discours de présentation du plan (F. Roussel, 6 novembre 2023) : « 20 réacteurs EPR2 et 12 réacteurs modulaires (SMR NUWARD) d'ici 2050 », prolongation du parc au-delà de 60 ans. Financement : hypothèse du schéma gouvernemental (voir `pretEPR`), soit {pretEPR} M€/an de prêt de l'État à EDF"
-    leviers := [.pretEtat pretEPR] },
+    leviers := [.pretEtat pretEPR]
+    debut := 2 },
   { id := "PC-09", titre := "Nationalisation de BNP Paribas et de TotalEnergies"
     source := "Discours de présentation du plan (6 novembre 2023) et presse ; prise de participation sans montant dans la source : non imputée"
     leviers := [] }
