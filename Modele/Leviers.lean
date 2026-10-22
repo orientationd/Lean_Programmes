@@ -90,6 +90,9 @@ inductive Levier where
   | depenseSur (fonction : Fonction) (montant : Int)
   /-- Économie, M€/an, sur une fonction identifiée. -/
   | economieSur (fonction : Fonction) (montant : Int)
+  /-- Investissement public (bâtiments, infrastructures), M€/an, imputé à une
+  fonction mais dont les emplois vont à la construction. -/
+  | investissement (fonction : Fonction) (montant : Int)
   /-- Durée du travail : variation des heures annuelles par emploi, pm
   (`-86` : 35 h → 32 h). Le PIB suit le volume d'heures à l'élasticité du
   scénario, sans effet d'Okun sur l'emploi. -/
@@ -193,6 +196,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .economie m, s => appliquerEconomie M H .nonVentile m s
   | .depenseSur f m, s => appliquerDepense H f.secteur f m s
   | .economieSur f m, s => appliquerEconomie M H f m s
+  | .investissement f m, s => appliquerDepense H (some .construction) f m s
   | .prelevement r, s => appliquerPrelevement M H .autres r s
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
