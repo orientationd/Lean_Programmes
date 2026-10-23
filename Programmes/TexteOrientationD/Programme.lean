@@ -472,7 +472,8 @@ scénario central) et calcule l'effet d'activité.
   imputation de l'IS (Institut de l'entreprise, 2026). Retenu : 6,5 Md€
   statiques, ≈ 5,2 Md€ nets de la fuite fiscale. Variante : chiffrage PS.
 * `csgHeritages` = 10 Md€ : chiffrage du groupe PS, sans contre-expertise
-  connue (droits de succession et donations ≈ 17 Md€ par an).
+  connue (droits de succession et donations : 20,7 Md€ en 2025). Imputée
+  à la ligne des droits de succession, dont elle partage l'assiette.
 * `taxeNumerique` = 3,1 Md€ : taxe sur les services numériques de 3 % à
   15 %, 0,89 → ≈ 4 Md€ (commission des finances, octobre 2026). Le PS
   annonce 10 Md€ (variante). Risque de représailles commerciales.
@@ -1049,8 +1050,8 @@ def mesures : List Mesure := [
 
   { id := "O-36"
     titre := "CSG sur les gros héritages"
-    source := s!"Texte Orientation D, mesure 36 ; chiffrage du groupe PS : {csgHeritages} M€ (sans contre-expertise connue)"
-    leviers := [.prelevementSur .csgCrds csgHeritages]
+    source := s!"Texte Orientation D, mesure 36 ; chiffrage du groupe PS : {csgHeritages} M€ (sans contre-expertise connue) ; prélevée comme la CSG mais assise sur les successions : imputée à la ligne des droits de succession, dont elle suit l'assiette (l'affectation à la Sécurité sociale est neutre sur le solde consolidé)"
+    leviers := [.prelevementSur .droitsMutation csgHeritages]
     debut := 0 },
 
   { id := "O-37"
@@ -1081,7 +1082,7 @@ def mesures : List Mesure := [
   { id := "O-41"
     titre := "Fiscalité du patrimoine : Pacte Dutreil divisé par deux (abattement 75 % → 37,5 %), taxe sur les holdings élargie"
     source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 (1,3 Md€ pour 75 % → 50 %, proportionnel) : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
-    leviers := [.prelevementSur .autres (pacteDutreil + holdings)]
+    leviers := [.prelevementSur .droitsMutation pacteDutreil, .prelevementSur .autres holdings]
     debut := 0 },
 
   { id := "O-42"

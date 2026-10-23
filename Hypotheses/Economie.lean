@@ -51,6 +51,23 @@ pour 2026, art. L. 136-6 et L. 136-7 CSS), soit 12,8 % d'impôt sur le revenu
 111) et 7,5 % de prélèvement de solidarité (`tauxPfuSolidaritePm` = 75).
 Législation en vigueur, identique dans les trois variantes.
 
+Droits de succession et de donation : 20,7 Md€ en 2025, dont 16,2 sur les
+successions et 4,5 sur les donations (Legifiscal, 23 septembre 2026).
+Leur assiette, le flux successoral (464 Md€ en 2025, 16,1 % du PIB),
+monterait à 20,2 % du PIB en 2040 (Fondation Jean-Jaurès, novembre 2024) :
++1,5 % par an au-delà du PIB, dont ≈ 1,1 point de hausse des décès (INSEE,
+projections 2026) ; `excesPatrimoineParDecesPb` = 40 pour le reste
+(patrimoine transmis par décès). Les abattements (100 000 € par enfant
+depuis 2012) et le barème (5 % à 45 %) ne sont pas indexés : la part
+taxable et le taux moyen montent avec les montants nominaux.
+`elasticiteDroitsSuccessionPm` = 1 200 : ≈ 0,1 au titre de l'abattement en
+ligne directe (relever celui-ci de 50 000 € coûterait ≈ 1 Md€, Institut
+Montaigne 2022, d'après l'étude d'impact de 2012 : ≈ 22 M€ par point
+d'érosion de 2025, soit 0,11 % des droits) et ≈ 0,1 pour les abattements
+en ligne indirecte et les tranches (hypothèse). Les droits ont progressé de
+4 % par an de 2014 à 2022 (Institut Montaigne), contre ≈ 2,6 % pour le PIB
+nominal.
+
 Marché du travail. L'emploi ne suit plus mécaniquement la population
 active : la tendance démographique est absorbée au taux d'emploi courant
 (chômage tendanciel inchangé), mais les chocs d'offre de travail des
@@ -98,6 +115,8 @@ def centrale : Economie where
   tauxMarginalPb := 330
   deriveTauxPb := 20
   primeDeficitPb := 25
+  excesPatrimoineParDecesPb := 40
+  elasticiteDroitsSuccessionPm := 1200
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -134,6 +153,8 @@ def croissanceBasse : Economie where
   tauxMarginalPb := 380
   deriveTauxPb := 25
   primeDeficitPb := 25
+  excesPatrimoineParDecesPb := 40
+  elasticiteDroitsSuccessionPm := 1200
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -170,6 +191,8 @@ def croissanceHaute : Economie where
   tauxMarginalPb := 300
   deriveTauxPb := 20
   primeDeficitPb := 25
+  excesPatrimoineParDecesPb := 40
+  elasticiteDroitsSuccessionPm := 1200
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500

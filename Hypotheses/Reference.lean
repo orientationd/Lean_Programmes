@@ -54,6 +54,36 @@ effets ne sont pas proportionnels au PIB :
   encaissés en 2025 (prévision initiale 1,9 Md€ ; Les Échos, La Tribune,
   début 2026). Suivie dans l'état (`cdhrMeur`) : la projection l'éteint
   l'année qui suit un déficit inférieur à 3 %.
+* **Droits de succession et de donation** (CGI, art. 777 à 800) : 20,7 Md€
+  en 2025 (successions 16,2, donations 4,5). Barème en ligne directe de 5 %
+  à 45 % après un abattement de 100 000 € par enfant, renouvelable tous les
+  15 ans (loi n° 2012-958 du 16 août 2012) ; abattements et tranches non
+  indexés : la projection fait croître les droits avec le flux successoral
+  (décès de l'axe démographique, patrimoine par décès) et une élasticité
+  supérieure à 1 (axe économique). Lois associées, dont l'effet est dans le
+  niveau de 2025 :
+  - exonération du conjoint survivant et du partenaire de PACS (loi
+    n° 2007-1223 du 21 août 2007, dite TEPA) ;
+  - Pacte Dutreil (art. 787 B) : 75 % de la valeur des titres exonérés,
+    ≈ 5,5 Md€ de moindres recettes en 2024 (Cour des comptes) ; la loi de
+    finances pour 2026 en exclut les actifs non professionnels (logements,
+    véhicules, objets d'art…) et porte l'engagement individuel de 4 à
+    6 ans, pour les transmissions depuis le 21 février 2026 (rendement non
+    publié, non chiffré) ;
+  - assurance-vie (art. 990 I et 757 B) : 152 500 € d'abattement par
+    bénéficiaire pour les primes versées avant 70 ans, puis 20 % et
+    31,25 % ; hors barème des successions ;
+  - dons familiaux de sommes d'argent (art. 790 G) : 31 865 € tous les
+    15 ans ; exonération temporaire de 100 000 € pour l'achat d'un logement
+    neuf ou une rénovation énergétique (art. 790 A bis), du 15 février 2025
+    au 31 décembre 2026 : sa fin relèvera un peu les droits sur les
+    donations à partir de 2027 (coût non publié, non chiffré).
+  Non retenus tant qu'ils ne sont pas votés : le PLF 2027 (taux de 6 % sur
+  les dons d'argent jusqu'à 100 000 €, don exonéré porté à 100 000 € en
+  2027, 790 A bis prolongé jusqu'en 2030, votés en première lecture le
+  16 octobre 2026) et les propositions de la Cour des comptes (note du
+  21 septembre 2026 : barème −5 points, −2,1 Md€ ; Dutreil à 50 %,
+  +1,3 Md€ ; assurance-vie au barème dès la tranche à 20 %, +1,25 Md€).
 * **Fin des ventes de voitures thermiques neuves en 2035** (règlement (UE)
   2023/851) : voir l'axe énergie ; érosion des accises et de la TVA sur les
   carburants calculée dans la projection.
@@ -107,7 +137,8 @@ def impots2025 : ParImpot where
   impotSocietes := 58900   -- dérivé : +2,1 Md€ soit +3,7 % (idem)
   accisesEnergie := 30500  -- TICPE, 30,5 Md€ en 2022, dernier chiffre publié (MTE, via Journal de l'Automobile)
   taxeFonciere := 44100    -- dérivé : TFPB +1,2 Md€ soit +2,8 % (DGCL, note REI 2025)
-  autres := 256400         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
+  droitsMutation := 20700  -- successions 16,2 + donations 4,5 Md€ en 2025 (Legifiscal, 23/09/2026)
+  autres := 235700         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
 
 /-- Éléments temporaires de la situation de départ : dépenses et recettes de
 2025 dont la fin est prévue par les textes ou les calendriers en vigueur.

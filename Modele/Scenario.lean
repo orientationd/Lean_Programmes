@@ -38,8 +38,11 @@ structure Demographie where
   description : String
   /-- Part des 65 ans et plus à l'horizon, pb. -/
   partPlus65Pb : Int
-  /-- Décès par an, milliers. -/
+  /-- Décès de l'année de départ, milliers. -/
   decesMilliers : Int
+  /-- Hausse annuelle des décès (arrivée des générations du baby-boom aux
+  grands âges), milliers par an. -/
+  hausseDecesMilliers : Int
   /-- Solde migratoire par an, milliers. -/
   soldeMigratoireMilliers : Int
   /-- Évolution tendancielle de la population active **hors migrations**, pb
@@ -145,6 +148,14 @@ structure Economie where
   /-- Prime de risque : hausse du taux marginal (pb) par point de PIB de
   déficit au-dessus du déficit de départ (baisse en dessous). -/
   primeDeficitPb : Int
+  /-- Croissance du patrimoine transmis par décès au-delà du PIB nominal, pb
+  par an. -/
+  excesPatrimoineParDecesPb : Int
+  /-- Élasticité des droits de succession et de donation au patrimoine
+  transmis par décès, pm : au-dessus de 1 000, car abattements et barème ne
+  sont pas indexés (la part taxable et le taux moyen montent avec les
+  montants nominaux). -/
+  elasticiteDroitsSuccessionPm : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
   /-- Élasticité du PIB au volume d'heures travaillées, pm (`650` : part du
@@ -246,6 +257,8 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.elasticiteChomageSmicPm ∧ 0 ≤ H.eco.economieParMoisRetraite ∧
   0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧ 0 ≤ H.eco.deriveTauxPb ∧
   0 ≤ H.eco.primeDeficitPb ∧ H.eco.primeDeficitPb ≤ 100 ∧
+  -200 ≤ H.eco.excesPatrimoineParDecesPb ∧ H.eco.excesPatrimoineParDecesPb ≤ 300 ∧
+  500 ≤ H.eco.elasticiteDroitsSuccessionPm ∧ H.eco.elasticiteDroitsSuccessionPm ≤ 2000 ∧
   0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
   0 ≤ H.eco.coutSanteParPbPlus65 ∧
   0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧
@@ -265,7 +278,8 @@ abbrev ValideEco (H : Scenario) : Prop :=
 /-- Bornes sur les axes démographie, natalité, énergie et droit. -/
 abbrev ValideAxes (H : Scenario) : Prop :=
   0 ≤ H.demo.partPlus65Pb ∧ H.demo.partPlus65Pb ≤ 10000 ∧
-  0 ≤ H.demo.decesMilliers ∧ -2000 ≤ H.demo.croissanceActifsPb ∧ H.demo.croissanceActifsPb ≤ 2000 ∧
+  0 ≤ H.demo.decesMilliers ∧ -50 ≤ H.demo.hausseDecesMilliers ∧ H.demo.hausseDecesMilliers ≤ 50 ∧
+  -2000 ≤ H.demo.croissanceActifsPb ∧ H.demo.croissanceActifsPb ≤ 2000 ∧
   0 ≤ H.demo.partActiveMigrantsPm ∧ H.demo.partActiveMigrantsPm ≤ 1000 ∧
   0 ≤ H.natalite.naissancesMilliers ∧ 0 < H.natalite.icfCentiemes ∧
   0 < H.energie.prixBrentDollars ∧ 0 < H.energie.prixReferenceDollars ∧

@@ -350,7 +350,7 @@ variante.
 | Mesure | Rendement statique | Déficit 2035 | PIB 2035 |
 |---|---|---|---|
 | **O-35** Taxe Zucman (impôt plancher sur les très hauts patrimoines) | 6,5 Md€ (PS : 15 ; sept économistes : ≈ 5) | −0,14 pt | −0,09 % |
-| **O-36** CSG sur les gros héritages | 10 Md€ (chiffrage PS) | −0,22 pt | −0,13 % |
+| **O-36** CSG sur les gros héritages, imputée aux droits de succession dont elle suit l'assiette | 10 Md€ (chiffrage PS) | −0,28 pt | −0,13 % |
 | **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,07 pt | −0,04 % |
 | **O-38** Reconfiguration des exonérations de cotisations | 4 Md€ (PS) | −0,09 pt | −0,06 % |
 | **O-39** Train de vie de l'État | 3,1 Md€ (part du PS, moins O-21) | −0,06 pt | −0,08 % |
@@ -365,8 +365,8 @@ variante.
 (Scénario central, moteur de demande, mesures prises isolément.)
 
 **Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
-D baisse chaque année de 2027 à 2035, de 4,7 % à 3,7 %** (dette 128 % du
-PIB, chômage 9,1 %), contre 9,2 % sans programme (référence complétée
+D baisse chaque année de 2027 à 2035, de 4,6 % à 3,3 %** (dette 127 % du
+PIB, chômage 9,1 %), contre 9,0 % sans programme (référence complétée
 des lois en vigueur : voir O-59 à O-62). Le programme entre en vigueur en
 2027 (aucune mesure avant).
 
@@ -374,10 +374,10 @@ Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,7 % | 9,1 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 3,0 % | 9,2 % |
-| … et norme renforcée de 100 pb supplémentaires | 1,7 % | 9,7 % |
-| … et de 200 pb supplémentaires | 0,3 % | 10,2 % |
+| Rien | 3,3 % | 9,1 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 2,7 % | 9,2 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,3 % | 9,7 % |
+| … et de 200 pb supplémentaires | 0,0 % (équilibre) | 10,2 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
 la synthèse les évalue une à une. (Avec l'IS maintenu à 25 %, O-60
@@ -429,10 +429,11 @@ pas le PIB (détail et sources : `Hypotheses/Reference.lean`, section
 | Contribution exceptionnelle des grandes entreprises (lois n° 2025-127 et 2026-103) | 8 Md€ en 2025, 7,5 Md€ en 2026, rien ensuite |
 | CVAE (loi n° 2025-127, art. 62) | 3,4 Md€, ramenés à 2,3 en 2028, 1,1 en 2029, 0 en 2030 |
 | Contribution différentielle sur les hauts revenus | ≈ 0,4 Md€, éteinte l'année qui suit un déficit sous 3 % |
+| Droits de succession et de donation (barème et abattements non indexés, Pacte Dutreil, assurance-vie, exonération du conjoint) | 20,7 Md€ en 2025 ; assiette portée par la hausse des décès (651 000 → 738 000 en 2035) et le patrimoine transmis : 35,1 Md€ en 2035 (0,69 % → 0,86 % du PIB) |
 | Règlement (UE) 2023/851 (100 % de voitures neuves électriques en 2035) | 12,2 millions de voitures électriques en 2035 ; accises et TVA sur les carburants −5,4 Md€ (euros 2025) |
 
-Le déficit tendanciel 2035 passe de 8,4 % à 9,2 % du PIB. Avec O-54 à
-O-58 seulement, celui du Texte Orientation D stagnait vers 4,6 % de 2028 à
+Le déficit tendanciel 2035 passe de 8,4 % à 9,0 % du PIB. Avec O-54 à
+O-58 seulement (et avant l'ajout des droits de succession), celui du Texte Orientation D stagnait vers 4,6 % de 2028 à
 2032 : la LPM monte jusqu'en 2030, la charge d'intérêts continue de croître
 et l'âge moyen de départ cesse de suivre le calendrier légal en 2032
 (O-07). Quatre mesures rétablissent la baisse :
@@ -448,16 +449,16 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,40 | 4,67 | 4,56 | 4,55 | 4,52 | 4,47 | 4,43 | 4,22 | 3,96 | 3,70 |
-| Offre | 5,40 | 4,58 | 4,42 | 4,39 | 4,35 | 4,30 | 4,22 | 4,01 | 3,76 | 3,52 |
+| Demande | 5,38 | 4,64 | 4,50 | 4,46 | 4,41 | 4,33 | 4,23 | 3,96 | 3,64 | 3,33 |
+| Offre | 5,38 | 4,55 | 4,37 | 4,32 | 4,26 | 4,19 | 4,05 | 3,81 | 3,53 | 3,26 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
 sous chaque moteur : toujours avec la croissance haute, jamais avec la
 croissance basse ; en croissance centrale, le pétrole cher ou le
-vieillissement accéléré l'interrompent. La marge est mince en 2029
-(−0,01 point) : c'est l'année où la LPM et les intérêts montent le plus
-vite.
+vieillissement accéléré l'interrompent. La baisse est la plus faible en
+2029 (−0,04 point) : c'est l'année où la LPM et les intérêts montent le
+plus vite.
 
 Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,45 %,
 ≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
