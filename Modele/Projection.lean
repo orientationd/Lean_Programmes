@@ -42,7 +42,15 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let dCsg := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuCsgCrdsPm / tPfu
   let impots := ((s.impots.croitre croissance).ajouter .ir (-dIr)
     |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
-  let autresRecettes := s.autresRecettes + appliquerPb s.autresRecettes croissance
+  -- participations de l'État : valorisation au rythme du PIB nominal, plus les
+  -- prises de participation ; dividendes au rendement du portefeuille de départ
+  let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
+    + s.investissementsParticipations
+  let ref := H.reference.etat
+  let dividendes := if ref.participationsEtat = 0 then s.dividendesEtat
+    else participations * ref.dividendesEtat / ref.participationsEtat
+  let horsDividendes := s.autresRecettes - s.dividendesEtat
+  let autresRecettes := horsDividendes + appliquerPb horsDividendes croissance + dividendes
   let recettes := impots.total + autresRecettes
   -- vieillissement : le surcoût total à l'horizon est réparti sur les années
   let surcoutVieillissement :=
@@ -90,7 +98,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
     economieInteretsNumeriqueMeur := economieNum
     pertePfuMeur := pertePfu
-    dette := s.dette + (depenses - recettes) + s.operationsFinancieres
+    dette := s.dette + (depenses - recettes) + s.operationsFinancieres + s.investissementsParticipations
+    participationsEtat := participations
+    dividendesEtat := dividendes
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - H.demo.decesMilliers + solde
@@ -132,11 +142,29 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit,
         poids prevu - poids reconduit)
   let pasEcheances := s.echeances.map pas
-  pasEcheances.foldl
-    (fun st (e, d, impulsion) =>
+  let s₃ : Etat := pasEcheances.foldl
+    (fun (st : Etat) ((e, d, impulsion) : Echeance × Int × Int) =>
       effetDemande H (if impulsion < 0 then none else e.fonction.secteur) impulsion
         { st with depensesF := st.depensesF.ajouter e.fonction d })
-    { s₂ with echeances := pasEcheances.map (·.1) }
+    ({ s₂ with echeances := pasEcheances.map (·.1) } : Etat)
+  -- recettes à échéancier : indexées sur le PIB nominal (comme les assiettes) ;
+  -- un impôt a l'effet de demande d'un prélèvement, une recette non fiscale aucun
+  let pasR (e : EcheanceRecette) : EcheanceRecette × Int :=
+    let indice := e.indice + appliquerPb e.indice croissance
+    let reconduit := e.niveau + appliquerPb e.niveau croissance
+    match e.restants with
+    | [] => ({ e with indice := indice, niveau := reconduit }, 0)
+    | x :: r =>
+      let prevu := x * indice / 10000
+      ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit)
+  let pasRecettes := s.echeancesRecettes.map pasR
+  pasRecettes.foldl
+    (fun (st : Etat) ((e, d) : EcheanceRecette × Int) =>
+      match e.impot with
+      | some i => effetDemande H none (-(appliquerPm d M.multiplicateurPrelevementsPm))
+          { st with impots := st.impots.ajouter i d }
+      | none => { st with autresRecettes := st.autresRecettes + d })
+    ({ s₃ with echeancesRecettes := pasRecettes.map (·.1) } : Etat)
 
 /-- Situation de départ du scénario : la référence observée, après le choc
 de niveau dû au prix du pétrole (nul au prix de référence). -/

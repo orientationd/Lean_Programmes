@@ -368,6 +368,18 @@ structure Echeance where
   indice : Int
   deriving Repr, DecidableEq, Inhabited
 
+/-- Échéancier d'une recette : impôt (`some i`) ou recette non fiscale
+(`none`), niveaux annuels fixés à l'avance (fin de la CRDS avec la CADES,
+péages d'autoroutes revenus à l'État…), en euros de l'année d'entrée en
+vigueur, indexés sur le PIB nominal comme les assiettes. Le dernier niveau
+est conservé une fois la liste épuisée. -/
+structure EcheanceRecette where
+  impot : Option Impot
+  restants : List Int
+  niveau : Int
+  indice : Int
+  deriving Repr, DecidableEq, Inhabited
+
 /-! ## État -/
 
 structure Etat where
@@ -470,6 +482,18 @@ structure Etat where
   moderationDepensesPb : Int := 0
   /-- Dépenses à échéancier en cours (voir `Echeance`). -/
   echeances : List Echeance := []
+  /-- Recettes à échéancier en cours (voir `EcheanceRecette`). -/
+  echeancesRecettes : List EcheanceRecette := []
+  /-- Valeur des participations de l'État dans les entreprises, M€. Elle suit
+  le PIB nominal, plus les prises de participation. -/
+  participationsEtat : Int := 0
+  /-- Dividendes reçus par l'État, M€ : compris dans `autresRecettes`. Ils
+  valent `participationsEtat` × rendement du portefeuille de départ. -/
+  dividendesEtat : Int := 0
+  /-- Prises de participation annuelles dues aux mesures, M€/an (flux porté) :
+  elles accroissent la dette sans entrer dans le déficit (opérations
+  financières) et augmentent le portefeuille. -/
+  investissementsParticipations : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat

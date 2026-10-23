@@ -155,6 +155,16 @@ inductive Levier where
   tendance. L'économie de l'année passe par le multiplicateur, pondérée par
   le moteur (dans la projection). -/
   | normeDepense (moderationPb : Int)
+  /-- Recette à échéancier : impôt (`some i`, avec effet de demande pondéré
+  comme un prélèvement) ou recette non fiscale (`none`, sans effet de
+  demande : péages, redevances déjà acquittés par les usagers). Niveaux
+  annuels nets, M€ de l'année d'entrée en vigueur, indexés sur le PIB
+  nominal ; le dernier est conservé. Voir `EcheanceRecette`. -/
+  | recetteEcheancier (impot : Option Impot) (niveaux : List Int)
+  /-- Prises de participation de l'État dans des entreprises, M€ par an (flux
+  porté) : dette sans déficit, portefeuille et dividendes au rendement du
+  portefeuille de départ. -/
+  | prisesDeParticipation (montantAnnuel : Int)
   /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
   publics (accompagnement des entreprises, inspection, formation) et
   baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
@@ -359,6 +369,17 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       if n < 0 then appliquerEconomie M H f (-n) s' else appliquerDepense H f.secteur f n s'
   | .importationsNiveau d, s => { s with importations := s.importations + d }
   | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
+  | .recetteEcheancier _ [], s => s
+  | .recetteEcheancier i (n :: reste), s =>
+      let e : EcheanceRecette := { impot := i, restants := reste, niveau := n, indice := 10000 }
+      let s' : Etat := { s with echeancesRecettes := s.echeancesRecettes ++ [e] }
+      match i with
+      | some imp =>
+          effetDemande H none (-(appliquerPm n M.multiplicateurPrelevementsPm))
+            { s' with impots := s'.impots.ajouter imp n }
+      | none => { s' with autresRecettes := s'.autresRecettes + n }
+  | .prisesDeParticipation m, s =>
+      { s with investissementsParticipations := s.investissementsParticipations + m }
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)

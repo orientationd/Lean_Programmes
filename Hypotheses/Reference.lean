@@ -56,6 +56,48 @@ def impots2025 : ParImpot where
   taxeFonciere := 44100    -- dérivé : TFPB +1,2 Md€ soit +2,8 % (DGCL, note REI 2025)
   autres := 256400         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
 
+/-- Éléments temporaires de la situation de départ : dépenses et recettes de
+2025 dont la fin est prévue par les textes ou les calendriers en vigueur.
+Sans eux, la projection les reconduirait indéfiniment.
+
+* **Grand Paris Express** (Société des grands projets, administration
+  publique) : ≈ 3,6 Md€ de dépenses par an en 2020-2022, 5,4 Md€ prévus en
+  2023 (Sénat, rapport sur le PLF 2024) ; coût 36,1 Md€ ; mises en service
+  de 2026 à 2031 (lignes 15 Ouest et Est en 2031). Retenu : 4,0 Md€ en
+  2025, décroissant avec les ouvertures, nul à partir de 2032. La dette
+  (remboursée jusqu'en 2071 par des taxes affectées, ≈ 0,85 Md€ par an)
+  reste dans la dette publique ; les futurs RER métropolitains (SERM, 20 à
+  30 Md€) ne sont pas financés à ce jour et ne sont pas reconduits.
+* **France 2030** : 54 Md€, ≈ 40 Md€ attribués et 14 Md€ décaissés au
+  30 juin 2025, 6,9 Md€ de décaissements prévus en 2026 (Sénat, rapport sur
+  le PLF 2026). Retenu : 6,5 Md€ en 2025, 6,7 Md€ en 2026 (euros 2025),
+  puis extinction des décaissements jusqu'en 2031 (≈ 26 Md€ restant à
+  verser) ; pas de programme successeur à législation constante.
+* **CRDS** : 0,5 %, 9,22 Md€ en 2026 ; due jusqu'à l'extinction de la CADES,
+  fin 2033 (loi organique). La fraction de CSG affectée à la CADES (0,45 %,
+  7,95 Md€) revient alors à la Sécurité sociale (neutre pour les
+  administrations publiques) ; la CRDS disparaît : −9 Md€ (euros 2025) à
+  partir de 2034. La dette de l'ACOSS (65 Md€ fin 2026) n'étant pas reprise,
+  une prolongation reste possible : elle demanderait une loi organique.
+
+Non retenus, faute d'échéance avant 2035 : les loyers des contrats de
+partenariat de l'État (9,8 Md€ d'investissements, signés surtout en
+2011-2012 pour 27 ans en moyenne : Balard, tribunal de Paris, LGV
+Bretagne-Pays de la Loire jusqu'en 2036, contournement Nîmes-Montpellier
+jusqu'en 2037) ; les lignes à grande vitesse en service (financement
+public versé pendant les travaux), alors que les projets en cours
+(Bordeaux-Toulouse, Montpellier-Perpignan, Lyon-Turin) font au contraire
+monter la dépense. -/
+def echeancesDepart : List Echeance := [
+  { fonction := .affairesEconomiques, niveau := 4000, indice := 10000,
+    restants := [3600, 3000, 2400, 1800, 1200, 600, 0] },        -- Grand Paris Express
+  { fonction := .affairesEconomiques, niveau := 6500, indice := 10000,
+    restants := [6700, 6000, 5000, 3800, 2400, 1000, 0] } ]      -- France 2030
+
+def echeancesRecettesDepart : List EcheanceRecette := [
+  { impot := some .csgCrds, niveau := 9000, indice := 10000,
+    restants := [9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 0] } ]  -- CRDS, fin de la CADES en 2033
+
 def reference2026 : Reference where
   id := "ref-2025"
   description := "Situation observée en 2025 (INSEE), départ des projections"
@@ -89,11 +131,17 @@ def reference2026 : Reference where
     parcElectriqueMilliers := 1600 -- voitures 100 % électriques en circulation fin 2025 (Avere-France, ordre de grandeur)
     bornesMilliers := 175          -- points de recharge ouverts au public fin 2025 (Avere-France, ordre de grandeur)
     electrificationAnnuelleMilliers := 0
-    bornesAnnuellesMilliers := 0 }
+    bornesAnnuellesMilliers := 0
+    participationsEtat := 209100   -- portefeuille de l'APE, valeur estimée au 30 juin 2025 (86 entités)
+    dividendesEtat := 4000         -- dividendes 2025 ≈ 6,5 Md€ (2024 et 2025) − 2,47 Md€ (2024) (APE, rapport d'activité) ; inclus dans les recettes non fiscales
+    echeances := echeancesDepart
+    echeancesRecettes := echeancesRecettesDepart }
   populationMilliers := 69100
   partPlus65Pb := 2220             -- 22,2 % au 1er janvier 2026 (INSEE)
   sources := [
     "INSEE, Informations rapides n°78, comptes des APU 2025 (27 mars 2026)",
+    "APE, rapport d'activité 2025 (portefeuille 209,1 Md€, dividendes)",
+    "Sénat, rapports sur les PLF 2024 (Société du Grand Paris) et 2026 (France 2030) ; CADES et CRDS (rapport 2026)",
     "INSEE, Bilan démographique 2025, Insee Première n°2087 (13 janvier 2026)",
     "INSEE, population active 2025 ; emploi salarié et non salarié par activité 2024",
     "DGCL, note sur les taux de fiscalité directe locale 2025",
