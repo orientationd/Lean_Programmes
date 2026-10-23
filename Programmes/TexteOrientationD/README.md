@@ -104,16 +104,29 @@ sur la population active suivent l'hypothèse économique du scénario.
 Hypothèse à étayer avec les données du COR (distribution des âges de
 début de carrière, part des métiers exposés).
 
-### O-08 — Impôt sur les sociétés au taux le plus bas de l'UE
+### O-08 — Impôt sur les sociétés à deux points au-dessus du taux le plus bas de l'UE
 
-Taux hongrois de 9 %. Le levier `impotSocietes` calcule la perte statique
-au prorata des taux (−37,7 Md€/an sur 58,9 Md€ d'IS 2025) puis applique
-un **coefficient de retour d'assiette** : la part de cette perte récupérée
-grâce aux bénéfices rapatriés et aux sociétés qui reviennent ou
-s'implantent. Valeur centrale 30 % (hypothèse fondée sur une élasticité
-de l'assiette au taux de l'ordre de 1) ; variantes 0 %, 60 % et taux
-irlandais de 12,5 %. Sous le moteur « offre », la baisse des prélèvements
+11 % : taux hongrois de 9 %, le plus bas de l'Union, plus deux points.
+
+**Minimum mondial de 15 % (pilier 2).** Les groupes de plus de 750 M€ de
+chiffre d'affaires restent imposés à 15 % effectifs au moins : sous ce
+taux, la France perçoit elle-même le complément (impôt complémentaire
+national, loi de finances pour 2024). Avec 45 % de l'IS acquitté par ces
+groupes (hypothèse), le taux effectif moyen est de 12,8 % et la perte
+statique de ≈ 28,7 Md€ par an sur 58,9 Md€ d'IS (contre 37,7 Md€ à 9 %
+sans tenir compte du pilier 2).
+
+Le levier `impotSocietes` applique ensuite un **coefficient de retour
+d'assiette** : la part de cette perte récupérée grâce aux bénéfices
+rapatriés et aux sociétés qui reviennent ou s'implantent. Valeur centrale
+30 % (hypothèse fondée sur une élasticité de l'assiette au taux de l'ordre
+de 1). Variantes : 17 % (deux points au-dessus du minimum de 15 % du
+pilier 2, si c'est ce minimum qui est visé), sans retour d'assiette, sans
+plancher du pilier 2. Sous le moteur « offre », la baisse des prélèvements
 relève en outre la croissance.
+
+Effet en 2035 (mesure seule, central) : déficit +0,58 point (+0,76 à 9 %),
+PIB +0,38 % ; moteur d'offre : +0,12 point, PIB +1,06 %.
 
 ### O-09 — Démission indemnisée
 
@@ -325,17 +338,19 @@ variante.
 | **O-36** CSG sur les gros héritages | 10 Md€ (chiffrage PS) | −0,22 pt | −0,13 % |
 | **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,07 pt | −0,04 % |
 | **O-38** Reconfiguration des exonérations de cotisations | 4 Md€ (PS) | −0,09 pt | −0,06 % |
-| **O-39** Fraude fiscale et train de vie de l'État | 6,1 Md€ (12,1 du PS moins O-21 et O-23) | −0,13 pt | −0,12 % |
+| **O-39** Train de vie de l'État | 3,1 Md€ (part du PS, moins O-21) | −0,06 pt | −0,08 % |
 | **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,11 % |
 | **O-41** Pacte Dutreil divisé par deux (75 % → 37,5 %), taxe sur les holdings élargie | 2,95 Md€ (Cour des comptes, proportionnel) | −0,07 pt | −0,04 % |
 | **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,55 pt | −0,75 % |
 | **O-43** Défense : −1 Md€ par an | 1 Md€ sur 53 | −0,02 pt | −0,03 % |
 | **O-44** Durée de cotisation : 174 trimestres au lieu de 172 | âge moyen de départ +5 mois (80 % des départs liés à la durée, hypothèse) : ≈ 3,3 Md€ de pensions, 150 000 actifs | −0,33 pt | +0,29 % |
+| **O-45** Lutte contre la fraude fiscale : facturation électronique (2,5 Md€ de TVA dès 2028 ; 2 à 3 Md€ attendus par l'administration), 1 500 agents de contrôle (105 M€) pour 1,5 Md€ d'encaissements | 4 Md€ | −0,08 pt | −0,05 % |
+| **O-46** CSG progressive : +2 points au-delà de 100 000 € par an et par personne | 2,0 Md€ (1 point = 17 Md€ ; 6 % de l'assiette au-delà du seuil, hypothèse) | −0,05 pt | −0,03 % |
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat : le Texte Orientation D passe de 8,1 % à 6,3 % de déficit en
-2035** (dette 139 % du PIB, chômage 8,3 %). Le modèle évalue désormais la
+**Résultat : le Texte Orientation D passe de 8,1 % à 6,1 % de déficit en
+2035** (dette 137 % du PIB, chômage 8,3 %), avec l'IS à 11 % (O-08). Le modèle évalue désormais la
 propriété « Budget à l'équilibre en 2035 » pour tous les programmes ;
 aucun ne la tient.
 
@@ -345,19 +360,19 @@ les intérêts montent vers 4 % : revenir à 0 % demande un effort permanent
 de l'ordre de 6,5 à 7 points de PIB. Ordres de grandeur, calculés avec le
 modèle (scénario central, moteur de demande) :
 
-| En plus du paquet O-35 à O-44 | Déficit 2035 | Chômage 2035 |
+| En plus du paquet O-35 à O-46 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 6,3 % | 8,3 % |
-| Abandon de O-08 (IS au taux le plus bas de l'UE) | 5,5 % | 8,5 % |
-| … et norme à zéro volume (100 pb au lieu de 50) | 5,0 % | 8,8 % |
-| … et norme de 300 pb par an | 3,0 % | 9,9 % |
+| Rien | 6,1 % | 8,3 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 5,5 % | 8,5 % |
+| … et norme à zéro volume (100 pb au lieu de 50) | 4,9 % | 8,8 % |
+| … et norme de 300 pb par an | 2,9 % | 9,9 % |
 | … et norme de 600 pb par an (dépenses pilotables ≈ −40 % en 2035) | ≈ 0 % | ≈ 11,3 % |
 
 La dernière ligne montre la taille du problème plutôt qu'une option : par
 le multiplicateur, une consolidation de cette ampleur réduit le PIB de
 ≈ 7 % et fait monter le chômage de trois points. Les postes du
 Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
-+0,76 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
++0,58 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
 (enseignants, +0,21 pt).
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
