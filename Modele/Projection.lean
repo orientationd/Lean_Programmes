@@ -105,21 +105,27 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- du scénario (la tendance est déjà dans la croissance)
   let dEmploiMesures := emploiEntrants + absorption
   let s₂ := chocEmploi H dEmploiMesures (ajouterEmploi H none dEmploiMesures s₁)
-  -- dépenses à échéancier : niveau prévu (indexé) moins niveau reconduit, avec
-  -- son effet de demande
-  let pas (e : Echeance) : Echeance × Int :=
+  -- dépenses à échéancier : niveau prévu (indexé) moins niveau reconduit. Effet
+  -- de demande cohérent avec les leviers ponctuels : un niveau positif est une
+  -- dépense (multiplicateur plein), un niveau négatif une économie (pondérée
+  -- par le moteur) ; l'impulsion de l'année est la variation du niveau pondéré,
+  -- si bien que la fin d'une dépense temporaire annule exactement son effet
+  let poids (x : Int) : Int := if x < 0 then appliquerPm x M.multiplicateurEconomiesPm else x
+  let pas (e : Echeance) : Echeance × Int × Int :=
     let t := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
     let indice := e.indice + appliquerPb e.indice t
     let reconduit := e.niveau + appliquerPb e.niveau t
     match e.restants with
-    | [] => ({ e with indice := indice, niveau := reconduit }, 0)
+    | [] => ({ e with indice := indice, niveau := reconduit }, 0, 0)
     | x :: r =>
       let prevu := x * indice / 10000
-      ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit)
+      ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit,
+        poids prevu - poids reconduit)
   let pasEcheances := s.echeances.map pas
   pasEcheances.foldl
-    (fun st (e, d) => effetDemande H e.fonction.secteur d
-      { st with depensesF := st.depensesF.ajouter e.fonction d })
+    (fun st (e, d, impulsion) =>
+      effetDemande H (if impulsion < 0 then none else e.fonction.secteur) impulsion
+        { st with depensesF := st.depensesF.ajouter e.fonction d })
     { s₂ with echeances := pasEcheances.map (·.1) }
 
 /-- Situation de départ du scénario : la référence observée, après le choc

@@ -60,6 +60,11 @@ Mesures (extrait) :
   automatisation des tâches administratives, 10 000 postes de contrôle
   supprimés par an pendant cinq ans ; **O-27** — simplification des tâches
   des généralistes, enquêteurs humains sur les cas anormaux.
+* **O-28** à **O-34** — désindexation des très hautes retraites, TVA à
+  22 %, taxe à l'atterrissage des jets privés, conversion électrique des
+  exploitations agricoles, DPE et climatisation réversible dans les
+  quartiers historiques, urbanisme (pas de tours en quartier historique,
+  quartiers de gare), TER 24 h sur 24 avec agents de sécurité.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -272,11 +277,11 @@ contrat (PLF 2026, rapport du Sénat sur la mission Enseignement scolaire) ;
 une hausse de 1 % du point d'indice coûte ≈ 0,5 Md€. Base 2027 :
 `masseEnseignants2027` = 59,23 × 1,028 ≈ 60,9 Md€ (croissance tendancielle
 des dépenses). Rémunération +2 % par an en plus de l'évolution tendancielle,
-de 2027 à 2035 : niveau atteint après k + 1 hausses = masse × (1,02^(k+1)
+à partir de 2027 (échéancier sur vingt ans) : niveau atteint après k + 1 hausses = masse × (1,02^(k+1)
 − 1), en euros de 2027, indexé ensuite comme la fonction enseignement. -/
 def masseEnseignants2027 : Int := 60900
 def revalorisationsEnseignants : List Int :=
-  (List.range 9).map fun k =>
+  (List.range 20).map fun k =>
     masseEnseignants2027 * ((10200 : Int) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 : Int) ^ (k + 1)
 
 /-- Automatisation des contrôles administratifs (O-26). 10 000 postes par an
@@ -319,6 +324,105 @@ def etpGeneralistesLiberes : Int := heuresLibereesMilliers * 1000 * 10 / (445 * 
 def consultationsMilliers : Int := heuresLibereesMilliers * 60 / 18
 /-- Coût pour l'assurance maladie si elles sont réalisées, M€. -/
 def coutConsultations : Int := consultationsMilliers * 30 * 700 / 1000000
+
+/-- Désindexation des très hautes retraites (O-28). ≈ 17 millions de
+retraités de droit direct ; 1 % perçoivent plus de 5 150 € bruts par mois,
+6 470 € en moyenne (DREES, cité par le Journal de l'économie, août 2026).
+Retenu : la revalorisation ne porte plus que sur la part de la pension sous
+`seuilTresHautesRetraites` = 5 150 € (pas d'effet de seuil ni d'inversion de
+rang) ; part au-delà : 170 000 × 1 320 € × 12 ≈ 2,69 Md€ en 2025, soit
+`masseAuDelaSeuil` ≈ 2,85 Md€ en 2027 (× 1,057, tendance). Revalorisation
+évitée : `inflationPb` = 180 (hypothèse : 1,8 % d'inflation, cohérente avec
+3 % de croissance nominale et 1,2 % réelle). Économie après k + 1 gels, en
+euros de 2027 : masse × (1 − 1/1,018^(k+1)). Suppose une loi s'appliquant
+aussi aux régimes complémentaires (Agirc-Arrco, gérés par les partenaires
+sociaux). Variante : gel de toute la pension au-delà du seuil (13,2 Md€ en
+2025, 13,95 Md€ en 2027), avec effets de seuil. -/
+def retraitesTresHautes : Int := 170000
+def seuilTresHautesRetraites : Int := 5150
+def pensionMoyenneTresHautes : Int := 6470
+def inflationPb : Int := 180
+def masseAuDelaSeuil : Int :=
+  retraitesTresHautes * (pensionMoyenneTresHautes - seuilTresHautesRetraites) * 12 * 10570 / 10000000000
+def masseTresHautes : Int := retraitesTresHautes * pensionMoyenneTresHautes * 12 * 10570 / 10000000000
+def desindexation (masse : Int) : List Int :=
+  (List.range 20).map fun k =>
+    -(masse * ((10000 + inflationPb) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 + inflationPb) ^ (k + 1))
+
+/-- TVA (O-29) : taux normal porté de 20 % à 22 %. Un point de taux normal
+rapporte un peu plus de 8 Md€ (FIPECO, IPP, Sénat, cités par L'Essentiel de
+l'éco, septembre 2026) : rendement statique `tvaDeuxPoints` = 16 Md€, net de
+la fuite fiscale du modèle. -/
+def tvaDeuxPoints : Int := 16000
+
+/-- Jets privés (O-30) : taxe forfaitaire de `taxeAtterrissage` = 3 000 € par
+atterrissage. 84 885 vols de jets privés au départ de la France en 2022
+(Greenpeace, repris par la proposition de loi n° 1741) ; atterrissages pris
+égaux : `atterrissagesJets` = 85 000. Rendement statique 255 M€ ; la fuite
+fiscale du modèle (20 % au scénario central) représente le report vers les
+aéroports frontaliers et la baisse des vols. Variante : 1 000 €. -/
+def atterrissagesJets : Int := 85000
+def taxeAtterrissage : Int := 3000
+
+/-- Conversion électrique des exploitations agricoles (O-31). 389 000
+exploitations (recensement agricole 2020). Énergie de l'agriculture et de la
+pêche : 52,1 TWh, dont 71 % de produits pétroliers (≈ 37 TWh, ≈ 3,7 Md de
+litres ; ministère de la Transition écologique, Chiffres clés de l'énergie
+2022), soit ≈ 10 Mt de CO₂ (0,27 t/MWh) : `emissionsEnergieAgricole`.
+Plan sur dix ans : aide de `aideConversion` = 30 000 € par exploitation
+(hypothèse : moitié d'un surcoût de 60 000 € pour les engins, la recharge
+et une production photovoltaïque), soit ≈ 1,17 Md€ par an ; −1 Mt par an.
+Commerce extérieur : carburant importé évité ≈ 2,0 Md€ (3,7 Md de litres ×
+0,55 € hors taxes), électricité non exportée ≈ 0,84 Md€ (≈ 12 TWh au
+rendement électrique, × 70 €/MWh) : −116 M€ d'importations nettes par an.
+Les engins lourds électriques restent peu disponibles : l'objectif de
+toutes les exploitations en dix ans est un plafond. -/
+def exploitationsAgricoles : Int := 389000
+def aideConversion : Int := 30000
+def emissionsEnergieAgricole : Int := 10
+def carburantAgricoleImporte : Int := 2000
+def electriciteNonExportee : Int := 840
+
+/-- DPE et climatisation réversible (O-32). Suppression du DPE pour les
+immeubles de Paris et des autres quartiers historiques : pas d'effet
+budgétaire ; évite le retrait du marché locatif des logements classés F et
+G (interdiction de location, loi Climat et résilience). Climatisation
+réversible (pompe à chaleur air-air) aidée : `logementsClimatisation` =
+50 000 par an × `aideClimatisation` = 2 000 € = 100 M€ par an pendant dix
+ans (hypothèses). Émissions : le remplacement du chauffage fossile (≈ 1 t
+par logement et par an pour la moitié des logements équipés) et le moindre
+effort de rénovation se compensent à moins de 1 Mt : effet non retenu. -/
+def logementsClimatisation : Int := 50000
+def aideClimatisation : Int := 2000
+
+/-- Urbanisme (O-33). Interdiction des immeubles de grande hauteur dans les
+quartiers historiques : sans effet budgétaire. Quartiers nouveaux autour des
+pôles très desservis (Val de Fontenay : RER A et E, métro 1 et 15, tramway
+T1) : aide aux équipements publics de `aideLogementQuartierGare` = 10 000 €
+pour `logementsQuartiersGare` = 20 000 logements par an (hypothèses), soit
+200 M€ par an d'investissement. -/
+def logementsQuartiersGare : Int := 20000
+def aideLogementQuartierGare : Int := 10000
+
+/-- TER 24 h sur 24 (O-34) entre métropoles et villes moyennes (Paris –
+Orléans…), avec agents de sécurité à bord, en gare et dans les parkings.
+`liaisonsTerNuit` = 20 liaisons de `distanceTerKm` = 100 km ; de 0 h à 5 h,
+un train par heure et par sens (`trainsParNuit` = 10). Coût :
+`coutTrainKmCentimes` = 2 340 (23,40 € par train-km, moyenne des TER sous
+convention SNCF, IFRAP 2024) ; sécurité : `heuresAgentsParNuit` = 46 (10 à
+bord, 24 en gare, 12 aux parkings) à `coutHeureAgent` = 35 €. Recettes :
+`couvertureRecettesPm` = 250 (hypothèse). La nuit est aussi la plage des
+travaux d'entretien du réseau : contrainte d'exploitation non chiffrée. -/
+def liaisonsTerNuit : Int := 20
+def distanceTerKm : Int := 100
+def trainsParNuit : Int := 10
+def coutTrainKmCentimes : Int := 2340
+def heuresAgentsParNuit : Int := 46
+def coutHeureAgent : Int := 35
+def couvertureRecettesPm : Int := 250
+def coutTerNuit : Int :=
+  liaisonsTerNuit * 365 * (trainsParNuit * distanceTerKm * coutTrainKmCentimes / 100
+    + heuresAgentsParNuit * coutHeureAgent) * (1000 - couvertureRecettesPm) / 1000000000
 
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
@@ -569,7 +673,7 @@ def mesures : List Mesure := [
 
   { id := "O-25"
     titre := "Rémunération des enseignants : +2 % par an"
-    source := s!"Texte Orientation D, mesure 25 ; masse salariale hors CAS Pensions 59,23 Md€ en 2026 (PLF 2026), base 2027 {masseEnseignants2027} M€ ; +2 %/an au-delà de la tendance de 2027 à 2035 : {revalorisationsEnseignants.head!} M€ la première année, {revalorisationsEnseignants.getLast!} M€ (euros 2027) la neuvième"
+    source := s!"Texte Orientation D, mesure 25 ; masse salariale hors CAS Pensions 59,23 Md€ en 2026 (PLF 2026), base 2027 {masseEnseignants2027} M€ ; +2 %/an au-delà de la tendance de 2027 à 2035 : {revalorisationsEnseignants.head!} M€ la première année, {revalorisationsEnseignants[8]!} M€ (euros 2027) la neuvième (2035)"
     leviers := [.depenseEcheancier .enseignement revalorisationsEnseignants]
     debut := 2 },
 
@@ -596,13 +700,64 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 24 ; OAT numériques réglées en jetons de monnaie électronique (MiCA, règlement (UE) 2023/1114, art. 50 : pas d'intérêt sur le jeton), régime pilote DLT (règlement (UE) 2022/858, à réviser) ; exonération du PFU de 31,4 % (LFSS 2026) pour les particuliers résidents ; tranche cible {cibleDetteNumerique} ‰ de la dette (+{rythmeDetteNumerique} ‰/an, première tranche fin 2028), capitalisation fiscale {capitalisationFiscale} ‰ (obligations municipales américaines), part des résidents {partResidents} ‰, part imposée auparavant {partImposeeAvant} ‰"
     leviers := [.detteNumerique cibleDetteNumerique rythmeDetteNumerique capitalisationFiscale
                   partResidents partImposeeAvant]
+    debut := 2 },
+
+  { id := "O-28"
+    titre := "Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € par mois"
+    source := s!"Texte Orientation D, mesure 28 ; 1 % des retraités au-delà de 5 150 € bruts, 6 470 € en moyenne (DREES) ; part au-delà du seuil {masseAuDelaSeuil} M€ (2027), revalorisation évitée {inflationPb} pb/an : {(desindexation masseAuDelaSeuil).head!} M€ la première année, {(desindexation masseAuDelaSeuil)[8]!} M€ en 2035 (euros 2027)"
+    leviers := [.depenseEcheancier .retraites (desindexation masseAuDelaSeuil)]
+    debut := 2
+    variantes := [
+      { nom := s!"gel de toute la pension au-delà du seuil ({masseTresHautes} M€ concernés)",
+        leviers := [.depenseEcheancier .retraites (desindexation masseTresHautes)] }] },
+
+  { id := "O-29"
+    titre := "TVA : taux normal porté de 20 % à 22 %"
+    source := s!"Texte Orientation D, mesure 29 ; un point de taux normal ≈ 8 Md€ (FIPECO, IPP, Sénat) : {tvaDeuxPoints} M€ de rendement statique, net de la fuite fiscale du modèle"
+    leviers := [.prelevementSur .tva tvaDeuxPoints]
+    debut := 2 },
+
+  { id := "O-30"
+    titre := "Taxe forfaitaire à l'atterrissage des jets privés"
+    source := s!"Texte Orientation D, mesure 30 ; {atterrissagesJets} atterrissages par an (84 885 départs en 2022, Greenpeace) × {taxeAtterrissage} € (hypothèse) ; fuite fiscale du modèle pour le report et la baisse des vols"
+    leviers := [.prelevementSur .autres (atterrissagesJets * taxeAtterrissage / 1000000)]
+    debut := 2
+    variantes := [
+      { nom := "taxe de 1 000 € par atterrissage", leviers := [.prelevementSur .autres (atterrissagesJets * 1000 / 1000000)] }] },
+
+  { id := "O-31"
+    titre := "Plan de conversion à l'électrique de l'ensemble des exploitations agricoles (dix ans)"
+    source := s!"Texte Orientation D, mesure 31 ; {exploitationsAgricoles} exploitations (RA 2020) × {aideConversion} € sur dix ans (hypothèse) ; énergie agricole ≈ 37 TWh de produits pétroliers, {emissionsEnergieAgricole} Mt de CO₂ ; importations nettes −{(carburantAgricoleImporte - electriciteNonExportee) / 10} M€ par an"
+    leviers := [.depenseEcheancier .affairesEconomiques [exploitationsAgricoles * aideConversion / 10 / 1000000, 0],
+                .transition (emissionsEnergieAgricole / 10) 0,
+                .importationsNiveau (-((carburantAgricoleImporte - electriciteNonExportee) / 10))]
+    debut := 2
+    repetitions := 10 },
+
+  { id := "O-32"
+    titre := "Suppression du DPE pour les immeubles de Paris et des quartiers historiques ; climatisation réversible aidée par l'État"
+    source := s!"Texte Orientation D, mesure 32 ; DPE : sans effet budgétaire ; {logementsClimatisation} logements par an × {aideClimatisation} € pendant dix ans (hypothèses) ; effet sur les émissions inférieur à la résolution du modèle (1 Mt)"
+    leviers := [.depenseEcheancier .logementEnvironnement [logementsClimatisation * aideClimatisation / 1000000, 0]]
+    debut := 2
+    repetitions := 10 },
+
+  { id := "O-33"
+    titre := "Pas d'immeubles de grande hauteur dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay)"
+    source := s!"Texte Orientation D, mesure 33 ; interdiction sans effet budgétaire ; {logementsQuartiersGare} logements par an × {aideLogementQuartierGare} € d'équipements publics (hypothèses)"
+    leviers := [.investissement .logementEnvironnement (logementsQuartiersGare * aideLogementQuartierGare / 1000000)]
+    debut := 2 },
+
+  { id := "O-34"
+    titre := "TER 24 h sur 24 entre métropoles et villes moyennes (Orléans…), agents de sécurité à bord, en gare et aux parkings"
+    source := s!"Texte Orientation D, mesure 34 ; {liaisonsTerNuit} liaisons de {distanceTerKm} km, {trainsParNuit} trains par nuit, 23,40 € par train-km (IFRAP 2024), {heuresAgentsParNuit} heures d'agents par nuit à {coutHeureAgent} €, {couvertureRecettesPm / 10} % couverts par les recettes : {coutTerNuit} M€ par an"
+    leviers := [.depenseSur .affairesEconomiques coutTerNuit]
     debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
