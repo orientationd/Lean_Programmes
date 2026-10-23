@@ -27,8 +27,8 @@ Mesures (extrait) :
   particules fines.
 * **O-07** — fin de l'âge légal de départ : seule compte la durée cotisée
   (seuil actuel, 172 trimestres), réduite selon la pénibilité.
-* **O-08** — impôt sur les sociétés au taux le plus bas de l'Union
-  européenne.
+* **O-08** — impôt sur les sociétés à deux points au-dessus du taux le plus
+  bas de l'Union européenne (11 %).
 * **O-09** — la démission ouvre des droits au chômage (six mois, une fois
   tous les cinq ans).
 * **O-10** — moyens pour la justice, prud'hommes en priorité.
@@ -69,7 +69,9 @@ Mesures (extrait) :
   taxe Zucman, CSG sur les gros héritages, taxe numérique à 15 %,
   exonérations de cotisations, fraude fiscale et train de vie de l'État,
   niches fiscales, Pacte Dutreil divisé par deux et holdings, norme de
-  dépense ; **O-43** défense −1 Md€ par an ; **O-44** 174 trimestres.
+  dépense ; **O-43** défense −1 Md€ par an ; **O-44** 174 trimestres ;
+  **O-45** lutte contre la fraude fiscale ; **O-46** CSG progressive pour
+  les hauts revenus.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -125,15 +127,32 @@ def pretEPR2Total : Int := 6067
 
 /-! ## O-07 à O-11 — Hypothèses de chiffrage -/
 
-/-- Impôt sur les sociétés au taux le plus bas de l'UE : 9 % (Hongrie), contre
-25 % en France. Le levier `impotSocietes` calcule la perte statique au
-prorata des taux (58,9 Md€ × (1 − 9/25) = −37,7 Md€) puis applique un
-**coefficient de retour d'assiette** : part de la perte récupérée grâce aux
-bénéfices rapatriés et aux sociétés qui reviennent ou s'implantent. Valeur
-centrale 30 % (hypothèse : élasticité de l'assiette de l'IS au taux de
-l'ordre de 1, littérature Devereux-Griffith / OCDE, pour un pays de la
-taille de la France) ; variantes 0 %, 60 % et taux irlandais. -/
-def tauxISCible : Int := 900
+/-- Impôt sur les sociétés à deux points au-dessus du taux le plus bas de
+l'UE : 9 % (Hongrie) + 2 = `tauxISCible` = 11 %, contre 25 % en France.
+
+**Minimum mondial (pilier 2)** : les groupes dont le chiffre d'affaires
+dépasse 750 M€ restent imposés à au moins 15 % effectifs (directive (UE)
+2022/2523, transposée par la loi de finances pour 2024 avec un impôt
+complémentaire national) : si le taux français tombe sous 15 %, la France
+perçoit elle-même le complément. Leur part de l'IS : `partPilier2` = 45 %
+(hypothèse : les grandes entreprises acquittent une part importante de
+l'IS ; exclusion fondée sur la substance négligée). Taux effectif moyen :
+55 % × 11 % + 45 % × 15 % = `tauxISEffectif` = 12,8 %.
+
+Le levier `impotSocietes` calcule la perte statique au prorata des taux
+(58,9 Md€ × (1 − 12,8/25) ≈ −28,7 Md€) puis applique un **coefficient de
+retour d'assiette** : part de la perte récupérée grâce aux bénéfices
+rapatriés et aux sociétés qui reviennent ou s'implantent. Valeur centrale
+30 % (hypothèse : élasticité de l'assiette de l'IS au taux de l'ordre de 1,
+littérature Devereux-Griffith / OCDE, pour un pays de la taille de la
+France). Variantes : 17 % (deux points au-dessus du minimum de 15 % du
+pilier 2, si c'est ce minimum qui est visé), sans retour d'assiette, sans
+plancher du pilier 2. -/
+def tauxISCible : Int := 1100
+def partPilier2 : Int := 450
+def tauxMinimumPilier2 : Int := 1500
+def tauxISEffectif : Int :=
+  ((1000 - partPilier2) * tauxISCible + partPilier2 * max tauxISCible tauxMinimumPilier2) / 1000
 def retourAssiette : Int := 300
 
 /-- Démission indemnisée six mois, une fois tous les cinq ans. Hypothèse :
@@ -450,9 +469,9 @@ scénario central) et calcule l'effet d'activité.
   annonce 10 Md€ (variante). Risque de représailles commerciales.
 * `exonerationsCotisations` = 4 Md€ : reconfiguration des allègements
   généraux (chiffrage PS).
-* `fraudeFiscale` = 3 Md€ et `trainDeVieEtat` = 3,1 Md€ : les 12,1 Md€
-  du PS, moins ce que comptent déjà O-21 (commande publique, 3 Md€) et
-  O-23 (fraude sociale et TVA, 3 Md€).
+* `trainDeVieEtat` = 3,1 Md€ : part « train de vie » des 12,1 Md€ du PS,
+  moins O-21 (commande publique, 3 Md€). La fraude fiscale fait l'objet
+  d'une mesure propre (O-45).
 * `nichesFiscales` = 8 Md€ : 465 niches pour 88,3 Md€ en 2026 (PLF 2026) ;
   −10 % hors Pacte Dutreil (traité à part) et hors dispositifs pour les
   ménages modestes, réparti entre IR (4), IS (2) et TVA (2).
@@ -472,7 +491,6 @@ def taxeZucman : Int := 6500
 def csgHeritages : Int := 10000
 def taxeNumerique : Int := 3100
 def exonerationsCotisations : Int := 4000
-def fraudeFiscale : Int := 3000
 def trainDeVieEtat : Int := 3100
 def nichesFiscales : Int := 8000
 def pacteDutreil : Int := 1950
@@ -494,6 +512,44 @@ def partDepartsDuree : Int := 800
 def moisDureeSupplementaire : Int := (6 * partDepartsDuree + 500) / 1000
 def holdings : Int := 1000
 def normeDepensePb : Int := 50
+
+/-- Lutte contre la fraude fiscale (O-45), distincte de la fraude sociale et
+de la TVA du travail dissimulé (O-23).
+* Écart de TVA (conformité) : 12,1 Md€ en 2023, 5,6 % de la TVA théorique ;
+  16,5 Md€ en estimation rapide pour 2024 (Commission européenne, VAT gap
+  report 2025).
+* Facturation électronique (émission obligatoire pour les grandes
+  entreprises et ETI en septembre 2026, pour toutes en septembre 2027) :
+  l'administration en attend 2 à 3 Md€ par an à terme (question écrite
+  n° 17870, Assemblée nationale, 2026) : `fraudeFacturation` = 2,5 Md€ de
+  TVA à partir de 2028.
+* Contrôle fiscal : 11,4 Md€ encaissés en 2024 (+0,8 Md€ sur 2023), après
+  ≈ 800 emplois créés en trois ans (DGFiP) ; la Cour des comptes (décembre
+  2025) demande de chiffrer l'écart fiscal et d'évaluer le croisement de
+  données. `agentsControle` = 1 500 agents de plus (vérificateurs,
+  analystes de données) à `coutAgentControle` = 70 000 € ; encaissements
+  supplémentaires `rendementControle` = 1,5 Md€ par an (hypothèse : ≈ 1 M€
+  par agent, ordre de grandeur de la hausse récente), répartis entre IR,
+  IS et TVA.
+Le modèle applique sa fuite fiscale à ces recettes. -/
+def fraudeFacturation : Int := 2500
+def agentsControle : Int := 1500
+def coutAgentControle : Int := 70000
+def rendementControle : Int := 1500
+
+/-- CSG progressive pour les hauts revenus (O-46) : +2 points de CSG sur la
+part des revenus d'activité et de remplacement au-delà de `seuilCsgHauts`
+= 100 000 € par an et par personne. Un point de CSG sur toute l'assiette
+rapporte 17 Md€ (FIPECO, 2024). Part de l'assiette au-delà du seuil :
+`partAssietteAuDelaPm` = 60 ‰ (hypothèse : ≈ 1 % des contribuables ;
+extrapolation de Pareto, coefficient ≈ 2, depuis l'assiette de la
+contribution exceptionnelle sur les hauts revenus, au-delà de 250 000 €).
+Rendement statique : 2 × 17 Md€ × 6 % ≈ 2,0 Md€, net de la fuite fiscale
+dans le modèle. À vérifier sur les données de la DGFiP. -/
+def seuilCsgHauts : Int := 100000
+def pointsCsgHauts : Int := 2
+def partAssietteAuDelaPm : Int := 60
+def rendementCsgHauts : Int := pointsCsgHauts * 17000 * partAssietteAuDelaPm / 1000
 
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
@@ -639,13 +695,13 @@ def mesures : List Mesure := [
       { nom := "âge moyen avancé de 12 mois (pénibilité large)", leviers := [.ageLegal (-12)] }] },
 
   { id := "O-08"
-    titre := "Impôt sur les sociétés au taux le plus bas de l'Union européenne (9 %)"
-    source := s!"Texte Orientation D, mesure 8 ; taux : Hongrie 9 %, Irlande 12,5 % (Commission européenne, Taxation trends 2025) ; perte statique −37,7 Md€/an sur 58,9 Md€ d'IS 2025, retour d'assiette {retourAssiette / 10} % (voir `retourAssiette`)"
-    leviers := [.impotSocietes tauxISCible retourAssiette]
+    titre := "Impôt sur les sociétés à deux points au-dessus du taux le plus bas de l'Union européenne (11 %)"
+    source := s!"Texte Orientation D, mesure 8 ; taux le plus bas de l'UE : Hongrie 9 % (Commission européenne, Taxation trends 2025), +2 points = {tauxISCible / 100} % ; groupes du pilier 2 ({partPilier2 / 10} % de l'IS, hypothèse) imposés à 15 % au moins : taux effectif moyen {tauxISEffectif} pb ; retour d'assiette {retourAssiette / 10} % (voir `tauxISCible`)"
+    leviers := [.impotSocietes tauxISEffectif retourAssiette]
     variantes := [
-      { nom := "aucun retour d'assiette", leviers := [.impotSocietes tauxISCible 0] },
-      { nom := "retour d'assiette de 60 %", leviers := [.impotSocietes tauxISCible 600] },
-      { nom := "taux irlandais de 12,5 %, retour de 30 %", leviers := [.impotSocietes 1250 retourAssiette] }] },
+      { nom := "17 % (minimum de 15 % du pilier 2 + 2 points)", leviers := [.impotSocietes 1700 retourAssiette] },
+      { nom := "aucun retour d'assiette", leviers := [.impotSocietes tauxISEffectif 0] },
+      { nom := "sans plancher du pilier 2 (11 % pour tous)", leviers := [.impotSocietes tauxISCible retourAssiette] }] },
 
   { id := "O-09"
     titre := "La démission ouvre des droits au chômage : six mois d'indemnités, une fois tous les cinq ans"
@@ -851,9 +907,9 @@ def mesures : List Mesure := [
     debut := 2 },
 
   { id := "O-39"
-    titre := "Lutte contre la fraude fiscale ; train de vie de l'État"
-    source := s!"Texte Orientation D, mesure 39 ; 12,1 Md€ du groupe PS, moins O-21 et O-23 déjà comptés : {fraudeFiscale} M€ de fraude fiscale (TVA) et {trainDeVieEtat} M€ d'économies de fonctionnement"
-    leviers := [.prelevementSur .tva fraudeFiscale, .economieSur .fonctionnement trainDeVieEtat]
+    titre := "Train de vie de l'État"
+    source := s!"Texte Orientation D, mesure 39 ; part « train de vie » des 12,1 Md€ d'économies du groupe PS, moins O-21 déjà compté : {trainDeVieEtat} M€ d'économies de fonctionnement (la lutte contre la fraude fiscale est en O-45)"
+    leviers := [.economieSur .fonctionnement trainDeVieEtat]
     debut := 2 },
 
   { id := "O-40"
@@ -885,13 +941,28 @@ def mesures : List Mesure := [
     titre := "Durée de cotisation portée de 172 à 174 trimestres"
     source := s!"Texte Orientation D, mesure 44 ; +2 trimestres, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse ; COR) : âge moyen de départ +{moisDureeSupplementaire} mois"
     leviers := [.ageLegal moisDureeSupplementaire]
+    debut := 2 },
+
+  { id := "O-45"
+    titre := "Lutte contre la fraude fiscale : facturation électronique, renfort du contrôle fiscal"
+    source := s!"Texte Orientation D, mesure 45 ; écart de TVA 12,1 Md€ en 2023 (Commission européenne) ; facturation électronique : {fraudeFacturation} M€ de TVA par an à partir de 2028 (2 à 3 Md€ attendus par l'administration) ; {agentsControle} agents de contrôle à {coutAgentControle} €, {rendementControle} M€ d'encaissements par an (hypothèse)"
+    leviers := [.prelevementSur .tva (fraudeFacturation + rendementControle / 3),
+                .prelevementSur .ir (rendementControle / 3),
+                .prelevementSur .impotSocietes (rendementControle - 2 * (rendementControle / 3)),
+                .depenseSur .fonctionnement (agentsControle * coutAgentControle / 1000000)]
+    debut := 3 },
+
+  { id := "O-46"
+    titre := "CSG progressive pour les hauts revenus : +2 points au-delà de 100 000 € par an"
+    source := s!"Texte Orientation D, mesure 46 ; +{pointsCsgHauts} points sur la part des revenus d'activité et de remplacement au-delà de {seuilCsgHauts} € ; 1 point de CSG = 17 Md€ (FIPECO 2024) ; {partAssietteAuDelaPm / 10} % de l'assiette au-delà du seuil (hypothèse) : {rendementCsgHauts} M€"
+    leviers := [.prelevementSur .csgCrds rendementCsgHauts]
     debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
