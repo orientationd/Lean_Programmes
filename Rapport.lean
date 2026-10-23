@@ -182,6 +182,7 @@ def etatJson (s : Etat) : Json :=
     ("pibParHeure", toJson s.pibParHeure),
     ("depensesParFonction", Json.mkObj <| Fonction.tous.map fun f => (f.id, toJson (s.depensesF.get f))),
     ("tauxApparentPb", toJson s.tauxApparentPb),
+    ("tauxMarginalPb", toJson s.tauxMarginalCourantPb),
     ("soldePrimaire", toJson s.soldePrimaire),
     ("decesPollutionAir", toJson s.decesPollutionAir),
     ("parcElectriqueMilliers", toJson s.parcElectriqueMilliers),

@@ -73,7 +73,9 @@ Mesures (extrait) :
   **O-45** lutte contre la fraude fiscale ; **O-46** CSG progressive pour
   les hauts revenus ; **O-47** 100 M€ par an de participations dans les
   entreprises stratégiques ; **O-48** non-renouvellement des concessions
-  autoroutières.
+  autoroutières ; **O-49** hauts fonctionnaires −5 % ; **O-50** revenus des
+  élus plafonnés ; **O-51** fin du PFU ; **O-52** rachats d'actions ;
+  **O-53** cabinets de conseil.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -594,6 +596,50 @@ def echeancierReprise (montant2023 : Int) (facteurPm : Int := 1000) : List Int :
   (List.range 20).map fun k =>
     montant2023 * indice2023a2027 / 10000 * partReprise k / 1000 * facteurPm / 1000
 
+/-- Hauts fonctionnaires (O-49) : −5 % de rémunération pour l'encadrement
+supérieur et dirigeant des trois versants. DGAFP (fin 2012) : 9 900 agents
+dans l'État (7 700 € bruts par mois en moyenne), 5 600 dans l'hospitalière
+(6 603 €), 6 000 dans la territoriale (5 898 €), soit 1 783 M€ bruts par an ;
+× 1,10 pour 2025 (point d'indice et primes, hypothèse) et × 1,5 pour le coût
+complet (cotisations employeur) : ≈ 2,94 Md€. Économie : 147 M€, dont 75 %
+sur les services généraux (État et collectivités) et 25 % sur la santé. -/
+def masseHautsFonctionnaires : Int := 1783 * 110 / 100 * 150 / 100
+def economieHautsFonctionnaires : Int := masseHautsFonctionnaires * 5 / 100
+
+/-- Revenus des élus (O-50) : plafond de 10 000 € par mois pour l'ensemble des
+mandats et fonctions. Le droit en vigueur plafonne déjà le cumul des
+indemnités et rémunérations à une fois et demie l'indemnité parlementaire de
+base, soit 8 897,93 € bruts par mois depuis le 1er janvier 2024 (article
+L. 2123-20 II du CGCT ; Ville de Paris, 2025). Un plafond de 10 000 € est
+donc moins strict : la mesure n'a d'effet qu'en étendant le plafond aux
+rémunérations qui y échappent (organismes extérieurs, sociétés publiques),
+dont le montant n'est pas publié. Enregistrée pour mémoire, sans effet
+budgétaire. -/
+def plafondElus : Int := 10000
+def plafondCumulActuel : Int := 8898
+
+/-- Fin du prélèvement forfaitaire unique (O-51) : retour au barème de l'IR
+pour les revenus du capital, chiffrage PS de longue date. Institut
+Montaigne (2024) : +3,2 à 3,6 Md€ par an à comportements inchangés ; perte
+de 0,7 Md€ si l'assiette des dividendes revient à son niveau de 2017
+(variante). Retenu : 3,4 Md€ statiques. Interaction avec O-24 : les intérêts
+des OAT numériques restent exonérés. -/
+def finPfu : Int := 3400
+
+/-- Rachats d'actions (O-52) : taxe de 8 % (loi de finances pour 2025,
+entreprises de plus de 1 Md€ de chiffre d'affaires) portée à 20 %. Un
+amendement à 33 % annonçait 8,4 Md€, soit une assiette implicite d'environ
+25 Md€ ; +12 points donneraient 3 Md€ mécaniquement. Les entreprises peuvent
+remplacer les rachats par des dividendes : rendement retenu 1,5 Md€ (moitié,
+hypothèse). -/
+def rachatsActions : Int := 1500
+
+/-- Cabinets de conseil (O-53) : dépenses de conseil des ministères 893,9 M€
+en 2021 (commission d'enquête du Sénat, 2022). Division par deux, au profit
+de l'expertise interne : `economieConseil` = 400 M€ (sur une base supposée
+ramenée à 800 M€ depuis la circulaire de 2022). -/
+def economieConseil : Int := 400
+
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
 (règlement (UE) 2023/1114) : c'est le mécanisme d'USDC (jeton adossé 1:1 à
@@ -1016,13 +1062,45 @@ def mesures : List Mesure := [
     variantes := [
       { nom := "péages baissés de 20 % à la reprise",
         leviers := [.recetteEcheancier none (echeancierReprise (ebitdaHistoriques * 800 / 1000 - investissementsHistoriques)),
-                    .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))] }] }
+                    .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))] }] },
+
+  { id := "O-49"
+    titre := "Rémunération des hauts fonctionnaires : −5 %"
+    source := s!"Texte Orientation D, mesure 49 ; encadrement supérieur et dirigeant (21 500 agents, DGAFP), coût complet ≈ {masseHautsFonctionnaires} M€ : économie {economieHautsFonctionnaires} M€"
+    leviers := [.economieSur .fonctionnement (economieHautsFonctionnaires * 3 / 4),
+                .economieSur .sante (economieHautsFonctionnaires - economieHautsFonctionnaires * 3 / 4)]
+    debut := 2 },
+
+  { id := "O-50"
+    titre := "Revenus des élus plafonnés à 10 000 € par mois tous mandats confondus (limiter le cumul)"
+    source := s!"Texte Orientation D, mesure 50 ; plafond en vigueur {plafondCumulActuel} € bruts par mois (CGCT, art. L. 2123-20 II), plus strict que {plafondElus} € : sans effet budgétaire, enregistrée pour mémoire"
+    leviers := []
+    debut := 2 },
+
+  { id := "O-51"
+    titre := "Fin du prélèvement forfaitaire unique : revenus du capital au barème de l'impôt sur le revenu"
+    source := s!"Texte Orientation D, mesure 51 ; Institut Montaigne : +3,2 à 3,6 Md€ à comportements inchangés, −0,7 Md€ si l'assiette revient à 2017 ; retenu {finPfu} M€"
+    leviers := [.prelevementSur .ir finPfu]
+    debut := 2
+    variantes := [{ nom := "assiette des dividendes revenue à 2017 (−0,7 Md€)", leviers := [.prelevementSur .ir (-700)] }] },
+
+  { id := "O-52"
+    titre := "Taxe sur les rachats d'actions portée de 8 % à 20 %"
+    source := s!"Texte Orientation D, mesure 52 ; assiette implicite ≈ 25 Md€ (amendement PLF 2026), +12 points = 3 Md€ mécaniques, report vers les dividendes : {rachatsActions} M€ retenus"
+    leviers := [.prelevementSur .impotSocietes rachatsActions]
+    debut := 2 },
+
+  { id := "O-53"
+    titre := "Dépenses de cabinets de conseil divisées par deux"
+    source := s!"Texte Orientation D, mesure 53 ; 893,9 M€ en 2021 (commission d'enquête du Sénat) : {economieConseil} M€ d'économies"
+    leviers := [.economieSur .fonctionnement economieConseil]
+    debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

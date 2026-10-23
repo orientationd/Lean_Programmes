@@ -90,6 +90,11 @@ déficit, dividendes au rendement du portefeuille de l'APE.
 (substitution d'énergie importée), sans effet sur le PIB, comme le
 sous-modèle automobile.
 
+Taux d'intérêt : le taux marginal du scénario est corrigé d'une prime de
+risque (`primeDeficitPb` par point de déficit au-dessus de celui de départ,
+Laubach 2009) ; le taux apparent s'en rapproche d'au plus `deriveTauxPb`
+par an, à la hausse comme à la baisse.
+
 Financement de la dette : `detteNumerique ciblePm rythmePm
 capitalisationPm partResidentsPm partImposeeAvantPm` (tranche de dette
 tokenisée, décote de taux = capitalisation × taux du PFU, perte de PFU

@@ -349,8 +349,12 @@ variante.
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat : le Texte Orientation D passe de 8,1 % à 6,1 % de déficit en
-2035** (dette 137 % du PIB, chômage 8,3 %), avec l'IS à 11 % (O-08). Le modèle évalue désormais la
+**Résultat : le Texte Orientation D est à 6,3 % de déficit en 2035**
+(dette 137 % du PIB, chômage 8,4 %), contre 8,4 % sans programme. Depuis
+l'ajout de la prime de risque (un point de déficit au-dessus de celui de
+2025 relève le taux marginal de 25 pb), le tendanciel se dégrade (taux
+marginal 4,0 % en 2035) et le Texte Orientation D profite d'un taux
+plus bas (3,6 %). Le modèle évalue désormais la
 propriété « Budget à l'équilibre en 2035 » pour tous les programmes ;
 aucun ne la tient.
 
@@ -360,17 +364,19 @@ les intérêts montent vers 4 % : revenir à 0 % demande un effort permanent
 de l'ordre de 6,5 à 7 points de PIB. Ordres de grandeur, calculés avec le
 modèle (scénario central, moteur de demande) :
 
-| En plus du paquet O-35 à O-46 | Déficit 2035 | Chômage 2035 |
+| En plus des mesures O-35 à O-53 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 6,1 % | 8,3 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 5,5 % | 8,5 % |
-| … et norme à zéro volume (100 pb au lieu de 50) | 4,9 % | 8,8 % |
-| … et norme de 300 pb par an | 2,9 % | 9,9 % |
-| … et norme de 600 pb par an (dépenses pilotables ≈ −40 % en 2035) | ≈ 0 % | ≈ 11,3 % |
+| Rien | 6,3 % | 8,4 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 5,4 % | 8,6 % |
+| … et norme à zéro volume (100 pb au lieu de 50) | 4,7 % | 8,9 % |
+| … et norme de 300 pb par an | 1,9 % | 9,9 % |
+| … et norme de 450 pb par an (dépenses pilotables ≈ −33 % en 2035) | ≈ 0 % | ≈ 10,7 % |
 
-La dernière ligne montre la taille du problème plutôt qu'une option : par
-le multiplicateur, une consolidation de cette ampleur réduit le PIB de
-≈ 7 % et fait monter le chômage de trois points. Les postes du
+La prime de risque rend l'équilibre un peu moins lointain (450 pb de norme
+au lieu de 600) : chaque point de déficit en moins fait baisser les taux.
+La dernière ligne reste la mesure du problème plutôt qu'une option : par
+le multiplicateur, le PIB baisse de ≈ 5,5 % et le chômage monte de plus de
+deux points. Les postes du
 Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
 +0,58 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
 (enseignants, +0,21 pt).
@@ -408,6 +414,22 @@ l'IS perdu, déficit −0,06 point ; à partir de 2037, l'essentiel du réseau
 baissés de 20 % à la reprise. Sources : Autorité de régulation des
 transports (EBITDA 9,1 Md€, investissements 1,5 Md€, dividendes 4,1 Md€ en
 2023), échéances Arafer 2018 ; IS estimé.
+
+### O-49 à O-53 — Hauts fonctionnaires, élus, capital, conseil
+
+| Mesure | Chiffrage | Déficit 2035 |
+|---|---|---|
+| **O-49** Hauts fonctionnaires −5 % | 21 500 agents de l'encadrement supérieur et dirigeant (DGAFP), coût complet ≈ 2,9 Md€ : 147 M€ | ≈ 0 |
+| **O-50** Revenus des élus plafonnés à 10 000 € par mois | Le plafond de cumul en vigueur est déjà de 8 897,93 € bruts (CGCT, art. L. 2123-20 II) : sans effet, sauf à l'étendre aux rémunérations qui y échappent | 0 (pour mémoire) |
+| **O-51** Fin du PFU, revenus du capital au barème | +3,2 à 3,6 Md€ à comportements inchangés (Institut Montaigne) ; variante −0,7 Md€ si l'assiette revient à 2017 | −0,08 pt |
+| **O-52** Taxe sur les rachats d'actions de 8 % à 20 % | 3 Md€ mécaniques, 1,5 Md€ retenus (report vers les dividendes) | −0,03 pt |
+| **O-53** Cabinets de conseil divisés par deux | 893,9 M€ en 2021 (Sénat) : 400 M€ | −0,01 pt |
+
+Pour O-50, un plafond à 10 000 € est moins strict que le droit actuel. Pour
+limiter réellement le cumul, il faudrait abaisser le plafond (par exemple à
+une indemnité parlementaire de base, 5 932 €) ou l'étendre aux fonctions
+dans les organismes extérieurs ; leur montant n'étant pas publié, le gain
+n'est pas chiffré.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
