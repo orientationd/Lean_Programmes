@@ -349,71 +349,19 @@ variante.
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat : le Texte Orientation D est à 6,3 % de déficit en 2035**
-(dette 137 % du PIB, chômage 8,4 %), contre 8,4 % sans programme. Depuis
-l'ajout de la prime de risque (un point de déficit au-dessus de celui de
-2025 relève le taux marginal de 25 pb), le tendanciel se dégrade (taux
-marginal 4,0 % en 2035) et le Texte Orientation D profite d'un taux
-plus bas (3,6 %). Le modèle évalue désormais la
-propriété « Budget à l'équilibre en 2035 » pour tous les programmes ;
-aucun ne la tient.
+**Résultat (avec O-54 à O-58 ci-dessous) : le déficit du Texte Orientation
+D baisse chaque année de 2027 à 2035, de 4,6 % à 3,5 %** (dette stabilisée
+à 127 % du PIB, chômage 9,2 %), contre 8,4 % sans programme. Le programme
+entre en vigueur en 2027 (aucune mesure avant).
 
-**L'équilibre en 2035 n'est pas atteignable avec des mesures compatibles
-avec le PS.** Au tendanciel, le solde primaire est d'environ −3 % du PIB et
-les intérêts montent vers 4 % : revenir à 0 % demande un effort permanent
-de l'ordre de 6,5 à 7 points de PIB. Ordres de grandeur, calculés avec le
-modèle (scénario central, moteur de demande) :
+Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
-| En plus des mesures O-35 à O-53 | Déficit 2035 | Chômage 2035 |
+| En plus des mesures O-35 à O-58 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 6,3 % | 8,4 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 5,4 % | 8,6 % |
-| … et norme à zéro volume (100 pb au lieu de 50) | 4,7 % | 8,9 % |
-| … et norme de 300 pb par an | 1,9 % | 9,9 % |
-| … et norme de 450 pb par an (dépenses pilotables ≈ −33 % en 2035) | ≈ 0 % | ≈ 10,7 % |
-
-La prime de risque rend l'équilibre un peu moins lointain (450 pb de norme
-au lieu de 600) : chaque point de déficit en moins fait baisser les taux.
-La dernière ligne reste la mesure du problème plutôt qu'une option : par
-le multiplicateur, le PIB baisse de ≈ 5,5 % et le chômage monte de plus de
-deux points. Les postes du
-Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
-+0,58 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
-(enseignants, +0,21 pt).
-
-### O-47 et O-48 — Participations stratégiques, autoroutes
-
-**O-47** — 100 M€ par an de prises de participation de l'État dans des
-entreprises stratégiques. C'est une opération financière : la dette
-augmente, pas le déficit. Les dividendes suivent le rendement du
-portefeuille de l'APE (4,0 Md€ en 2025 pour 209,1 Md€, ≈ 1,9 %), inférieur
-au taux d'intérêt de la dette (3,3 %) : chaque euro emprunté pour acheter
-des parts coûte ≈ 1,4 centime par an. En 2035 : +17 M€ de dividendes,
-+24 M€ d'intérêts, effet négligeable sur le solde. L'intérêt de la mesure
-est stratégique, pas budgétaire.
-
-**O-48** — Non-renouvellement des concessions autoroutières : exploitation
-publique à l'échéance, péages maintenus. Le gain pour les administrations
-publiques est l'EBITDA moins les investissements de renouvellement, moins
-l'IS que payaient les concessionnaires (≈ 5,7 Md€ par an pour l'ensemble des
-sociétés historiques hors Cofiroute, en euros 2023).
-
-| Concession | Échéance | Part de l'EBITDA (hypothèse) | Comptée à partir de |
-|---|---|---|---|
-| Sanef | 31/12/2031 | 11,8 % | 2032 |
-| Escota | 29/02/2032 | 7,6 % | 2033 |
-| SAPN | 31/08/2033 | 3,9 % | 2034 |
-| APRR | 30/11/2035 | 19,7 % | 2036 |
-| ASF | 30/04/2036 | 34,7 % | 2037 |
-| AREA | 30/09/2036 | 5,6 % | 2037 |
-| Cofiroute | 31/12/2086 | 16,7 % | — |
-
-Effet en 2035 (mesure seule) : +2,0 Md€ de recettes non fiscales nettes de
-l'IS perdu, déficit −0,06 point ; à partir de 2037, l'essentiel du réseau
-(83 %) est repris, soit ≈ 4,7 Md€ par an (euros 2023). Variante : péages
-baissés de 20 % à la reprise. Sources : Autorité de régulation des
-transports (EBITDA 9,1 Md€, investissements 1,5 Md€, dividendes 4,1 Md€ en
-2023), échéances Arafer 2018 ; IS estimé.
+| Rien | 3,5 % | 9,2 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 2,7 % | 9,3 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,7 % | 9,7 % |
+| … et de 200 pb supplémentaires | 0,7 % | 10,1 % |
 
 ### O-49 à O-53 — Hauts fonctionnaires, élus, capital, conseil
 
@@ -430,6 +378,41 @@ limiter réellement le cumul, il faudrait abaisser le plafond (par exemple à
 une indemnité parlementaire de base, 5 932 €) ou l'étendre aux fonctions
 dans les organismes extérieurs ; leur montant n'étant pas publié, le gain
 n'est pas chiffré.
+
+### O-54 à O-58 — Trajectoire de baisse continue du déficit
+
+Sans ces mesures, le déficit baisse en 2027 puis remonte d'environ
+0,2 point par an : la charge d'intérêts passe de 2,6 % à 4,6 % du PIB, le
+taux apparent de la dette (1,9 % en 2025) rejoignant le taux de marché. Il
+faut donc des mesures dont le rendement croît chaque année plus vite que
+les intérêts.
+
+| Mesure | Chiffrage | Déficit 2035 | PIB 2035 |
+|---|---|---|---|
+| **O-54** CRDS prolongée au-delà de 2033 pour amortir la dette de l'ACOSS (≈ 65 Md€ fin 2026) | 9,55 Md€ (euros 2027) dès 2034 ; loi organique | −0,23 pt | −0,13 % |
+| **O-55** Norme de dépense renforcée : 150 pb avec O-42, dépenses pilotables à +1,3 % par an en valeur (≈ −0,5 % en volume) | | −1,21 pt | −1,45 % |
+| **O-56** Aides aux entreprises (211 Md€, Sénat 2025) : exonérations de cotisations −1,5 Md€ de plus chaque année pendant six ans, sous conditions | 9 Md€ en 2032 | −0,17 pt | −0,11 % |
+| **O-57** Niches fiscales : −2 % de plus chaque année pendant cinq ans | ≈ 2 Md€ par an, 10 Md€ en 2031 | −0,20 pt | −0,12 % |
+| **O-58** Durée de cotisation : +1 trimestre tous les trois ans dès 2028 (logique de la réforme de 2014) | +1 mois de durée requise par an, 80 % des départs | −0,35 pt | +0,34 % |
+
+Trajectoire du déficit (scénario central) :
+
+| Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Demande | 5,28 | 4,59 | 4,50 | 4,47 | 4,44 | 4,42 | 4,24 | 3,99 | 3,73 | 3,46 |
+| Offre | 5,28 | 4,50 | 4,37 | 4,32 | 4,27 | 4,23 | 3,99 | 3,72 | 3,43 | 3,15 |
+
+La propriété « Déficit en baisse chaque année » est tenue au scénario
+central sous les trois moteurs, et dans 16 à 18 des 36 scénarios de la
+matrice : avec un pétrole cher, la baisse s'interrompt en 2032. Entre
+2029 et 2031, la baisse n'est que de 0,03 point par an : c'est la période
+où les intérêts montent le plus vite.
+
+Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,5 %, ≈ 210 000
+emplois en 2035 au moteur de demande) ; le chômage du Texte Orientation D
+atteint 9,2 % en 2035. Variante sans O-58 (pas de nouvel allongement de la
+durée) : il faut une norme de 200 pb au total pour obtenir la même
+trajectoire.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 

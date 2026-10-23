@@ -58,5 +58,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "lesecologistes.fr, Projet 2027 « Pour une prospérité écologique » (via MonVote2027 et Votons 2027, consultés le 22 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.Ecologistes

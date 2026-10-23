@@ -54,8 +54,9 @@ structure Mesure where
   contrats : List Contrat := []
   /-- Variantes comparées dans le rapport (voir `Variante`). -/
   variantes : List Variante := []
-  /-- Année d'entrée en vigueur, comptée depuis l'année de départ (0 =
-  immédiate). Une mesure dont le début dépasse l'horizon n'a aucun effet. -/
+  /-- Année d'entrée en vigueur, comptée depuis l'entrée en vigueur du
+  programme (0 = dès la première année du programme). Une mesure dont le
+  début dépasse l'horizon n'a aucun effet. -/
   debut : Nat := 0
   /-- Nombre d'années consécutives d'application (1 par défaut) : une mesure
   « 10 000 postes par an pendant cinq ans » s'applique cinq fois. -/
@@ -85,6 +86,10 @@ structure Programme where
   source : String
   mesures : List Mesure
   engagements : List Engagement := []
+  /-- Année d'entrée en vigueur du programme, comptée depuis l'année de départ
+  (2025) : 2 pour un programme présidentiel ou législatif de 2027. Aucune
+  mesure ne s'applique avant. -/
+  entreeEnVigueur : Nat := 0
 
 namespace Programme
 
@@ -92,9 +97,11 @@ namespace Programme
 def _root_.Modele.Mesure.sAppliqueA (m : Mesure) (t : Nat) : Bool :=
   decide (m.debut ≤ t) && decide (t < m.debut + m.repetitions)
 
-/-- Applique les mesures qui s'appliquent l'année `t`. -/
+/-- Applique les mesures qui s'appliquent l'année `t` (rien avant l'entrée en
+vigueur du programme ; le début des mesures est compté depuis celle-ci). -/
 def appliquerAnnee (p : Programme) (M : Moteur) (H : Scenario) (t : Nat) (s : Etat) : Etat :=
-  (p.mesures.filter (·.sAppliqueA t)).foldl (fun s m => m.appliquer M H s) s
+  if t < p.entreeEnVigueur then s else
+  (p.mesures.filter (·.sAppliqueA (t - p.entreeEnVigueur))).foldl (fun s m => m.appliquer M H s) s
 
 /-- Situation de départ après application des mesures immédiates. -/
 def etatInitial (p : Programme) (M : Moteur) (H : Scenario) : Etat :=
@@ -126,11 +133,14 @@ def resultat (p : Programme) (M : Moteur) (H : Scenario) : Etat :=
 /-- La propriété `q` tient pour le programme sous le moteur et le scénario,
 à l'année propre à la propriété (horizon du scénario par défaut). -/
 def Verifie (p : Programme) (M : Moteur) (H : Scenario) (q : Propriete) : Prop :=
-  q.tient H (tendancielA M H (q.horizon H)) (p.resultatA M H (q.horizon H))
+  match q.trajectoire with
+  | none => q.tient H (tendancielA M H (q.horizon H)) (p.resultatA M H (q.horizon H))
+  | some f => f H p.entreeEnVigueur (Modele.trajectoire M H (q.horizon H) (etatDepart H))
+      (p.trajectoire M H (q.horizon H) 0 (etatDepart H)) = true
 
 instance (p : Programme) (M : Moteur) (H : Scenario) (q : Propriete) :
-    Decidable (p.Verifie M H q) :=
-  inferInstanceAs (Decidable (q.tient H _ _))
+    Decidable (p.Verifie M H q) := by
+  unfold Verifie; split <;> infer_instance
 
 /-- Tous les engagements revendiqués sont tenus. -/
 def EngagementsTenus (p : Programme) : Prop :=

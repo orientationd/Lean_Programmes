@@ -501,7 +501,7 @@ def puces(items):
 
 PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee": "Dette non dégradée",
                "chomage-non-degrade": "Chômage non dégradé", "emissions-plafond": "Émissions sous plafond",
-               "deficit-3pct-2035": "Déficit < 3 % 2035", "equilibre-2035": "Équilibre 2035", "dette-stabilisee-2035": "Dette stable 2035",
+               "deficit-3pct-2035": "Déficit < 3 % 2035", "equilibre-2035": "Équilibre 2035", "deficit-en-baisse": "Déficit en baisse", "dette-stabilisee-2035": "Dette stable 2035",
                "air-non-degrade": "Air non dégradé", "bornes-suffisantes-2035": "Bornes 2035",
                "emplois-annonces-realisables": "Emplois annoncés",
                "balance-courante-non-degradee": "Solde courant", "accidents-travail-norme-ue": "Accidents du travail",

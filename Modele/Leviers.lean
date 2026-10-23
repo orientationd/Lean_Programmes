@@ -165,6 +165,10 @@ inductive Levier where
   porté) : dette sans déficit, portefeuille et dividendes au rendement du
   portefeuille de départ. -/
   | prisesDeParticipation (montantAnnuel : Int)
+  /-- Durée de cotisation requise allongée de `moisRequis` mois ; seule la part
+  `partDepartsDureePm` des départs, liée à la durée, est retardée d'autant.
+  Même effet par mois que `ageLegal`, au millième de mois près. -/
+  | dureeCotisation (moisRequis : Int) (partDepartsDureePm : Int)
   /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
   publics (accompagnement des entreprises, inspection, formation) et
   baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
@@ -264,6 +268,22 @@ def appliquerPrelevement (M : Moteur) (H : Scenario) (i : Impot) (r : Int) (s : 
   effetDemande H none (-(appliquerPm r M.multiplicateurPrelevementsPm))
     { s with impots := s.impots.ajouter i rendement }
 
+/-- Recul de l'âge moyen de départ de `moisPm` millièmes de mois : actifs
+supplémentaires en emploi au taux observé lors du report de 2010 (l'écart à
+l'emploi d'équilibre est résorbé dans la projection), pensions économisées,
+PIB par le volume d'heures. -/
+def reculDepart (H : Scenario) (moisPm : Int) (s : Etat) : Etat :=
+  let dActifs := moisPm * H.eco.actifsParMoisAgeLegal / 1000
+  let dEmploi := appliquerPm dActifs H.eco.tauxEmploiSeniorsMaintenusPm
+  let dEquilibre := if s.actifs = 0 then 0 else dActifs * s.emploiTotal / s.actifs
+  chocEmploi H dEmploi
+    { s with
+      ageLegalMois := s.ageLegalMois + moisPm / 1000
+      depensesF := s.depensesF.ajouter .retraites (-(moisPm * H.eco.economieParMoisRetraite / 1000))
+      actifs := s.actifs + dActifs
+      emploi := s.emploi.repartir dEmploi none
+      chomeursExcedentaires := s.chomeursExcedentaires + (dEquilibre - dEmploi) }
+
 /-- Interprétation d'un levier sous un moteur et un scénario. -/
 def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depense m, s => appliquerDepense H none .nonVentile m s
@@ -281,20 +301,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let dEmploi := -(emploisPourChomeurs H (s.actifs * h * H.eco.elasticiteChomageSmicPm / 10000000))
       chocEmploi H dEmploi (chocDemandeTravail H none dEmploi
         { s with smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h })
-  -- les actifs maintenus (ou libérés) sont en emploi au taux observé lors du
-  -- report de 2010 ; l'écart à l'emploi d'équilibre (taux d'emploi courant)
-  -- est résorbé dans la projection
-  | .ageLegal d, s =>
-      let dActifs := d * H.eco.actifsParMoisAgeLegal
-      let dEmploi := appliquerPm dActifs H.eco.tauxEmploiSeniorsMaintenusPm
-      let dEquilibre := if s.actifs = 0 then 0 else dActifs * s.emploiTotal / s.actifs
-      chocEmploi H dEmploi
-        { s with
-          ageLegalMois := s.ageLegalMois + d
-          depensesF := s.depensesF.ajouter .retraites (-(d * H.eco.economieParMoisRetraite))
-          actifs := s.actifs + dActifs
-          emploi := s.emploi.repartir dEmploi none
-          chomeursExcedentaires := s.chomeursExcedentaires + (dEquilibre - dEmploi) }
+  | .ageLegal d, s => reculDepart H (d * 1000) s
+  | .dureeCotisation m part, s => reculDepart H (m * part) s
   | .dureeTravail v, s =>
       chocHeures H v { s with heuresParEmploi := s.heuresParEmploi + appliquerPm s.heuresParEmploi v }
   -- IS : perte statique au prorata des taux, retour d'assiette, impulsion de demande

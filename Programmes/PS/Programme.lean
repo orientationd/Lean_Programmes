@@ -55,5 +55,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "https://projet-socialiste.fr/ (consulté le 21 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.PS

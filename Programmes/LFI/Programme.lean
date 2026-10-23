@@ -137,5 +137,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "https://melenchon2027.fr/programme/plans-investissement/automobile/ (consulté le 21 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.LFI

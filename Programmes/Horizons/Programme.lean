@@ -50,5 +50,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "« L'Heure de vérité », France 2, 8 octobre 2026 (Euronews, franceinfo, Echos Plus, consultés le 21 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.Horizons
