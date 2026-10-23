@@ -29,7 +29,7 @@ def mesures : List Mesure := [
   { id := "RE-03", titre := "Année blanche sur les prestations sociales en 2028, petites retraites épargnées"
     source := "G. Attal, Le Parisien, 2 juillet 2026 (via MoneyVox) ; conversion : non-indexation d'un an de ≈ 700 Md€ de prestations hors petites retraites, inflation 1,5 % → ≈ 10 Md€/an d'économie permanente, répartie 6 Md€ retraites et 4 Md€ autres prestations (hypothèses) ; entrée en vigueur la troisième année (2028)"
     leviers := [.economieSur .retraites 6000, .economieSur .famille 4000]
-    debut := 3 },
+    debut := 1 },
   { id := "RE-04", titre := "100 000 postes de fonctionnaires supprimés par départs volontaires et non-remplacements"
     source := "G. Attal, Le Parisien, 2 juillet 2026 (via MoneyVox) : Éducation, Armées, Justice et Intérieur préservés ; conversion : 62 500 € par poste → 6,25 Md€/an en régime de croisière"
     leviers := [.economieSur .fonctionnement 6250] },
@@ -45,5 +45,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "attalpresident.fr/programme et presse (RMC 6 octobre 2026, Le Parisien 23 mai 2026, CNews 30 avril 2026), consultés le 22 octobre 2026"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.Renaissance

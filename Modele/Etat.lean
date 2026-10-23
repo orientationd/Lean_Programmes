@@ -480,6 +480,9 @@ structure Etat where
   /-- Norme de dépense : moindre croissance annuelle des fonctions pilotables
 (`Fonction.pilotable`), pb. -/
   moderationDepensesPb : Int := 0
+  /-- Taux marginal de l'année (taux du scénario corrigé de la prime de risque
+  liée au déficit), pb (suivi). -/
+  tauxMarginalCourantPb : Int := 0
   /-- Dépenses à échéancier en cours (voir `Echeance`). -/
   echeances : List Echeance := []
   /-- Recettes à échéancier en cours (voir `EcheanceRecette`). -/

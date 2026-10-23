@@ -120,9 +120,12 @@ structure Economie where
   economieParMoisRetraite : Int
   /-- Taux d'intérêt marginal sur la dette nouvelle et refinancée, pb. -/
   tauxMarginalPb : Int
-  /-- Hausse annuelle maximale du taux apparent vers le taux marginal, pb
-  (rythme de refinancement du stock). -/
+  /-- Variation annuelle maximale du taux apparent vers le taux marginal, pb
+  (rythme de refinancement du stock), à la hausse comme à la baisse. -/
   deriveTauxPb : Int
+  /-- Prime de risque : hausse du taux marginal (pb) par point de PIB de
+  déficit au-dessus du déficit de départ (baisse en dessous). -/
+  primeDeficitPb : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
   /-- Élasticité du PIB au volume d'heures travaillées, pm (`650` : part du
@@ -223,6 +226,7 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.fuiteFiscalePm ∧ H.eco.fuiteFiscalePm ≤ 1000 ∧
   0 ≤ H.eco.elasticiteChomageSmicPm ∧ 0 ≤ H.eco.economieParMoisRetraite ∧
   0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧ 0 ≤ H.eco.deriveTauxPb ∧
+  0 ≤ H.eco.primeDeficitPb ∧ H.eco.primeDeficitPb ≤ 100 ∧
   0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
   0 ≤ H.eco.coutSanteParPbPlus65 ∧
   0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧

@@ -90,6 +90,19 @@ déficit, dividendes au rendement du portefeuille de l'APE.
 (substitution d'énergie importée), sans effet sur le PIB, comme le
 sous-modèle automobile.
 
+Calendrier : `entreeEnVigueur` (Programme) fixe l'année où le programme
+commence (2 = 2027 pour les programmes de 2027) ; aucune mesure ne
+s'applique avant, et `debut` est compté depuis cette année.
+Propriétés de trajectoire : `Propriete.surTrajectoire` évalue un critère
+sur la liste des états de 0 à l'horizon (exemple : « Déficit en baisse
+chaque année »). Retraites : `dureeCotisation moisRequis partDepartsDureePm`
+(au millième de mois près ; `ageLegal` en mois entiers).
+
+Taux d'intérêt : le taux marginal du scénario est corrigé d'une prime de
+risque (`primeDeficitPb` par point de déficit au-dessus de celui de départ,
+Laubach 2009) ; le taux apparent s'en rapproche d'au plus `deriveTauxPb`
+par an, à la hausse comme à la baisse.
+
 Financement de la dette : `detteNumerique ciblePm rythmePm
 capitalisationPm partResidentsPm partImposeeAvantPm` (tranche de dette
 tokenisée, décote de taux = capitalisation × taux du PFU, perte de PFU

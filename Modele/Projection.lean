@@ -24,7 +24,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let pib := s.pib + appliquerPb s.pib croissance
   -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
   -- appliqué à la dette de fin d'année précédente (effet boule de neige)
-  let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
+  -- prime de risque : le taux marginal monte (baisse) de `primeDeficitPb` par
+  -- point de déficit au-dessus (au-dessous) du déficit de départ ; le taux
+  -- apparent s'en rapproche d'au plus `deriveTauxPb` par an, dans les deux sens
+  let tauxCible := max 0 (H.eco.tauxMarginalPb
+    + H.eco.primeDeficitPb * (s.deficitPb - H.reference.etat.deficitPb) / 100)
+  let taux := if s.tauxApparentPb ≤ tauxCible
+    then min tauxCible (s.tauxApparentPb + H.eco.deriveTauxPb)
+    else max tauxCible (s.tauxApparentPb - H.eco.deriveTauxPb)
   -- OAT numériques : la tranche `part` de la dette est servie au taux
   -- apparent diminué de la décote ; ses intérêts, pour la part défiscalisée,
   -- échappent au PFU (perte de recettes de l'année)
@@ -95,6 +102,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     autresRecettes := autresRecettes
     depensesF := depensesF
     tauxApparentPb := taux
+    tauxMarginalCourantPb := tauxCible
     partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
     economieInteretsNumeriqueMeur := economieNum
     pertePfuMeur := pertePfu
@@ -176,7 +184,8 @@ def etatDepart (H : Scenario) : Etat :=
   -- facture énergétique importée proportionnelle au prix du Brent
   let dImports := H.energie.factureEnergetiqueMeur
     * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / H.energie.prixReferenceDollars
-  let s := { s with importations := s.importations + dImports, robotisationPb := H.eco.robotisationTendanciellePb }
+  let s := { s with importations := s.importations + dImports, robotisationPb := H.eco.robotisationTendanciellePb
+                    tauxMarginalCourantPb := H.eco.tauxMarginalPb }
   chocPib H none dPib s
 
 /-- `f` appliquée `n` fois. -/

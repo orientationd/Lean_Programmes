@@ -36,7 +36,14 @@ les dépenses de fonctionnement, d'affaires économiques et de santé
 `tauxMarginalPb` : taux auquel la dette nouvelle et refinancée est émise
 (OAT 10 ans autour de 3,3 % fin 2025, hypothèse) ; `deriveTauxPb` : le
 taux apparent (1,87 % en 2025, INSEE) y converge d'environ 20 pb par an,
-rythme de renouvellement du stock (maturité moyenne ≈ 8,5 ans, AFT).
+rythme de renouvellement du stock (maturité moyenne ≈ 8,5 ans, AFT), à la
+hausse comme à la baisse. `primeDeficitPb` = 25 : une hausse d'un point du
+déficit/PIB anticipé relève les taux longs d'environ 25 pb, une hausse d'un
+point de dette/PIB de 3 à 4 pb (Laubach, « New Evidence on the Interest
+Rate Effects of Budget Deficits and Debt », JEEA, 2009). Appliquée à
+l'écart entre le déficit de l'année précédente et celui de départ
+(5,1 %) : un déficit ramené à 3 % abaisse le taux marginal de ≈ 50 pb, un
+déficit de 8 % le relève de ≈ 75 pb.
 Prélèvement forfaitaire unique (PFU) : 31,4 % depuis le 1er janvier 2026
 (loi n° 2025-1403 du 30 décembre 2025 de financement de la Sécurité sociale
 pour 2026, art. L. 136-6 et L. 136-7 CSS), soit 12,8 % d'impôt sur le revenu
@@ -90,6 +97,7 @@ def centrale : Economie where
   economieParMoisRetraite := 650
   tauxMarginalPb := 330
   deriveTauxPb := 20
+  primeDeficitPb := 25
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -125,6 +133,7 @@ def croissanceBasse : Economie where
   economieParMoisRetraite := 650
   tauxMarginalPb := 380
   deriveTauxPb := 25
+  primeDeficitPb := 25
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -160,6 +169,7 @@ def croissanceHaute : Economie where
   economieParMoisRetraite := 650
   tauxMarginalPb := 300
   deriveTauxPb := 20
+  primeDeficitPb := 25
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500

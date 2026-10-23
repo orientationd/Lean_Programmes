@@ -73,7 +73,11 @@ Mesures (extrait) :
   **O-45** lutte contre la fraude fiscale ; **O-46** CSG progressive pour
   les hauts revenus ; **O-47** 100 M€ par an de participations dans les
   entreprises stratégiques ; **O-48** non-renouvellement des concessions
-  autoroutières.
+  autoroutières ; **O-49** hauts fonctionnaires −5 % ; **O-50** revenus des
+  élus plafonnés ; **O-51** fin du PFU ; **O-52** rachats d'actions ;
+  **O-53** cabinets de conseil ; **O-54** à **O-58** trajectoire de baisse
+  continue : CRDS prolongée, norme renforcée, aides aux entreprises,
+  niches, durée de cotisation.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -507,11 +511,9 @@ la contrainte de la plupart des départs : plus de neuf retraités sur dix
 liquident au taux plein, surtout au titre de la durée (COR, génération 1950) ;
 les carrières incomplètes partent à l'âge du taux plein automatique.
 `partDepartsDuree` = 800 ‰ (hypothèse) : âge moyen de départ reculé de
-6 × 0,8 ≈ 5 mois. Coût et actifs par mois : hypothèses économiques du
+6 × 0,8 = 4,8 mois (levier `dureeCotisation`). Coût et actifs par mois : hypothèses économiques du
 scénario (réforme de 2023). -/
 def partDepartsDuree : Int := 800
-/-- Arrondi au mois le plus proche : 4,8 → 5. -/
-def moisDureeSupplementaire : Int := (6 * partDepartsDuree + 500) / 1000
 def holdings : Int := 1000
 def normeDepensePb : Int := 50
 
@@ -593,6 +595,76 @@ def partReprise (k : Nat) : Int :=
 def echeancierReprise (montant2023 : Int) (facteurPm : Int := 1000) : List Int :=
   (List.range 20).map fun k =>
     montant2023 * indice2023a2027 / 10000 * partReprise k / 1000 * facteurPm / 1000
+
+/-- Hauts fonctionnaires (O-49) : −5 % de rémunération pour l'encadrement
+supérieur et dirigeant des trois versants. DGAFP (fin 2012) : 9 900 agents
+dans l'État (7 700 € bruts par mois en moyenne), 5 600 dans l'hospitalière
+(6 603 €), 6 000 dans la territoriale (5 898 €), soit 1 783 M€ bruts par an ;
+× 1,10 pour 2025 (point d'indice et primes, hypothèse) et × 1,5 pour le coût
+complet (cotisations employeur) : ≈ 2,94 Md€. Économie : 147 M€, dont 75 %
+sur les services généraux (État et collectivités) et 25 % sur la santé. -/
+def masseHautsFonctionnaires : Int := 1783 * 110 / 100 * 150 / 100
+def economieHautsFonctionnaires : Int := masseHautsFonctionnaires * 5 / 100
+
+/-- Revenus des élus (O-50) : plafond de 10 000 € par mois pour l'ensemble des
+mandats et fonctions. Le droit en vigueur plafonne déjà le cumul des
+indemnités et rémunérations à une fois et demie l'indemnité parlementaire de
+base, soit 8 897,93 € bruts par mois depuis le 1er janvier 2024 (article
+L. 2123-20 II du CGCT ; Ville de Paris, 2025). Un plafond de 10 000 € est
+donc moins strict : la mesure n'a d'effet qu'en étendant le plafond aux
+rémunérations qui y échappent (organismes extérieurs, sociétés publiques),
+dont le montant n'est pas publié. Enregistrée pour mémoire, sans effet
+budgétaire. -/
+def plafondElus : Int := 10000
+def plafondCumulActuel : Int := 8898
+
+/-- Fin du prélèvement forfaitaire unique (O-51) : retour au barème de l'IR
+pour les revenus du capital, chiffrage PS de longue date. Institut
+Montaigne (2024) : +3,2 à 3,6 Md€ par an à comportements inchangés ; perte
+de 0,7 Md€ si l'assiette des dividendes revient à son niveau de 2017
+(variante). Retenu : 3,4 Md€ statiques. Interaction avec O-24 : les intérêts
+des OAT numériques restent exonérés. -/
+def finPfu : Int := 3400
+
+/-- Rachats d'actions (O-52) : taxe de 8 % (loi de finances pour 2025,
+entreprises de plus de 1 Md€ de chiffre d'affaires) portée à 20 %. Un
+amendement à 33 % annonçait 8,4 Md€, soit une assiette implicite d'environ
+25 Md€ ; +12 points donneraient 3 Md€ mécaniquement. Les entreprises peuvent
+remplacer les rachats par des dividendes : rendement retenu 1,5 Md€ (moitié,
+hypothèse). -/
+def rachatsActions : Int := 1500
+
+/-- Cabinets de conseil (O-53) : dépenses de conseil des ministères 893,9 M€
+en 2021 (commission d'enquête du Sénat, 2022). Division par deux, au profit
+de l'expertise interne : `economieConseil` = 400 M€ (sur une base supposée
+ramenée à 800 M€ depuis la circulaire de 2022). -/
+def economieConseil : Int := 400
+
+/-- Trajectoire de baisse continue du déficit (O-54 à O-58). Sans elles, le
+déficit du Texte Orientation D baisse en 2027 puis remonte d'environ
+0,2 point par an : la charge d'intérêts passe de 2,6 % à 4,6 % du PIB, le
+taux apparent rejoignant le taux de marché. Pour qu'il baisse chaque année,
+il faut des mesures dont le rendement croît chaque année plus vite que les
+intérêts :
+
+* O-54 : prolongation de la CRDS au-delà de 2033 pour amortir la dette de
+  l'ACOSS (59,4 Md€ fin 2025, ≈ 65 Md€ fin 2026, sans ressource dédiée) :
+  9,55 Md€ (euros 2027) à partir de 2034 ; loi organique nécessaire.
+* O-55 : norme de dépense renforcée de 100 pb (soit 150 pb avec O-42) :
+  dépenses pilotables à +1,3 % par an en valeur, ≈ −0,5 % en volume.
+* O-56 : aides aux entreprises (211 Md€ selon la commission d'enquête du
+  Sénat, juillet 2025) : exonérations de cotisations réduites de 1,5 Md€
+  par an pendant six ans (9 Md€ en 2032), en les conditionnant.
+* O-57 : niches fiscales : −2 % par an pendant cinq ans en plus de O-40
+  (≈ 2 Md€ par an : IR 1, IS 0,5, TVA 0,5).
+* O-58 : durée de cotisation +1 trimestre tous les trois ans à partir de
+  2028, dans la logique de la réforme de 2014 : +1 mois de durée requise
+  par an, 80 % des départs concernés (`partDepartsDuree`).
+-/
+def crdsProlongee : List Int := (List.range 20).map fun k => if k < 7 then 0 else 9550
+def normeRenforceePb : Int := 100
+def baisseAidesEntreprises : Int := 1500
+def rabotNiches : Int := 2000
 
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
@@ -714,7 +786,7 @@ def mesures : List Mesure := [
     titre := "Construction de six EPR2, au niveau du programme gouvernemental"
     source := "Texte Orientation D, mesure 4 ; programme gouvernemental : devis EDF du 18 décembre 2025 (72,8 Md€₂₀₂₀ pour 6 EPR2), accord État-EDF du 19 juin 2025 (prêt de l'État ≥ 50 %, CfD 100 €/MWh), première mise en service 2038. Effets hors horizon : production, CfD, remboursements"
     leviers := [.pretEtat pretEPR2]
-    debut := 2  -- décision finale d'investissement fin 2026, premiers décaissements 2027
+    debut := 0  -- décision finale d'investissement fin 2026, premiers décaissements 2027
     variantes := [
       { nom := "prêt de l'État couvrant la totalité du coût", leviers := [.pretEtat pretEPR2Total] }] },
 
@@ -775,7 +847,7 @@ def mesures : List Mesure := [
     titre := "Autorisation de la conduite autonome (FSD) ; indemnisation des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite"
     source := s!"Texte Orientation D, mesure 13 ; {titulairesTaxi} titulaires (hypothèse sur 62 800 ADS, Observatoire T3P 2024), pyramide des âges INSEE 2016 (moyenne 49 ans), {indemniteTaxi} € par an jusqu'à {ageRetraiteTaxi} ans : {indemnitesAnnee titulairesTaxi 0 0 0} M€ la première année, {indemnitesAnnee titulairesTaxi 0 0 8} M€ au bout de huit ans ; {sortiesTaxis titulairesTaxi} titulaires de {ageSortieTaxi} ans et plus quittent la population active, les autres se reclassent ; +0,05 % de PIB (voir `titulairesTaxi`)"
     leviers := leviersTaxis titulairesTaxi 0 0
-    debut := 2
+    debut := 0
     variantes := [
       { nom := "toutes les ADS indemnisées (62 800)", leviers := leviersTaxis 62800 0 0 },
       { nom := "moins de 50 ans : deux ans d'indemnité et 15 000 € de formation", leviers := leviersTaxis titulairesTaxi 50 15000 }] },
@@ -796,7 +868,7 @@ def mesures : List Mesure := [
     titre := "Logiciel libre : économies de licences en régime de croisière"
     source := "Texte Orientation D, mesure 15 (suite) ; entrée en vigueur la quatrième année"
     leviers := [.economieSur .fonctionnement economieLibre]
-    debut := 3 },
+    debut := 1 },
 
   { id := "O-16"
     titre := "Reprise de la dette des universités et apurement de leurs déficits"
@@ -807,7 +879,7 @@ def mesures : List Mesure := [
     titre := "Reconstruction aux normes des universités de Nanterre, Toulouse, Montpellier et Grenoble (démolition puis construction)"
     source := s!"Texte Orientation D, mesure 17 ; 4 × 1 Md€ sur huit ans à partir de 2027 : {reconstructionCampus} M€/an d'investissement (hypothèse), emplois dans la construction ; le modèle garde la dépense constante au-delà des huit ans (prudent)"
     leviers := [.investissement .enseignement reconstructionCampus]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-18"
     titre := "Parcoursup ouvert aux étudiants étrangers, à nombre d'admis constant"
@@ -839,13 +911,13 @@ def mesures : List Mesure := [
     titre := "Lutte contre la fraude et le travail dissimulé (BTP, restauration, services à la personne)"
     source := s!"Texte Orientation D, mesure 23 ; HCFiPS 2024 : 6 à 8 Md€ de cotisations éludées par an ; récupération de {fraudeCotisations} M€ de cotisations et {fraudeTVA} M€ de TVA par an, en régime de croisière la troisième année ; le modèle applique sa fuite fiscale à ces recettes"
     leviers := [.prelevementSur .cotisations fraudeCotisations, .prelevementSur .tva fraudeTVA]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-25"
     titre := "Rémunération des enseignants : +2 % par an"
     source := s!"Texte Orientation D, mesure 25 ; masse salariale hors CAS Pensions 59,23 Md€ en 2026 (PLF 2026), base 2027 {masseEnseignants2027} M€ ; +2 %/an au-delà de la tendance de 2027 à 2035 : {revalorisationsEnseignants.head!} M€ la première année, {revalorisationsEnseignants[8]!} M€ (euros 2027) la neuvième (2035)"
     leviers := [.depenseEcheancier .enseignement revalorisationsEnseignants]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-26"
     titre := "Automatisation des tâches administratives : 10 000 postes de contrôle supprimés par an pendant cinq ans"
@@ -853,14 +925,14 @@ def mesures : List Mesure := [
     leviers := [.suppressionPostes .fonctionnement postesControleParAn coutPosteControle,
                 .depenseEcheancier .fonctionnement [postesControleParAn * investissementParPoste / 1000000, 0],
                 .depenseSur .fonctionnement (postesControleParAn * maintenanceParPoste / 1000000)]
-    debut := 2
+    debut := 0
     repetitions := 5 },
 
   { id := "O-27"
     titre := "Médecins généralistes : simplification des tâches administratives ; enquêteurs humains sur les cas anormaux à la place des contrôles systématiques"
     source := s!"Texte Orientation D, mesure 27 ; DREES 2019 : 5 h 30 de gestion par semaine sur 54 h ; moitié supprimée pour {generalistesLiberaux} généralistes libéraux : {heuresLibereesMilliers} milliers d'heures de soin libérées par an, ≈ {etpGeneralistesLiberes} généralistes à temps plein, {consultationsMilliers} milliers de consultations possibles ; {enqueteurs} enquêteurs à {coutEnqueteur} € (hypothèses)"
     leviers := [.depenseSur .sante (enqueteurs * coutEnqueteur / 1000000)]
-    debut := 2
+    debut := 0
     variantes := [
       { nom := s!"temps libéré converti en consultations remboursées (+{coutConsultations} M€/an)",
         leviers := [.depenseSur .sante (enqueteurs * coutEnqueteur / 1000000), .depenseSur .sante coutConsultations] }] },
@@ -870,13 +942,13 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 24 ; OAT numériques réglées en jetons de monnaie électronique (MiCA, règlement (UE) 2023/1114, art. 50 : pas d'intérêt sur le jeton), régime pilote DLT (règlement (UE) 2022/858, à réviser) ; exonération du PFU de 31,4 % (LFSS 2026) pour les particuliers résidents ; tranche cible {cibleDetteNumerique} ‰ de la dette (+{rythmeDetteNumerique} ‰/an, première tranche fin 2028), capitalisation fiscale {capitalisationFiscale} ‰ (obligations municipales américaines), part des résidents {partResidents} ‰, part imposée auparavant {partImposeeAvant} ‰"
     leviers := [.detteNumerique cibleDetteNumerique rythmeDetteNumerique capitalisationFiscale
                   partResidents partImposeeAvant]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-28"
     titre := "Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € par mois"
     source := s!"Texte Orientation D, mesure 28 ; 1 % des retraités au-delà de 5 150 € bruts, 6 470 € en moyenne (DREES) ; part au-delà du seuil {masseAuDelaSeuil} M€ (2027), revalorisation évitée {inflationPb} pb/an : {(desindexation masseAuDelaSeuil).head!} M€ la première année, {(desindexation masseAuDelaSeuil)[8]!} M€ en 2035 (euros 2027)"
     leviers := [.depenseEcheancier .retraites (desindexation masseAuDelaSeuil)]
-    debut := 2
+    debut := 0
     variantes := [
       { nom := s!"gel de toute la pension au-delà du seuil ({masseTresHautes} M€ concernés)",
         leviers := [.depenseEcheancier .retraites (desindexation masseTresHautes)] }] },
@@ -885,13 +957,13 @@ def mesures : List Mesure := [
     titre := "TVA : taux normal porté de 20 % à 22 %"
     source := s!"Texte Orientation D, mesure 29 ; un point de taux normal ≈ 8 Md€ (FIPECO, IPP, Sénat) : {tvaDeuxPoints} M€ de rendement statique, net de la fuite fiscale du modèle"
     leviers := [.prelevementSur .tva tvaDeuxPoints]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-30"
     titre := "Taxe forfaitaire à l'atterrissage des jets privés"
     source := s!"Texte Orientation D, mesure 30 ; {atterrissagesJets} atterrissages par an (84 885 départs en 2022, Greenpeace) × {taxeAtterrissage} € (hypothèse) ; fuite fiscale du modèle pour le report et la baisse des vols"
     leviers := [.prelevementSur .autres (atterrissagesJets * taxeAtterrissage / 1000000)]
-    debut := 2
+    debut := 0
     variantes := [
       { nom := "taxe de 1 000 € par atterrissage", leviers := [.prelevementSur .autres (atterrissagesJets * 1000 / 1000000)] }] },
 
@@ -901,90 +973,90 @@ def mesures : List Mesure := [
     leviers := [.depenseEcheancier .affairesEconomiques [exploitationsAgricoles * aideConversion / 10 / 1000000, 0],
                 .transition (emissionsEnergieAgricole / 10) 0,
                 .importationsNiveau (-((carburantAgricoleImporte - electriciteNonExportee) / 10))]
-    debut := 2
+    debut := 0
     repetitions := 10 },
 
   { id := "O-32"
     titre := "Suppression du DPE pour les immeubles de Paris et des quartiers historiques ; climatisation réversible aidée par l'État"
     source := s!"Texte Orientation D, mesure 32 ; DPE : sans effet budgétaire ; {logementsClimatisation} logements par an × {aideClimatisation} € pendant dix ans (hypothèses) ; effet sur les émissions inférieur à la résolution du modèle (1 Mt)"
     leviers := [.depenseEcheancier .logementEnvironnement [logementsClimatisation * aideClimatisation / 1000000, 0]]
-    debut := 2
+    debut := 0
     repetitions := 10 },
 
   { id := "O-33"
     titre := "Pas d'immeubles de grande hauteur dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay)"
     source := s!"Texte Orientation D, mesure 33 ; interdiction sans effet budgétaire ; {logementsQuartiersGare} logements par an × {aideLogementQuartierGare} € d'équipements publics (hypothèses)"
     leviers := [.investissement .logementEnvironnement (logementsQuartiersGare * aideLogementQuartierGare / 1000000)]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-34"
     titre := "TER 24 h sur 24 entre métropoles et villes moyennes (Orléans…), agents de sécurité à bord, en gare et aux parkings"
     source := s!"Texte Orientation D, mesure 34 ; {liaisonsTerNuit} liaisons de {distanceTerKm} km, {trainsParNuit} trains par nuit, 23,40 € par train-km (IFRAP 2024), {heuresAgentsParNuit} heures d'agents par nuit à {coutHeureAgent} €, {couvertureRecettesPm / 10} % couverts par les recettes : {coutTerNuit} M€ par an"
     leviers := [.depenseSur .affairesEconomiques coutTerNuit]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-35"
     titre := "Impôt plancher sur les très hauts patrimoines (taxe Zucman)"
     source := s!"Texte Orientation D, mesure 35 ; proposition du groupe PS (15 Md€) ; retenu {taxeZucman} M€ statiques (≈ 5 Md€ selon sept économistes, 4,6 à 5,5 Md€ avec imputation de l'IS)"
     leviers := [.prelevementSur .autres taxeZucman]
-    debut := 2
+    debut := 0
     variantes := [{ nom := "chiffrage du groupe PS (15 Md€)", leviers := [.prelevementSur .autres 15000] }] },
 
   { id := "O-36"
     titre := "CSG sur les gros héritages"
     source := s!"Texte Orientation D, mesure 36 ; chiffrage du groupe PS : {csgHeritages} M€ (sans contre-expertise connue)"
     leviers := [.prelevementSur .csgCrds csgHeritages]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-37"
     titre := "Taxe sur les services numériques portée de 3 % à 15 %"
     source := s!"Texte Orientation D, mesure 37 ; 0,89 Md€ à 3 %, ≈ 4 Md€ à 15 % (commission des finances, octobre 2026) : +{taxeNumerique} M€ ; le PS annonce 10 Md€"
     leviers := [.prelevementSur .autres taxeNumerique]
-    debut := 2
+    debut := 0
     variantes := [{ nom := "chiffrage du groupe PS (10 Md€)", leviers := [.prelevementSur .autres 10000] }] },
 
   { id := "O-38"
     titre := "Reconfiguration des exonérations de cotisations patronales"
     source := s!"Texte Orientation D, mesure 38 ; chiffrage du groupe PS : {exonerationsCotisations} M€"
     leviers := [.prelevementSur .cotisations exonerationsCotisations]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-39"
     titre := "Train de vie de l'État"
     source := s!"Texte Orientation D, mesure 39 ; part « train de vie » des 12,1 Md€ d'économies du groupe PS, moins O-21 déjà compté : {trainDeVieEtat} M€ d'économies de fonctionnement (la lutte contre la fraude fiscale est en O-45)"
     leviers := [.economieSur .fonctionnement trainDeVieEtat]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-40"
     titre := "Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes"
     source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2)"
     leviers := [.prelevementSur .ir 4000, .prelevementSur .impotSocietes 2000, .prelevementSur .tva 2000]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-41"
     titre := "Fiscalité du patrimoine : Pacte Dutreil divisé par deux (abattement 75 % → 37,5 %), taxe sur les holdings élargie"
     source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 (1,3 Md€ pour 75 % → 50 %, proportionnel) : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
     leviers := [.prelevementSur .autres (pacteDutreil + holdings)]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-42"
     titre := "Norme de dépense : +0,5 % en volume pour les dépenses pilotables (hors retraites, famille, enseignement, défense)"
     source := s!"Texte Orientation D, mesure 42 ; {normeDepensePb} pb de moins par an sur ≈ 739 Md€ de dépenses pilotables (2025) : 2,3 % au lieu de 2,8 %"
     leviers := [.normeDepense normeDepensePb]
-    debut := 2
+    debut := 0
     variantes := [{ nom := "zéro volume (100 pb)", leviers := [.normeDepense 100] }] },
 
   { id := "O-43"
     titre := "Budget de la défense : −1 Md€ par an"
     source := s!"Texte Orientation D, mesure 43 ; {economieDefense} M€ par an sur 53 Md€ (2025)"
     leviers := [.economieSur .defense economieDefense]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-44"
     titre := "Durée de cotisation portée de 172 à 174 trimestres"
-    source := s!"Texte Orientation D, mesure 44 ; +2 trimestres, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse ; COR) : âge moyen de départ +{moisDureeSupplementaire} mois"
-    leviers := [.ageLegal moisDureeSupplementaire]
-    debut := 2 },
+    source := s!"Texte Orientation D, mesure 44 ; +2 trimestres, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse ; COR) : âge moyen de départ +4,8 mois (levier `dureeCotisation`, au millième de mois)"
+    leviers := [.dureeCotisation 6 partDepartsDuree]
+    debut := 0 },
 
   { id := "O-45"
     titre := "Lutte contre la fraude fiscale : facturation électronique, renfort du contrôle fiscal"
@@ -993,38 +1065,101 @@ def mesures : List Mesure := [
                 .prelevementSur .ir (rendementControle / 3),
                 .prelevementSur .impotSocietes (rendementControle - 2 * (rendementControle / 3)),
                 .depenseSur .fonctionnement (agentsControle * coutAgentControle / 1000000)]
-    debut := 3 },
+    debut := 1 },
 
   { id := "O-46"
     titre := "CSG progressive pour les hauts revenus : +2 points au-delà de 100 000 € par an"
     source := s!"Texte Orientation D, mesure 46 ; +{pointsCsgHauts} points sur la part des revenus d'activité et de remplacement au-delà de {seuilCsgHauts} € ; 1 point de CSG = 17 Md€ (FIPECO 2024) ; {partAssietteAuDelaPm / 10} % de l'assiette au-delà du seuil (hypothèse) : {rendementCsgHauts} M€"
     leviers := [.prelevementSur .csgCrds rendementCsgHauts]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-47"
     titre := "Investissements de l'État dans les entreprises stratégiques : 100 M€ par an"
     source := s!"Texte Orientation D, mesure 47 ; {participationsStrategiques} M€ par an de prises de participation (opération financière : dette sans déficit) ; dividendes au rendement du portefeuille de l'APE (≈ 1,9 %)"
     leviers := [.prisesDeParticipation participationsStrategiques]
-    debut := 2 },
+    debut := 0 },
 
   { id := "O-48"
     titre := "Non-renouvellement des concessions autoroutières : exploitation publique à l'échéance (2031-2036)"
     source := s!"Texte Orientation D, mesure 48 ; échéances Sanef 2031, Escota 2032, SAPN 2033, APRR 2035, ASF et AREA 2036 (Cofiroute 2086) ; EBITDA des historiques ≈ {ebitdaHistoriques} M€, renouvellement {investissementsHistoriques} M€, IS ≈ {isHistoriques} M€ (ART 2023, estimations) ; part reprise en 2035 : {partReprise 8} ‰, en 2037 : {partReprise 10} ‰"
     leviers := [.recetteEcheancier none (echeancierReprise (ebitdaHistoriques - investissementsHistoriques)),
                 .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))]
-    debut := 2
+    debut := 0
     variantes := [
       { nom := "péages baissés de 20 % à la reprise",
         leviers := [.recetteEcheancier none (echeancierReprise (ebitdaHistoriques * 800 / 1000 - investissementsHistoriques)),
-                    .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))] }] }
+                    .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))] }] },
+
+  { id := "O-49"
+    titre := "Rémunération des hauts fonctionnaires : −5 %"
+    source := s!"Texte Orientation D, mesure 49 ; encadrement supérieur et dirigeant (21 500 agents, DGAFP), coût complet ≈ {masseHautsFonctionnaires} M€ : économie {economieHautsFonctionnaires} M€"
+    leviers := [.economieSur .fonctionnement (economieHautsFonctionnaires * 3 / 4),
+                .economieSur .sante (economieHautsFonctionnaires - economieHautsFonctionnaires * 3 / 4)]
+    debut := 0 },
+
+  { id := "O-50"
+    titre := "Revenus des élus plafonnés à 10 000 € par mois tous mandats confondus (limiter le cumul)"
+    source := s!"Texte Orientation D, mesure 50 ; plafond en vigueur {plafondCumulActuel} € bruts par mois (CGCT, art. L. 2123-20 II), plus strict que {plafondElus} € : sans effet budgétaire, enregistrée pour mémoire"
+    leviers := []
+    debut := 0 },
+
+  { id := "O-51"
+    titre := "Fin du prélèvement forfaitaire unique : revenus du capital au barème de l'impôt sur le revenu"
+    source := s!"Texte Orientation D, mesure 51 ; Institut Montaigne : +3,2 à 3,6 Md€ à comportements inchangés, −0,7 Md€ si l'assiette revient à 2017 ; retenu {finPfu} M€"
+    leviers := [.prelevementSur .ir finPfu]
+    debut := 0
+    variantes := [{ nom := "assiette des dividendes revenue à 2017 (−0,7 Md€)", leviers := [.prelevementSur .ir (-700)] }] },
+
+  { id := "O-52"
+    titre := "Taxe sur les rachats d'actions portée de 8 % à 20 %"
+    source := s!"Texte Orientation D, mesure 52 ; assiette implicite ≈ 25 Md€ (amendement PLF 2026), +12 points = 3 Md€ mécaniques, report vers les dividendes : {rachatsActions} M€ retenus"
+    leviers := [.prelevementSur .impotSocietes rachatsActions]
+    debut := 0 },
+
+  { id := "O-53"
+    titre := "Dépenses de cabinets de conseil divisées par deux"
+    source := s!"Texte Orientation D, mesure 53 ; 893,9 M€ en 2021 (commission d'enquête du Sénat) : {economieConseil} M€ d'économies"
+    leviers := [.economieSur .fonctionnement economieConseil]
+    debut := 0 },
+
+  { id := "O-54"
+    titre := "Prolongation de la CRDS au-delà de 2033 pour amortir la dette de l'ACOSS"
+    source := "Texte Orientation D, mesure 54 ; CRDS 9,22 Md€ en 2026, fin prévue avec la CADES (2033) ; dette de l'ACOSS ≈ 65 Md€ fin 2026 sans ressource ; maintien de 9,55 Md€ (euros 2027) à partir de 2034"
+    leviers := [.recetteEcheancier (some .csgCrds) crdsProlongee] },
+
+  { id := "O-55"
+    titre := "Norme de dépense renforcée : dépenses pilotables à −0,5 % par an en volume (avec O-42)"
+    source := s!"Texte Orientation D, mesure 55 ; +{normeRenforceePb} pb de modération, soit 150 pb avec O-42 : 1,3 % par an en valeur au lieu de 2,8 %"
+    leviers := [.normeDepense normeRenforceePb] },
+
+  { id := "O-56"
+    titre := "Aides aux entreprises : exonérations de cotisations réduites de 1,5 Md€ par an pendant six ans, sous conditions"
+    source := s!"Texte Orientation D, mesure 56 ; 211 Md€ d'aides publiques aux entreprises (commission d'enquête du Sénat, juillet 2025) ; {baisseAidesEntreprises} M€ de plus chaque année de 2027 à 2032"
+    leviers := [.prelevementSur .cotisations baisseAidesEntreprises]
+    repetitions := 6 },
+
+  { id := "O-57"
+    titre := "Niches fiscales : −2 % par an pendant cinq ans (en plus de O-40)"
+    source := s!"Texte Orientation D, mesure 57 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {rabotNiches} M€ de plus chaque année de 2027 à 2031 (IR, IS, TVA)"
+    leviers := [.prelevementSur .ir (rabotNiches / 2), .prelevementSur .impotSocietes (rabotNiches / 4),
+                .prelevementSur .tva (rabotNiches / 4)]
+    repetitions := 5 },
+
+  { id := "O-58"
+    titre := "Durée de cotisation : +1 trimestre tous les trois ans à partir de 2028"
+    source := s!"Texte Orientation D, mesure 58 ; logique de la réforme de 2014 ; +1 mois de durée requise par an, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse)"
+    leviers := [.dureeCotisation 1 partDepartsDuree]
+    debut := 1
+    repetitions := 8 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation)."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.TexteOrientationD
