@@ -22,34 +22,63 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let croissance := H.eco.croissancePb
     - appliquerPm (s.prelevementsPb - H.reference.etat.prelevementsPb) M.elasticiteCroissancePoPm
   let pib := s.pib + appliquerPb s.pib croissance
+  -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
+  -- appliqué à la dette de fin d'année précédente (effet boule de neige)
+  let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
+  -- OAT numériques : la tranche `part` de la dette est servie au taux
+  -- apparent diminué de la décote ; ses intérêts, pour la part défiscalisée,
+  -- échappent au PFU (perte de recettes de l'année)
+  let tranche := s.dette * s.partDetteNumeriquePm / 1000
+  let economieNum := tranche * taux * s.decoteDetteNumeriquePm / 10000000
+  let interetsTranche := tranche * taux / 10000 - economieNum
+  let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
+  let pertePfu := interetsTranche * s.partDefiscaliseePm * tPfu / 1000000
+  let interets := s.dette * taux / 10000 - economieNum
   -- assiettes supposées proportionnelles au PIB nominal (élasticité unitaire)
-  let impots := s.impots.croitre croissance
+  -- la perte de PFU de l'an dernier est déjà dans l'assiette et croît avec
+  -- elle : on n'ajoute que l'écart, réparti selon l'affectation du PFU
+  let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
+  let dIr := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuIrPm / tPfu
+  let dCsg := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuCsgCrdsPm / tPfu
+  let impots := ((s.impots.croitre croissance).ajouter .ir (-dIr)
+    |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
   let autresRecettes := s.autresRecettes + appliquerPb s.autresRecettes croissance
   let recettes := impots.total + autresRecettes
   -- vieillissement : le surcoût total à l'horizon est réparti sur les années
   let surcoutVieillissement :=
     (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutParPbPlus65
       / (H.horizon : Int)
-  -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
-  -- appliqué à la dette de fin d'année précédente (effet boule de neige)
-  let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
-  let interets := s.dette * taux / 10000
   let surcoutSante :=
     (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutSanteParPbPlus65
       / (H.horizon : Int)
-  let depensesF := (((s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb)
+  -- norme de dépense : économie de l'année sur les fonctions pilotables
+  let sansNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
+  let avecNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
+    s.moderationDepensesPb
+  let economieNorme := sansNorme.total - avecNorme.total
+  let depensesF := ((avecNorme
     |>.ajouter .retraites surcoutVieillissement)
     |>.ajouter .sante surcoutSante)
     |>.ajouter .interets (interets - s.depensesF.interets)
   let depenses := depensesF.total
-  -- population active : tendance hors migrations + part active du solde migratoire
+  -- population active : tendance démographique et migrations du scénario
+  -- d'une part, migrations dues aux mesures d'autre part
   let solde := H.demo.soldeMigratoireMilliers + s.migrationAnnuelleMilliers
-  let actifs := s.actifs + appliquerPb s.actifs H.demo.croissanceActifsPb
-    + appliquerPm (solde * 1000) H.demo.partActiveMigrantsPm
-  -- emploi : suit la population active à chômage constant, puis loi d'Okun
-  -- (le chômage baisse de `okun × (croissance − seuil)`)
-  let emploiSuivi := if s.actifs = 0 then 0 else s.emploiTotal * actifs / s.actifs
-  let dOkun := actifs * (croissance - H.eco.seuilOkunPb) * H.eco.okunPm / 10000000
+  let actifsTendance := appliquerPb s.actifs H.demo.croissanceActifsPb
+    + appliquerPm (H.demo.soldeMigratoireMilliers * 1000) H.demo.partActiveMigrantsPm
+  let actifsMesures := appliquerPm (s.migrationAnnuelleMilliers * 1000) H.demo.partActiveMigrantsPm
+  -- emploi : la tendance est absorbée au taux d'emploi courant (chômage
+  -- tendanciel inchangé) ; les migrants dus aux mesures entrent au taux
+  -- d'emploi des immigrés ; l'écart à l'emploi d'équilibre se résorbe
+  let emploiTendance := if s.actifs = 0 then 0 else actifsTendance * s.emploiTotal / s.actifs
+  let emploiEntrants := appliquerPm actifsMesures H.eco.tauxEmploiMigrantsPm
+  let equilibreEntrants := if s.actifs = 0 then 0 else actifsMesures * s.emploiTotal / s.actifs
+  let absorption := appliquerPm s.chomeursExcedentaires H.eco.absorptionChomagePm
+  -- loi d'Okun : le chômage baisse de `okun × (croissance − seuil)` ; emplois
+  -- et actifs supplémentaires s'en déduisent par l'effet de flexion
+  let actifs := s.actifs + actifsTendance + actifsMesures
+  let dChomeursOkun := actifs * (croissance - H.eco.seuilOkunPb) * H.eco.okunPm / 10000000
+  let emploisOkun := emploisPourChomeurs H dChomeursOkun
   -- transports : parc électrique, bornes, décès évités par la baisse des particules
   let dParc := H.energie.electrificationTendancielleMilliers + s.electrificationAnnuelleMilliers
   let s' : Etat := { s with
@@ -58,11 +87,15 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     autresRecettes := autresRecettes
     depensesF := depensesF
     tauxApparentPb := taux
+    partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
+    economieInteretsNumeriqueMeur := economieNum
+    pertePfuMeur := pertePfu
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - H.demo.decesMilliers + solde
-    actifs := actifs
+    actifs := actifs + (emploisOkun - dChomeursOkun)
+    chomeursExcedentaires := s.chomeursExcedentaires - absorption + (equilibreEntrants - emploiEntrants)
     depenseParTouriste := s.depenseParTouriste + appliquerPb s.depenseParTouriste croissance
     -- commerce extérieur : exportations et importations suivent le PIB nominal,
     -- plus les flux d'importations dus aux mesures
@@ -72,7 +105,38 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     bornesMilliers := s.bornesMilliers + H.energie.bornesTendanciellesMilliers + s.bornesAnnuellesMilliers
     decesPollutionAir := max 0 (s.decesPollutionAir
       - dParc * H.energie.decesEvitesParMillionVehicules / 1000) }
-  ajouterEmploi H none (emploiSuivi - s.emploiTotal + dOkun) s'
+  let s₁ := ajouterEmploi H none (emploiTendance + emploisOkun) s'
+  -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
+  -- du scénario (la tendance est déjà dans la croissance)
+  let dEmploiMesures := emploiEntrants + absorption
+  let s₂ := effetDemande H none (-(appliquerPm economieNorme M.multiplicateurEconomiesPm))
+    (chocEmploi H dEmploiMesures (ajouterEmploi H none dEmploiMesures s₁))
+  -- dépenses à échéancier : niveau prévu (indexé) moins niveau reconduit. Effet
+  -- de demande cohérent avec les leviers ponctuels : un niveau positif est une
+  -- dépense (multiplicateur plein), un niveau négatif une économie (pondérée
+  -- par le moteur) ; l'impulsion de l'année est la variation du niveau pondéré,
+  -- si bien que la fin d'une dépense temporaire annule exactement son effet
+  let poids (x : Int) : Int := if x < 0 then appliquerPm x M.multiplicateurEconomiesPm else x
+  let pas (e : Echeance) : Echeance × Int × Int :=
+    -- le niveau inscrit dans la fonction a crû comme elle (norme comprise) ; le
+    -- niveau prévu est indexé hors norme (l'échéancier est une décision explicite)
+    let t := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
+    let tNorme := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
+      s.moderationDepensesPb
+    let indice := e.indice + appliquerPb e.indice t
+    let reconduit := e.niveau + appliquerPb e.niveau tNorme
+    match e.restants with
+    | [] => ({ e with indice := indice, niveau := reconduit }, 0, 0)
+    | x :: r =>
+      let prevu := x * indice / 10000
+      ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit,
+        poids prevu - poids reconduit)
+  let pasEcheances := s.echeances.map pas
+  pasEcheances.foldl
+    (fun st (e, d, impulsion) =>
+      effetDemande H (if impulsion < 0 then none else e.fonction.secteur) impulsion
+        { st with depensesF := st.depensesF.ajouter e.fonction d })
+    { s₂ with echeances := pasEcheances.map (·.1) }
 
 /-- Situation de départ du scénario : la référence observée, après le choc
 de niveau dû au prix du pétrole (nul au prix de référence). -/

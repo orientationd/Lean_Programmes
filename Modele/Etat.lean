@@ -247,6 +247,14 @@ def id : Fonction → String
   | .fonctionnement => "fonctionnement"
   | .nonVentile => "nonVentile"
 
+/-- Fonctions soumises à une norme de dépense : toutes sauf les transferts
+sociaux (retraites, famille-chômage), les priorités (enseignement, défense)
+et la charge d'intérêts. -/
+def pilotable : Fonction → Bool
+  | .sante | .affairesEconomiques | .securiteJustice | .logementEnvironnement | .culture
+  | .fonctionnement | .nonVentile => true
+  | _ => false
+
 /-- Secteur qui reçoit les emplois d'une dépense de cette fonction (sinon :
 au prorata des secteurs). -/
 def secteur : Fonction → Option Secteur
@@ -310,17 +318,55 @@ def total (v : ParFonction) : Int :=
 
 /-- Toutes les fonctions sauf la charge d'intérêts croissent du taux `tauxPb` ;
 les fonctions automatisables (services généraux, affaires économiques,
-santé) croissent de `robotisationPb` de moins. -/
-def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) : ParFonction :=
+santé) croissent de `robotisationPb` de moins ; les fonctions soumises à une
+norme de dépense (`Fonction.pilotable`) de `moderationPb` de moins. -/
+def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) (moderationPb : Int := 0) :
+    ParFonction :=
   let g (x : Int) := x + appliquerPb x tauxPb
-  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb)
+  let n (x : Int) := x + appliquerPb x (tauxPb - moderationPb)
+  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb - moderationPb)
   { retraites := g v.retraites, sante := r v.sante, famille := g v.famille
     enseignement := g v.enseignement, affairesEconomiques := r v.affairesEconomiques
-    defense := g v.defense, securiteJustice := g v.securiteJustice
-    logementEnvironnement := g v.logementEnvironnement, culture := g v.culture
-    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := g v.nonVentile }
+    defense := g v.defense, securiteJustice := n v.securiteJustice
+    logementEnvironnement := n v.logementEnvironnement, culture := n v.culture
+    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := n v.nonVentile }
+
+/-- Taux de croissance tendanciel d'une fonction, pb : celui que lui applique
+`croitrePrimaires` (nul pour la charge d'intérêts, calculée à part). -/
+def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) (moderationPb : Int := 0) : Int :=
+  match f with
+  | .sante | .affairesEconomiques | .fonctionnement => tauxPb - robotisationPb - moderationPb
+  | .securiteJustice | .logementEnvironnement | .culture | .nonVentile => tauxPb - moderationPb
+  | .interets => 0
+  | _ => tauxPb
+
+/-- Cohérence : hors intérêts, `croitrePrimaires` fait croître chaque fonction
+exactement de son `tauxCroissance` (utilisé pour indexer les échéanciers). -/
+theorem croitrePrimaires_get (v : ParFonction) (t r m : Int) (f : Fonction) (h : f ≠ .interets) :
+    (v.croitrePrimaires t r m).get f = v.get f + appliquerPb (v.get f) (tauxCroissance f t r m) := by
+  cases f <;> first | exact absurd rfl h | rfl
+
+/-- Cohérence : la norme de dépense retire exactement `m` au taux de
+croissance des fonctions pilotables, et rien aux autres. -/
+theorem tauxCroissance_norme (f : Fonction) (t r m : Int) (h : f ≠ .interets) :
+    tauxCroissance f t r m = tauxCroissance f t r 0 - (if f.pilotable then m else 0) := by
+  cases f <;> simp_all [tauxCroissance, Fonction.pilotable] <;> omega
 
 end ParFonction
+
+/-- Échéancier d'une dépense : niveaux annuels fixés à l'avance (indemnités
+versées jusqu'à la retraite, revalorisations cumulées…), exprimés en euros de
+l'année d'entrée en vigueur et indexés sur la croissance tendancielle de leur
+fonction. Une fois la liste épuisée, le dernier niveau est conservé. -/
+structure Echeance where
+  fonction : Fonction
+  /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
+  restants : List Int
+  /-- Niveau de l'année, M€ courants. -/
+  niveau : Int
+  /-- Indice de croissance de la fonction depuis l'entrée en vigueur, base 10 000. -/
+  indice : Int
+  deriving Repr, DecidableEq, Inhabited
 
 /-! ## État -/
 
@@ -395,6 +441,35 @@ structure Etat where
   electrificationAnnuelleMilliers : Int
   /-- Bornes supplémentaires dues aux mesures, milliers par an. -/
   bornesAnnuellesMilliers : Int
+  /-- Part de la dette émise en OAT numériques (titres tokenisés réglés en
+  jetons de monnaie électronique), pm de la dette. Nulle sans mesure. -/
+  partDetteNumeriquePm : Int := 0
+  /-- Part cible des OAT numériques, pm de la dette (flux porté). -/
+  cibleDetteNumeriquePm : Int := 0
+  /-- Hausse annuelle de la part des OAT numériques, pm (flux porté). -/
+  rythmeDetteNumeriquePm : Int := 0
+  /-- Décote du taux servi sur la tranche numérique, pm du taux apparent :
+  part de l'exonération fiscale capitalisée dans le prix des titres. -/
+  decoteDetteNumeriquePm : Int := 0
+  /-- Part des intérêts de la tranche numérique qui, sans exonération,
+  auraient été imposés au prélèvement forfaitaire unique, pm. -/
+  partDefiscaliseePm : Int := 0
+  /-- Économie d'intérêts de l'année due à la décote, M€ (suivi). -/
+  economieInteretsNumeriqueMeur : Int := 0
+  /-- Recettes de PFU perdues dans l'année du fait de l'exonération, M€
+  (déjà retranchées des impôts ; mémorisées pour la projection). -/
+  pertePfuMeur : Int := 0
+  /-- Écart entre l'emploi d'équilibre et l'emploi effectif dû aux chocs
+  d'offre de travail des mesures (migrations, âge de départ, réallocations
+  par automatisation), personnes : emploi d'équilibre = taux d'emploi
+  d'avant le choc × variation de la population active. Résorbé chaque année
+  au taux `absorptionChomagePm` du scénario. -/
+  chomeursExcedentaires : Int := 0
+  /-- Norme de dépense : moindre croissance annuelle des fonctions pilotables
+(`Fonction.pilotable`), pb. -/
+  moderationDepensesPb : Int := 0
+  /-- Dépenses à échéancier en cours (voir `Echeance`). -/
+  echeances : List Echeance := []
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat

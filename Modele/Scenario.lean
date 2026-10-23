@@ -152,6 +152,23 @@ structure Economie where
   tauxAccidentsUEPdm : Int
   /-- Baisse tendancielle annuelle des émissions, pm. -/
   baisseEmissionsPm : Int
+  /-- Prélèvement forfaitaire unique sur les revenus de capitaux mobiliers,
+  par affectation, pm : part impôt sur le revenu (État), CSG + CRDS
+  (Sécurité sociale, CADES), prélèvement de solidarité (État). -/
+  tauxPfuIrPm : Int
+  tauxPfuCsgCrdsPm : Int
+  tauxPfuSolidaritePm : Int
+  /-- Effet de flexion : actifs supplémentaires pour un chômeur de moins, pm
+  (une partie des emplois créés va à des personnes inactives). -/
+  flexionPm : Int
+  /-- Part en emploi des actifs maintenus en activité par un recul de l'âge
+  de départ (ou libérés par une avance), pm. -/
+  tauxEmploiSeniorsMaintenusPm : Int
+  /-- Part en emploi des actifs immigrés à leur arrivée, pm. -/
+  tauxEmploiMigrantsPm : Int
+  /-- Part de l'écart à l'emploi d'équilibre (`chomeursExcedentaires`)
+  résorbée chaque année, pm. -/
+  absorptionChomagePm : Int
   sources : List String
   deriving Repr
 
@@ -214,7 +231,13 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.letaliteAccidentsPdm ∧ 0 < H.eco.tauxAccidentsUEPdm ∧
   0 ≤ H.eco.actifsParMoisAgeLegal ∧
   0 ≤ H.eco.elasticitePibHeuresPm ∧ H.eco.elasticitePibHeuresPm ≤ 1000 ∧
-  0 < H.eco.tauxISPb ∧ H.eco.tauxISPb ≤ 10000
+  0 < H.eco.tauxISPb ∧ H.eco.tauxISPb ≤ 10000 ∧
+  0 ≤ H.eco.tauxPfuIrPm ∧ 0 ≤ H.eco.tauxPfuCsgCrdsPm ∧ 0 ≤ H.eco.tauxPfuSolidaritePm ∧
+  H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm ≤ 1000 ∧
+  0 ≤ H.eco.flexionPm ∧ H.eco.flexionPm ≤ 1000 ∧
+  0 ≤ H.eco.tauxEmploiSeniorsMaintenusPm ∧ H.eco.tauxEmploiSeniorsMaintenusPm ≤ 1000 ∧
+  0 ≤ H.eco.tauxEmploiMigrantsPm ∧ H.eco.tauxEmploiMigrantsPm ≤ 1000 ∧
+  0 ≤ H.eco.absorptionChomagePm ∧ H.eco.absorptionChomagePm ≤ 1000
 
 /-- Bornes sur les axes démographie, natalité, énergie et droit. -/
 abbrev ValideAxes (H : Scenario) : Prop :=

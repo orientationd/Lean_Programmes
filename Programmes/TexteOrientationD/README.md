@@ -142,17 +142,44 @@ la mesure les relève de +2 % et +3 % (variantes faible et forte), soit
 hypothèses à étayer avec Atout France ; le nombre de nuitées n'est pas
 distingué du nombre de visiteurs.
 
-### O-13 — Conduite autonome et indemnisation des taxis
+### O-13 — Conduite autonome et indemnisation des taxis, par âge
 
-Autorisation de la conduite autonome (FSD). Les ≈ 60 000 titulaires d'une
-licence de taxi sont indemnisés jusqu'à leur retraite : 25 000 €/an en
-moyenne, soit 1,5 Md€/an au départ (montant gardé constant, par prudence,
-alors qu'il décroît avec les départs). L'automatisation du transport de
-personnes est traduite en +0,05 % de PIB et −20 000 emplois de chauffeurs
-(levier `automatisation` ; variante large +0,15 %, −60 000). Hypothèses à
-étayer : nombre de licences actives (préfectures), revenu moyen des
-chauffeurs (Insee, Observatoire du T3P), part du transport de personnes
-dans le PIB.
+Autorisation de la conduite autonome (FSD) en 2027 ; les titulaires d'une
+licence de taxi cèdent leur licence contre une indemnité versée **jusqu'à
+leur retraite**. Le coût et l'effet sur l'emploi sont calculés cohorte par
+cohorte d'âge (`indemnitesTaxis`, `sortiesTaxis`).
+
+* **Effectif** : 62 800 taxis (ADS) en 2024 ; 40 000 titulaires exploitant
+  eux-mêmes leur licence (hypothèse, deux tiers des ADS).
+* **Âges** : pyramide reconstituée sur les repères INSEE (taxis non
+  salariés, 2016) : 49 ans en moyenne, 2,4 % de moins de 30 ans, 12,8 % de
+  60 ans ou plus.
+
+  | Âge | 25-29 | 30-39 | 40-49 | 50-59 | 60-64 | 65-69 |
+  |---|---|---|---|---|---|---|
+  | Part | 2,4 % | 15,0 % | 31,0 % | 38,8 % | 9,8 % | 3,0 % |
+
+* **Indemnité** : 25 000 € par an jusqu'à 64 ans (durée cotisée de O-07) ;
+  rien pour ceux qui ont déjà 64 ans.
+
+| Année après l'entrée en vigueur | 1 | 3 | 5 | 9 | 11 | Total jusqu'à extinction |
+|---|---|---|---|---|---|---|
+| 40 000 titulaires (retenu) | 950 M€ | 911 M€ | 872 M€ | 716 M€ | 639 M€ | 15,2 Md€ |
+| 62 800 ADS (variante) | 1 491 M€ | 1 430 M€ | 1 368 M€ | 1 125 M€ | — | — |
+| Moins de 50 ans : 2 ans + 15 000 € de formation (variante) | 1 240 M€ | 427 M€ | 388 M€ | 232 M€ | — | 5,1 Md€ |
+
+(Euros de 2027, indexés ensuite sur les dépenses de la fonction.)
+
+* **Emploi** : 40 000 emplois de chauffeurs disparaissent. Les 12 880
+  titulaires de 55 ans et plus quittent la population active (moins de dix
+  ans d'indemnité) ; les 27 120 plus jeunes restent actifs et se reclassent
+  à 20 % de l'écart par an. Effet net en 2035 : ≈ −14 000 emplois.
+* **PIB** : +0,05 % par l'automatisation. *Correction* : le levier
+  recevait 5 ‰ au lieu de 0,5 ‰, soit dix fois l'effet documenté ;
+  l'unité est désormais le point de base.
+
+Résultat (mesure seule, 2035, scénario central) : PIB +0,11 % (automatisation
+et reclassement des plus jeunes), déficit −0,06 point.
 
 ### O-14 — Accidents du travail : rejoindre la moyenne européenne
 
@@ -211,6 +238,177 @@ en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
 
 Ensemble : ≈ 9,7 Md€/an d'amélioration brute du solde en régime de
 croisière.
+
+### O-25 — Enseignants : +2 % par an
+
+Masse salariale des enseignants hors CAS Pensions : 59,23 Md€ en 2026
+(852 752 enseignants, PLF 2026), soit ≈ 60,9 Md€ en 2027. Hausse de 2 % par
+an **en plus** de l'évolution tendancielle des dépenses, de 2027 à 2035 :
+1,2 Md€ la première année, 11,9 Md€ (euros 2027) la neuvième, niveau
+calculé exactement (masse × (1,02^k − 1)) par l'échéancier. Mesure seule en
+2035 : +15,6 Md€ de dépenses, +0,29 % de PIB, +44 000 emplois (effet de
+demande), déficit +0,21 point après les recettes induites.
+
+Comme pour tous les programmes, le modèle ne nette pas explicitement les
+cotisations et l'impôt prélevés sur la paie publique : ils reviennent par
+le multiplicateur (≈ 42 % de la dépense), ce qui approche le retour réel
+(≈ la moitié du coût complet).
+
+### O-26 — Automatisation des contrôles administratifs
+
+10 000 postes de contrôle supprimés par an pendant cinq ans (50 000), non
+remplacés au départ en retraite (levier `suppressionPostes`, mesure répétée
+cinq fois). Coût complet d'un poste : 55 000 € (hypothèse, catégories B
+et C) ; outil : 30 000 € par poste la même année, puis 3 000 €/an de
+maintenance. Effets en 2035 : −3,3 Md€ de dépenses nettes, −47 000
+emplois (l'emploi public baisse directement ; l'emploi privé ne répond qu'à
+la part de la baisse du PIB qui n'est pas la production publique
+supprimée), PIB −0,07 %, déficit −0,05 point (−0,07 sous le moteur
+d'offre).
+
+### O-27 — Médecins généralistes : simplification, enquêteurs sur cas anormaux
+
+Les généralistes libéraux consacrent ≈ 5 h 30 par semaine à la gestion
+sur 54 h (DREES, 2019). En supprimer la moitié libère ≈ 6,5 millions
+d'heures de soin par an, soit ≈ 3 200 généralistes à temps plein ou ≈ 21,8
+millions de consultations possibles. Les contrôles systématiques sont
+remplacés par 500 enquêteurs humains sur les cas anormaux (32,5 M€/an,
+hypothèse). Retenu : le seul coût des enquêteurs (le temps libéré sert
+l'accès aux soins sans hypothèse de volume). Variante : le temps libéré
+devient des consultations remboursées, +458 M€/an pour l'assurance maladie.
+
+### O-28 à O-34 — Fiscalité, agriculture, logement, territoires
+
+Effets de chaque mesure seule en 2035, scénario central (moteur de
+demande ; moteur d'offre entre parenthèses quand il diffère).
+
+| Mesure | Chiffrage | Déficit | PIB | Emplois |
+|---|---|---|---|---|
+| **O-28** Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € bruts par mois | 1 % des retraités, 6 470 € en moyenne (DREES) ; part au-delà du seuil 2,85 Md€ ; 1,8 % d'inflation évitée par an : −50 M€ en 2027, −422 M€ (euros 2027) en 2035 | −0,01 pt | −0,02 % | −1 600 |
+| **O-29** TVA : taux normal 20 % → 22 % | 1 point ≈ 8 Md€ (FIPECO, IPP, Sénat) : 16 Md€ statiques, 12,8 Md€ après fuite fiscale | −0,35 pt (−0,15) | −0,21 % (−0,52 %) | −30 000 (−77 000) |
+| **O-30** Taxe forfaitaire de 3 000 € par atterrissage de jet privé | 85 000 atterrissages (84 885 départs en 2022, Greenpeace) : 255 M€ statiques | −0,01 pt | ≈ 0 | −500 |
+| **O-31** Conversion électrique de toutes les exploitations agricoles en dix ans | 389 000 exploitations × 30 000 € : 1,17 Md€ par an ; −1 Mt de CO₂ par an (10 Mt au total, énergie agricole) ; importations nettes −116 M€ par an | +0,02 pt | +0,02 % | +3 500 |
+| **O-32** Suppression du DPE dans les quartiers historiques ; climatisation réversible aidée | 50 000 logements × 2 000 € par an pendant dix ans : 100 M€ par an | ≈ 0 | ≈ 0 | +300 |
+| **O-33** Pas de tours dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay) | 20 000 logements × 10 000 € d'équipements publics : 200 M€ par an | ≈ 0 | ≈ 0 | +700 |
+| **O-34** TER 24 h sur 24 avec agents de sécurité (train, gare, parking) | 20 liaisons de 100 km, 10 trains par nuit, 23,40 € par train-km, 46 heures d'agents par nuit, 25 % de recettes : 136 M€ par an | ≈ 0 | ≈ 0 | +500 |
+
+Points d'attention :
+
+* **O-28** : la mesure suppose une loi qui s'impose aussi aux régimes
+  complémentaires (Agirc-Arrco). Variante : gel de toute la pension
+  au-delà du seuil (13,95 Md€ concernés, −2,07 Md€ en 2035), au prix
+  d'effets de seuil (une pension juste au-dessus finit sous une pension
+  juste en dessous).
+* **O-29** : le moteur d'offre pénalise la hausse des prélèvements
+  obligatoires (PIB −0,5 %) ; c'est la mesure la plus lourde du bloc.
+* **O-31** : les engins lourds électriques restent rares ; l'effet sur la
+  balance commerciale est compté, pas celui sur le PIB (même convention que
+  le sous-modèle automobile).
+* **O-32** : l'effet climatique (remplacement du chauffage fossile, moindre
+  rénovation sans DPE) est inférieur à la résolution du modèle (1 Mt) ; les
+  unités extérieures restent soumises à l'avis des Architectes des
+  bâtiments de France.
+* **O-34** : la nuit est la plage des travaux d'entretien du réseau, ce qui
+  limite le nombre de lignes exploitables 24 h sur 24.
+
+### O-35 à O-42 — Redressement compatible avec les positions du PS
+
+Base : propositions du groupe socialiste à l'Assemblée (16 septembre 2026),
+note de la Cour des comptes sur la fiscalité du patrimoine (septembre
+2026), revue des niches fiscales. Quand un chiffrage indépendant existe et
+diffère de celui du PS, il est retenu et le chiffrage PS devient une
+variante.
+
+| Mesure | Rendement statique | Déficit 2035 | PIB 2035 |
+|---|---|---|---|
+| **O-35** Taxe Zucman (impôt plancher sur les très hauts patrimoines) | 6,5 Md€ (PS : 15 ; sept économistes : ≈ 5) | −0,14 pt | −0,09 % |
+| **O-36** CSG sur les gros héritages | 10 Md€ (chiffrage PS) | −0,22 pt | −0,13 % |
+| **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,07 pt | −0,04 % |
+| **O-38** Reconfiguration des exonérations de cotisations | 4 Md€ (PS) | −0,09 pt | −0,06 % |
+| **O-39** Fraude fiscale et train de vie de l'État | 6,1 Md€ (12,1 du PS moins O-21 et O-23) | −0,13 pt | −0,12 % |
+| **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,11 % |
+| **O-41** Pacte Dutreil divisé par deux (75 % → 37,5 %), taxe sur les holdings élargie | 2,95 Md€ (Cour des comptes, proportionnel) | −0,07 pt | −0,04 % |
+| **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,55 pt | −0,75 % |
+| **O-43** Défense : −1 Md€ par an | 1 Md€ sur 53 | −0,02 pt | −0,03 % |
+| **O-44** Durée de cotisation : 174 trimestres au lieu de 172 | âge moyen de départ +5 mois (80 % des départs liés à la durée, hypothèse) : ≈ 3,3 Md€ de pensions, 150 000 actifs | −0,33 pt | +0,29 % |
+
+(Scénario central, moteur de demande, mesures prises isolément.)
+
+**Résultat : le Texte Orientation D passe de 8,1 % à 6,3 % de déficit en
+2035** (dette 139 % du PIB, chômage 8,3 %). Le modèle évalue désormais la
+propriété « Budget à l'équilibre en 2035 » pour tous les programmes ;
+aucun ne la tient.
+
+**L'équilibre en 2035 n'est pas atteignable avec des mesures compatibles
+avec le PS.** Au tendanciel, le solde primaire est d'environ −3 % du PIB et
+les intérêts montent vers 4 % : revenir à 0 % demande un effort permanent
+de l'ordre de 6,5 à 7 points de PIB. Ordres de grandeur, calculés avec le
+modèle (scénario central, moteur de demande) :
+
+| En plus du paquet O-35 à O-44 | Déficit 2035 | Chômage 2035 |
+|---|---|---|
+| Rien | 6,3 % | 8,3 % |
+| Abandon de O-08 (IS au taux le plus bas de l'UE) | 5,5 % | 8,5 % |
+| … et norme à zéro volume (100 pb au lieu de 50) | 5,0 % | 8,8 % |
+| … et norme de 300 pb par an | 3,0 % | 9,9 % |
+| … et norme de 600 pb par an (dépenses pilotables ≈ −40 % en 2035) | ≈ 0 % | ≈ 11,3 % |
+
+La dernière ligne montre la taille du problème plutôt qu'une option : par
+le multiplicateur, une consolidation de cette ampleur réduit le PIB de
+≈ 7 % et fait monter le chômage de trois points. Les postes du
+Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
++0,76 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
+(enseignants, +0,21 pt).
+
+### O-24 — Dette numérique en stablecoin, exonérée de PFU
+
+Le mécanisme d'USDC appliqué à la dette française : des **OAT numériques**
+(titres tokenisés inscrits sur une chaîne de blocs) que l'on achète et
+revend en **jetons de monnaie électronique euro** conformes à MiCA. Les
+intérêts sont **exonérés du prélèvement forfaitaire unique** (31,4 % en
+2026 : 12,8 % d'IR, 10,6 % de CSG, 0,5 % de CRDS, 7,5 % de solidarité)
+pour les particuliers résidents. Les non-résidents ne paient déjà pas
+d'impôt français sur ces intérêts : pour eux, seul l'accès en jetons
+change.
+
+Contraintes juridiques prises en compte :
+
+* MiCA (règlement (UE) 2023/1114), art. 50 : aucun intérêt ne peut être
+  versé au détenteur d'un jeton de monnaie électronique. Le jeton sert
+  donc à **régler** l'achat ; le rendement est porté par l'OAT numérique.
+  Les réserves des émetteurs significatifs sont placées à 60 % en dépôts
+  bancaires (30 % pour les autres), le reste en actifs liquides comme les
+  titres d'État courts.
+* Régime pilote DLT (règlement (UE) 2022/858) : 6 Md€ au total pour tous
+  les titres tokenisés aujourd'hui ; 100 Md€ proposés par la Commission
+  (décembre 2025), au moins 150 Md€ demandés par les plateformes. La
+  tranche visée (≈ 57 Md€ en 2035) suppose ce relèvement, ou une émission
+  par le dépositaire central hors régime pilote.
+
+Modélisation (`detteNumerique`, calcul annuel dans la projection) :
+
+| Paramètre | Valeur | Repère |
+|---|---|---|
+| Tranche cible | 1 % de la dette, +0,2 point/an, atteinte en 2032 | ménages italiens : ≈ 13 % de la dette italienne |
+| Capitalisation fiscale θ | 50 % | obligations municipales américaines : 60 % à 10 ans, 22 % à 30 ans |
+| Décote de taux | θ × 31,4 % = 15,7 % du taux | |
+| Part des particuliers résidents ρ | 80 % | le reste : réserves d'émetteurs, non-résidents |
+| Part venant de produits imposés α | 60 % | le reste : livrets exonérés |
+
+Pour un euro de tranche au taux y : économie d'intérêts θ·t·y, perte de
+PFU (1 − θt)·y·t·ρα, d'où un **gain net y·t·(θ − (1 − θt)·ρα)**. La mesure
+rapporte si θ dépasse **θ\* = ρα / (1 + t·ρα) ≈ 0,42**. Avec θ = 0,5 :
+≈ 10 pb sur la tranche, soit en 2035 294 M€ d'intérêts économisés contre
+238 M€ de PFU perdu (+56 M€/an). Avec θ = 0,3, elle coûte ≈ 80 M€/an.
+Son effet budgétaire est donc faible et son signe dépend de θ : l'intérêt
+de la mesure tient surtout à l'élargissement de la base d'investisseurs
+et à l'accès direct des épargnants, pas au solde.
+
+Non modélisé : la décollecte des livrets exonérés réduit les ressources du
+fonds d'épargne de la Caisse des dépôts, qui finance le logement social
+(à mettre en regard de O-02 et O-03) ; l'effet de la demande des émetteurs
+de jetons sur le taux des titres courts (de l'ordre du point de base par
+milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 
 ## À compléter
 

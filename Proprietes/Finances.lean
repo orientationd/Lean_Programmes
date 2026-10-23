@@ -36,6 +36,15 @@ def deficit2035 : Propriete :=
     "Dix ans après le départ, le déficit public ne dépasse pas 3 % du PIB (critère de Maastricht), quel que soit le cadre juridique."
     DeficitSous3En2035 (annee := some 10)
 
+/-- Budget à l'équilibre en 2035 : déficit nul ou excédent. -/
+abbrev EquilibreEn2035 (_H : Scenario) (_tendanciel s : Etat) : Prop :=
+  s.deficit ≤ 0
+
+def equilibre2035 : Propriete :=
+  .mk' "equilibre-2035" "Budget à l'équilibre en 2035"
+    "Dix ans après le départ, le solde public est à l'équilibre ou en excédent (déficit ≤ 0)."
+    EquilibreEn2035 (annee := some 10)
+
 /-- Dette/PIB en 2035 au plus égale à celle de départ (produit en croix). -/
 abbrev DetteStabiliseeEn2035 (H : Scenario) (_tendanciel s : Etat) : Prop :=
   s.dette * H.reference.etat.pib ≤ H.reference.etat.dette * s.pib

@@ -50,10 +50,24 @@ from reportlab.platypus import (  # noqa: E402
 SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4",
           "#008300", "#6250d6", "#e34948"]
 ORDINAL = ["#86b6ef", "#2a78d6", "#104281"]   # bas → haut, une seule teinte
-TENDANCIEL = "#898781"
+TENDANCIEL = "#4d4c48"
+# Couleurs des partis, au plus près des conventions des médias (rose PS,
+# rouges LFI et PCF, vert écologiste, jaune-orangé Ensemble, bleus de la
+# droite, bleu marine RN). Contraintes par l'usage, elles ne passent pas
+# toutes les seuils de séparation du validateur (trois bleus, deux rouges) :
+# l'identité est donc doublée par la forme du marqueur, une étiquette en bout
+# de courbe et le tableau sous chaque figure. Programme absent du tableau :
+# palette catégorielle par défaut.
+COULEURS_PARTIS = {
+    "TexteOrientationD": "#C0158A", "PS": "#E86D9A", "LFI": "#D9502D", "PCF": "#A51C1F",
+    "Ecologistes": "#2E9E50", "Renaissance": "#D99100", "Horizons": "#1AABC4",
+    "LR": "#2F62C2", "RN": "#283C8C",
+    "ExempleRelance": "#a3a29b", "ExempleConsolidation": "#77766f"}
+MARQUEURS = ["o", "s", "^", "D", "v", "P", "X", "h", "<", ">", "p", "*"]
+FICTIFS = {"ExempleRelance", "ExempleConsolidation"}
 INK, INK2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, BASE, FOND = "#e1e0d9", "#c3c2b7", "#f4f3ef"
-PAR_FIGURE = 6          # au-delà, les programmes sont répartis sur plusieurs figures
+PAR_FIGURE = 99         # un seul graphe par indicateur, tous programmes confondus
 
 FONT_DIR = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
 pdfmetrics.registerFont(TTFont("Sans", str(FONT_DIR / "DejaVuSans.ttf")))
@@ -133,8 +147,12 @@ class Donnees:
                 raise SystemExit(f"Programmes inconnus : {', '.join(inconnus)}")
             self.progs = [p for p in self.progs if p["id"] in programmes]
         self.personnalisee = bool(moteur or programmes)
-        # la couleur suit le programme (ordre du registre), jamais son rang
-        self.couleur = {p["id"]: SERIES[i % len(SERIES)] for i, p in enumerate(self.progs)}
+        # la couleur suit le programme (couleur du parti, sinon ordre du
+        # registre), jamais son rang ; idem pour la forme du marqueur
+        self.couleur = {p["id"]: COULEURS_PARTIS.get(p["id"], SERIES[i % len(SERIES)])
+                        for i, p in enumerate(d["programmes"])}
+        self.marqueur = {p["id"]: MARQUEURS[i % len(MARQUEURS)] for i, p in enumerate(d["programmes"])}
+        self.style = {p["id"]: (":" if p["id"] in FICTIFS else "-") for p in d["programmes"]}
         nb = -(-len(self.progs) // PAR_FIGURE) or 1            # groupes de tailles équilibrées
         taille = -(-len(self.progs) // nb)
         self.groupes = [self.progs[i:i + taille] for i in range(0, len(self.progs), taille)]
@@ -196,9 +214,38 @@ def png(fig) -> Image:
     return Image(buf, width=w * 72, height=h * 72)
 
 
-def ligne(ax, x, y, couleur, label, epaisseur=1.6, z=3):
-    ax.plot(x, y, color=couleur, lw=epaisseur, label=label, zorder=z)
-    ax.plot([x[-1]], [y[-1]], "o", ms=4.6, color=couleur, mec="white", mew=1.2, zorder=z + 1)
+def ligne(ax, x, y, couleur, label, epaisseur=1.6, z=3, marqueur="o", style="-"):
+    ax.plot(x, y, color=couleur, lw=epaisseur, ls=style, zorder=z)
+    ax.plot([x[-1]], [y[-1]], marqueur, ms=4.8, color=couleur, mec="white", mew=1.0, zorder=z + 1)
+    # entrée de légende : trait et marqueur ensemble
+    ax.plot([], [], color=couleur, lw=epaisseur, ls=style, marker=marqueur, ms=4.8,
+            mec="white", mew=1.0, label=label)
+
+
+def etiquettes_fin(ax, x_fin, series, dec, suffixe):
+    """Étiquettes en bout de courbe (nom et valeur), écartées pour ne pas se
+    chevaucher, reliées à leur point par un trait fin de la couleur de la
+    série. Le texte reste à l'encre secondaire."""
+    if not series:
+        return
+    y0, y1 = ax.get_ylim()
+    ecart = (y1 - y0) * 0.052
+    ordre = sorted(series, key=lambda t: t[1])
+    pos = []
+    for _nom, y, _c in ordre:
+        pos.append(max(y, pos[-1] + ecart) if pos else y)
+    # recentrer le bloc si le dernier déborde en haut
+    debord = pos[-1] - (y1 - ecart * 0.3)
+    if debord > 0:
+        pos = [p - debord for p in pos]
+        for i in range(len(pos) - 2, -1, -1):
+            pos[i] = min(pos[i], pos[i + 1] - ecart)
+    xl = x_fin + 0.55
+    for (nom, y, c), p in zip(ordre, pos):
+        ax.plot([x_fin + 0.12, xl - 0.08], [y, p], color=c, lw=0.6, zorder=1, clip_on=False)
+        val = nombre(y, dec) + suffixe
+        ax.annotate(f"{nom}  {val}", (xl, p), va="center", ha="left", fontsize=6.3,
+                    color=INK2, annotation_clip=False)
 
 
 def legende(fig, ncol=3):
@@ -206,17 +253,22 @@ def legende(fig, ncol=3):
 
 
 def courbes(D: Donnees, groupe, valeur, titre, dec, suffixe="", ecart=False, reference=None):
-    """Une courbe par programme (scénario central), et le tendanciel."""
-    fig, ax = figure(2.6)
+    """Une courbe par programme (scénario central), et le tendanciel, sur un
+    seul graphe ; étiquettes en bout de courbe."""
+    fig, ax = figure(3.5)
     x = D.annees
     base = [valeur(e) for e in D.traj("central", None)]
+    fins = []
     if not ecart:
-        ligne(ax, x, base, TENDANCIEL, "Tendanciel (sans programme)", epaisseur=1.3, z=2)
+        ligne(ax, x, base, TENDANCIEL, "Tendanciel (sans programme)", epaisseur=1.3, z=2, style="--")
+        fins.append(("Tendanciel", base[-1], TENDANCIEL))
     for p in groupe:
         y = [valeur(e) for e in D.traj("central", p["id"])]
         if ecart:
             y = [a - b for a, b in zip(y, base)]
-        ligne(ax, x, y, D.couleur[p["id"]], nom_court(p["nom"]))
+        ligne(ax, x, y, D.couleur[p["id"]], nom_court(p["nom"]),
+              marqueur=D.marqueur[p["id"]], style=D.style[p["id"]])
+        fins.append((court_nom(nom_court(p["nom"]), 22), y[-1], D.couleur[p["id"]]))
     if ecart:
         ax.axhline(0, color=BASE, lw=0.8, zorder=1)
     if reference is not None:
@@ -228,32 +280,39 @@ def courbes(D: Donnees, groupe, valeur, titre, dec, suffixe="", ecart=False, ref
     ax.yaxis.set_major_locator(MaxNLocator(5))
     ax.set_xticks(x[::2] if len(x) > 6 else x)
     ax.set_xlim(x[0] - 0.3, x[-1] + 0.3)
-    legende(fig)
+    fig.canvas.draw()           # fige les limites avant de placer les étiquettes
+    etiquettes_fin(ax, x[-1], fins, dec, suffixe)
+    fig.get_layout_engine().set(rect=(0, 0, 0.78, 1))
+    legende(fig, ncol=4)
     return fig
 
 
 def barres_secteurs(D: Donnees, groupe, variante="central"):
-    """Écart d'emploi au tendanciel en fin de période, par secteur et programme."""
+    """Écart d'emploi au tendanciel en fin de période : un panneau par secteur,
+    une barre par programme (même échelle partout)."""
     secs = D.secteurs
     n = len(groupe)
-    fig, ax = figure(0.12 * len(secs) * n + 0.9)
-    pas = 0.82 / max(n, 1)
+    fig, axes = figure(0.2 * n + 1.0, 1, len(secs), sharey=True, sharex=True)
     base = D.fin(variante, None)["emploi"]
-    for j, p in enumerate(groupe):
-        e = D.fin(variante, p["id"])["emploi"]
-        ys = [i + (j - (n - 1) / 2) * pas for i in range(len(secs))]
-        vals = [(e[s["id"]] - base[s["id"]]) / 1000 for s in secs]
-        ax.barh(ys, vals, height=pas * 0.84, color=D.couleur[p["id"]],
-                label=nom_court(p["nom"]), zorder=3)
-    ax.set_yticks(range(len(secs)), [s["nom"] for s in secs])
-    ax.set_ylim(len(secs) - 0.5, -0.5)
-    ax.tick_params(axis="y", labelcolor=INK2, labelsize=7.5)
-    ax.grid(axis="y", visible=False)
-    ax.grid(axis="x", visible=True)
-    ax.axvline(0, color=BASE, lw=0.8, zorder=2)
-    ax.xaxis.set_major_formatter(fmt_axe(0, ""))
-    ax.set_title(f"Écart d'emploi au tendanciel en {D.annees[-1]}, par secteur (milliers)")
-    legende(fig)
+    ecarts = {p["id"]: [(D.fin(variante, p["id"])["emploi"][s["id"]] - base[s["id"]]) / 1000
+                        for s in secs] for p in groupe}
+    m = max([abs(v) for vs in ecarts.values() for v in vs] + [1.0])
+    for k, (ax, sec) in enumerate(zip(axes, secs)):
+        vals = [ecarts[p["id"]][k] for p in groupe]
+        ax.barh(range(n), vals, height=0.66, color=[D.couleur[p["id"]] for p in groupe], zorder=3)
+        ax.axvline(0, color=BASE, lw=0.8, zorder=2)
+        ax.set_title(SECTEURS_TAB.get(sec["id"], sec["nom"]), fontsize=7.5)
+        ax.grid(axis="y", visible=False)
+        ax.grid(axis="x", visible=True)
+        ax.set_xlim(-m * 1.15, m * 1.15)
+        ax.xaxis.set_major_formatter(fmt_axe(0, ""))
+        ax.xaxis.set_major_locator(MaxNLocator(3))
+        ax.tick_params(axis="x", labelsize=6.5)
+    axes[0].set_yticks(range(n), [court_nom(nom_court(p["nom"]), 26) for p in groupe])
+    axes[0].set_ylim(n - 0.5, -0.5)
+    axes[0].tick_params(axis="y", labelcolor=INK2, labelsize=6.8)
+    fig.suptitle(f"Écart d'emploi au tendanciel en {D.annees[-1]}, par secteur (milliers)",
+                 x=0.0, ha="left", fontsize=8.5, fontweight="bold", color=INK)
     return fig
 
 
@@ -262,9 +321,9 @@ def petits_multiples_impots(D: Donnees, groupe, variante="central"):
     même échelle partout."""
     imp = D.impots
     n = len(groupe)
-    cols = 3 if n > 2 else n
+    cols = 4 if n > 6 else (3 if n > 2 else n)
     rangs = (n + cols - 1) // cols
-    fig, axes = figure(1.75 * rangs + 0.35, rangs, cols, sharex=True, sharey=True, squeeze=False)
+    fig, axes = figure(1.6 * rangs + 0.35, rangs, cols, sharex=True, sharey=True, squeeze=False)
     base = D.fin(variante, None)["impots"]
     ecarts = {p["id"]: [(D.fin(variante, p["id"])["impots"][i["id"]] - base[i["id"]]) / 1000
                         for i in imp] for p in groupe}
@@ -277,7 +336,7 @@ def petits_multiples_impots(D: Donnees, groupe, variante="central"):
         vals = ecarts[p["id"]]
         ax.barh(range(len(imp)), vals, height=0.62, color=D.couleur[p["id"]], zorder=3)
         ax.axvline(0, color=BASE, lw=0.8, zorder=2)
-        ax.set_title(nom_court(p["nom"]), fontsize=7.5)
+        ax.set_title(court_nom(nom_court(p["nom"]), 24), fontsize=7)
         ax.grid(axis="y", visible=False)
         ax.grid(axis="x", visible=True)
         ax.set_xlim(-m * 1.35, m * 1.35)
@@ -442,7 +501,7 @@ def puces(items):
 
 PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee": "Dette non dégradée",
                "chomage-non-degrade": "Chômage non dégradé", "emissions-plafond": "Émissions sous plafond",
-               "deficit-3pct-2035": "Déficit < 3 % 2035", "dette-stabilisee-2035": "Dette stable 2035",
+               "deficit-3pct-2035": "Déficit < 3 % 2035", "equilibre-2035": "Équilibre 2035", "dette-stabilisee-2035": "Dette stable 2035",
                "air-non-degrade": "Air non dégradé", "bornes-suffisantes-2035": "Bornes 2035",
                "emplois-annonces-realisables": "Emplois annoncés",
                "balance-courante-non-degradee": "Solde courant", "accidents-travail-norme-ue": "Accidents du travail",
@@ -1384,7 +1443,16 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
              "donc les intérêts, sans entrer dans le déficit primaire.")
     story.append(CondPageBreak(110 * mm))
     story += section_courbe(
-        D, "Chômage", "Taux de chômage au sens du BIT, en % de la population active.",
+        D, "Chômage",
+        "Taux de chômage au sens du BIT, en % de la population active. L'emploi ne suit pas "
+        "mécaniquement la population active : la tendance démographique est absorbée au taux "
+        "d'emploi courant ; la croissance agit par la loi d'Okun, convertie en emplois avec "
+        "l'effet de flexion (1,15 emploi par chômeur en moins, INSEE) ; les actifs ajoutés ou "
+        "retirés par les mesures (âge de départ, migrations, reconversions) entrent au taux "
+        "d'emploi des personnes concernées (72 % pour les seniors maintenus, 87,6 % pour les "
+        "immigrés), puis l'écart à l'emploi d'équilibre se résorbe de 20 % par an. Le chômage "
+        "réagit donc d'abord à la composition de la population active, puis revient vers son "
+        "niveau d'avant choc.",
         lambda e: e["chomagePb"] / 100, "Taux de chômage (%), scénario central", 1, NBSP + "%",
         lambda v: pct_pb(v, 2), valeur_table=lambda e: e["chomagePb"])
     story.append(CondPageBreak(110 * mm))

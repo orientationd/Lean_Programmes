@@ -187,6 +187,10 @@ def etatJson (s : Etat) : Json :=
     ("parcElectriqueMilliers", toJson s.parcElectriqueMilliers),
     ("bornesMilliers", toJson s.bornesMilliers),
     ("operationsFinancieres", toJson s.operationsFinancieres),
+    ("partDetteNumeriquePm", toJson s.partDetteNumeriquePm),
+    ("economieInteretsNumeriqueMeur", toJson s.economieInteretsNumeriqueMeur),
+    ("pertePfuMeur", toJson s.pertePfuMeur),
+    ("chomeursExcedentaires", toJson s.chomeursExcedentaires),
     ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
     ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]
 
@@ -288,7 +292,7 @@ def rapportSyntheseJson : Json :=
       Json.mkObj [("id", toJson p.id), ("nom", toJson p.nom),
         ("description", toJson p.description), ("nbMesures", toJson p.mesures.length),
         ("mesures", Json.arr <| p.mesures.toArray.map fun m =>
-          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("debut", toJson m.debut)]),
+          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("debut", toJson m.debut), ("repetitions", toJson m.repetitions)]),
         ("contrats", toJson ((contrats p).map fun (m, t) => s!"{m} — {t}")),
         -- effet de chaque mesure seule, à l'horizon de la synthèse, par moteur
         ("effetsMesures", Json.arr <| (moteurs.toArray.flatMap fun M =>

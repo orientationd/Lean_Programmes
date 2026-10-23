@@ -57,6 +57,9 @@ structure Mesure where
   /-- Année d'entrée en vigueur, comptée depuis l'année de départ (0 =
   immédiate). Une mesure dont le début dépasse l'horizon n'a aucun effet. -/
   debut : Nat := 0
+  /-- Nombre d'années consécutives d'application (1 par défaut) : une mesure
+  « 10 000 postes par an pendant cinq ans » s'applique cinq fois. -/
+  repetitions : Nat := 1
 
 def Mesure.appliquer (M : Moteur) (H : Scenario) (m : Mesure) (s : Etat) : Etat :=
   m.leviers.foldl (fun s l => l.appliquer M H s) s
@@ -85,9 +88,13 @@ structure Programme where
 
 namespace Programme
 
-/-- Applique les mesures qui entrent en vigueur l'année `t`. -/
+/-- La mesure s'applique l'année `t` (entrée en vigueur ou répétition). -/
+def _root_.Modele.Mesure.sAppliqueA (m : Mesure) (t : Nat) : Bool :=
+  decide (m.debut ≤ t) && decide (t < m.debut + m.repetitions)
+
+/-- Applique les mesures qui s'appliquent l'année `t`. -/
 def appliquerAnnee (p : Programme) (M : Moteur) (H : Scenario) (t : Nat) (s : Etat) : Etat :=
-  (p.mesures.filter (·.debut == t)).foldl (fun s m => m.appliquer M H s) s
+  (p.mesures.filter (·.sAppliqueA t)).foldl (fun s m => m.appliquer M H s) s
 
 /-- Situation de départ après application des mesures immédiates. -/
 def etatInitial (p : Programme) (M : Moteur) (H : Scenario) : Etat :=
