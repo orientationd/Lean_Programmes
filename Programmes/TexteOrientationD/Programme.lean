@@ -56,6 +56,10 @@ Mesures (extrait) :
 * **O-24** — dette numérique : OAT tokenisées achetées en stablecoin euro
   (mécanisme USDC), intérêts exonérés de PFU pour les particuliers
   résidents.
+* **O-25** — rémunération des enseignants +2 % par an ; **O-26** —
+  automatisation des tâches administratives, 10 000 postes de contrôle
+  supprimés par an pendant cinq ans ; **O-27** — simplification des tâches
+  des généralistes, enquêteurs humains sur les cas anormaux.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -144,14 +148,66 @@ de recettes touristiques sur 71 Md€. -/
 def zonesTouristiques : Int := 6
 def coutParZone : Int := 150
 
-/-- Conduite autonome : ≈ 60 000 licences de taxi en France (dont 20 000 à
-Paris). Indemnisation jusqu'à la retraite : 25 000 €/an en moyenne
-(hypothèse : perte de revenu et de valeur de licence lissée), soit 1,5 Md€/an
-au départ, décroissant avec les départs en retraite (non modélisé : montant
-constant, prudent). Automatisation du transport de personnes : +0,05 % de
-PIB (hypothèse : 0,3 % de PIB pour taxis, VTC et livraison, 15 % de gain
-de coût) et 20 000 emplois de chauffeurs en moins. -/
-def indemnisationTaxis : Int := 1500
+/-- Conduite autonome et taxis (O-13), par cohorte d'âge.
+
+* Effectif : 62 800 taxis en 2024, autant d'autorisations de stationnement
+  (ADS) (Observatoire national des T3P) ; titulaires exploitant eux-mêmes
+  leur licence : `titulairesTaxi` = 40 000 (hypothèse : environ deux tiers
+  des ADS, le reste étant détenu par des sociétés et des loueurs, surtout à
+  Paris ; INSEE : 24 000 taxis non salariés sans salarié en 2016).
+* Âges : 49 ans en moyenne, 2,4 % de moins de 30 ans, 12,8 % de 60 ans ou
+  plus parmi les taxis non salariés (INSEE, « Les revenus d'activité des
+  chauffeurs de taxi et de VTC », 2016). `pyramideTaxis` reconstitue des
+  tranches (âge minimal, âge maximal, ‰), uniformes à l'intérieur, qui
+  respectent ces trois repères (moyenne 49,3 ans).
+* Indemnité : `indemniteTaxi` = 25 000 € par an et par titulaire
+  (hypothèse : entre le revenu déclaré, 14 800 € en 2016 selon l'INSEE, et
+  le chiffre d'affaires des artisans), versée de l'entrée en vigueur
+  jusqu'à `ageRetraiteTaxi` = 64 ans (O-07 : 172 trimestres pour une
+  carrière commencée vers 21 ans) ; rien pour ceux qui l'ont déjà atteint.
+  Le coût s'éteint cohorte par cohorte (`indemnitesTaxis`).
+* Emploi : les titulaires cessent l'activité à l'entrée en vigueur (rachat
+  de la licence contre la rente). À partir de `ageSortieTaxi` = 55 ans
+  (moins de dix ans d'indemnité), ils quittent la population active ; les
+  plus jeunes restent actifs et se reclassent au rythme du scénario.
+* Automatisation : +0,05 % de PIB (hypothèse : 0,3 % de PIB pour taxis,
+  VTC et livraison, 15 % de gain de coût). -/
+def titulairesTaxi : Int := 40000
+def indemniteTaxi : Int := 25000
+def ageRetraiteTaxi : Nat := 64
+def ageSortieTaxi : Nat := 55
+def pyramideTaxis : List (Nat × Nat × Int) :=
+  [(25, 29, 24), (30, 39, 150), (40, 49, 310), (50, 59, 388), (60, 64, 98), (65, 69, 30)]
+
+/-- Titulaires d'âge `a` parmi `n` (répartition uniforme dans la tranche). -/
+def titulairesAge (n : Int) (a : Nat) : Int :=
+  pyramideTaxis.foldl (fun acc (lo, hi, pm) =>
+    if lo ≤ a ∧ a ≤ hi then acc + n * pm / (1000 * ((hi - lo + 1 : Nat) : Int)) else acc) 0
+
+/-- Somme sur les âges 0 à 99 des titulaires (parmi `n`) qui vérifient `p`. -/
+def titulairesSi (n : Int) (p : Nat → Bool) : Int :=
+  (List.range 100).foldl (fun acc a => if p a then acc + titulairesAge n a else acc) 0
+
+/-- Indemnités de l'année `k` après l'entrée en vigueur, M€ : titulaires
+encore sous l'âge de départ × indemnité. Variante `seuilReconversion` :
+sous cet âge, deux ans d'indemnité puis une formation de `formation` €
+(versée la première année) au lieu d'une rente jusqu'à la retraite. -/
+def indemnitesAnnee (n : Int) (seuilReconversion : Nat) (formation : Int) (k : Nat) : Int :=
+  let rente := titulairesSi n (fun a => decide (seuilReconversion ≤ a) && decide (a + k < ageRetraiteTaxi))
+  let reconvertis := titulairesSi n (fun a => decide (a < seuilReconversion) && decide (a + k < ageRetraiteTaxi) && decide (k < 2))
+  let formations := if k = 0 then titulairesSi n (fun a => decide (a < seuilReconversion)) * formation else 0
+  ((rente + reconvertis) * indemniteTaxi + formations) / 1000000
+
+/-- Échéancier sur 40 ans (le plus jeune titulaire atteint 64 ans). -/
+def indemnitesTaxis (n : Int) (seuilReconversion : Nat) (formation : Int) : List Int :=
+  (List.range 40).map (indemnitesAnnee n seuilReconversion formation)
+
+def sortiesTaxis (n : Int) : Int := titulairesSi n (fun a => decide (ageSortieTaxi ≤ a))
+
+/-- Leviers de O-13 pour `n` titulaires. -/
+def leviersTaxis (n : Int) (seuilReconversion : Nat) (formation : Int) : List Levier :=
+  [.depenseEcheancier .famille (indemnitesTaxis n seuilReconversion formation),
+   .automatisation 5 (titulairesSi n (fun _ => true)) (sortiesTaxis n)]
 
 /-- Accidents du travail : 190 accidents avec arrêt pour 10 000 emplois en
 France contre ≈ 110 en moyenne dans l'Union (Eurostat). Fonds dédiés :
@@ -209,6 +265,60 @@ def coutAgenceMedicament : Int := 300
 def investissementAgence : Int := 500
 def fraudeCotisations : Int := 2000
 def fraudeTVA : Int := 1000
+
+/-- Enseignants (O-25). Masse salariale des enseignants hors CAS Pensions :
+59,23 Md€ en 2026 pour 852 752 enseignants du public et du privé sous
+contrat (PLF 2026, rapport du Sénat sur la mission Enseignement scolaire) ;
+une hausse de 1 % du point d'indice coûte ≈ 0,5 Md€. Base 2027 :
+`masseEnseignants2027` = 59,23 × 1,028 ≈ 60,9 Md€ (croissance tendancielle
+des dépenses). Rémunération +2 % par an en plus de l'évolution tendancielle,
+de 2027 à 2035 : niveau atteint après k + 1 hausses = masse × (1,02^(k+1)
+− 1), en euros de 2027, indexé ensuite comme la fonction enseignement. -/
+def masseEnseignants2027 : Int := 60900
+def revalorisationsEnseignants : List Int :=
+  (List.range 9).map fun k =>
+    masseEnseignants2027 * ((10200 : Int) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 : Int) ^ (k + 1)
+
+/-- Automatisation des contrôles administratifs (O-26). 10 000 postes par an
+pendant cinq ans (50 000), non remplacés au départ en retraite. Coût complet
+d'un poste de catégorie B ou C : `coutPosteControle` = 55 000 € par an
+(hypothèse : salaire net moyen de la fonction publique de l'État 3 018 €
+par mois en 2024, toutes catégories (DGAFP), plus bas en B et C, cotisations
+employeur comprises hors pensions). Outil : `investissementParPoste` =
+30 000 € par poste supprimé, la même année, et `maintenanceParPoste` =
+3 000 € par an ensuite (hypothèses). -/
+def postesControleParAn : Int := 10000
+def coutPosteControle : Int := 55000
+def investissementParPoste : Int := 30000
+def maintenanceParPoste : Int := 3000
+
+/-- Médecins généralistes (O-27). Les généralistes libéraux travaillent
+54 h par semaine, dont 44 h 30 de soins et ≈ 5 h 30 de gestion et de
+coordination ; 18 min par consultation ; 6,2 semaines de congés (DREES,
+Études et résultats, mai 2019). `generalistesLiberaux` = 52 000 (ordre de
+grandeur, à sourcer). Simplification : `heuresLibereesCentiemes` = 275,
+soit la moitié des tâches administratives (2 h 45 par semaine). Temps
+libéré : 52 000 × 2,75 h × 45,8 semaines ≈ 6,5 millions d'heures par an,
+soit ≈ 3 200 généralistes à temps plein (44 h 30 de soins) ou ≈ 21,8
+millions de consultations possibles. Les contrôles systématiques sont
+remplacés par `enqueteurs` = 500 enquêteurs sur les cas anormaux, à
+`coutEnqueteur` = 65 000 € (hypothèses). Sans hypothèse d'usage du temps
+libéré, l'effet budgétaire est le seul coût des enquêteurs ; la variante
+convertit le temps libéré en consultations remboursées (30 €, 70 % à la
+charge de l'assurance maladie). -/
+def generalistesLiberaux : Int := 52000
+def heuresLibereesCentiemes : Int := 275
+def semainesTravaillees10 : Int := 458
+def enqueteurs : Int := 500
+def coutEnqueteur : Int := 65000
+/-- Heures de soin libérées par an, milliers. -/
+def heuresLibereesMilliers : Int := generalistesLiberaux * heuresLibereesCentiemes * semainesTravaillees10 / 1000000
+/-- Équivalents temps plein de généralistes (44,5 h de soins × 45,8 semaines). -/
+def etpGeneralistesLiberes : Int := heuresLibereesMilliers * 1000 * 10 / (445 * semainesTravaillees10 / 10)
+/-- Consultations possibles (18 min), milliers. -/
+def consultationsMilliers : Int := heuresLibereesMilliers * 60 / 18
+/-- Coût pour l'assurance maladie si elles sont réalisées, M€. -/
+def coutConsultations : Int := consultationsMilliers * 30 * 700 / 1000000
 
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
@@ -389,10 +499,12 @@ def mesures : List Mesure := [
 
   { id := "O-13"
     titre := "Autorisation de la conduite autonome (FSD) ; indemnisation des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite"
-    source := s!"Texte Orientation D, mesure 13 ; {indemnisationTaxis} M€/an d'indemnisation (60 000 licences × 25 000 €, hypothèse), +0,05 % de PIB et −20 000 emplois de chauffeurs (hypothèses, voir `indemnisationTaxis`)"
-    leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 5 20000]
+    source := s!"Texte Orientation D, mesure 13 ; {titulairesTaxi} titulaires (hypothèse sur 62 800 ADS, Observatoire T3P 2024), pyramide des âges INSEE 2016 (moyenne 49 ans), {indemniteTaxi} € par an jusqu'à {ageRetraiteTaxi} ans : {indemnitesAnnee titulairesTaxi 0 0 0} M€ la première année, {indemnitesAnnee titulairesTaxi 0 0 8} M€ au bout de huit ans ; {sortiesTaxis titulairesTaxi} titulaires de {ageSortieTaxi} ans et plus quittent la population active, les autres se reclassent ; +0,05 % de PIB (voir `titulairesTaxi`)"
+    leviers := leviersTaxis titulairesTaxi 0 0
+    debut := 2
     variantes := [
-      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] },
+      { nom := "toutes les ADS indemnisées (62 800)", leviers := leviersTaxis 62800 0 0 },
+      { nom := "moins de 50 ans : deux ans d'indemnité et 15 000 € de formation", leviers := leviersTaxis titulairesTaxi 50 15000 }] },
 
   { id := "O-14"
     titre := "Partenaires d'accompagnement des normes et de lutte contre les accidents du travail, financés par l'État ; objectif : moyenne de l'Union européenne"
@@ -455,6 +567,30 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .cotisations fraudeCotisations, .prelevementSur .tva fraudeTVA]
     debut := 2 },
 
+  { id := "O-25"
+    titre := "Rémunération des enseignants : +2 % par an"
+    source := s!"Texte Orientation D, mesure 25 ; masse salariale hors CAS Pensions 59,23 Md€ en 2026 (PLF 2026), base 2027 {masseEnseignants2027} M€ ; +2 %/an au-delà de la tendance de 2027 à 2035 : {revalorisationsEnseignants.head!} M€ la première année, {revalorisationsEnseignants.getLast!} M€ (euros 2027) la neuvième"
+    leviers := [.depenseEcheancier .enseignement revalorisationsEnseignants]
+    debut := 2 },
+
+  { id := "O-26"
+    titre := "Automatisation des tâches administratives : 10 000 postes de contrôle supprimés par an pendant cinq ans"
+    source := s!"Texte Orientation D, mesure 26 ; {postesControleParAn} postes par an × 5, non remplacés, à {coutPosteControle} € (hypothèse, DGAFP 2024) ; outil : {investissementParPoste} € par poste la même année puis {maintenanceParPoste} €/an (hypothèses)"
+    leviers := [.suppressionPostes .fonctionnement postesControleParAn coutPosteControle,
+                .depenseEcheancier .fonctionnement [postesControleParAn * investissementParPoste / 1000000, 0],
+                .depenseSur .fonctionnement (postesControleParAn * maintenanceParPoste / 1000000)]
+    debut := 2
+    repetitions := 5 },
+
+  { id := "O-27"
+    titre := "Médecins généralistes : simplification des tâches administratives ; enquêteurs humains sur les cas anormaux à la place des contrôles systématiques"
+    source := s!"Texte Orientation D, mesure 27 ; DREES 2019 : 5 h 30 de gestion par semaine sur 54 h ; moitié supprimée pour {generalistesLiberaux} généralistes libéraux : {heuresLibereesMilliers} milliers d'heures de soin libérées par an, ≈ {etpGeneralistesLiberes} généralistes à temps plein, {consultationsMilliers} milliers de consultations possibles ; {enqueteurs} enquêteurs à {coutEnqueteur} € (hypothèses)"
+    leviers := [.depenseSur .sante (enqueteurs * coutEnqueteur / 1000000)]
+    debut := 2
+    variantes := [
+      { nom := s!"temps libéré converti en consultations remboursées (+{coutConsultations} M€/an)",
+        leviers := [.depenseSur .sante (enqueteurs * coutEnqueteur / 1000000), .depenseSur .sante coutConsultations] }] },
+
   { id := "O-24"
     titre := "Dette numérique : achat d'OAT tokenisées en stablecoin euro (mécanisme USDC), intérêts exonérés de PFU"
     source := s!"Texte Orientation D, mesure 24 ; OAT numériques réglées en jetons de monnaie électronique (MiCA, règlement (UE) 2023/1114, art. 50 : pas d'intérêt sur le jeton), régime pilote DLT (règlement (UE) 2022/858, à réviser) ; exonération du PFU de 31,4 % (LFSS 2026) pour les particuliers résidents ; tranche cible {cibleDetteNumerique} ‰ de la dette (+{rythmeDetteNumerique} ‰/an, première tranche fin 2028), capitalisation fiscale {capitalisationFiscale} ‰ (obligations municipales américaines), part des résidents {partResidents} ‰, part imposée auparavant {partImposeeAvant} ‰"
@@ -466,7 +602,7 @@ def mesures : List Mesure := [
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

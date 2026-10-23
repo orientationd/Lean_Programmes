@@ -44,6 +44,30 @@ pour 2026, art. L. 136-6 et L. 136-7 CSS), soit 12,8 % d'impôt sur le revenu
 111) et 7,5 % de prélèvement de solidarité (`tauxPfuSolidaritePm` = 75).
 Législation en vigueur, identique dans les trois variantes.
 
+Marché du travail. L'emploi ne suit plus mécaniquement la population
+active : la tendance démographique est absorbée au taux d'emploi courant
+(chômage tendanciel inchangé), mais les chocs d'offre de travail des
+mesures entrent au taux d'emploi propre aux personnes concernées, puis
+l'écart à l'emploi d'équilibre se résorbe progressivement. À long terme,
+le taux de chômage ne dépend donc pas de la taille de la population active
+(résultat empirique usuel) ; à court terme, il réagit à sa composition.
+* `flexionPm` = 150 : une hausse de 10 000 chômeurs réduit la population
+  active d'environ 1 500 personnes (INSEE, Note de conjoncture, juin 2017,
+  éclairage « chômage ») ; d'où 1,15 emploi par chômeur en moins, et 13 %
+  des emplois créés ou détruits qui passent par l'inactivité plutôt que
+  par le chômage. La loi d'Okun et l'élasticité au SMIC restent exprimées
+  en chômage ; les emplois s'en déduisent.
+* `tauxEmploiSeniorsMaintenusPm` = 720 : report de 60 à 61 ans (réforme de
+  2010), à 60 ans : +24 points d'activité et +17 points d'emploi pour les
+  hommes, +22 et +16 pour les femmes (INSEE Analyses n° 30, 2017), soit
+  ≈ 72 % des actifs supplémentaires en emploi.
+* `tauxEmploiMigrantsPm` = 876 : taux de chômage des immigrés de 12,4 % en
+  2025, contre 7,7 % pour l'ensemble (INSEE, enquête Emploi).
+* `absorptionChomagePm` = 200 : 20 % de l'écart résorbé par an (demi-vie
+  ≈ 3 ans). Hypothèse, à sourcer : convergence du chômage des immigrés avec
+  l'ancienneté de résidence, retour au taux d'avant choc en 5 à 10 ans dans
+  la littérature sur les chocs migratoires.
+
 C'est l'axe le plus disputé : multiplicateur, élasticités et fuite fiscale
 déterminent l'essentiel des écarts entre programmes. D'où trois variantes
 dès le départ, plutôt qu'une valeur « officielle ».
@@ -81,6 +105,10 @@ def centrale : Economie where
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
+  flexionPm := 150
+  tauxEmploiSeniorsMaintenusPm := 720
+  tauxEmploiMigrantsPm := 876
+  absorptionChomagePm := 200
   sources := ["À COMPLÉTER"]
 
 def croissanceBasse : Economie where
@@ -112,6 +140,10 @@ def croissanceBasse : Economie where
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
+  flexionPm := 150
+  tauxEmploiSeniorsMaintenusPm := 720
+  tauxEmploiMigrantsPm := 876
+  absorptionChomagePm := 200
   sources := ["À COMPLÉTER"]
 
 def croissanceHaute : Economie where
@@ -143,6 +175,10 @@ def croissanceHaute : Economie where
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
+  flexionPm := 150
+  tauxEmploiSeniorsMaintenusPm := 720
+  tauxEmploiMigrantsPm := 876
+  absorptionChomagePm := 200
   sources := ["À COMPLÉTER"]
 
 def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute]

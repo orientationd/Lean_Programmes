@@ -142,17 +142,44 @@ la mesure les relève de +2 % et +3 % (variantes faible et forte), soit
 hypothèses à étayer avec Atout France ; le nombre de nuitées n'est pas
 distingué du nombre de visiteurs.
 
-### O-13 — Conduite autonome et indemnisation des taxis
+### O-13 — Conduite autonome et indemnisation des taxis, par âge
 
-Autorisation de la conduite autonome (FSD). Les ≈ 60 000 titulaires d'une
-licence de taxi sont indemnisés jusqu'à leur retraite : 25 000 €/an en
-moyenne, soit 1,5 Md€/an au départ (montant gardé constant, par prudence,
-alors qu'il décroît avec les départs). L'automatisation du transport de
-personnes est traduite en +0,05 % de PIB et −20 000 emplois de chauffeurs
-(levier `automatisation` ; variante large +0,15 %, −60 000). Hypothèses à
-étayer : nombre de licences actives (préfectures), revenu moyen des
-chauffeurs (Insee, Observatoire du T3P), part du transport de personnes
-dans le PIB.
+Autorisation de la conduite autonome (FSD) en 2027 ; les titulaires d'une
+licence de taxi cèdent leur licence contre une indemnité versée **jusqu'à
+leur retraite**. Le coût et l'effet sur l'emploi sont calculés cohorte par
+cohorte d'âge (`indemnitesTaxis`, `sortiesTaxis`).
+
+* **Effectif** : 62 800 taxis (ADS) en 2024 ; 40 000 titulaires exploitant
+  eux-mêmes leur licence (hypothèse, deux tiers des ADS).
+* **Âges** : pyramide reconstituée sur les repères INSEE (taxis non
+  salariés, 2016) : 49 ans en moyenne, 2,4 % de moins de 30 ans, 12,8 % de
+  60 ans ou plus.
+
+  | Âge | 25-29 | 30-39 | 40-49 | 50-59 | 60-64 | 65-69 |
+  |---|---|---|---|---|---|---|
+  | Part | 2,4 % | 15,0 % | 31,0 % | 38,8 % | 9,8 % | 3,0 % |
+
+* **Indemnité** : 25 000 € par an jusqu'à 64 ans (durée cotisée de O-07) ;
+  rien pour ceux qui ont déjà 64 ans.
+
+| Année après l'entrée en vigueur | 1 | 3 | 5 | 9 | 11 | Total jusqu'à extinction |
+|---|---|---|---|---|---|---|
+| 40 000 titulaires (retenu) | 950 M€ | 911 M€ | 872 M€ | 716 M€ | 639 M€ | 15,2 Md€ |
+| 62 800 ADS (variante) | 1 491 M€ | 1 430 M€ | 1 368 M€ | 1 125 M€ | — | — |
+| Moins de 50 ans : 2 ans + 15 000 € de formation (variante) | 1 240 M€ | 427 M€ | 388 M€ | 232 M€ | — | 5,1 Md€ |
+
+(Euros de 2027, indexés ensuite sur les dépenses de la fonction.)
+
+* **Emploi** : 40 000 emplois de chauffeurs disparaissent. Les 12 880
+  titulaires de 55 ans et plus quittent la population active (moins de dix
+  ans d'indemnité) ; les 27 120 plus jeunes restent actifs et se reclassent
+  à 20 % de l'écart par an. Effet net en 2035 : ≈ −14 000 emplois.
+* **PIB** : +0,05 % par l'automatisation. *Correction* : le levier
+  recevait 5 ‰ au lieu de 0,5 ‰, soit dix fois l'effet documenté ;
+  l'unité est désormais le point de base.
+
+Résultat (mesure seule, 2035, scénario central) : PIB +0,11 % (automatisation
+et reclassement des plus jeunes), déficit −0,06 point.
 
 ### O-14 — Accidents du travail : rejoindre la moyenne européenne
 
@@ -211,6 +238,44 @@ en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
 
 Ensemble : ≈ 9,7 Md€/an d'amélioration brute du solde en régime de
 croisière.
+
+### O-25 — Enseignants : +2 % par an
+
+Masse salariale des enseignants hors CAS Pensions : 59,23 Md€ en 2026
+(852 752 enseignants, PLF 2026), soit ≈ 60,9 Md€ en 2027. Hausse de 2 % par
+an **en plus** de l'évolution tendancielle des dépenses, de 2027 à 2035 :
+1,2 Md€ la première année, 11,9 Md€ (euros 2027) la neuvième, niveau
+calculé exactement (masse × (1,02^k − 1)) par l'échéancier. Mesure seule en
+2035 : +15,6 Md€ de dépenses, +0,29 % de PIB, +44 000 emplois (effet de
+demande), déficit +0,21 point après les recettes induites.
+
+Comme pour tous les programmes, le modèle ne nette pas explicitement les
+cotisations et l'impôt prélevés sur la paie publique : ils reviennent par
+le multiplicateur (≈ 42 % de la dépense), ce qui approche le retour réel
+(≈ la moitié du coût complet).
+
+### O-26 — Automatisation des contrôles administratifs
+
+10 000 postes de contrôle supprimés par an pendant cinq ans (50 000), non
+remplacés au départ en retraite (levier `suppressionPostes`, mesure répétée
+cinq fois). Coût complet d'un poste : 55 000 € (hypothèse, catégories B
+et C) ; outil : 30 000 € par poste la même année, puis 3 000 €/an de
+maintenance. Effets en 2035 : −3,3 Md€ de dépenses nettes, −47 000
+emplois (l'emploi public baisse directement ; l'emploi privé ne répond qu'à
+la part de la baisse du PIB qui n'est pas la production publique
+supprimée), PIB −0,07 %, déficit −0,05 point (−0,07 sous le moteur
+d'offre).
+
+### O-27 — Médecins généralistes : simplification, enquêteurs sur cas anormaux
+
+Les généralistes libéraux consacrent ≈ 5 h 30 par semaine à la gestion
+sur 54 h (DREES, 2019). En supprimer la moitié libère ≈ 6,5 millions
+d'heures de soin par an, soit ≈ 3 200 généralistes à temps plein ou ≈ 21,8
+millions de consultations possibles. Les contrôles systématiques sont
+remplacés par 500 enquêteurs humains sur les cas anormaux (32,5 M€/an,
+hypothèse). Retenu : le seul coût des enquêteurs (le temps libéré sert
+l'accès aux soins sans hypothèse de volume). Variante : le temps libéré
+devient des consultations remboursées, +458 M€/an pour l'assurance maladie.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 

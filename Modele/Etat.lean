@@ -320,7 +320,35 @@ def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) : ParFoncti
     logementEnvironnement := g v.logementEnvironnement, culture := g v.culture
     interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := g v.nonVentile }
 
+/-- Taux de croissance tendanciel d'une fonction, pb : celui que lui applique
+`croitrePrimaires` (nul pour la charge d'intérêts, calculée à part). -/
+def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) : Int :=
+  match f with
+  | .sante | .affairesEconomiques | .fonctionnement => tauxPb - robotisationPb
+  | .interets => 0
+  | _ => tauxPb
+
+/-- Cohérence : hors intérêts, `croitrePrimaires` fait croître chaque fonction
+exactement de son `tauxCroissance` (utilisé pour indexer les échéanciers). -/
+theorem croitrePrimaires_get (v : ParFonction) (t r : Int) (f : Fonction) (h : f ≠ .interets) :
+    (v.croitrePrimaires t r).get f = v.get f + appliquerPb (v.get f) (tauxCroissance f t r) := by
+  cases f <;> first | exact absurd rfl h | rfl
+
 end ParFonction
+
+/-- Échéancier d'une dépense : niveaux annuels fixés à l'avance (indemnités
+versées jusqu'à la retraite, revalorisations cumulées…), exprimés en euros de
+l'année d'entrée en vigueur et indexés sur la croissance tendancielle de leur
+fonction. Une fois la liste épuisée, le dernier niveau est conservé. -/
+structure Echeance where
+  fonction : Fonction
+  /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
+  restants : List Int
+  /-- Niveau de l'année, M€ courants. -/
+  niveau : Int
+  /-- Indice de croissance de la fonction depuis l'entrée en vigueur, base 10 000. -/
+  indice : Int
+  deriving Repr, DecidableEq, Inhabited
 
 /-! ## État -/
 
@@ -413,6 +441,14 @@ structure Etat where
   /-- Recettes de PFU perdues dans l'année du fait de l'exonération, M€
   (déjà retranchées des impôts ; mémorisées pour la projection). -/
   pertePfuMeur : Int := 0
+  /-- Écart entre l'emploi d'équilibre et l'emploi effectif dû aux chocs
+  d'offre de travail des mesures (migrations, âge de départ, réallocations
+  par automatisation), personnes : emploi d'équilibre = taux d'emploi
+  d'avant le choc × variation de la population active. Résorbé chaque année
+  au taux `absorptionChomagePm` du scénario. -/
+  chomeursExcedentaires : Int := 0
+  /-- Dépenses à échéancier en cours (voir `Echeance`). -/
+  echeances : List Echeance := []
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat

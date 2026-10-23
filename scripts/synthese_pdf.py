@@ -1276,7 +1276,16 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
              "donc les intérêts, sans entrer dans le déficit primaire.")
     story.append(CondPageBreak(110 * mm))
     story += section_courbe(
-        D, "Chômage", "Taux de chômage au sens du BIT, en % de la population active.",
+        D, "Chômage",
+        "Taux de chômage au sens du BIT, en % de la population active. L'emploi ne suit pas "
+        "mécaniquement la population active : la tendance démographique est absorbée au taux "
+        "d'emploi courant ; la croissance agit par la loi d'Okun, convertie en emplois avec "
+        "l'effet de flexion (1,15 emploi par chômeur en moins, INSEE) ; les actifs ajoutés ou "
+        "retirés par les mesures (âge de départ, migrations, reconversions) entrent au taux "
+        "d'emploi des personnes concernées (72 % pour les seniors maintenus, 87,6 % pour les "
+        "immigrés), puis l'écart à l'emploi d'équilibre se résorbe de 20 % par an. Le chômage "
+        "réagit donc d'abord à la composition de la population active, puis revient vers son "
+        "niveau d'avant choc.",
         lambda e: e["chomagePb"] / 100, "Taux de chômage (%), scénario central", 1, NBSP + "%",
         lambda v: pct_pb(v, 2), valeur_table=lambda e: e["chomagePb"])
     story.append(CondPageBreak(110 * mm))
