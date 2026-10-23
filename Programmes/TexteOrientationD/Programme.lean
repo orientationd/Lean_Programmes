@@ -56,6 +56,20 @@ Mesures (extrait) :
 * **O-24** — dette numérique : OAT tokenisées achetées en stablecoin euro
   (mécanisme USDC), intérêts exonérés de PFU pour les particuliers
   résidents.
+* **O-25** — rémunération des enseignants +2 % par an ; **O-26** —
+  automatisation des tâches administratives, 10 000 postes de contrôle
+  supprimés par an pendant cinq ans ; **O-27** — simplification des tâches
+  des généralistes, enquêteurs humains sur les cas anormaux.
+* **O-28** à **O-34** — désindexation des très hautes retraites, TVA à
+  22 %, taxe à l'atterrissage des jets privés, conversion électrique des
+  exploitations agricoles, DPE et climatisation réversible dans les
+  quartiers historiques, urbanisme (pas de tours en quartier historique,
+  quartiers de gare), TER 24 h sur 24 avec agents de sécurité.
+* **O-35** à **O-42** — redressement compatible avec les positions du PS :
+  taxe Zucman, CSG sur les gros héritages, taxe numérique à 15 %,
+  exonérations de cotisations, fraude fiscale et train de vie de l'État,
+  niches fiscales, Pacte Dutreil divisé par deux et holdings, norme de
+  dépense ; **O-43** défense −1 Md€ par an ; **O-44** 174 trimestres.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -144,14 +158,66 @@ de recettes touristiques sur 71 Md€. -/
 def zonesTouristiques : Int := 6
 def coutParZone : Int := 150
 
-/-- Conduite autonome : ≈ 60 000 licences de taxi en France (dont 20 000 à
-Paris). Indemnisation jusqu'à la retraite : 25 000 €/an en moyenne
-(hypothèse : perte de revenu et de valeur de licence lissée), soit 1,5 Md€/an
-au départ, décroissant avec les départs en retraite (non modélisé : montant
-constant, prudent). Automatisation du transport de personnes : +0,05 % de
-PIB (hypothèse : 0,3 % de PIB pour taxis, VTC et livraison, 15 % de gain
-de coût) et 20 000 emplois de chauffeurs en moins. -/
-def indemnisationTaxis : Int := 1500
+/-- Conduite autonome et taxis (O-13), par cohorte d'âge.
+
+* Effectif : 62 800 taxis en 2024, autant d'autorisations de stationnement
+  (ADS) (Observatoire national des T3P) ; titulaires exploitant eux-mêmes
+  leur licence : `titulairesTaxi` = 40 000 (hypothèse : environ deux tiers
+  des ADS, le reste étant détenu par des sociétés et des loueurs, surtout à
+  Paris ; INSEE : 24 000 taxis non salariés sans salarié en 2016).
+* Âges : 49 ans en moyenne, 2,4 % de moins de 30 ans, 12,8 % de 60 ans ou
+  plus parmi les taxis non salariés (INSEE, « Les revenus d'activité des
+  chauffeurs de taxi et de VTC », 2016). `pyramideTaxis` reconstitue des
+  tranches (âge minimal, âge maximal, ‰), uniformes à l'intérieur, qui
+  respectent ces trois repères (moyenne 49,3 ans).
+* Indemnité : `indemniteTaxi` = 25 000 € par an et par titulaire
+  (hypothèse : entre le revenu déclaré, 14 800 € en 2016 selon l'INSEE, et
+  le chiffre d'affaires des artisans), versée de l'entrée en vigueur
+  jusqu'à `ageRetraiteTaxi` = 64 ans (O-07 : 172 trimestres pour une
+  carrière commencée vers 21 ans) ; rien pour ceux qui l'ont déjà atteint.
+  Le coût s'éteint cohorte par cohorte (`indemnitesTaxis`).
+* Emploi : les titulaires cessent l'activité à l'entrée en vigueur (rachat
+  de la licence contre la rente). À partir de `ageSortieTaxi` = 55 ans
+  (moins de dix ans d'indemnité), ils quittent la population active ; les
+  plus jeunes restent actifs et se reclassent au rythme du scénario.
+* Automatisation : +0,05 % de PIB (hypothèse : 0,3 % de PIB pour taxis,
+  VTC et livraison, 15 % de gain de coût). -/
+def titulairesTaxi : Int := 40000
+def indemniteTaxi : Int := 25000
+def ageRetraiteTaxi : Nat := 64
+def ageSortieTaxi : Nat := 55
+def pyramideTaxis : List (Nat × Nat × Int) :=
+  [(25, 29, 24), (30, 39, 150), (40, 49, 310), (50, 59, 388), (60, 64, 98), (65, 69, 30)]
+
+/-- Titulaires d'âge `a` parmi `n` (répartition uniforme dans la tranche). -/
+def titulairesAge (n : Int) (a : Nat) : Int :=
+  pyramideTaxis.foldl (fun acc (lo, hi, pm) =>
+    if lo ≤ a ∧ a ≤ hi then acc + n * pm / (1000 * ((hi - lo + 1 : Nat) : Int)) else acc) 0
+
+/-- Somme sur les âges 0 à 99 des titulaires (parmi `n`) qui vérifient `p`. -/
+def titulairesSi (n : Int) (p : Nat → Bool) : Int :=
+  (List.range 100).foldl (fun acc a => if p a then acc + titulairesAge n a else acc) 0
+
+/-- Indemnités de l'année `k` après l'entrée en vigueur, M€ : titulaires
+encore sous l'âge de départ × indemnité. Variante `seuilReconversion` :
+sous cet âge, deux ans d'indemnité puis une formation de `formation` €
+(versée la première année) au lieu d'une rente jusqu'à la retraite. -/
+def indemnitesAnnee (n : Int) (seuilReconversion : Nat) (formation : Int) (k : Nat) : Int :=
+  let rente := titulairesSi n (fun a => decide (seuilReconversion ≤ a) && decide (a + k < ageRetraiteTaxi))
+  let reconvertis := titulairesSi n (fun a => decide (a < seuilReconversion) && decide (a + k < ageRetraiteTaxi) && decide (k < 2))
+  let formations := if k = 0 then titulairesSi n (fun a => decide (a < seuilReconversion)) * formation else 0
+  ((rente + reconvertis) * indemniteTaxi + formations) / 1000000
+
+/-- Échéancier sur 40 ans (le plus jeune titulaire atteint 64 ans). -/
+def indemnitesTaxis (n : Int) (seuilReconversion : Nat) (formation : Int) : List Int :=
+  (List.range 40).map (indemnitesAnnee n seuilReconversion formation)
+
+def sortiesTaxis (n : Int) : Int := titulairesSi n (fun a => decide (ageSortieTaxi ≤ a))
+
+/-- Leviers de O-13 pour `n` titulaires. -/
+def leviersTaxis (n : Int) (seuilReconversion : Nat) (formation : Int) : List Levier :=
+  [.depenseEcheancier .famille (indemnitesTaxis n seuilReconversion formation),
+   .automatisation 5 (titulairesSi n (fun _ => true)) (sortiesTaxis n)]
 
 /-- Accidents du travail : 190 accidents avec arrêt pour 10 000 emplois en
 France contre ≈ 110 en moyenne dans l'Union (Eurostat). Fonds dédiés :
@@ -209,6 +275,225 @@ def coutAgenceMedicament : Int := 300
 def investissementAgence : Int := 500
 def fraudeCotisations : Int := 2000
 def fraudeTVA : Int := 1000
+
+/-- Enseignants (O-25). Masse salariale des enseignants hors CAS Pensions :
+59,23 Md€ en 2026 pour 852 752 enseignants du public et du privé sous
+contrat (PLF 2026, rapport du Sénat sur la mission Enseignement scolaire) ;
+une hausse de 1 % du point d'indice coûte ≈ 0,5 Md€. Base 2027 :
+`masseEnseignants2027` = 59,23 × 1,028 ≈ 60,9 Md€ (croissance tendancielle
+des dépenses). Rémunération +2 % par an en plus de l'évolution tendancielle,
+à partir de 2027 (échéancier sur vingt ans) : niveau atteint après k + 1 hausses = masse × (1,02^(k+1)
+− 1), en euros de 2027, indexé ensuite comme la fonction enseignement. -/
+def masseEnseignants2027 : Int := 60900
+def revalorisationsEnseignants : List Int :=
+  (List.range 20).map fun k =>
+    masseEnseignants2027 * ((10200 : Int) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 : Int) ^ (k + 1)
+
+/-- Automatisation des contrôles administratifs (O-26). 10 000 postes par an
+pendant cinq ans (50 000), non remplacés au départ en retraite. Coût complet
+d'un poste de catégorie B ou C : `coutPosteControle` = 55 000 € par an
+(hypothèse : salaire net moyen de la fonction publique de l'État 3 018 €
+par mois en 2024, toutes catégories (DGAFP), plus bas en B et C, cotisations
+employeur comprises hors pensions). Outil : `investissementParPoste` =
+30 000 € par poste supprimé, la même année, et `maintenanceParPoste` =
+3 000 € par an ensuite (hypothèses). -/
+def postesControleParAn : Int := 10000
+def coutPosteControle : Int := 55000
+def investissementParPoste : Int := 30000
+def maintenanceParPoste : Int := 3000
+
+/-- Médecins généralistes (O-27). Les généralistes libéraux travaillent
+54 h par semaine, dont 44 h 30 de soins et ≈ 5 h 30 de gestion et de
+coordination ; 18 min par consultation ; 6,2 semaines de congés (DREES,
+Études et résultats, mai 2019). `generalistesLiberaux` = 52 000 (ordre de
+grandeur, à sourcer). Simplification : `heuresLibereesCentiemes` = 275,
+soit la moitié des tâches administratives (2 h 45 par semaine). Temps
+libéré : 52 000 × 2,75 h × 45,8 semaines ≈ 6,5 millions d'heures par an,
+soit ≈ 3 200 généralistes à temps plein (44 h 30 de soins) ou ≈ 21,8
+millions de consultations possibles. Les contrôles systématiques sont
+remplacés par `enqueteurs` = 500 enquêteurs sur les cas anormaux, à
+`coutEnqueteur` = 65 000 € (hypothèses). Sans hypothèse d'usage du temps
+libéré, l'effet budgétaire est le seul coût des enquêteurs ; la variante
+convertit le temps libéré en consultations remboursées (30 €, 70 % à la
+charge de l'assurance maladie). -/
+def generalistesLiberaux : Int := 52000
+def heuresLibereesCentiemes : Int := 275
+def semainesTravaillees10 : Int := 458
+def enqueteurs : Int := 500
+def coutEnqueteur : Int := 65000
+/-- Heures de soin libérées par an, milliers. -/
+def heuresLibereesMilliers : Int := generalistesLiberaux * heuresLibereesCentiemes * semainesTravaillees10 / 1000000
+/-- Équivalents temps plein de généralistes (44,5 h de soins × 45,8 semaines). -/
+def etpGeneralistesLiberes : Int := heuresLibereesMilliers * 1000 * 10 / (445 * semainesTravaillees10 / 10)
+/-- Consultations possibles (18 min), milliers. -/
+def consultationsMilliers : Int := heuresLibereesMilliers * 60 / 18
+/-- Coût pour l'assurance maladie si elles sont réalisées, M€. -/
+def coutConsultations : Int := consultationsMilliers * 30 * 700 / 1000000
+
+/-- Désindexation des très hautes retraites (O-28). ≈ 17 millions de
+retraités de droit direct ; 1 % perçoivent plus de 5 150 € bruts par mois,
+6 470 € en moyenne (DREES, cité par le Journal de l'économie, août 2026).
+Retenu : la revalorisation ne porte plus que sur la part de la pension sous
+`seuilTresHautesRetraites` = 5 150 € (pas d'effet de seuil ni d'inversion de
+rang) ; part au-delà : 170 000 × 1 320 € × 12 ≈ 2,69 Md€ en 2025, soit
+`masseAuDelaSeuil` ≈ 2,85 Md€ en 2027 (× 1,057, tendance). Revalorisation
+évitée : `inflationPb` = 180 (hypothèse : 1,8 % d'inflation, cohérente avec
+3 % de croissance nominale et 1,2 % réelle). Économie après k + 1 gels, en
+euros de 2027 : masse × (1 − 1/1,018^(k+1)). Suppose une loi s'appliquant
+aussi aux régimes complémentaires (Agirc-Arrco, gérés par les partenaires
+sociaux). Variante : gel de toute la pension au-delà du seuil (13,2 Md€ en
+2025, 13,95 Md€ en 2027), avec effets de seuil. -/
+def retraitesTresHautes : Int := 170000
+def seuilTresHautesRetraites : Int := 5150
+def pensionMoyenneTresHautes : Int := 6470
+def inflationPb : Int := 180
+def masseAuDelaSeuil : Int :=
+  retraitesTresHautes * (pensionMoyenneTresHautes - seuilTresHautesRetraites) * 12 * 10570 / 10000000000
+def masseTresHautes : Int := retraitesTresHautes * pensionMoyenneTresHautes * 12 * 10570 / 10000000000
+def desindexation (masse : Int) : List Int :=
+  (List.range 20).map fun k =>
+    -(masse * ((10000 + inflationPb) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 + inflationPb) ^ (k + 1))
+
+/-- TVA (O-29) : taux normal porté de 20 % à 22 %. Un point de taux normal
+rapporte un peu plus de 8 Md€ (FIPECO, IPP, Sénat, cités par L'Essentiel de
+l'éco, septembre 2026) : rendement statique `tvaDeuxPoints` = 16 Md€, net de
+la fuite fiscale du modèle. -/
+def tvaDeuxPoints : Int := 16000
+
+/-- Jets privés (O-30) : taxe forfaitaire de `taxeAtterrissage` = 3 000 € par
+atterrissage. 84 885 vols de jets privés au départ de la France en 2022
+(Greenpeace, repris par la proposition de loi n° 1741) ; atterrissages pris
+égaux : `atterrissagesJets` = 85 000. Rendement statique 255 M€ ; la fuite
+fiscale du modèle (20 % au scénario central) représente le report vers les
+aéroports frontaliers et la baisse des vols. Variante : 1 000 €. -/
+def atterrissagesJets : Int := 85000
+def taxeAtterrissage : Int := 3000
+
+/-- Conversion électrique des exploitations agricoles (O-31). 389 000
+exploitations (recensement agricole 2020). Énergie de l'agriculture et de la
+pêche : 52,1 TWh, dont 71 % de produits pétroliers (≈ 37 TWh, ≈ 3,7 Md de
+litres ; ministère de la Transition écologique, Chiffres clés de l'énergie
+2022), soit ≈ 10 Mt de CO₂ (0,27 t/MWh) : `emissionsEnergieAgricole`.
+Plan sur dix ans : aide de `aideConversion` = 30 000 € par exploitation
+(hypothèse : moitié d'un surcoût de 60 000 € pour les engins, la recharge
+et une production photovoltaïque), soit ≈ 1,17 Md€ par an ; −1 Mt par an.
+Commerce extérieur : carburant importé évité ≈ 2,0 Md€ (3,7 Md de litres ×
+0,55 € hors taxes), électricité non exportée ≈ 0,84 Md€ (≈ 12 TWh au
+rendement électrique, × 70 €/MWh) : −116 M€ d'importations nettes par an.
+Les engins lourds électriques restent peu disponibles : l'objectif de
+toutes les exploitations en dix ans est un plafond. -/
+def exploitationsAgricoles : Int := 389000
+def aideConversion : Int := 30000
+def emissionsEnergieAgricole : Int := 10
+def carburantAgricoleImporte : Int := 2000
+def electriciteNonExportee : Int := 840
+
+/-- DPE et climatisation réversible (O-32). Suppression du DPE pour les
+immeubles de Paris et des autres quartiers historiques : pas d'effet
+budgétaire ; évite le retrait du marché locatif des logements classés F et
+G (interdiction de location, loi Climat et résilience). Climatisation
+réversible (pompe à chaleur air-air) aidée : `logementsClimatisation` =
+50 000 par an × `aideClimatisation` = 2 000 € = 100 M€ par an pendant dix
+ans (hypothèses). Émissions : le remplacement du chauffage fossile (≈ 1 t
+par logement et par an pour la moitié des logements équipés) et le moindre
+effort de rénovation se compensent à moins de 1 Mt : effet non retenu. -/
+def logementsClimatisation : Int := 50000
+def aideClimatisation : Int := 2000
+
+/-- Urbanisme (O-33). Interdiction des immeubles de grande hauteur dans les
+quartiers historiques : sans effet budgétaire. Quartiers nouveaux autour des
+pôles très desservis (Val de Fontenay : RER A et E, métro 1 et 15, tramway
+T1) : aide aux équipements publics de `aideLogementQuartierGare` = 10 000 €
+pour `logementsQuartiersGare` = 20 000 logements par an (hypothèses), soit
+200 M€ par an d'investissement. -/
+def logementsQuartiersGare : Int := 20000
+def aideLogementQuartierGare : Int := 10000
+
+/-- TER 24 h sur 24 (O-34) entre métropoles et villes moyennes (Paris –
+Orléans…), avec agents de sécurité à bord, en gare et dans les parkings.
+`liaisonsTerNuit` = 20 liaisons de `distanceTerKm` = 100 km ; de 0 h à 5 h,
+un train par heure et par sens (`trainsParNuit` = 10). Coût :
+`coutTrainKmCentimes` = 2 340 (23,40 € par train-km, moyenne des TER sous
+convention SNCF, IFRAP 2024) ; sécurité : `heuresAgentsParNuit` = 46 (10 à
+bord, 24 en gare, 12 aux parkings) à `coutHeureAgent` = 35 €. Recettes :
+`couvertureRecettesPm` = 250 (hypothèse). La nuit est aussi la plage des
+travaux d'entretien du réseau : contrainte d'exploitation non chiffrée. -/
+def liaisonsTerNuit : Int := 20
+def distanceTerKm : Int := 100
+def trainsParNuit : Int := 10
+def coutTrainKmCentimes : Int := 2340
+def heuresAgentsParNuit : Int := 46
+def coutHeureAgent : Int := 35
+def couvertureRecettesPm : Int := 250
+def coutTerNuit : Int :=
+  liaisonsTerNuit * 365 * (trainsParNuit * distanceTerKm * coutTrainKmCentimes / 100
+    + heuresAgentsParNuit * coutHeureAgent) * (1000 - couvertureRecettesPm) / 1000000000
+
+/-- Redressement compatible avec les positions du PS (O-35 à O-42). Base :
+propositions du groupe socialiste à l'Assemblée (16 septembre 2026 : taxe
+Zucman 15 Md€, CSG sur les gros héritages 10 Md€, taxe sur les géants du
+numérique 10 Md€, reconfiguration des exonérations de cotisations 4 Md€,
+12,1 Md€ d'économies par la lutte contre la fraude fiscale et le train de
+vie de l'État), complétées par la note de la Cour des comptes sur la
+fiscalité du patrimoine (septembre 2026) et une revue des niches fiscales.
+Les rendements sont statiques ; le modèle retire sa fuite fiscale (20 % au
+scénario central) et calcule l'effet d'activité.
+
+* `taxeZucman` = 6,5 Md€ : 15 à 25 Md€ selon ses promoteurs, ≈ 5 Md€
+  selon sept économistes (Le Monde, septembre 2025) et 4,6 à 5,5 Md€ avec
+  imputation de l'IS (Institut de l'entreprise, 2026). Retenu : 6,5 Md€
+  statiques, ≈ 5,2 Md€ nets de la fuite fiscale. Variante : chiffrage PS.
+* `csgHeritages` = 10 Md€ : chiffrage du groupe PS, sans contre-expertise
+  connue (droits de succession et donations ≈ 17 Md€ par an).
+* `taxeNumerique` = 3,1 Md€ : taxe sur les services numériques de 3 % à
+  15 %, 0,89 → ≈ 4 Md€ (commission des finances, octobre 2026). Le PS
+  annonce 10 Md€ (variante). Risque de représailles commerciales.
+* `exonerationsCotisations` = 4 Md€ : reconfiguration des allègements
+  généraux (chiffrage PS).
+* `fraudeFiscale` = 3 Md€ et `trainDeVieEtat` = 3,1 Md€ : les 12,1 Md€
+  du PS, moins ce que comptent déjà O-21 (commande publique, 3 Md€) et
+  O-23 (fraude sociale et TVA, 3 Md€).
+* `nichesFiscales` = 8 Md€ : 465 niches pour 88,3 Md€ en 2026 (PLF 2026) ;
+  −10 % hors Pacte Dutreil (traité à part) et hors dispositifs pour les
+  ménages modestes, réparti entre IR (4), IS (2) et TVA (2).
+* `pacteDutreil` = 1,95 Md€ : Pacte Dutreil divisé par deux, abattement de
+  75 % à 37,5 %. La Cour des comptes (note du 21 septembre 2026) chiffre à
+  1,3 Md€ le passage à 50 % (25 points, pactes futurs, comportements
+  inchangés) ; même méthode, proportionnelle aux points d'abattement
+  retirés : 1,3 × 37,5 / 25 = 1,95 Md€ (le dispositif coûtait 5,5 Md€ en
+  2024). `holdings` = 1,0 Md€ (taxe sur les holdings élargie, même note).
+* `normeDepense` = 50 pb : les dépenses pilotables (santé, affaires
+  économiques, sécurité-justice, logement-environnement, culture, services
+  généraux ; ≈ 739 Md€ en 2025) croissent de 2,3 % au lieu de 2,8 % par an,
+  soit +0,5 % en volume pour 1,8 % d'inflation. Retraites, famille,
+  enseignement et défense sont hors norme. Variante : zéro volume (100 pb).
+-/
+def taxeZucman : Int := 6500
+def csgHeritages : Int := 10000
+def taxeNumerique : Int := 3100
+def exonerationsCotisations : Int := 4000
+def fraudeFiscale : Int := 3000
+def trainDeVieEtat : Int := 3100
+def nichesFiscales : Int := 8000
+def pacteDutreil : Int := 1950
+
+/-- Défense (O-43) : −1 Md€ par an sur le budget de la défense (53 Md€ en
+2025, COFOG), hors norme de dépense. -/
+def economieDefense : Int := 1000
+
+/-- Durée de cotisation (O-44) : 174 trimestres au lieu de 172, soit six mois
+de plus pour les départs liés à la durée. Sans âge légal (O-07), la durée est
+la contrainte de la plupart des départs : plus de neuf retraités sur dix
+liquident au taux plein, surtout au titre de la durée (COR, génération 1950) ;
+les carrières incomplètes partent à l'âge du taux plein automatique.
+`partDepartsDuree` = 800 ‰ (hypothèse) : âge moyen de départ reculé de
+6 × 0,8 ≈ 5 mois. Coût et actifs par mois : hypothèses économiques du
+scénario (réforme de 2023). -/
+def partDepartsDuree : Int := 800
+/-- Arrondi au mois le plus proche : 4,8 → 5. -/
+def moisDureeSupplementaire : Int := (6 * partDepartsDuree + 500) / 1000
+def holdings : Int := 1000
+def normeDepensePb : Int := 50
 
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
@@ -347,7 +632,7 @@ def mesures : List Mesure := [
     leviers := [.deploiementBornes 50000 8000] },
 
   { id := "O-07"
-    titre := "Fin de l'âge légal : départ à la durée cotisée (172 trimestres), réduite selon la pénibilité"
+    titre := "Fin de l'âge légal : départ à la durée cotisée (172 trimestres, 174 avec O-44), réduite selon la pénibilité"
     source := "Texte Orientation D, mesure 7. Conversion : le modèle ne connaît qu'un âge moyen de départ ; sans borne d'âge, les carrières commencées avant 21 ans partent avant 64 ans et la réduction pour pénibilité avance encore les métiers exposés : âge moyen de départ supposé avancé de 6 mois (hypothèse à étayer avec le COR), coût et actifs selon l'hypothèse économique du scénario"
     leviers := [.ageLegal (-6)]
     variantes := [
@@ -389,10 +674,12 @@ def mesures : List Mesure := [
 
   { id := "O-13"
     titre := "Autorisation de la conduite autonome (FSD) ; indemnisation des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite"
-    source := s!"Texte Orientation D, mesure 13 ; {indemnisationTaxis} M€/an d'indemnisation (60 000 licences × 25 000 €, hypothèse), +0,05 % de PIB et −20 000 emplois de chauffeurs (hypothèses, voir `indemnisationTaxis`)"
-    leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 5 20000]
+    source := s!"Texte Orientation D, mesure 13 ; {titulairesTaxi} titulaires (hypothèse sur 62 800 ADS, Observatoire T3P 2024), pyramide des âges INSEE 2016 (moyenne 49 ans), {indemniteTaxi} € par an jusqu'à {ageRetraiteTaxi} ans : {indemnitesAnnee titulairesTaxi 0 0 0} M€ la première année, {indemnitesAnnee titulairesTaxi 0 0 8} M€ au bout de huit ans ; {sortiesTaxis titulairesTaxi} titulaires de {ageSortieTaxi} ans et plus quittent la population active, les autres se reclassent ; +0,05 % de PIB (voir `titulairesTaxi`)"
+    leviers := leviersTaxis titulairesTaxi 0 0
+    debut := 2
     variantes := [
-      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] },
+      { nom := "toutes les ADS indemnisées (62 800)", leviers := leviersTaxis 62800 0 0 },
+      { nom := "moins de 50 ans : deux ans d'indemnité et 15 000 € de formation", leviers := leviersTaxis titulairesTaxi 50 15000 }] },
 
   { id := "O-14"
     titre := "Partenaires d'accompagnement des normes et de lutte contre les accidents du travail, financés par l'État ; objectif : moyenne de l'Union européenne"
@@ -455,18 +742,156 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .cotisations fraudeCotisations, .prelevementSur .tva fraudeTVA]
     debut := 2 },
 
+  { id := "O-25"
+    titre := "Rémunération des enseignants : +2 % par an"
+    source := s!"Texte Orientation D, mesure 25 ; masse salariale hors CAS Pensions 59,23 Md€ en 2026 (PLF 2026), base 2027 {masseEnseignants2027} M€ ; +2 %/an au-delà de la tendance de 2027 à 2035 : {revalorisationsEnseignants.head!} M€ la première année, {revalorisationsEnseignants[8]!} M€ (euros 2027) la neuvième (2035)"
+    leviers := [.depenseEcheancier .enseignement revalorisationsEnseignants]
+    debut := 2 },
+
+  { id := "O-26"
+    titre := "Automatisation des tâches administratives : 10 000 postes de contrôle supprimés par an pendant cinq ans"
+    source := s!"Texte Orientation D, mesure 26 ; {postesControleParAn} postes par an × 5, non remplacés, à {coutPosteControle} € (hypothèse, DGAFP 2024) ; outil : {investissementParPoste} € par poste la même année puis {maintenanceParPoste} €/an (hypothèses)"
+    leviers := [.suppressionPostes .fonctionnement postesControleParAn coutPosteControle,
+                .depenseEcheancier .fonctionnement [postesControleParAn * investissementParPoste / 1000000, 0],
+                .depenseSur .fonctionnement (postesControleParAn * maintenanceParPoste / 1000000)]
+    debut := 2
+    repetitions := 5 },
+
+  { id := "O-27"
+    titre := "Médecins généralistes : simplification des tâches administratives ; enquêteurs humains sur les cas anormaux à la place des contrôles systématiques"
+    source := s!"Texte Orientation D, mesure 27 ; DREES 2019 : 5 h 30 de gestion par semaine sur 54 h ; moitié supprimée pour {generalistesLiberaux} généralistes libéraux : {heuresLibereesMilliers} milliers d'heures de soin libérées par an, ≈ {etpGeneralistesLiberes} généralistes à temps plein, {consultationsMilliers} milliers de consultations possibles ; {enqueteurs} enquêteurs à {coutEnqueteur} € (hypothèses)"
+    leviers := [.depenseSur .sante (enqueteurs * coutEnqueteur / 1000000)]
+    debut := 2
+    variantes := [
+      { nom := s!"temps libéré converti en consultations remboursées (+{coutConsultations} M€/an)",
+        leviers := [.depenseSur .sante (enqueteurs * coutEnqueteur / 1000000), .depenseSur .sante coutConsultations] }] },
+
   { id := "O-24"
     titre := "Dette numérique : achat d'OAT tokenisées en stablecoin euro (mécanisme USDC), intérêts exonérés de PFU"
     source := s!"Texte Orientation D, mesure 24 ; OAT numériques réglées en jetons de monnaie électronique (MiCA, règlement (UE) 2023/1114, art. 50 : pas d'intérêt sur le jeton), régime pilote DLT (règlement (UE) 2022/858, à réviser) ; exonération du PFU de 31,4 % (LFSS 2026) pour les particuliers résidents ; tranche cible {cibleDetteNumerique} ‰ de la dette (+{rythmeDetteNumerique} ‰/an, première tranche fin 2028), capitalisation fiscale {capitalisationFiscale} ‰ (obligations municipales américaines), part des résidents {partResidents} ‰, part imposée auparavant {partImposeeAvant} ‰"
     leviers := [.detteNumerique cibleDetteNumerique rythmeDetteNumerique capitalisationFiscale
                   partResidents partImposeeAvant]
+    debut := 2 },
+
+  { id := "O-28"
+    titre := "Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € par mois"
+    source := s!"Texte Orientation D, mesure 28 ; 1 % des retraités au-delà de 5 150 € bruts, 6 470 € en moyenne (DREES) ; part au-delà du seuil {masseAuDelaSeuil} M€ (2027), revalorisation évitée {inflationPb} pb/an : {(desindexation masseAuDelaSeuil).head!} M€ la première année, {(desindexation masseAuDelaSeuil)[8]!} M€ en 2035 (euros 2027)"
+    leviers := [.depenseEcheancier .retraites (desindexation masseAuDelaSeuil)]
+    debut := 2
+    variantes := [
+      { nom := s!"gel de toute la pension au-delà du seuil ({masseTresHautes} M€ concernés)",
+        leviers := [.depenseEcheancier .retraites (desindexation masseTresHautes)] }] },
+
+  { id := "O-29"
+    titre := "TVA : taux normal porté de 20 % à 22 %"
+    source := s!"Texte Orientation D, mesure 29 ; un point de taux normal ≈ 8 Md€ (FIPECO, IPP, Sénat) : {tvaDeuxPoints} M€ de rendement statique, net de la fuite fiscale du modèle"
+    leviers := [.prelevementSur .tva tvaDeuxPoints]
+    debut := 2 },
+
+  { id := "O-30"
+    titre := "Taxe forfaitaire à l'atterrissage des jets privés"
+    source := s!"Texte Orientation D, mesure 30 ; {atterrissagesJets} atterrissages par an (84 885 départs en 2022, Greenpeace) × {taxeAtterrissage} € (hypothèse) ; fuite fiscale du modèle pour le report et la baisse des vols"
+    leviers := [.prelevementSur .autres (atterrissagesJets * taxeAtterrissage / 1000000)]
+    debut := 2
+    variantes := [
+      { nom := "taxe de 1 000 € par atterrissage", leviers := [.prelevementSur .autres (atterrissagesJets * 1000 / 1000000)] }] },
+
+  { id := "O-31"
+    titre := "Plan de conversion à l'électrique de l'ensemble des exploitations agricoles (dix ans)"
+    source := s!"Texte Orientation D, mesure 31 ; {exploitationsAgricoles} exploitations (RA 2020) × {aideConversion} € sur dix ans (hypothèse) ; énergie agricole ≈ 37 TWh de produits pétroliers, {emissionsEnergieAgricole} Mt de CO₂ ; importations nettes −{(carburantAgricoleImporte - electriciteNonExportee) / 10} M€ par an"
+    leviers := [.depenseEcheancier .affairesEconomiques [exploitationsAgricoles * aideConversion / 10 / 1000000, 0],
+                .transition (emissionsEnergieAgricole / 10) 0,
+                .importationsNiveau (-((carburantAgricoleImporte - electriciteNonExportee) / 10))]
+    debut := 2
+    repetitions := 10 },
+
+  { id := "O-32"
+    titre := "Suppression du DPE pour les immeubles de Paris et des quartiers historiques ; climatisation réversible aidée par l'État"
+    source := s!"Texte Orientation D, mesure 32 ; DPE : sans effet budgétaire ; {logementsClimatisation} logements par an × {aideClimatisation} € pendant dix ans (hypothèses) ; effet sur les émissions inférieur à la résolution du modèle (1 Mt)"
+    leviers := [.depenseEcheancier .logementEnvironnement [logementsClimatisation * aideClimatisation / 1000000, 0]]
+    debut := 2
+    repetitions := 10 },
+
+  { id := "O-33"
+    titre := "Pas d'immeubles de grande hauteur dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay)"
+    source := s!"Texte Orientation D, mesure 33 ; interdiction sans effet budgétaire ; {logementsQuartiersGare} logements par an × {aideLogementQuartierGare} € d'équipements publics (hypothèses)"
+    leviers := [.investissement .logementEnvironnement (logementsQuartiersGare * aideLogementQuartierGare / 1000000)]
+    debut := 2 },
+
+  { id := "O-34"
+    titre := "TER 24 h sur 24 entre métropoles et villes moyennes (Orléans…), agents de sécurité à bord, en gare et aux parkings"
+    source := s!"Texte Orientation D, mesure 34 ; {liaisonsTerNuit} liaisons de {distanceTerKm} km, {trainsParNuit} trains par nuit, 23,40 € par train-km (IFRAP 2024), {heuresAgentsParNuit} heures d'agents par nuit à {coutHeureAgent} €, {couvertureRecettesPm / 10} % couverts par les recettes : {coutTerNuit} M€ par an"
+    leviers := [.depenseSur .affairesEconomiques coutTerNuit]
+    debut := 2 },
+
+  { id := "O-35"
+    titre := "Impôt plancher sur les très hauts patrimoines (taxe Zucman)"
+    source := s!"Texte Orientation D, mesure 35 ; proposition du groupe PS (15 Md€) ; retenu {taxeZucman} M€ statiques (≈ 5 Md€ selon sept économistes, 4,6 à 5,5 Md€ avec imputation de l'IS)"
+    leviers := [.prelevementSur .autres taxeZucman]
+    debut := 2
+    variantes := [{ nom := "chiffrage du groupe PS (15 Md€)", leviers := [.prelevementSur .autres 15000] }] },
+
+  { id := "O-36"
+    titre := "CSG sur les gros héritages"
+    source := s!"Texte Orientation D, mesure 36 ; chiffrage du groupe PS : {csgHeritages} M€ (sans contre-expertise connue)"
+    leviers := [.prelevementSur .csgCrds csgHeritages]
+    debut := 2 },
+
+  { id := "O-37"
+    titre := "Taxe sur les services numériques portée de 3 % à 15 %"
+    source := s!"Texte Orientation D, mesure 37 ; 0,89 Md€ à 3 %, ≈ 4 Md€ à 15 % (commission des finances, octobre 2026) : +{taxeNumerique} M€ ; le PS annonce 10 Md€"
+    leviers := [.prelevementSur .autres taxeNumerique]
+    debut := 2
+    variantes := [{ nom := "chiffrage du groupe PS (10 Md€)", leviers := [.prelevementSur .autres 10000] }] },
+
+  { id := "O-38"
+    titre := "Reconfiguration des exonérations de cotisations patronales"
+    source := s!"Texte Orientation D, mesure 38 ; chiffrage du groupe PS : {exonerationsCotisations} M€"
+    leviers := [.prelevementSur .cotisations exonerationsCotisations]
+    debut := 2 },
+
+  { id := "O-39"
+    titre := "Lutte contre la fraude fiscale ; train de vie de l'État"
+    source := s!"Texte Orientation D, mesure 39 ; 12,1 Md€ du groupe PS, moins O-21 et O-23 déjà comptés : {fraudeFiscale} M€ de fraude fiscale (TVA) et {trainDeVieEtat} M€ d'économies de fonctionnement"
+    leviers := [.prelevementSur .tva fraudeFiscale, .economieSur .fonctionnement trainDeVieEtat]
+    debut := 2 },
+
+  { id := "O-40"
+    titre := "Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes"
+    source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2)"
+    leviers := [.prelevementSur .ir 4000, .prelevementSur .impotSocietes 2000, .prelevementSur .tva 2000]
+    debut := 2 },
+
+  { id := "O-41"
+    titre := "Fiscalité du patrimoine : Pacte Dutreil divisé par deux (abattement 75 % → 37,5 %), taxe sur les holdings élargie"
+    source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 (1,3 Md€ pour 75 % → 50 %, proportionnel) : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
+    leviers := [.prelevementSur .autres (pacteDutreil + holdings)]
+    debut := 2 },
+
+  { id := "O-42"
+    titre := "Norme de dépense : +0,5 % en volume pour les dépenses pilotables (hors retraites, famille, enseignement, défense)"
+    source := s!"Texte Orientation D, mesure 42 ; {normeDepensePb} pb de moins par an sur ≈ 739 Md€ de dépenses pilotables (2025) : 2,3 % au lieu de 2,8 %"
+    leviers := [.normeDepense normeDepensePb]
+    debut := 2
+    variantes := [{ nom := "zéro volume (100 pb)", leviers := [.normeDepense 100] }] },
+
+  { id := "O-43"
+    titre := "Budget de la défense : −1 Md€ par an"
+    source := s!"Texte Orientation D, mesure 43 ; {economieDefense} M€ par an sur 53 Md€ (2025)"
+    leviers := [.economieSur .defense economieDefense]
+    debut := 2 },
+
+  { id := "O-44"
+    titre := "Durée de cotisation portée de 172 à 174 trimestres"
+    source := s!"Texte Orientation D, mesure 44 ; +2 trimestres, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse ; COR) : âge moyen de départ +{moisDureeSupplementaire} mois"
+    leviers := [.ageLegal moisDureeSupplementaire]
     debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

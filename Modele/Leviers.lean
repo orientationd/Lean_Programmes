@@ -124,10 +124,37 @@ inductive Levier where
   moins de croissance des dépenses de fonctionnement, d'affaires
   économiques et de santé chaque année, en plus de la tendance. -/
   | robotisation (gainPb : Int)
-  /-- Automatisation d'une activité (véhicules autonomes, caisses…) :
-  gain de productivité `gainPibPm` sur le niveau du PIB (sans effet
-  d'Okun) et `emploisSupprimes` personnes en moins dans l'emploi. -/
-  | automatisation (gainPibPm : Int) (emploisSupprimes : Int)
+  /-- Automatisation d'une activité (véhicules autonomes, caisses…) : gain
+  de productivité `gainPibPb` sur le niveau du PIB (sans effet d'Okun) et
+  `emploisSupprimes` emplois en moins. Parmi les personnes concernées,
+  `sortiesActivite` quittent la population active (fin de carrière) ; les
+  autres restent actives et sont réabsorbées au rythme du scénario
+  (réallocation, voir `Etat.chomeursExcedentaires`). -/
+  | automatisation (gainPibPb : Int) (emploisSupprimes : Int) (sortiesActivite : Int)
+  /-- Suppression de `postes` emplois publics de la fonction `f`, au coût
+  complet `coutParPosteEuros` par an : économie de dépense (impulsion
+  pondérée par le moteur), baisse directe de l'emploi public, et réponse de
+  l'emploi privé (loi d'Okun) à la seule part de la variation du PIB qui
+  n'est pas la production publique supprimée. -/
+  | suppressionPostes (f : Fonction) (postes : Int) (coutParPosteEuros : Int)
+  /-- Dépense à échéancier sur la fonction `f` : `niveaux` = montants des
+  années successives, M€ de l'année d'entrée en vigueur (le premier est
+  versé tout de suite, les suivants dans la projection, indexés ; le dernier
+  est conservé). Des niveaux négatifs sont des économies (gel d'une
+  revalorisation…). L'impulsion de demande suit le niveau pondéré : un
+  niveau positif est une dépense (multiplicateur plein), un niveau négatif
+  une économie (pondérée par le moteur). Voir `Echeance`. -/
+  | depenseEcheancier (f : Fonction) (niveaux : List Int)
+  /-- Variation du niveau des importations, M€ (substitution d'une énergie
+  importée par une production nationale…). Comme dans le sous-modèle
+  automobile, l'effet passe par la balance commerciale, pas par le PIB. -/
+  | importationsNiveau (deltaMeur : Int)
+  /-- Norme de dépense : les fonctions pilotables (santé, affaires
+  économiques, sécurité-justice, logement-environnement, culture, services
+  généraux) croissent chaque année de `moderationPb` de moins que la
+  tendance. L'économie de l'année passe par le multiplicateur, pondérée par
+  le moteur (dans la projection). -/
+  | normeDepense (moderationPb : Int)
   /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
   publics (accompagnement des entreprises, inspection, formation) et
   baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
@@ -155,15 +182,35 @@ def ajouterEmploi (H : Scenario) (cible : Option Secteur) (d : Int) (s : Etat) :
   let d' := if 0 < d then min d (max (plafond - s.emploiTotal) 0) else d
   { s with emploi := s.emploi.repartir d' cible }
 
-/-- Choc sur le niveau du PIB (M€) : recettes au prorata ; emploi via la loi
-d'Okun (le chômage baisse de `okun × dPib / PIB`), au bénéfice de `cible`. -/
-def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Etat :=
+/-- Choc de demande de travail de `d` emplois (signé), au bénéfice de
+`cible`. Effet de flexion : la population active varie de
+`flexion / (1000 + flexion)` de ces emplois (des inactifs prennent une
+partie des emplois créés ; une partie des emplois détruits pousse à
+l'inactivité), le reste passe par le chômage. -/
+def chocDemandeTravail (H : Scenario) (cible : Option Secteur) (d : Int) (s : Etat) : Etat :=
+  let dActifs := d * H.eco.flexionPm / (1000 + H.eco.flexionPm)
+  ajouterEmploi H cible d { s with actifs := s.actifs + dActifs }
+
+/-- Emplois correspondant à `dChomeurs` chômeurs de moins (loi d'Okun,
+élasticité au SMIC… sont exprimées en chômage) : `(1000 + flexion)/1000`
+emploi par chômeur. -/
+def emploisPourChomeurs (H : Scenario) (dChomeurs : Int) : Int :=
+  dChomeurs * (1000 + H.eco.flexionPm) / 1000
+
+/-- Variation de PIB et de recettes sans effet sur l'emploi. -/
+def chocPibSeul (H : Scenario) (dPib : Int) (s : Etat) : Etat :=
   let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
-  let dEmploi := if s.pib = 0 then 0 else s.actifs * dPib * H.eco.okunPm / (s.pib * 1000)
-  ajouterEmploi H cible dEmploi
-    { s.ajouterRecettesProrata dRecettes with
-      pib := s.pib + dPib
-      importations := s.importations + appliquerPm dPib H.eco.contenuImportDemandePm }
+  { s.ajouterRecettesProrata dRecettes with
+    pib := s.pib + dPib
+    importations := s.importations + appliquerPm dPib H.eco.contenuImportDemandePm }
+
+/-- Choc sur le niveau du PIB (M€) : recettes au prorata ; le chômage baisse
+de `okun × dPib / PIB` (loi d'Okun), converti en emplois avec l'effet de
+flexion, au bénéfice de `cible`. -/
+def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Etat :=
+  let dEmploi := if s.pib = 0 then 0
+    else s.actifs * dPib * H.eco.okunPm * (1000 + H.eco.flexionPm) / (s.pib * 1000000)
+  chocDemandeTravail H cible dEmploi (chocPibSeul H dPib s)
 
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
 multiplicateur, puis `chocPib`. -/
@@ -180,17 +227,23 @@ def appliquerEconomie (M : Moteur) (H : Scenario) (f : Fonction) (montant : Int)
   effetDemande H none (-(appliquerPm montant M.multiplicateurEconomiesPm))
     { s with depensesF := s.depensesF.ajouter f (-montant) }
 
-/-- Choc d'offre de travail : variation du volume d'heures (pm) → PIB à
-l'élasticité du scénario, recettes au prorata, sans effet d'Okun. -/
-def chocHeures (H : Scenario) (variationPm : Int) (s : Etat) : Etat :=
-  let dPib := s.pib * variationPm * H.eco.elasticitePibHeuresPm / 1000000
+/-- Choc d'offre de travail : variation relative `num / den` du volume
+d'heures → PIB à l'élasticité du scénario, recettes au prorata, sans effet
+d'Okun. Une seule division : pas de perte de précision pour les petits chocs. -/
+def chocHeuresRatio (H : Scenario) (num den : Int) (s : Etat) : Etat :=
+  if den = 0 then s else
+  let dPib := s.pib * num * H.eco.elasticitePibHeuresPm / (den * 1000)
   let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
   { s.ajouterRecettesProrata dRecettes with pib := s.pib + dPib }
+
+/-- Variation du volume d'heures de `variationPm` pour mille. -/
+def chocHeures (H : Scenario) (variationPm : Int) (s : Etat) : Etat :=
+  chocHeuresRatio H variationPm 1000 s
 
 /-- Variation du PIB induite par `dEmploi` personnes en emploi de plus (ou
 de moins), à durée du travail inchangée. -/
 def chocEmploi (H : Scenario) (dEmploi : Int) (s : Etat) : Etat :=
-  if s.emploiTotal = 0 then s else chocHeures H (dEmploi * 1000 / s.emploiTotal) s
+  chocHeuresRatio H dEmploi s.emploiTotal s
 
 /-- Prélèvement nouveau (rendement statique `r`, négatif pour une baisse) sur
 l'impôt `i`. Le rendement est réduit de la fuite fiscale ; l'impulsion de
@@ -215,20 +268,23 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- le chômage augmente de `hausse × élasticité` : autant d'emplois en moins,
   -- et autant d'heures en moins dans le PIB
   | .revalorisationSmic h, s =>
-      let dEmploi := -(s.actifs * h * H.eco.elasticiteChomageSmicPm / 10000000)
-      chocEmploi H dEmploi (ajouterEmploi H none dEmploi
+      let dEmploi := -(emploisPourChomeurs H (s.actifs * h * H.eco.elasticiteChomageSmicPm / 10000000))
+      chocEmploi H dEmploi (chocDemandeTravail H none dEmploi
         { s with smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h })
-  -- les actifs supplémentaires trouvent un emploi au taux de chômage courant
-  -- et produisent à la durée du travail en vigueur
+  -- les actifs maintenus (ou libérés) sont en emploi au taux observé lors du
+  -- report de 2010 ; l'écart à l'emploi d'équilibre (taux d'emploi courant)
+  -- est résorbé dans la projection
   | .ageLegal d, s =>
       let dActifs := d * H.eco.actifsParMoisAgeLegal
-      let dEmploi := if s.actifs = 0 then 0 else dActifs * s.emploiTotal / s.actifs
+      let dEmploi := appliquerPm dActifs H.eco.tauxEmploiSeniorsMaintenusPm
+      let dEquilibre := if s.actifs = 0 then 0 else dActifs * s.emploiTotal / s.actifs
       chocEmploi H dEmploi
         { s with
           ageLegalMois := s.ageLegalMois + d
           depensesF := s.depensesF.ajouter .retraites (-(d * H.eco.economieParMoisRetraite))
           actifs := s.actifs + dActifs
-          emploi := s.emploi.repartir dEmploi none }
+          emploi := s.emploi.repartir dEmploi none
+          chomeursExcedentaires := s.chomeursExcedentaires + (dEquilibre - dEmploi) }
   | .dureeTravail v, s =>
       chocHeures H v { s with heuresParEmploi := s.heuresParEmploi + appliquerPm s.heuresParEmploi v }
   -- IS : perte statique au prorata des taux, retour d'assiette, impulsion de demande
@@ -273,13 +329,36 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let economie := evites * H.eco.coutParAccidentEuros / 1000000
       -- journées rendues au travail : 7 h chacune, rapportées au volume d'heures
       let heures : Int := evites * H.eco.joursPerdusParAccident * 7
-      let variationPm : Int := if s₂.heuresTotales ≤ (0 : Int) then (0 : Int) else heures / (s₂.heuresTotales * 1000)
-      chocHeures H variationPm { s₂ with depensesF := s₂.depensesF.ajouter .famille (-economie) }
-  | .automatisation g emplois, s =>
-      let s' := ajouterEmploi H none (-emplois) s
-      let dPib := appliquerPm s'.pib g
+      chocHeuresRatio H heures (s₂.heuresTotales * 1000000)
+        { s₂ with depensesF := s₂.depensesF.ajouter .famille (-economie) }
+  -- réallocation : l'écart à l'emploi d'équilibre (taux d'emploi courant
+  -- appliqué à la population active restante) est résorbé dans la projection
+  | .automatisation g emplois sorties, s =>
+      let dEquilibre := if s.actifs = 0 then 0 else -(sorties * s.emploiTotal / s.actifs)
+      let s' : Etat := { s with
+        actifs := s.actifs - sorties
+        emploi := s.emploi.repartir (-emplois) none
+        chomeursExcedentaires := s.chomeursExcedentaires + (dEquilibre + emplois) }
+      let dPib := appliquerPb s'.pib g
       let dRecettes := if s'.pib = 0 then 0 else dPib * s'.recettes / s'.pib
       { s'.ajouterRecettesProrata dRecettes with pib := s'.pib + dPib }
+  -- la production publique supprimée (au coût des facteurs) est la part
+  -- directe de la baisse du PIB ; l'emploi privé répond au reste
+  | .suppressionPostes f postes cout, s =>
+      let economie := postes * cout / 1000000
+      let dPib := -(appliquerPm (appliquerPm economie M.multiplicateurEconomiesPm) H.eco.multiplicateurPm)
+      let s₁ := chocPibSeul H dPib { s with depensesF := s.depensesF.ajouter f (-economie) }
+      let s₂ := chocDemandeTravail H (some .tertiaireNonMarchand) (-postes) s₁
+      let reste := dPib + economie
+      let dEmploi := if s₂.pib = 0 then 0
+        else s₂.actifs * reste * H.eco.okunPm * (1000 + H.eco.flexionPm) / (s₂.pib * 1000000)
+      chocDemandeTravail H none dEmploi s₂
+  | .depenseEcheancier _ [], s => s
+  | .depenseEcheancier f (n :: reste), s =>
+      let s' := { s with echeances := s.echeances ++ [{ fonction := f, restants := reste, niveau := n, indice := 10000 }] }
+      if n < 0 then appliquerEconomie M H f (-n) s' else appliquerDepense H f.secteur f n s'
+  | .importationsNiveau d, s => { s with importations := s.importations + d }
+  | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)

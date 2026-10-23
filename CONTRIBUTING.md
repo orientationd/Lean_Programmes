@@ -67,6 +67,25 @@ publics et baisse du taux d'accidents ; le sous-modèle calcule coûts
 `ue-*` (`Proprietes/Europe.lean`) traduisent les règles listées dans
 `Hypotheses/Europe.lean` ; en ajouter une = un texte cité + un critère.
 
+Marché du travail : la loi d'Okun et l'élasticité au SMIC sont exprimées
+en chômage ; les emplois s'en déduisent avec l'effet de flexion
+(`emploisPourChomeurs`, `chocDemandeTravail`). Les chocs d'offre de
+travail des mesures (âge de départ, migrations, réallocations par
+`automatisation gainPibPb emplois sortiesActivite`) entrent au taux
+d'emploi propre aux personnes concernées et l'écart à l'emploi d'équilibre
+(`chomeursExcedentaires`) se résorbe au rythme du scénario.
+`suppressionPostes fonction postes coutParPosteEuros` supprime des emplois
+publics. `depenseEcheancier fonction niveaux` fixe une dépense année par
+année (indemnités jusqu'à la retraite, revalorisations cumulées) ; une
+mesure peut aussi être répétée (`repetitions := 5`). Un niveau négatif est
+une économie, pondérée par le moteur comme `economieSur`.
+`normeDepense moderationPb` ralentit la croissance des fonctions
+pilotables (santé, affaires économiques, sécurité-justice, logement-
+environnement, culture, services généraux ; lemme `tauxCroissance_norme`).
+`importationsNiveau deltaMeur` déplace le niveau des importations
+(substitution d'énergie importée), sans effet sur le PIB, comme le
+sous-modèle automobile.
+
 Financement de la dette : `detteNumerique ciblePm rythmePm
 capitalisationPm partResidentsPm partImposeeAvantPm` (tranche de dette
 tokenisée, décote de taux = capitalisation × taux du PFU, perte de PFU
