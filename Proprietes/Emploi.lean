@@ -32,3 +32,17 @@ def emploisAnnonces : Propriete :=
     EmploisAnnoncesRealisables
 
 end Proprietes
+
+namespace Proprietes
+open Modele
+
+/-- Le taux d'accidents du travail rejoint la moyenne de l'Union à l'horizon. -/
+abbrev AccidentsNormeUE (H : Scenario) (_a s : Etat) : Prop :=
+  s.tauxAccidentsPdm ≤ H.eco.tauxAccidentsUEPdm
+
+def accidentsTravail : Propriete :=
+  .mk' "accidents-travail-norme-ue" "Accidents du travail à la norme UE"
+    "À l'horizon, le taux d'accidents du travail avec arrêt pour 10 000 emplois ne dépasse pas la moyenne de l'Union européenne."
+    AccidentsNormeUE
+
+end Proprietes

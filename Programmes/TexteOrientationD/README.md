@@ -154,6 +154,64 @@ personnes est traduite en +0,05 % de PIB et −20 000 emplois de chauffeurs
 chauffeurs (Insee, Observatoire du T3P), part du transport de personnes
 dans le PIB.
 
+### O-14 — Accidents du travail : rejoindre la moyenne européenne
+
+Des partenaires d'accompagnement (application des normes, prévention),
+financés par 500 M€/an de fonds dédiés de l'État, pour ramener le taux
+d'accidents du travail avec arrêt de 190 à 110 pour 10 000 emplois, la
+moyenne de l'Union (Eurostat). Le sous-modèle chiffre les accidents
+évités (≈ 235 000 par an à terme), leur coût pour les finances publiques
+(24 000 € chacun, branche AT-MP), les journées de travail rendues au PIB
+(70 par accident) et les décès évités (13 pour 10 000 accidents).
+Propriété « accidents du travail à la norme UE ». Variantes : fonds
+doublés ; objectif à moitié atteint.
+
+### O-15 — Logiciel libre dans l'État
+
+Migration de tous les logiciels et postes de l'État vers le libre :
+900 M€ de migration (comptés en une fois) puis 400 M€/an d'économies de
+licences à partir de la quatrième année (mesure en deux temps, O-15 et
+O-15b). Montants : hypothèses à documenter avec la DINUM (accords-cadres
+en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
+
+### O-16 à O-19 — Universités
+
+* **O-16** Reprise de la dette et apurement des déficits : les universités
+  sont déjà dans le périmètre des administrations publiques, la reprise de
+  leur dette est donc neutre sur la dette et le solde consolidés ;
+  l'apurement de leurs déficits de fonctionnement coûte ≈ 500 M€/an
+  (hypothèse, Cour des comptes 2025).
+* **O-17** Reconstruction aux normes (démolition puis construction) des
+  campus de Nanterre, Toulouse, Montpellier et Grenoble : 4 × 1 Md€ sur
+  huit ans à partir de 2027, soit 500 M€/an d'investissement (emplois dans
+  la construction), montant gardé constant au-delà par prudence.
+* **O-18** Parcoursup ouvert aux étudiants étrangers à nombre d'admis
+  constant : sans effet budgétaire, pour mémoire.
+* **O-19** Places pour les bacheliers sans affectation : ≈ 10 000 par an,
+  trois années de licence, 10 500 € par étudiant : 315 M€/an et 2 000
+  postes d'enseignants-chercheurs annoncés (vérifiés par la propriété
+  « emplois annoncés réalisables »).
+
+### O-20 à O-23 — Économies et recettes
+
+* **O-20** Aide à l'apprentissage réservée à l'infra-bac et aux PME :
+  −2 Md€/an (Cour des comptes 2025 : 6 Md€ dont la moitié pour des bac+3
+  et plus).
+* **O-21** Commande publique (centrales d'achat, standardisation,
+  ententes) : −3 Md€/an sur les services généraux (hypothèse médiane).
+* **O-22** Médicaments et dispositifs : −2 Md€/an (génériques,
+  biosimilaires, prix, pertinence ; Assurance maladie 2025) ; création
+  d'une agence française du médicament qui produit les références en
+  rupture : 500 M€ d'investissement puis 300 M€/an, 1 500 emplois
+  annoncés (hypothèses).
+* **O-23** Fraude et travail dissimulé (BTP, restauration, services à la
+  personne) : +2 Md€ de cotisations et +1 Md€ de TVA par an à partir de la
+  troisième année (HCFiPS 2024 : 6 à 8 Md€ éludés), nets de la fuite
+  fiscale du modèle.
+
+Ensemble : ≈ 9,7 Md€/an d'amélioration brute du solde en régime de
+croisière.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

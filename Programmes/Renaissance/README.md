@@ -15,6 +15,14 @@ porte un montant.
 |---|---|
 | RE-01 « Droit au brut » : baisse des cotisations salariales (jusqu'à 250 € net/mois au salaire médian) | −40 Md€/an de cotisations (RMC, 6 octobre 2026) |
 | RE-02 Réforme de l'assurance chômage | objectif déclaré de 100 000 emplois (vérifié par la propriété « emplois annoncés réalisables ») |
+| RE-03 Année blanche 2028 sur les prestations (petites retraites épargnées) | −10 Md€/an à partir de 2028 (6 retraites, 4 autres prestations ; conversion documentée) |
+| RE-04 100 000 postes de fonctionnaires (départs volontaires, non-remplacements) | −6,25 Md€/an (62 500 € par poste) |
+| RE-05 Taxe sur les rachats d'actions | +0,3 Md€ d'IS (Ifrap) |
+
+Objectif annoncé le 2 juillet 2026 : 120 à 150 Md€ d'économies sans hausse
+d'impôts, deux tiers sur les dépenses sociales, déficit sous 3 % « avant
+2032 » et équilibre en 2037. Les mesures publiées à ce jour (≈ 16 Md€)
+n'en représentent qu'une fraction : le reste n'est pas détaillé.
 
 Le financement annoncé (« économies sur les dépenses sociales ») n'a pas
 de montant : le modèle montre donc le coût brut de la mesure.
@@ -23,7 +31,7 @@ de montant : le modèle montre donc le coût brut de la mesure.
 
 * Retraite universelle par points (« un euro cotisé ouvre les mêmes
   droits »), sans âge légal, part de capitalisation.
-* « Frein d'urgence » et année blanche sur les dépenses sociales.
+* « Frein d'urgence » sur les dépenses sociales au-delà de l'année blanche ; règle d'or et « impunité budgétaire zéro » (référendum).
 * 13e mois pour tous ; suppression du plafond de 220 heures
   supplémentaires ; « Constitution du travail ».
 * Mutuelle publique à 1 €/jour ; quotas d'immigration votés par le

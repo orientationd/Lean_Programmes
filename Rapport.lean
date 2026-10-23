@@ -173,6 +173,8 @@ def etatJson (s : Etat) : Json :=
     ("balanceCommerciale", toJson s.balanceCommerciale),
     ("balanceCourante", toJson s.balanceCourante), ("balanceCourantePb", toJson s.balanceCourantePb),
     ("robotisationPb", toJson s.robotisationPb),
+    ("tauxAccidentsPdm", toJson s.tauxAccidentsPdm),
+    ("accidentsTravail", toJson s.accidentsTravail),
     ("migrationAnnuelleMilliers", toJson s.migrationAnnuelleMilliers),
 
     ("heuresTotalesMillions", toJson s.heuresTotales),
@@ -256,7 +258,10 @@ def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
     ("dettePb", toJson (s.dettePb - a.dettePb)),
     ("emplois", toJson (s.emploiTotal - a.emploiTotal)),
     ("recettes", toJson (s.recettes - a.recettes)),
-    ("depenses", toJson (s.depenses - a.depenses))]
+    ("depenses", toJson (s.depenses - a.depenses)),
+    ("exportations", toJson (s.exportations - a.exportations)),
+    ("importations", toJson (s.importations - a.importations)),
+    ("balanceCourante", toJson (s.balanceCourante - a.balanceCourante))]
 
 def rapportSyntheseJson : Json :=
   let annee0 := Hypotheses.reference2026.annee
@@ -315,6 +320,10 @@ def rapportSyntheseJson : Json :=
         ("decesEvitesParMillionVehicules", toJson H.energie.decesEvitesParMillionVehicules),
         ("vehiculesParBorne", toJson H.energie.vehiculesParBorne),
         ("chomageFrictionnelPb", toJson H.eco.chomageFrictionnelPb),
+        ("coutParAccidentEuros", toJson H.eco.coutParAccidentEuros),
+        ("joursPerdusParAccident", toJson H.eco.joursPerdusParAccident),
+        ("letaliteAccidentsPdm", toJson H.eco.letaliteAccidentsPdm),
+        ("tauxAccidentsUEPdm", toJson H.eco.tauxAccidentsUEPdm),
         ("soldeMigratoireMilliers", toJson H.demo.soldeMigratoireMilliers),
         ("partActiveMigrantsPm", toJson H.demo.partActiveMigrantsPm),
         ("moteurs", Json.mkObj <| moteurs.map fun M =>
@@ -322,6 +331,9 @@ def rapportSyntheseJson : Json :=
             ("tendanciel", Json.arr <| (trajectoire M H horizonSynthese (etatDepart H)).toArray.map etatJson),
             ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
               (p.id, Json.arr <| (p.trajectoire M H horizonSynthese 0 (etatDepart H)).toArray.map etatJson))]))]),
+    ("textesEuropeens", Json.arr <| Hypotheses.Europe.textes.toArray.map fun t =>
+      Json.mkObj [("id", toJson t.id), ("titre", toJson t.titre), ("reference", toJson t.reference),
+        ("critere", toJson t.critere)]),
     ("hypotheses", Json.mkObj [
       ("reference", Json.mkObj [("description", toJson Hypotheses.reference2026.description),
         ("sources", sourcesJson Hypotheses.reference2026.sources)]),

@@ -83,6 +83,7 @@ def reference2026 : Reference where
     importations := 985200         -- exportations − solde biens et services (−64,4 + 59,2 = −5,2 Md€, BdF, 12 mois à sept. 2025)
     revenusNets := -5300           -- revenus primaires et secondaires nets (BdF, 12 mois à sept. 2025) ; solde courant −10,5 Md€
     variationImportsAnnuelle := 0
+    tauxAccidentsPdm := 190        -- 564 000 accidents avec arrêt / 29,3 M d'emplois (CNAM 2023)
     robotisationPb := 0
     decesPollutionAir := 40000     -- décès attribuables aux PM2,5 (Santé publique France, 2021)
     parcElectriqueMilliers := 1600 -- voitures 100 % électriques en circulation fin 2025 (Avere-France, ordre de grandeur)

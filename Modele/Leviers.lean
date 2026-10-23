@@ -90,6 +90,9 @@ inductive Levier where
   | depenseSur (fonction : Fonction) (montant : Int)
   /-- Économie, M€/an, sur une fonction identifiée. -/
   | economieSur (fonction : Fonction) (montant : Int)
+  /-- Investissement public (bâtiments, infrastructures), M€/an, imputé à une
+  fonction mais dont les emplois vont à la construction. -/
+  | investissement (fonction : Fonction) (montant : Int)
   /-- Durée du travail : variation des heures annuelles par emploi, pm
   (`-86` : 35 h → 32 h). Le PIB suit le volume d'heures à l'élasticité du
   scénario, sans effet d'Okun sur l'emploi. -/
@@ -125,6 +128,12 @@ inductive Levier where
   gain de productivité `gainPibPm` sur le niveau du PIB (sans effet
   d'Okun) et `emploisSupprimes` personnes en moins dans l'emploi. -/
   | automatisation (gainPibPm : Int) (emploisSupprimes : Int)
+  /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
+  publics (accompagnement des entreprises, inspection, formation) et
+  baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
+  Les accidents évités réduisent la dépense d'indemnisation (fonction
+  famille-chômage) et rendent des journées de travail au PIB. -/
+  | preventionAccidents (fondsMeur : Int) (baissePm : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -187,6 +196,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .economie m, s => appliquerEconomie M H .nonVentile m s
   | .depenseSur f m, s => appliquerDepense H f.secteur f m s
   | .economieSur f m, s => appliquerEconomie M H f m s
+  | .investissement f m, s => appliquerDepense H (some .construction) f m s
   | .prelevement r, s => appliquerPrelevement M H .autres r s
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
@@ -244,6 +254,16 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let dExport := s₂.recettesTourisme - s₁.recettesTourisme
       chocPib H none (appliquerPm dExport 800) { s₂ with exportations := s₂.exportations + dExport }
   | .robotisation g, s => { s with robotisationPb := s.robotisationPb + g }
+  | .preventionAccidents fonds baisse, s =>
+      let s₁ := appliquerDepense H none .famille fonds s
+      let avant := s₁.accidentsTravail
+      let s₂ := { s₁ with tauxAccidentsPdm := s₁.tauxAccidentsPdm - appliquerPm s₁.tauxAccidentsPdm baisse }
+      let evites := avant - s₂.accidentsTravail
+      let economie := evites * H.eco.coutParAccidentEuros / 1000000
+      -- journées rendues au travail : 7 h chacune, rapportées au volume d'heures
+      let heures : Int := evites * H.eco.joursPerdusParAccident * 7
+      let variationPm : Int := if s₂.heuresTotales ≤ (0 : Int) then (0 : Int) else heures / (s₂.heuresTotales * 1000)
+      chocHeures H variationPm { s₂ with depensesF := s₂.depensesF.ajouter .famille (-economie) }
   | .automatisation g emplois, s =>
       let s' := ajouterEmploi H none (-emplois) s
       let dPib := appliquerPm s'.pib g

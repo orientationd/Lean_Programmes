@@ -39,6 +39,20 @@ Trois mesures :
   le nombre de nuitées.
 * **O-13** — autorisation de la conduite autonome (FSD), avec indemnisation
   des chauffeurs de taxi titulaires d'une licence jusqu'à leur retraite.
+* **O-14** — partenaires d'accompagnement à l'application des normes et à
+  la lutte contre les accidents du travail, financés par des fonds dédiés
+  de l'État ; objectif : la moyenne de l'Union européenne.
+* **O-15** — passage au logiciel libre pour tous les logiciels de l'État et
+  tous ses ordinateurs.
+* **O-20** à **O-23** — économies et recettes : aide à l'apprentissage
+  recentrée, commande publique, médicaments et dispositifs avec une agence
+  française du médicament qui produit les références en rupture, lutte
+  contre la fraude et le travail dissimulé.
+* **O-16** à **O-19** — universités : reprise de la dette et apurement des
+  déficits, reconstruction aux normes de campus dégradés (Nanterre,
+  Toulouse, Montpellier, Grenoble), Parcoursup pour les étudiants
+  étrangers à nombre constant, places pour les bacheliers sans
+  affectation.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -135,6 +149,63 @@ constant, prudent). Automatisation du transport de personnes : +0,05 % de
 PIB (hypothèse : 0,3 % de PIB pour taxis, VTC et livraison, 15 % de gain
 de coût) et 20 000 emplois de chauffeurs en moins. -/
 def indemnisationTaxis : Int := 1500
+
+/-- Accidents du travail : 190 accidents avec arrêt pour 10 000 emplois en
+France contre ≈ 110 en moyenne dans l'Union (Eurostat). Fonds dédiés :
+500 M€/an (hypothèse : réseau de partenaires d'accompagnement des
+entreprises, renfort de l'inspection et de la médecine du travail). Objectif
+atteint à l'horizon : −42,5 % du taux (190 → 110, arrondi entier). Variante : fonds doublés,
+objectif inchangé. -/
+def fondsPrevention : Int := 500
+def baisseAccidentsPm : Int := 425
+
+/-- Logiciel libre : licences et services propriétaires de l'État ≈ 1 Md€/an
+(hypothèse : accords-cadres Microsoft, Oracle, SAP… de l'État et de ses
+opérateurs) ; économie nette de 400 M€/an à partir de la quatrième année,
+après une migration de 900 M€ (formation, adaptation, matériel) étalée sur
+trois ans et comptée en une fois dans la dette, par prudence. -/
+def economieLibre : Int := 400
+def coutMigrationLibre : Int := 900
+
+/-- Universités. Reprise de la dette : les universités sont des organismes
+divers d'administration centrale, déjà consolidés dans la dette publique ;
+la reprise par l'État est un transfert interne, neutre sur le solde et la
+dette des administrations publiques. Ce qui coûte, c'est l'apurement des
+déficits de fonctionnement : ≈ 60 universités en déficit en 2024, pour
+environ 500 M€/an (hypothèse ; Cour des comptes, situation financière des
+universités, 2025). Reconstruction : quatre campus démolis puis rebâtis aux
+normes, 1 Md€ chacun (hypothèse : opérations campus comparables, Jussieu
+≈ 2 Md€), étalés sur huit ans à partir de 2027 : 500 M€/an. Places pour les
+bacheliers sans affectation : ≈ 10 000 par an sans proposition en fin de
+procédure Parcoursup (SIES), trois années de licence, 10 500 € par
+étudiant et par an (dépense moyenne, MESR) : 315 M€/an, et 2 000 postes
+d'enseignants-chercheurs annoncés. -/
+def deficitsUniversites : Int := 500
+def reconstructionCampus : Int := 500
+def placesSansFac : Int := 315
+
+/-- Économies et recettes. Apprentissage : 6 Md€ d'aides à l'embauche
+d'apprentis, dont la moitié pour des niveaux bac+3 et plus et dans de
+grandes entreprises (Cour des comptes, 2025) ; recentrage sur l'infra-bac et
+les PME : 2 Md€/an. Commande publique : centrales d'achat, standardisation,
+lutte contre les ententes ; 3 Md€/an (hypothèse médiane des estimations,
+Autorité de la concurrence, IGF). Médicaments et dispositifs : génériques,
+biosimilaires, prix des innovations, pertinence des prescriptions, 2 Md€/an
+(Assurance maladie, rapport charges et produits 2025) ; l'agence française
+du médicament qui produit les références en rupture coûte 300 M€/an
+(hypothèse : établissement pharmaceutique public de taille moyenne,
+investissement initial de 500 M€). Fraude et travail dissimulé (BTP,
+restauration, services à la personne) : manque à gagner de cotisations
+estimé entre 6 et 8 Md€ par an (Haut Conseil du financement de la
+protection sociale, 2024) ; récupération de 2 Md€/an de cotisations et 1 Md€
+de TVA, montée en charge sur deux ans. -/
+def economieApprentissage : Int := 2000
+def economieCommandePublique : Int := 3000
+def economieMedicament : Int := 2000
+def coutAgenceMedicament : Int := 300
+def investissementAgence : Int := 500
+def fraudeCotisations : Int := 2000
+def fraudeTVA : Int := 1000
 
 /-! ## Mesures -/
 
@@ -273,13 +344,74 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 13 ; {indemnisationTaxis} M€/an d'indemnisation (60 000 licences × 25 000 €, hypothèse), +0,05 % de PIB et −20 000 emplois de chauffeurs (hypothèses, voir `indemnisationTaxis`)"
     leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 5 20000]
     variantes := [
-      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] }
+      { nom := "automatisation plus large : +0,15 % de PIB, −60 000 emplois", leviers := [.depenseSur .famille indemnisationTaxis, .automatisation 15 60000] }] },
+
+  { id := "O-14"
+    titre := "Partenaires d'accompagnement des normes et de lutte contre les accidents du travail, financés par l'État ; objectif : moyenne de l'Union européenne"
+    source := s!"Texte Orientation D, mesure 14 ; {fondsPrevention} M€/an de fonds dédiés et taux d'accidents ramené de 190 à 110 pour 10 000 emplois (hypothèses, voir `fondsPrevention`) ; sources du sous-modèle : CNAM, rapport AT-MP 2023 ; Eurostat, accidents du travail 2022"
+    leviers := [.preventionAccidents fondsPrevention baisseAccidentsPm]
+    variantes := [
+      { nom := "fonds doublés (1 Md€/an)", leviers := [.preventionAccidents 1000 baisseAccidentsPm] },
+      { nom := "objectif à moitié atteint (−21 %)", leviers := [.preventionAccidents fondsPrevention 210] }] },
+
+  { id := "O-15"
+    titre := "Passage au logiciel libre pour tous les logiciels et tous les ordinateurs de l'État"
+    source := s!"Texte Orientation D, mesure 15 ; migration {coutMigrationLibre} M€ en une fois puis {economieLibre} M€/an d'économies de licences à partir de la quatrième année (hypothèses, voir `economieLibre`)"
+    leviers := [.depensePonctuelle coutMigrationLibre] },
+  { id := "O-15b"
+    titre := "Logiciel libre : économies de licences en régime de croisière"
+    source := "Texte Orientation D, mesure 15 (suite) ; entrée en vigueur la quatrième année"
+    leviers := [.economieSur .fonctionnement economieLibre]
+    debut := 3 },
+
+  { id := "O-16"
+    titre := "Reprise de la dette des universités et apurement de leurs déficits"
+    source := s!"Texte Orientation D, mesure 16 ; la reprise de dette est un transfert interne aux administrations publiques (neutre) ; apurement des déficits : {deficitsUniversites} M€/an (hypothèse, Cour des comptes 2025 : ≈ 60 universités en déficit)"
+    leviers := [.depenseSur .enseignement deficitsUniversites] },
+
+  { id := "O-17"
+    titre := "Reconstruction aux normes des universités de Nanterre, Toulouse, Montpellier et Grenoble (démolition puis construction)"
+    source := s!"Texte Orientation D, mesure 17 ; 4 × 1 Md€ sur huit ans à partir de 2027 : {reconstructionCampus} M€/an d'investissement (hypothèse), emplois dans la construction ; le modèle garde la dépense constante au-delà des huit ans (prudent)"
+    leviers := [.investissement .enseignement reconstructionCampus]
+    debut := 2 },
+
+  { id := "O-18"
+    titre := "Parcoursup ouvert aux étudiants étrangers, à nombre d'admis constant"
+    source := "Texte Orientation D, mesure 18 ; à effectifs constants, sans effet budgétaire : procédure d'admission unifiée (remplace Études en France pour les candidats hors UE) ; enregistrée pour mémoire"
+    leviers := [] },
+
+  { id := "O-19"
+    titre := "Ouverture de places pour tous les bacheliers sans affectation"
+    source := s!"Texte Orientation D, mesure 19 ; ≈ 10 000 bacheliers sans proposition par an (SIES, Parcoursup 2025) × 3 ans × 10 500 € : {placesSansFac} M€/an ; 2 000 postes d'enseignants-chercheurs annoncés"
+    leviers := [.depenseSur .enseignement placesSansFac, .annonceEmplois 2000] },
+
+  { id := "O-20"
+    titre := "Aide à l'apprentissage réservée aux niveaux infra-bac et aux PME"
+    source := s!"Texte Orientation D, mesure 20 ; Cour des comptes, « L'aide exceptionnelle à l'apprentissage », 2025 : 6 Md€ dont la moitié pour des bac+3 et plus ; économie retenue {economieApprentissage} M€/an"
+    leviers := [.economieSur .famille economieApprentissage] },
+
+  { id := "O-21"
+    titre := "Commande publique : centrales d'achat, standardisation, lutte contre les ententes"
+    source := s!"Texte Orientation D, mesure 21 ; {economieCommandePublique} M€/an (hypothèse médiane : Autorité de la concurrence sur les ententes, IGF sur la mutualisation des achats) ; répartie sur les services généraux"
+    leviers := [.economieSur .fonctionnement economieCommandePublique] },
+
+  { id := "O-22"
+    titre := "Médicaments et dispositifs : génériques, biosimilaires, prix, pertinence ; agence française du médicament produisant les références en rupture"
+    source := s!"Texte Orientation D, mesure 22 ; économies {economieMedicament} M€/an (Assurance maladie, charges et produits 2025) ; agence publique : {investissementAgence} M€ d'investissement puis {coutAgenceMedicament} M€/an de fonctionnement (hypothèses) ; 1 500 emplois industriels annoncés"
+    leviers := [.economieSur .sante economieMedicament, .depensePonctuelle investissementAgence,
+                .depenseSur .sante coutAgenceMedicament, .annonceEmplois 1500] },
+
+  { id := "O-23"
+    titre := "Lutte contre la fraude et le travail dissimulé (BTP, restauration, services à la personne)"
+    source := s!"Texte Orientation D, mesure 23 ; HCFiPS 2024 : 6 à 8 Md€ de cotisations éludées par an ; récupération de {fraudeCotisations} M€ de cotisations et {fraudeTVA} M€ de TVA par an, en régime de croisière la troisième année ; le modèle applique sa fuite fiscale à ces recettes"
+    leviers := [.prelevementSur .cotisations fraudeCotisations, .prelevementSur .tva fraudeTVA]
+    debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude)."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

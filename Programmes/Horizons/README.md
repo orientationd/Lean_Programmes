@@ -17,6 +17,7 @@
 | H-03 Fonds unique d'adaptation au changement climatique | +2 Md€/an, logement-environnement |
 | H-04 Deux heures supplémentaires par semaine exonérées | +1,7 % d'heures par emploi (recours 30 %, hypothèse), −0,3 Md€ de cotisations |
 | H-05 Immigration légale divisée par deux | solde migratoire −90 000 par an (hypothèse de conversion) ; population et population active suivent |
+| H-06 15 % de capitalisation | pour mémoire, sans levier |
 
 ## Non modélisé, faute de montant dans les sources
 
