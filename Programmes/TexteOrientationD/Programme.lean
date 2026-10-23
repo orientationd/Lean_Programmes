@@ -68,7 +68,8 @@ Mesures (extrait) :
 * **O-35** à **O-42** — redressement compatible avec les positions du PS :
   taxe Zucman, CSG sur les gros héritages, taxe numérique à 15 %,
   exonérations de cotisations, fraude fiscale et train de vie de l'État,
-  niches fiscales, Pacte Dutreil et holdings, norme de dépense.
+  niches fiscales, Pacte Dutreil divisé par deux et holdings, norme de
+  dépense ; **O-43** défense −1 Md€ par an ; **O-44** 174 trimestres.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -455,9 +456,12 @@ scénario central) et calcule l'effet d'activité.
 * `nichesFiscales` = 8 Md€ : 465 niches pour 88,3 Md€ en 2026 (PLF 2026) ;
   −10 % hors Pacte Dutreil (traité à part) et hors dispositifs pour les
   ménages modestes, réparti entre IR (4), IS (2) et TVA (2).
-* `pacteDutreil` = 1,3 Md€ (abattement de 75 % à 50 %) et `holdings` =
-  1,0 Md€ (taxe sur les holdings élargie) : Cour des comptes, note du
-  21 septembre 2026, à comportements inchangés.
+* `pacteDutreil` = 1,95 Md€ : Pacte Dutreil divisé par deux, abattement de
+  75 % à 37,5 %. La Cour des comptes (note du 21 septembre 2026) chiffre à
+  1,3 Md€ le passage à 50 % (25 points, pactes futurs, comportements
+  inchangés) ; même méthode, proportionnelle aux points d'abattement
+  retirés : 1,3 × 37,5 / 25 = 1,95 Md€ (le dispositif coûtait 5,5 Md€ en
+  2024). `holdings` = 1,0 Md€ (taxe sur les holdings élargie, même note).
 * `normeDepense` = 50 pb : les dépenses pilotables (santé, affaires
   économiques, sécurité-justice, logement-environnement, culture, services
   généraux ; ≈ 739 Md€ en 2025) croissent de 2,3 % au lieu de 2,8 % par an,
@@ -471,7 +475,23 @@ def exonerationsCotisations : Int := 4000
 def fraudeFiscale : Int := 3000
 def trainDeVieEtat : Int := 3100
 def nichesFiscales : Int := 8000
-def pacteDutreil : Int := 1300
+def pacteDutreil : Int := 1950
+
+/-- Défense (O-43) : −1 Md€ par an sur le budget de la défense (53 Md€ en
+2025, COFOG), hors norme de dépense. -/
+def economieDefense : Int := 1000
+
+/-- Durée de cotisation (O-44) : 174 trimestres au lieu de 172, soit six mois
+de plus pour les départs liés à la durée. Sans âge légal (O-07), la durée est
+la contrainte de la plupart des départs : plus de neuf retraités sur dix
+liquident au taux plein, surtout au titre de la durée (COR, génération 1950) ;
+les carrières incomplètes partent à l'âge du taux plein automatique.
+`partDepartsDuree` = 800 ‰ (hypothèse) : âge moyen de départ reculé de
+6 × 0,8 ≈ 5 mois. Coût et actifs par mois : hypothèses économiques du
+scénario (réforme de 2023). -/
+def partDepartsDuree : Int := 800
+/-- Arrondi au mois le plus proche : 4,8 → 5. -/
+def moisDureeSupplementaire : Int := (6 * partDepartsDuree + 500) / 1000
 def holdings : Int := 1000
 def normeDepensePb : Int := 50
 
@@ -612,7 +632,7 @@ def mesures : List Mesure := [
     leviers := [.deploiementBornes 50000 8000] },
 
   { id := "O-07"
-    titre := "Fin de l'âge légal : départ à la durée cotisée (172 trimestres), réduite selon la pénibilité"
+    titre := "Fin de l'âge légal : départ à la durée cotisée (172 trimestres, 174 avec O-44), réduite selon la pénibilité"
     source := "Texte Orientation D, mesure 7. Conversion : le modèle ne connaît qu'un âge moyen de départ ; sans borne d'âge, les carrières commencées avant 21 ans partent avant 64 ans et la réduction pour pénibilité avance encore les métiers exposés : âge moyen de départ supposé avancé de 6 mois (hypothèse à étayer avec le COR), coût et actifs selon l'hypothèse économique du scénario"
     leviers := [.ageLegal (-6)]
     variantes := [
@@ -843,8 +863,8 @@ def mesures : List Mesure := [
     debut := 2 },
 
   { id := "O-41"
-    titre := "Fiscalité du patrimoine (Cour des comptes) : Pacte Dutreil ramené à 50 %, taxe sur les holdings élargie"
-    source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
+    titre := "Fiscalité du patrimoine : Pacte Dutreil divisé par deux (abattement 75 % → 37,5 %), taxe sur les holdings élargie"
+    source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 (1,3 Md€ pour 75 % → 50 %, proportionnel) : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
     leviers := [.prelevementSur .autres (pacteDutreil + holdings)]
     debut := 2 },
 
@@ -853,13 +873,25 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 42 ; {normeDepensePb} pb de moins par an sur ≈ 739 Md€ de dépenses pilotables (2025) : 2,3 % au lieu de 2,8 %"
     leviers := [.normeDepense normeDepensePb]
     debut := 2
-    variantes := [{ nom := "zéro volume (100 pb)", leviers := [.normeDepense 100] }] }
+    variantes := [{ nom := "zéro volume (100 pb)", leviers := [.normeDepense 100] }] },
+
+  { id := "O-43"
+    titre := "Budget de la défense : −1 Md€ par an"
+    source := s!"Texte Orientation D, mesure 43 ; {economieDefense} M€ par an sur 53 Md€ (2025)"
+    leviers := [.economieSur .defense economieDefense]
+    debut := 2 },
+
+  { id := "O-44"
+    titre := "Durée de cotisation portée de 172 à 174 trimestres"
+    source := s!"Texte Orientation D, mesure 44 ; +2 trimestres, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse ; COR) : âge moyen de départ +{moisDureeSupplementaire} mois"
+    leviers := [.ageLegal moisDureeSupplementaire]
+    debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense)."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

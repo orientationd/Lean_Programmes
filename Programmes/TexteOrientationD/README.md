@@ -327,13 +327,15 @@ variante.
 | **O-38** Reconfiguration des exonérations de cotisations | 4 Md€ (PS) | −0,09 pt | −0,06 % |
 | **O-39** Fraude fiscale et train de vie de l'État | 6,1 Md€ (12,1 du PS moins O-21 et O-23) | −0,13 pt | −0,12 % |
 | **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,11 % |
-| **O-41** Pacte Dutreil à 50 %, taxe sur les holdings élargie | 2,3 Md€ (Cour des comptes) | −0,05 pt | −0,03 % |
+| **O-41** Pacte Dutreil divisé par deux (75 % → 37,5 %), taxe sur les holdings élargie | 2,95 Md€ (Cour des comptes, proportionnel) | −0,07 pt | −0,04 % |
 | **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,55 pt | −0,75 % |
+| **O-43** Défense : −1 Md€ par an | 1 Md€ sur 53 | −0,02 pt | −0,03 % |
+| **O-44** Durée de cotisation : 174 trimestres au lieu de 172 | âge moyen de départ +5 mois (80 % des départs liés à la durée, hypothèse) : ≈ 3,3 Md€ de pensions, 150 000 actifs | −0,33 pt | +0,29 % |
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat : le Texte Orientation D passe de 8,1 % à 6,7 % de déficit en
-2035** (dette 142 % du PIB, chômage 8,2 %). Le modèle évalue désormais la
+**Résultat : le Texte Orientation D passe de 8,1 % à 6,3 % de déficit en
+2035** (dette 139 % du PIB, chômage 8,3 %). Le modèle évalue désormais la
 propriété « Budget à l'équilibre en 2035 » pour tous les programmes ;
 aucun ne la tient.
 
@@ -343,17 +345,17 @@ les intérêts montent vers 4 % : revenir à 0 % demande un effort permanent
 de l'ordre de 6,5 à 7 points de PIB. Ordres de grandeur, calculés avec le
 modèle (scénario central, moteur de demande) :
 
-| En plus du paquet O-35 à O-42 | Déficit 2035 | Chômage 2035 |
+| En plus du paquet O-35 à O-44 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 6,7 % | 8,2 % |
-| Abandon de O-08 (IS au taux le plus bas de l'UE) | 5,9 % | 8,4 % |
-| … et norme à zéro volume (100 pb au lieu de 50) | 5,4 % | 8,7 % |
-| … et norme de 300 pb par an | 2,8 % | 10,1 % |
-| … et norme de 650 pb par an (dépenses pilotables −40 % en 2035) | ≈ 0 % | ≈ 11,5 % |
+| Rien | 6,3 % | 8,3 % |
+| Abandon de O-08 (IS au taux le plus bas de l'UE) | 5,5 % | 8,5 % |
+| … et norme à zéro volume (100 pb au lieu de 50) | 5,0 % | 8,8 % |
+| … et norme de 300 pb par an | 3,0 % | 9,9 % |
+| … et norme de 600 pb par an (dépenses pilotables ≈ −40 % en 2035) | ≈ 0 % | ≈ 11,3 % |
 
 La dernière ligne montre la taille du problème plutôt qu'une option : par
 le multiplicateur, une consolidation de cette ampleur réduit le PIB de
-≈ 5,5 % et fait monter le chômage de plus de trois points. Les postes du
+≈ 7 % et fait monter le chômage de trois points. Les postes du
 Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
 +0,76 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
 (enseignants, +0,21 pt).
