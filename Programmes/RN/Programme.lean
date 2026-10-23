@@ -82,5 +82,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "Dossier de presse du 6 octobre 2026, via Institut de l'Entreprise (note IDEP) et presse (consultés le 21 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.RN

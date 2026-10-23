@@ -63,7 +63,7 @@ def mesures : List Mesure := [
   { id := "PC-08", titre := "Programme nucléaire : 20 EPR2 et 12 SMR d'ici 2050"
     source := s!"Discours de présentation du plan (F. Roussel, 6 novembre 2023) : « 20 réacteurs EPR2 et 12 réacteurs modulaires (SMR NUWARD) d'ici 2050 », prolongation du parc au-delà de 60 ans. Financement : hypothèse du schéma gouvernemental (voir `pretEPR`), soit {pretEPR} M€/an de prêt de l'État à EDF"
     leviers := [.pretEtat pretEPR]
-    debut := 2 },
+    debut := 0 },
   { id := "PC-10", titre := "Électrification du parc : fin des ventes thermiques en 2035, 2,5 millions de voitures par an"
     source := s!"{plan}, B.1 Transports, p. 17-18 et B.3, p. 29 : parc entièrement électrifié en 2048, capacité de 2,5 millions de voitures par an d'ici 2035 ; conversion : +500 000 électriques par an au-delà de la tendance, sans prime (interdiction), coût public nul ; bornes correspondantes non chiffrées par la source"
     leviers := [.aideAchatElectrique 500000 0] },
@@ -79,5 +79,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "https://ecologie.pcf.fr/plan-climat/ et document « Empreinte 2050 » (consultés le 21 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.PCF

@@ -45,6 +45,20 @@ def equilibre2035 : Propriete :=
     "Dix ans après le départ, le solde public est à l'équilibre ou en excédent (déficit ≤ 0)."
     EquilibreEn2035 (annee := some 10)
 
+/-- Déficits (pb du PIB) de chaque année d'une trajectoire. -/
+def deficits (traj : List Etat) : List Int := traj.map Etat.deficitPb
+
+/-- Le déficit baisse strictement chaque année, à partir de l'entrée en
+vigueur (comparée à l'année précédente). -/
+def baisseChaqueAnnee (entree : Nat) (ds : List Int) : Bool :=
+  (List.range ds.length).all fun t =>
+    decide (t < max entree 1) || decide (ds.getD t 0 < ds.getD (t - 1) 0)
+
+def deficitEnBaisse : Propriete :=
+  .surTrajectoire "deficit-en-baisse" "Déficit en baisse chaque année"
+    "De l'entrée en vigueur du programme à 2035, le déficit public (en % du PIB) baisse chaque année par rapport à l'année précédente."
+    (fun _ entree _ traj => baisseChaqueAnnee entree (deficits traj)) (annee := some 10)
+
 /-- Dette/PIB en 2035 au plus égale à celle de départ (produit en croix). -/
 abbrev DetteStabiliseeEn2035 (H : Scenario) (_tendanciel s : Etat) : Prop :=
   s.dette * H.reference.etat.pib ≤ H.reference.etat.dette * s.pib

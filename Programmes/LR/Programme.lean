@@ -73,5 +73,6 @@ def programme : Programme where
   mainteneurs := ["@orientationd"]
   source := "Présentation du 12 octobre 2026 (Public Sénat, Europe 1, AFP, consultés le 21 octobre 2026)"
   mesures := mesures
+  entreeEnVigueur := 2
 
 end Programmes.LR

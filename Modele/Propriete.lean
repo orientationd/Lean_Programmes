@@ -24,15 +24,26 @@ structure Propriete where
   /-- Année d'évaluation, comptée depuis l'année de départ ; `none` =
   horizon du scénario. Permet « déficit sous 3 % en 2035 ». -/
   annee : Option Nat := none
+  /-- Critère portant sur toute la trajectoire, quand l'état final ne suffit
+  pas (« le déficit baisse chaque année ») : `f H entree tendanciel
+  programme`, où les listes contiennent les états des années 0 à
+  `horizon` et `entree` est l'année d'entrée en vigueur du programme.
+  S'il est présent, il remplace `tient`. -/
+  trajectoire : Option (Scenario → Nat → List Etat → List Etat → Bool) := none
 
 instance (p : Propriete) (H : Scenario) (a b : Etat) : Decidable (p.tient H a b) :=
   p.dec H a b
+
+/-- Propriété de trajectoire (critère calculable sur les listes d'états). -/
+def Propriete.surTrajectoire (id titre description : String)
+    (f : Scenario → Nat → List Etat → List Etat → Bool) (annee : Option Nat := none) : Propriete :=
+  ⟨id, titre, description, (fun _ _ _ => True), (fun _ _ _ => instDecidableTrue), annee, some f⟩
 
 /-- Constructeur qui infère l'instance de décidabilité. -/
 def Propriete.mk' (id titre description : String)
     (tient : Scenario → Etat → Etat → Prop)
     [inst : ∀ H a b, Decidable (tient H a b)] (annee : Option Nat := none) : Propriete :=
-  ⟨id, titre, description, tient, inst, annee⟩
+  ⟨id, titre, description, tient, inst, annee, none⟩
 
 /-- Année à laquelle la propriété est évaluée sous le scénario `H`. -/
 def Propriete.horizon (p : Propriete) (H : Scenario) : Nat :=
