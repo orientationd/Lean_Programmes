@@ -149,6 +149,12 @@ inductive Levier where
   importée par une production nationale…). Comme dans le sous-modèle
   automobile, l'effet passe par la balance commerciale, pas par le PIB. -/
   | importationsNiveau (deltaMeur : Int)
+  /-- Norme de dépense : les fonctions pilotables (santé, affaires
+  économiques, sécurité-justice, logement-environnement, culture, services
+  généraux) croissent chaque année de `moderationPb` de moins que la
+  tendance. L'économie de l'année passe par le multiplicateur, pondérée par
+  le moteur (dans la projection). -/
+  | normeDepense (moderationPb : Int)
   /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
   publics (accompagnement des entreprises, inspection, formation) et
   baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
@@ -352,6 +358,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let s' := { s with echeances := s.echeances ++ [{ fonction := f, restants := reste, niveau := n, indice := 10000 }] }
       if n < 0 then appliquerEconomie M H f (-n) s' else appliquerDepense H f.secteur f n s'
   | .importationsNiveau d, s => { s with importations := s.importations + d }
+  | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)

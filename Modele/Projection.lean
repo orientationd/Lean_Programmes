@@ -51,7 +51,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let surcoutSante :=
     (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutSanteParPbPlus65
       / (H.horizon : Int)
-  let depensesF := (((s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb)
+  -- norme de dépense : économie de l'année sur les fonctions pilotables
+  let sansNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
+  let avecNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
+    s.moderationDepensesPb
+  let economieNorme := sansNorme.total - avecNorme.total
+  let depensesF := ((avecNorme
     |>.ajouter .retraites surcoutVieillissement)
     |>.ajouter .sante surcoutSante)
     |>.ajouter .interets (interets - s.depensesF.interets)
@@ -104,7 +109,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
   -- du scénario (la tendance est déjà dans la croissance)
   let dEmploiMesures := emploiEntrants + absorption
-  let s₂ := chocEmploi H dEmploiMesures (ajouterEmploi H none dEmploiMesures s₁)
+  let s₂ := effetDemande H none (-(appliquerPm economieNorme M.multiplicateurEconomiesPm))
+    (chocEmploi H dEmploiMesures (ajouterEmploi H none dEmploiMesures s₁))
   -- dépenses à échéancier : niveau prévu (indexé) moins niveau reconduit. Effet
   -- de demande cohérent avec les leviers ponctuels : un niveau positif est une
   -- dépense (multiplicateur plein), un niveau négatif une économie (pondérée
@@ -112,9 +118,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- si bien que la fin d'une dépense temporaire annule exactement son effet
   let poids (x : Int) : Int := if x < 0 then appliquerPm x M.multiplicateurEconomiesPm else x
   let pas (e : Echeance) : Echeance × Int × Int :=
+    -- le niveau inscrit dans la fonction a crû comme elle (norme comprise) ; le
+    -- niveau prévu est indexé hors norme (l'échéancier est une décision explicite)
     let t := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
+    let tNorme := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
+      s.moderationDepensesPb
     let indice := e.indice + appliquerPb e.indice t
-    let reconduit := e.niveau + appliquerPb e.niveau t
+    let reconduit := e.niveau + appliquerPb e.niveau tNorme
     match e.restants with
     | [] => ({ e with indice := indice, niveau := reconduit }, 0, 0)
     | x :: r =>

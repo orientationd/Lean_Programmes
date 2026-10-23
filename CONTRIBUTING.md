@@ -79,6 +79,9 @@ publics. `depenseEcheancier fonction niveaux` fixe une dépense année par
 année (indemnités jusqu'à la retraite, revalorisations cumulées) ; une
 mesure peut aussi être répétée (`repetitions := 5`). Un niveau négatif est
 une économie, pondérée par le moteur comme `economieSur`.
+`normeDepense moderationPb` ralentit la croissance des fonctions
+pilotables (santé, affaires économiques, sécurité-justice, logement-
+environnement, culture, services généraux ; lemme `tauxCroissance_norme`).
 `importationsNiveau deltaMeur` déplace le niveau des importations
 (substitution d'énergie importée), sans effet sur le PIB, comme le
 sous-modèle automobile.

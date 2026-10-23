@@ -65,6 +65,10 @@ Mesures (extrait) :
   exploitations agricoles, DPE et climatisation réversible dans les
   quartiers historiques, urbanisme (pas de tours en quartier historique,
   quartiers de gare), TER 24 h sur 24 avec agents de sécurité.
+* **O-35** à **O-42** — redressement compatible avec les positions du PS :
+  taxe Zucman, CSG sur les gros héritages, taxe numérique à 15 %,
+  exonérations de cotisations, fraude fiscale et train de vie de l'État,
+  niches fiscales, Pacte Dutreil et holdings, norme de dépense.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -424,6 +428,53 @@ def coutTerNuit : Int :=
   liaisonsTerNuit * 365 * (trainsParNuit * distanceTerKm * coutTrainKmCentimes / 100
     + heuresAgentsParNuit * coutHeureAgent) * (1000 - couvertureRecettesPm) / 1000000000
 
+/-- Redressement compatible avec les positions du PS (O-35 à O-42). Base :
+propositions du groupe socialiste à l'Assemblée (16 septembre 2026 : taxe
+Zucman 15 Md€, CSG sur les gros héritages 10 Md€, taxe sur les géants du
+numérique 10 Md€, reconfiguration des exonérations de cotisations 4 Md€,
+12,1 Md€ d'économies par la lutte contre la fraude fiscale et le train de
+vie de l'État), complétées par la note de la Cour des comptes sur la
+fiscalité du patrimoine (septembre 2026) et une revue des niches fiscales.
+Les rendements sont statiques ; le modèle retire sa fuite fiscale (20 % au
+scénario central) et calcule l'effet d'activité.
+
+* `taxeZucman` = 6,5 Md€ : 15 à 25 Md€ selon ses promoteurs, ≈ 5 Md€
+  selon sept économistes (Le Monde, septembre 2025) et 4,6 à 5,5 Md€ avec
+  imputation de l'IS (Institut de l'entreprise, 2026). Retenu : 6,5 Md€
+  statiques, ≈ 5,2 Md€ nets de la fuite fiscale. Variante : chiffrage PS.
+* `csgHeritages` = 10 Md€ : chiffrage du groupe PS, sans contre-expertise
+  connue (droits de succession et donations ≈ 17 Md€ par an).
+* `taxeNumerique` = 3,1 Md€ : taxe sur les services numériques de 3 % à
+  15 %, 0,89 → ≈ 4 Md€ (commission des finances, octobre 2026). Le PS
+  annonce 10 Md€ (variante). Risque de représailles commerciales.
+* `exonerationsCotisations` = 4 Md€ : reconfiguration des allègements
+  généraux (chiffrage PS).
+* `fraudeFiscale` = 3 Md€ et `trainDeVieEtat` = 3,1 Md€ : les 12,1 Md€
+  du PS, moins ce que comptent déjà O-21 (commande publique, 3 Md€) et
+  O-23 (fraude sociale et TVA, 3 Md€).
+* `nichesFiscales` = 8 Md€ : 465 niches pour 88,3 Md€ en 2026 (PLF 2026) ;
+  −10 % hors Pacte Dutreil (traité à part) et hors dispositifs pour les
+  ménages modestes, réparti entre IR (4), IS (2) et TVA (2).
+* `pacteDutreil` = 1,3 Md€ (abattement de 75 % à 50 %) et `holdings` =
+  1,0 Md€ (taxe sur les holdings élargie) : Cour des comptes, note du
+  21 septembre 2026, à comportements inchangés.
+* `normeDepense` = 50 pb : les dépenses pilotables (santé, affaires
+  économiques, sécurité-justice, logement-environnement, culture, services
+  généraux ; ≈ 739 Md€ en 2025) croissent de 2,3 % au lieu de 2,8 % par an,
+  soit +0,5 % en volume pour 1,8 % d'inflation. Retraites, famille,
+  enseignement et défense sont hors norme. Variante : zéro volume (100 pb).
+-/
+def taxeZucman : Int := 6500
+def csgHeritages : Int := 10000
+def taxeNumerique : Int := 3100
+def exonerationsCotisations : Int := 4000
+def fraudeFiscale : Int := 3000
+def trainDeVieEtat : Int := 3100
+def nichesFiscales : Int := 8000
+def pacteDutreil : Int := 1300
+def holdings : Int := 1000
+def normeDepensePb : Int := 50
+
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
 (règlement (UE) 2023/1114) : c'est le mécanisme d'USDC (jeton adossé 1:1 à
@@ -751,13 +802,64 @@ def mesures : List Mesure := [
     titre := "TER 24 h sur 24 entre métropoles et villes moyennes (Orléans…), agents de sécurité à bord, en gare et aux parkings"
     source := s!"Texte Orientation D, mesure 34 ; {liaisonsTerNuit} liaisons de {distanceTerKm} km, {trainsParNuit} trains par nuit, 23,40 € par train-km (IFRAP 2024), {heuresAgentsParNuit} heures d'agents par nuit à {coutHeureAgent} €, {couvertureRecettesPm / 10} % couverts par les recettes : {coutTerNuit} M€ par an"
     leviers := [.depenseSur .affairesEconomiques coutTerNuit]
-    debut := 2 }
+    debut := 2 },
+
+  { id := "O-35"
+    titre := "Impôt plancher sur les très hauts patrimoines (taxe Zucman)"
+    source := s!"Texte Orientation D, mesure 35 ; proposition du groupe PS (15 Md€) ; retenu {taxeZucman} M€ statiques (≈ 5 Md€ selon sept économistes, 4,6 à 5,5 Md€ avec imputation de l'IS)"
+    leviers := [.prelevementSur .autres taxeZucman]
+    debut := 2
+    variantes := [{ nom := "chiffrage du groupe PS (15 Md€)", leviers := [.prelevementSur .autres 15000] }] },
+
+  { id := "O-36"
+    titre := "CSG sur les gros héritages"
+    source := s!"Texte Orientation D, mesure 36 ; chiffrage du groupe PS : {csgHeritages} M€ (sans contre-expertise connue)"
+    leviers := [.prelevementSur .csgCrds csgHeritages]
+    debut := 2 },
+
+  { id := "O-37"
+    titre := "Taxe sur les services numériques portée de 3 % à 15 %"
+    source := s!"Texte Orientation D, mesure 37 ; 0,89 Md€ à 3 %, ≈ 4 Md€ à 15 % (commission des finances, octobre 2026) : +{taxeNumerique} M€ ; le PS annonce 10 Md€"
+    leviers := [.prelevementSur .autres taxeNumerique]
+    debut := 2
+    variantes := [{ nom := "chiffrage du groupe PS (10 Md€)", leviers := [.prelevementSur .autres 10000] }] },
+
+  { id := "O-38"
+    titre := "Reconfiguration des exonérations de cotisations patronales"
+    source := s!"Texte Orientation D, mesure 38 ; chiffrage du groupe PS : {exonerationsCotisations} M€"
+    leviers := [.prelevementSur .cotisations exonerationsCotisations]
+    debut := 2 },
+
+  { id := "O-39"
+    titre := "Lutte contre la fraude fiscale ; train de vie de l'État"
+    source := s!"Texte Orientation D, mesure 39 ; 12,1 Md€ du groupe PS, moins O-21 et O-23 déjà comptés : {fraudeFiscale} M€ de fraude fiscale (TVA) et {trainDeVieEtat} M€ d'économies de fonctionnement"
+    leviers := [.prelevementSur .tva fraudeFiscale, .economieSur .fonctionnement trainDeVieEtat]
+    debut := 2 },
+
+  { id := "O-40"
+    titre := "Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes"
+    source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2)"
+    leviers := [.prelevementSur .ir 4000, .prelevementSur .impotSocietes 2000, .prelevementSur .tva 2000]
+    debut := 2 },
+
+  { id := "O-41"
+    titre := "Fiscalité du patrimoine (Cour des comptes) : Pacte Dutreil ramené à 50 %, taxe sur les holdings élargie"
+    source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
+    leviers := [.prelevementSur .autres (pacteDutreil + holdings)]
+    debut := 2 },
+
+  { id := "O-42"
+    titre := "Norme de dépense : +0,5 % en volume pour les dépenses pilotables (hors retraites, famille, enseignement, défense)"
+    source := s!"Texte Orientation D, mesure 42 ; {normeDepensePb} pb de moins par an sur ≈ 739 Md€ de dépenses pilotables (2025) : 2,3 % au lieu de 2,8 %"
+    leviers := [.normeDepense normeDepensePb]
+    debut := 2
+    variantes := [{ nom := "zéro volume (100 pb)", leviers := [.normeDepense 100] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense)."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

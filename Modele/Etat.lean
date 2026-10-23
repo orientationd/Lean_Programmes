@@ -247,6 +247,14 @@ def id : Fonction → String
   | .fonctionnement => "fonctionnement"
   | .nonVentile => "nonVentile"
 
+/-- Fonctions soumises à une norme de dépense : toutes sauf les transferts
+sociaux (retraites, famille-chômage), les priorités (enseignement, défense)
+et la charge d'intérêts. -/
+def pilotable : Fonction → Bool
+  | .sante | .affairesEconomiques | .securiteJustice | .logementEnvironnement | .culture
+  | .fonctionnement | .nonVentile => true
+  | _ => false
+
 /-- Secteur qui reçoit les emplois d'une dépense de cette fonction (sinon :
 au prorata des secteurs). -/
 def secteur : Fonction → Option Secteur
@@ -310,29 +318,39 @@ def total (v : ParFonction) : Int :=
 
 /-- Toutes les fonctions sauf la charge d'intérêts croissent du taux `tauxPb` ;
 les fonctions automatisables (services généraux, affaires économiques,
-santé) croissent de `robotisationPb` de moins. -/
-def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) : ParFonction :=
+santé) croissent de `robotisationPb` de moins ; les fonctions soumises à une
+norme de dépense (`Fonction.pilotable`) de `moderationPb` de moins. -/
+def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) (moderationPb : Int := 0) :
+    ParFonction :=
   let g (x : Int) := x + appliquerPb x tauxPb
-  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb)
+  let n (x : Int) := x + appliquerPb x (tauxPb - moderationPb)
+  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb - moderationPb)
   { retraites := g v.retraites, sante := r v.sante, famille := g v.famille
     enseignement := g v.enseignement, affairesEconomiques := r v.affairesEconomiques
-    defense := g v.defense, securiteJustice := g v.securiteJustice
-    logementEnvironnement := g v.logementEnvironnement, culture := g v.culture
-    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := g v.nonVentile }
+    defense := g v.defense, securiteJustice := n v.securiteJustice
+    logementEnvironnement := n v.logementEnvironnement, culture := n v.culture
+    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := n v.nonVentile }
 
 /-- Taux de croissance tendanciel d'une fonction, pb : celui que lui applique
 `croitrePrimaires` (nul pour la charge d'intérêts, calculée à part). -/
-def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) : Int :=
+def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) (moderationPb : Int := 0) : Int :=
   match f with
-  | .sante | .affairesEconomiques | .fonctionnement => tauxPb - robotisationPb
+  | .sante | .affairesEconomiques | .fonctionnement => tauxPb - robotisationPb - moderationPb
+  | .securiteJustice | .logementEnvironnement | .culture | .nonVentile => tauxPb - moderationPb
   | .interets => 0
   | _ => tauxPb
 
 /-- Cohérence : hors intérêts, `croitrePrimaires` fait croître chaque fonction
 exactement de son `tauxCroissance` (utilisé pour indexer les échéanciers). -/
-theorem croitrePrimaires_get (v : ParFonction) (t r : Int) (f : Fonction) (h : f ≠ .interets) :
-    (v.croitrePrimaires t r).get f = v.get f + appliquerPb (v.get f) (tauxCroissance f t r) := by
+theorem croitrePrimaires_get (v : ParFonction) (t r m : Int) (f : Fonction) (h : f ≠ .interets) :
+    (v.croitrePrimaires t r m).get f = v.get f + appliquerPb (v.get f) (tauxCroissance f t r m) := by
   cases f <;> first | exact absurd rfl h | rfl
+
+/-- Cohérence : la norme de dépense retire exactement `m` au taux de
+croissance des fonctions pilotables, et rien aux autres. -/
+theorem tauxCroissance_norme (f : Fonction) (t r m : Int) (h : f ≠ .interets) :
+    tauxCroissance f t r m = tauxCroissance f t r 0 - (if f.pilotable then m else 0) := by
+  cases f <;> simp_all [tauxCroissance, Fonction.pilotable] <;> omega
 
 end ParFonction
 
@@ -447,6 +465,9 @@ structure Etat where
   d'avant le choc × variation de la population active. Résorbé chaque année
   au taux `absorptionChomagePm` du scénario. -/
   chomeursExcedentaires : Int := 0
+  /-- Norme de dépense : moindre croissance annuelle des fonctions pilotables
+(`Fonction.pilotable`), pb. -/
+  moderationDepensesPb : Int := 0
   /-- Dépenses à échéancier en cours (voir `Echeance`). -/
   echeances : List Echeance := []
   deriving Repr, DecidableEq, Inhabited
