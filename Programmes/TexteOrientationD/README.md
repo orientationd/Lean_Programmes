@@ -212,6 +212,56 @@ en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
 Ensemble : ≈ 9,7 Md€/an d'amélioration brute du solde en régime de
 croisière.
 
+### O-24 — Dette numérique en stablecoin, exonérée de PFU
+
+Le mécanisme d'USDC appliqué à la dette française : des **OAT numériques**
+(titres tokenisés inscrits sur une chaîne de blocs) que l'on achète et
+revend en **jetons de monnaie électronique euro** conformes à MiCA. Les
+intérêts sont **exonérés du prélèvement forfaitaire unique** (31,4 % en
+2026 : 12,8 % d'IR, 10,6 % de CSG, 0,5 % de CRDS, 7,5 % de solidarité)
+pour les particuliers résidents. Les non-résidents ne paient déjà pas
+d'impôt français sur ces intérêts : pour eux, seul l'accès en jetons
+change.
+
+Contraintes juridiques prises en compte :
+
+* MiCA (règlement (UE) 2023/1114), art. 50 : aucun intérêt ne peut être
+  versé au détenteur d'un jeton de monnaie électronique. Le jeton sert
+  donc à **régler** l'achat ; le rendement est porté par l'OAT numérique.
+  Les réserves des émetteurs significatifs sont placées à 60 % en dépôts
+  bancaires (30 % pour les autres), le reste en actifs liquides comme les
+  titres d'État courts.
+* Régime pilote DLT (règlement (UE) 2022/858) : 6 Md€ au total pour tous
+  les titres tokenisés aujourd'hui ; 100 Md€ proposés par la Commission
+  (décembre 2025), au moins 150 Md€ demandés par les plateformes. La
+  tranche visée (≈ 57 Md€ en 2035) suppose ce relèvement, ou une émission
+  par le dépositaire central hors régime pilote.
+
+Modélisation (`detteNumerique`, calcul annuel dans la projection) :
+
+| Paramètre | Valeur | Repère |
+|---|---|---|
+| Tranche cible | 1 % de la dette, +0,2 point/an, atteinte en 2032 | ménages italiens : ≈ 13 % de la dette italienne |
+| Capitalisation fiscale θ | 50 % | obligations municipales américaines : 60 % à 10 ans, 22 % à 30 ans |
+| Décote de taux | θ × 31,4 % = 15,7 % du taux | |
+| Part des particuliers résidents ρ | 80 % | le reste : réserves d'émetteurs, non-résidents |
+| Part venant de produits imposés α | 60 % | le reste : livrets exonérés |
+
+Pour un euro de tranche au taux y : économie d'intérêts θ·t·y, perte de
+PFU (1 − θt)·y·t·ρα, d'où un **gain net y·t·(θ − (1 − θt)·ρα)**. La mesure
+rapporte si θ dépasse **θ\* = ρα / (1 + t·ρα) ≈ 0,42**. Avec θ = 0,5 :
+≈ 10 pb sur la tranche, soit en 2035 294 M€ d'intérêts économisés contre
+238 M€ de PFU perdu (+56 M€/an). Avec θ = 0,3, elle coûte ≈ 80 M€/an.
+Son effet budgétaire est donc faible et son signe dépend de θ : l'intérêt
+de la mesure tient surtout à l'élargissement de la base d'investisseurs
+et à l'accès direct des épargnants, pas au solde.
+
+Non modélisé : la décollecte des livrets exonérés réduit les ressources du
+fonds d'épargne de la Caisse des dépôts, qui finance le logement social
+(à mettre en regard de O-02 et O-03) ; l'effet de la demande des émetteurs
+de jetons sur le taux des titres courts (de l'ordre du point de base par
+milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
+
 ## À compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).

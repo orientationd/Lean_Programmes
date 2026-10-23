@@ -395,6 +395,24 @@ structure Etat where
   electrificationAnnuelleMilliers : Int
   /-- Bornes supplémentaires dues aux mesures, milliers par an. -/
   bornesAnnuellesMilliers : Int
+  /-- Part de la dette émise en OAT numériques (titres tokenisés réglés en
+  jetons de monnaie électronique), pm de la dette. Nulle sans mesure. -/
+  partDetteNumeriquePm : Int := 0
+  /-- Part cible des OAT numériques, pm de la dette (flux porté). -/
+  cibleDetteNumeriquePm : Int := 0
+  /-- Hausse annuelle de la part des OAT numériques, pm (flux porté). -/
+  rythmeDetteNumeriquePm : Int := 0
+  /-- Décote du taux servi sur la tranche numérique, pm du taux apparent :
+  part de l'exonération fiscale capitalisée dans le prix des titres. -/
+  decoteDetteNumeriquePm : Int := 0
+  /-- Part des intérêts de la tranche numérique qui, sans exonération,
+  auraient été imposés au prélèvement forfaitaire unique, pm. -/
+  partDefiscaliseePm : Int := 0
+  /-- Économie d'intérêts de l'année due à la décote, M€ (suivi). -/
+  economieInteretsNumeriqueMeur : Int := 0
+  /-- Recettes de PFU perdues dans l'année du fait de l'exonération, M€
+  (déjà retranchées des impôts ; mémorisées pour la projection). -/
+  pertePfuMeur : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat

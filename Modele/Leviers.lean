@@ -134,6 +134,17 @@ inductive Levier where
   Les accidents évités réduisent la dépense d'indemnisation (fonction
   famille-chômage) et rendent des journées de travail au PIB. -/
   | preventionAccidents (fondsMeur : Int) (baissePm : Int)
+  /-- Dette numérique : OAT tokenisées, souscrites et échangées en jetons de
+  monnaie électronique euro (mécanisme « USDC »), dont les intérêts sont
+  exonérés de PFU pour les particuliers résidents. La tranche monte de
+  `rythmePm` de la dette par an jusqu'à `ciblePm`. Le taux servi sur la
+  tranche est réduit de `capitalisationPm` × taux du PFU (part de
+  l'avantage fiscal que le prix des titres capitalise). Les intérêts de la
+  tranche détenus par des particuliers résidents (`partResidentsPm`) et
+  qui, sans la mesure, auraient été placés en produits imposés au PFU
+  (`partImposeeAvantPm`) sont autant de recettes perdues. Calcul annuel
+  dans `anneeSuivante`. -/
+  | detteNumerique (ciblePm rythmePm capitalisationPm partResidentsPm partImposeeAvantPm : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -273,6 +284,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)
         { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }
+  | .detteNumerique cible rythme cap res imp, s =>
+      let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
+      { s with cibleDetteNumeriquePm := cible
+               rythmeDetteNumeriquePm := rythme
+               decoteDetteNumeriquePm := cap * tPfu / 1000
+               partDefiscaliseePm := res * imp / 1000 }
   | .deploiementBornes n cout, s =>
       appliquerDepense H (some .construction) .affairesEconomiques (n * cout / 1000000)
         { s with bornesAnnuellesMilliers := s.bornesAnnuellesMilliers + n / 1000 }

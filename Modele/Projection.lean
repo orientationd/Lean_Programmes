@@ -22,18 +22,32 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let croissance := H.eco.croissancePb
     - appliquerPm (s.prelevementsPb - H.reference.etat.prelevementsPb) M.elasticiteCroissancePoPm
   let pib := s.pib + appliquerPb s.pib croissance
+  -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
+  -- appliqué à la dette de fin d'année précédente (effet boule de neige)
+  let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
+  -- OAT numériques : la tranche `part` de la dette est servie au taux
+  -- apparent diminué de la décote ; ses intérêts, pour la part défiscalisée,
+  -- échappent au PFU (perte de recettes de l'année)
+  let tranche := s.dette * s.partDetteNumeriquePm / 1000
+  let economieNum := tranche * taux * s.decoteDetteNumeriquePm / 10000000
+  let interetsTranche := tranche * taux / 10000 - economieNum
+  let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
+  let pertePfu := interetsTranche * s.partDefiscaliseePm * tPfu / 1000000
+  let interets := s.dette * taux / 10000 - economieNum
   -- assiettes supposées proportionnelles au PIB nominal (élasticité unitaire)
-  let impots := s.impots.croitre croissance
+  -- la perte de PFU de l'an dernier est déjà dans l'assiette et croît avec
+  -- elle : on n'ajoute que l'écart, réparti selon l'affectation du PFU
+  let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
+  let dIr := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuIrPm / tPfu
+  let dCsg := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuCsgCrdsPm / tPfu
+  let impots := ((s.impots.croitre croissance).ajouter .ir (-dIr)
+    |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
   let autresRecettes := s.autresRecettes + appliquerPb s.autresRecettes croissance
   let recettes := impots.total + autresRecettes
   -- vieillissement : le surcoût total à l'horizon est réparti sur les années
   let surcoutVieillissement :=
     (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutParPbPlus65
       / (H.horizon : Int)
-  -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
-  -- appliqué à la dette de fin d'année précédente (effet boule de neige)
-  let taux := min H.eco.tauxMarginalPb (s.tauxApparentPb + H.eco.deriveTauxPb)
-  let interets := s.dette * taux / 10000
   let surcoutSante :=
     (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutSanteParPbPlus65
       / (H.horizon : Int)
@@ -58,6 +72,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     autresRecettes := autresRecettes
     depensesF := depensesF
     tauxApparentPb := taux
+    partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
+    economieInteretsNumeriqueMeur := economieNum
+    pertePfuMeur := pertePfu
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
