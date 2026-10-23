@@ -311,6 +311,53 @@ Points d'attention :
 * **O-34** : la nuit est la plage des travaux d'entretien du réseau, ce qui
   limite le nombre de lignes exploitables 24 h sur 24.
 
+### O-35 à O-42 — Redressement compatible avec les positions du PS
+
+Base : propositions du groupe socialiste à l'Assemblée (16 septembre 2026),
+note de la Cour des comptes sur la fiscalité du patrimoine (septembre
+2026), revue des niches fiscales. Quand un chiffrage indépendant existe et
+diffère de celui du PS, il est retenu et le chiffrage PS devient une
+variante.
+
+| Mesure | Rendement statique | Déficit 2035 | PIB 2035 |
+|---|---|---|---|
+| **O-35** Taxe Zucman (impôt plancher sur les très hauts patrimoines) | 6,5 Md€ (PS : 15 ; sept économistes : ≈ 5) | −0,14 pt | −0,09 % |
+| **O-36** CSG sur les gros héritages | 10 Md€ (chiffrage PS) | −0,22 pt | −0,13 % |
+| **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,07 pt | −0,04 % |
+| **O-38** Reconfiguration des exonérations de cotisations | 4 Md€ (PS) | −0,09 pt | −0,06 % |
+| **O-39** Fraude fiscale et train de vie de l'État | 6,1 Md€ (12,1 du PS moins O-21 et O-23) | −0,13 pt | −0,12 % |
+| **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,11 % |
+| **O-41** Pacte Dutreil à 50 %, taxe sur les holdings élargie | 2,3 Md€ (Cour des comptes) | −0,05 pt | −0,03 % |
+| **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,55 pt | −0,75 % |
+
+(Scénario central, moteur de demande, mesures prises isolément.)
+
+**Résultat : le Texte Orientation D passe de 8,1 % à 6,7 % de déficit en
+2035** (dette 142 % du PIB, chômage 8,2 %). Le modèle évalue désormais la
+propriété « Budget à l'équilibre en 2035 » pour tous les programmes ;
+aucun ne la tient.
+
+**L'équilibre en 2035 n'est pas atteignable avec des mesures compatibles
+avec le PS.** Au tendanciel, le solde primaire est d'environ −3 % du PIB et
+les intérêts montent vers 4 % : revenir à 0 % demande un effort permanent
+de l'ordre de 6,5 à 7 points de PIB. Ordres de grandeur, calculés avec le
+modèle (scénario central, moteur de demande) :
+
+| En plus du paquet O-35 à O-42 | Déficit 2035 | Chômage 2035 |
+|---|---|---|
+| Rien | 6,7 % | 8,2 % |
+| Abandon de O-08 (IS au taux le plus bas de l'UE) | 5,9 % | 8,4 % |
+| … et norme à zéro volume (100 pb au lieu de 50) | 5,4 % | 8,7 % |
+| … et norme de 300 pb par an | 2,8 % | 10,1 % |
+| … et norme de 650 pb par an (dépenses pilotables −40 % en 2035) | ≈ 0 % | ≈ 11,5 % |
+
+La dernière ligne montre la taille du problème plutôt qu'une option : par
+le multiplicateur, une consolidation de cette ampleur réduit le PIB de
+≈ 5,5 % et fait monter le chômage de plus de trois points. Les postes du
+Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
++0,76 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
+(enseignants, +0,21 pt).
+
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
 Le mécanisme d'USDC appliqué à la dette française : des **OAT numériques**
