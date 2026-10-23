@@ -37,6 +37,12 @@ les dépenses de fonctionnement, d'affaires économiques et de santé
 (OAT 10 ans autour de 3,3 % fin 2025, hypothèse) ; `deriveTauxPb` : le
 taux apparent (1,87 % en 2025, INSEE) y converge d'environ 20 pb par an,
 rythme de renouvellement du stock (maturité moyenne ≈ 8,5 ans, AFT).
+Prélèvement forfaitaire unique (PFU) : 31,4 % depuis le 1er janvier 2026
+(loi n° 2025-1403 du 30 décembre 2025 de financement de la Sécurité sociale
+pour 2026, art. L. 136-6 et L. 136-7 CSS), soit 12,8 % d'impôt sur le revenu
+(`tauxPfuIrPm` = 128), 10,6 % de CSG et 0,5 % de CRDS (`tauxPfuCsgCrdsPm` =
+111) et 7,5 % de prélèvement de solidarité (`tauxPfuSolidaritePm` = 75).
+Législation en vigueur, identique dans les trois variantes.
 
 C'est l'axe le plus disputé : multiplicateur, élasticités et fuite fiscale
 déterminent l'essentiel des écarts entre programmes. D'où trois variantes
@@ -72,6 +78,9 @@ def centrale : Economie where
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
   baisseEmissionsPm := 30
+  tauxPfuIrPm := 128
+  tauxPfuCsgCrdsPm := 111
+  tauxPfuSolidaritePm := 75
   sources := ["À COMPLÉTER"]
 
 def croissanceBasse : Economie where
@@ -100,6 +109,9 @@ def croissanceBasse : Economie where
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
   baisseEmissionsPm := 20
+  tauxPfuIrPm := 128
+  tauxPfuCsgCrdsPm := 111
+  tauxPfuSolidaritePm := 75
   sources := ["À COMPLÉTER"]
 
 def croissanceHaute : Economie where
@@ -128,6 +140,9 @@ def croissanceHaute : Economie where
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
   baisseEmissionsPm := 40
+  tauxPfuIrPm := 128
+  tauxPfuCsgCrdsPm := 111
+  tauxPfuSolidaritePm := 75
   sources := ["À COMPLÉTER"]
 
 def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute]

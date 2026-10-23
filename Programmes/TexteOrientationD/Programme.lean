@@ -9,7 +9,7 @@ Programme de orientation_d. Seuls les comptes listés dans `PROPRIETAIRES`
 peuvent modifier ce dossier : la CI refuse toute autre PR (contrôle d'accès
 aux programmes).
 
-Trois mesures :
+Mesures (extrait) :
 
 * **O-01** — remplacement gratuit par l'État des 10 000 voitures les plus
   polluantes. Balance commerciale à 5 et 10 ans : sous-modèle automobile.
@@ -53,6 +53,9 @@ Trois mesures :
   Toulouse, Montpellier, Grenoble), Parcoursup pour les étudiants
   étrangers à nombre constant, places pour les bacheliers sans
   affectation.
+* **O-24** — dette numérique : OAT tokenisées achetées en stablecoin euro
+  (mécanisme USDC), intérêts exonérés de PFU pour les particuliers
+  résidents.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -206,6 +209,51 @@ def coutAgenceMedicament : Int := 300
 def investissementAgence : Int := 500
 def fraudeCotisations : Int := 2000
 def fraudeTVA : Int := 1000
+
+/-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
+et réglées en jetons de monnaie électronique euro conformes à MiCA
+(règlement (UE) 2023/1114) : c'est le mécanisme d'USDC (jeton adossé 1:1 à
+des réserves, circulant sur une chaîne publique), appliqué à la dette
+française. MiCA interdit de rémunérer le jeton lui-même (art. 50) : le
+rendement est porté par l'OAT numérique, que le jeton sert à acheter.
+Intérêts exonérés de PFU pour les particuliers résidents (31,4 % en 2026) ;
+les non-résidents ne paient déjà pas d'impôt français sur ces intérêts.
+
+* `cibleDetteNumerique` = 10 ‰ de la dette (≈ 57 Md€ en 2035 dans le
+  scénario central), par paliers de `rythmeDetteNumerique` = 2 ‰ par an :
+  mesure votée en 2027, première tranche fin 2028, cible atteinte en 2032.
+  Le régime pilote DLT (règlement (UE) 2022/858) plafonne aujourd'hui
+  l'ensemble des titres tokenisés à 6 Md€ ; la Commission propose 100 Md€
+  pour toute l'Union (paquet « intégration des marchés », décembre 2025),
+  les plateformes demandent au moins 150 Md€. La cible suppose un plafond
+  relevé au-delà de la proposition, ou une émission hors régime pilote
+  par le dépositaire central. Repère de demande : les ménages italiens
+  détiennent ≈ 13 % de la dette italienne (SUERF, 2026), contre une
+  détention directe marginale en France.
+* `capitalisationFiscale` = 500 ‰ : part de l'avantage fiscal capitalisée
+  dans le prix. Repère : obligations municipales américaines exonérées,
+  ratio de rendement à Treasury ≈ 75 % à 10 ans et ≈ 91 % à 30 ans
+  (2025), soit un taux implicite de 25 % et 9 % pour un taux marginal
+  maximal de 40,8 % : 60 % et 22 % capitalisés ; maturité moyenne de la
+  dette ≈ 8,5 ans. Décote retenue : 500 ‰ × 314 ‰ = 157 ‰ du taux.
+* `partResidents` = 800 ‰ : le reste est détenu par des émetteurs de
+  jetons (réserves) et des non-résidents, qui ne tirent aucun avantage de
+  l'exonération.
+* `partImposeeAvant` = 600 ‰ : part de l'épargne attirée qui était placée
+  en produits imposés au PFU ou assimilés ; le reste vient de livrets
+  exonérés (livret A, LDDS, LEP), sans perte fiscale mais avec moins de
+  ressources pour le fonds d'épargne (logement social), non modélisé.
+
+Bilan par euro de tranche, taux `y`, PFU `t`, capitalisation `θ`, part
+défiscalisée `ρα` : gain = y·t·(θ − (1 − θt)·ρα). Seuil de rentabilité :
+θ* = ρα / (1 + t·ρα) = 0,48 / 1,151 ≈ 0,417 ; avec θ = 0,5 le gain est
+≈ 0,030·y, soit ≈ 10 pb sur la tranche quand y = 3,3 % (≈ 56 M€/an en
+2035 : 294 M€ d'intérêts économisés, 238 M€ de PFU perdus). -/
+def cibleDetteNumerique : Int := 10
+def rythmeDetteNumerique : Int := 2
+def capitalisationFiscale : Int := 500
+def partResidents : Int := 800
+def partImposeeAvant : Int := 600
 
 /-! ## Mesures -/
 
@@ -405,13 +453,20 @@ def mesures : List Mesure := [
     titre := "Lutte contre la fraude et le travail dissimulé (BTP, restauration, services à la personne)"
     source := s!"Texte Orientation D, mesure 23 ; HCFiPS 2024 : 6 à 8 Md€ de cotisations éludées par an ; récupération de {fraudeCotisations} M€ de cotisations et {fraudeTVA} M€ de TVA par an, en régime de croisière la troisième année ; le modèle applique sa fuite fiscale à ces recettes"
     leviers := [.prelevementSur .cotisations fraudeCotisations, .prelevementSur .tva fraudeTVA]
+    debut := 2 },
+
+  { id := "O-24"
+    titre := "Dette numérique : achat d'OAT tokenisées en stablecoin euro (mécanisme USDC), intérêts exonérés de PFU"
+    source := s!"Texte Orientation D, mesure 24 ; OAT numériques réglées en jetons de monnaie électronique (MiCA, règlement (UE) 2023/1114, art. 50 : pas d'intérêt sur le jeton), régime pilote DLT (règlement (UE) 2022/858, à réviser) ; exonération du PFU de 31,4 % (LFSS 2026) pour les particuliers résidents ; tranche cible {cibleDetteNumerique} ‰ de la dette (+{rythmeDetteNumerique} ‰/an, première tranche fin 2028), capitalisation fiscale {capitalisationFiscale} ‰ (obligations municipales américaines), part des résidents {partResidents} ‰, part imposée auparavant {partImposeeAvant} ‰"
+    leviers := [.detteNumerique cibleDetteNumerique rythmeDetteNumerique capitalisationFiscale
+                  partResidents partImposeeAvant]
     debut := 2 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude)."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS au taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

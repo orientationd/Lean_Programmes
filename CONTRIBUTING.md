@@ -67,6 +67,12 @@ publics et baisse du taux d'accidents ; le sous-modèle calcule coûts
 `ue-*` (`Proprietes/Europe.lean`) traduisent les règles listées dans
 `Hypotheses/Europe.lean` ; en ajouter une = un texte cité + un critère.
 
+Financement de la dette : `detteNumerique ciblePm rythmePm
+capitalisationPm partResidentsPm partImposeeAvantPm` (tranche de dette
+tokenisée, décote de taux = capitalisation × taux du PFU, perte de PFU
+sur la part défiscalisée des intérêts ; calcul annuel dans la
+projection, taux du PFU dans l'axe économique).
+
 Objectifs d'emplois et immigration : `annonceEmplois n` enregistre un
 objectif déclaré (sans effet sur le modèle ; la propriété « emplois
 annoncés réalisables » vérifie qu'il tient dans la population active),
