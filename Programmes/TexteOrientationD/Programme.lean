@@ -71,7 +71,9 @@ Mesures (extrait) :
   niches fiscales, Pacte Dutreil divisé par deux et holdings, norme de
   dépense ; **O-43** défense −1 Md€ par an ; **O-44** 174 trimestres ;
   **O-45** lutte contre la fraude fiscale ; **O-46** CSG progressive pour
-  les hauts revenus.
+  les hauts revenus ; **O-47** 100 M€ par an de participations dans les
+  entreprises stratégiques ; **O-48** non-renouvellement des concessions
+  autoroutières.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -551,6 +553,47 @@ def pointsCsgHauts : Int := 2
 def partAssietteAuDelaPm : Int := 60
 def rendementCsgHauts : Int := pointsCsgHauts * 17000 * partAssietteAuDelaPm / 1000
 
+/-- Entreprises stratégiques (O-47) : 100 M€ par an de prises de participation
+de l'État. Opération financière : dette sans déficit ; les dividendes suivent
+le rendement du portefeuille de l'APE (4,0 Md€ de dividendes 2025 pour
+209,1 Md€, soit ≈ 1,9 %). -/
+def participationsStrategiques : Int := 100
+
+/-- Concessions autoroutières (O-48) : pas de renouvellement à l'échéance,
+exploitation publique, péages maintenus. Échéances (Arafer, 2018) : Sanef
+31/12/2031, Escota 29/02/2032, SAPN 31/08/2033, APRR 30/11/2035, ASF
+30/04/2036, AREA 30/09/2036, Cofiroute 31/12/2086.
+
+Secteur en 2023 (Autorité de régulation des transports) : EBITDA 9,1 Md€,
+dont ≈ 8,5 Md€ pour les sociétés historiques (93 % du réseau) ;
+investissements 1,5 Md€ (92 % pour les historiques, ≈ 1,4 Md€) ; dividendes
+4,1 Md€, soit l'ordre de grandeur du bénéfice net, d'où un IS estimé à
+≈ 1,4 Md€ (taux de 25,8 %). Parts par société (‰ de l'EBITDA des
+historiques), d'après la répartition des dividendes par groupe (ASF-Escota
+40,6 %, APRR-AREA 24,3 %, Cofiroute 16 %, Sanef-SAPN 15,1 %) et la
+longueur relative des réseaux dans chaque groupe (hypothèse).
+
+Gain pour les administrations publiques à l'échéance : EBITDA − investissements
+de renouvellement, recette non fiscale ; IS des concessionnaires en moins.
+Une concession est comptée à partir de la première année pleine qui suit son
+échéance (prudent). Valeurs 2023 portées en 2027 par la croissance nominale
+(× 1,1255). Variante : baisse des péages de 20 % à la reprise. -/
+def ebitdaHistoriques : Int := 8500
+def investissementsHistoriques : Int := 1400
+def isHistoriques : Int := 1400
+def indice2023a2027 : Int := 11255
+/-- (société, part en ‰, première année pleine après l'échéance, comptée depuis 2027). -/
+def concessions : List (String × Int × Nat) :=
+  [("Sanef", 118, 5), ("Escota", 76, 6), ("SAPN", 39, 7), ("APRR", 197, 9),
+   ("ASF", 347, 10), ("AREA", 56, 10), ("Cofiroute", 167, 60)]
+/-- Part du réseau historique revenue à l'État l'année `k` (comptée depuis 2027), ‰. -/
+def partReprise (k : Nat) : Int :=
+  concessions.foldl (fun acc (_, pm, an) => if an ≤ k then acc + pm else acc) 0
+/-- Échéancier (20 ans) d'une grandeur 2023 répartie selon les reprises, M€ de 2027. -/
+def echeancierReprise (montant2023 : Int) (facteurPm : Int := 1000) : List Int :=
+  (List.range 20).map fun k =>
+    montant2023 * indice2023a2027 / 10000 * partReprise k / 1000 * facteurPm / 1000
+
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
 (règlement (UE) 2023/1114) : c'est le mécanisme d'USDC (jeton adossé 1:1 à
@@ -956,13 +999,30 @@ def mesures : List Mesure := [
     titre := "CSG progressive pour les hauts revenus : +2 points au-delà de 100 000 € par an"
     source := s!"Texte Orientation D, mesure 46 ; +{pointsCsgHauts} points sur la part des revenus d'activité et de remplacement au-delà de {seuilCsgHauts} € ; 1 point de CSG = 17 Md€ (FIPECO 2024) ; {partAssietteAuDelaPm / 10} % de l'assiette au-delà du seuil (hypothèse) : {rendementCsgHauts} M€"
     leviers := [.prelevementSur .csgCrds rendementCsgHauts]
-    debut := 2 }
+    debut := 2 },
+
+  { id := "O-47"
+    titre := "Investissements de l'État dans les entreprises stratégiques : 100 M€ par an"
+    source := s!"Texte Orientation D, mesure 47 ; {participationsStrategiques} M€ par an de prises de participation (opération financière : dette sans déficit) ; dividendes au rendement du portefeuille de l'APE (≈ 1,9 %)"
+    leviers := [.prisesDeParticipation participationsStrategiques]
+    debut := 2 },
+
+  { id := "O-48"
+    titre := "Non-renouvellement des concessions autoroutières : exploitation publique à l'échéance (2031-2036)"
+    source := s!"Texte Orientation D, mesure 48 ; échéances Sanef 2031, Escota 2032, SAPN 2033, APRR 2035, ASF et AREA 2036 (Cofiroute 2086) ; EBITDA des historiques ≈ {ebitdaHistoriques} M€, renouvellement {investissementsHistoriques} M€, IS ≈ {isHistoriques} M€ (ART 2023, estimations) ; part reprise en 2035 : {partReprise 8} ‰, en 2037 : {partReprise 10} ‰"
+    leviers := [.recetteEcheancier none (echeancierReprise (ebitdaHistoriques - investissementsHistoriques)),
+                .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))]
+    debut := 2
+    variantes := [
+      { nom := "péages baissés de 20 % à la reprise",
+        leviers := [.recetteEcheancier none (echeancierReprise (ebitdaHistoriques * 800 / 1000 - investissementsHistoriques)),
+                    .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

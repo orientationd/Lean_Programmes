@@ -82,6 +82,10 @@ une économie, pondérée par le moteur comme `economieSur`.
 `normeDepense moderationPb` ralentit la croissance des fonctions
 pilotables (santé, affaires économiques, sécurité-justice, logement-
 environnement, culture, services généraux ; lemme `tauxCroissance_norme`).
+`recetteEcheancier impot niveaux` fixe une recette année par année (impôt
+avec effet de demande, ou recette non fiscale sans effet si `none`).
+`prisesDeParticipation montant` : participations de l'État, dette sans
+déficit, dividendes au rendement du portefeuille de l'APE.
 `importationsNiveau deltaMeur` déplace le niveau des importations
 (substitution d'énergie importée), sans effet sur le PIB, comme le
 sous-modèle automobile.

@@ -375,6 +375,40 @@ Texte Orientation D qui pèsent le plus sur le solde en 2035 sont O-08 (IS,
 +0,58 pt), O-07 (retraite à la durée cotisée, +0,43 pt) et O-25
 (enseignants, +0,21 pt).
 
+### O-47 et O-48 — Participations stratégiques, autoroutes
+
+**O-47** — 100 M€ par an de prises de participation de l'État dans des
+entreprises stratégiques. C'est une opération financière : la dette
+augmente, pas le déficit. Les dividendes suivent le rendement du
+portefeuille de l'APE (4,0 Md€ en 2025 pour 209,1 Md€, ≈ 1,9 %), inférieur
+au taux d'intérêt de la dette (3,3 %) : chaque euro emprunté pour acheter
+des parts coûte ≈ 1,4 centime par an. En 2035 : +17 M€ de dividendes,
++24 M€ d'intérêts, effet négligeable sur le solde. L'intérêt de la mesure
+est stratégique, pas budgétaire.
+
+**O-48** — Non-renouvellement des concessions autoroutières : exploitation
+publique à l'échéance, péages maintenus. Le gain pour les administrations
+publiques est l'EBITDA moins les investissements de renouvellement, moins
+l'IS que payaient les concessionnaires (≈ 5,7 Md€ par an pour l'ensemble des
+sociétés historiques hors Cofiroute, en euros 2023).
+
+| Concession | Échéance | Part de l'EBITDA (hypothèse) | Comptée à partir de |
+|---|---|---|---|
+| Sanef | 31/12/2031 | 11,8 % | 2032 |
+| Escota | 29/02/2032 | 7,6 % | 2033 |
+| SAPN | 31/08/2033 | 3,9 % | 2034 |
+| APRR | 30/11/2035 | 19,7 % | 2036 |
+| ASF | 30/04/2036 | 34,7 % | 2037 |
+| AREA | 30/09/2036 | 5,6 % | 2037 |
+| Cofiroute | 31/12/2086 | 16,7 % | — |
+
+Effet en 2035 (mesure seule) : +2,0 Md€ de recettes non fiscales nettes de
+l'IS perdu, déficit −0,06 point ; à partir de 2037, l'essentiel du réseau
+(83 %) est repris, soit ≈ 4,7 Md€ par an (euros 2023). Variante : péages
+baissés de 20 % à la reprise. Sources : Autorité de régulation des
+transports (EBITDA 9,1 Md€, investissements 1,5 Md€, dividendes 4,1 Md€ en
+2023), échéances Arafer 2018 ; IS estimé.
+
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
 Le mécanisme d'USDC appliqué à la dette française : des **OAT numériques**
