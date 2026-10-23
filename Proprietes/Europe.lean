@@ -43,12 +43,16 @@ def ueClimat : Propriete :=
     "Loi européenne sur le climat et répartition de l'effort (SNBC-3) : émissions territoriales ≤ 270 Mt CO₂e en 2030."
     UeClimat2030 (annee := some 5)
 
+/-- AFIR, art. 3 : puissance publique d'au moins 1,3 kW par voiture électrique
+à batterie immatriculée (exigence annuelle, vérifiée en 2030). La puissance
+installée est le nombre de points × la puissance moyenne d'un point
+(hypothèse du scénario, calée sur 140 % de l'objectif fin mars 2026). -/
 abbrev UeAfir2030 (H : Scenario) (_a s : Etat) : Prop :=
-  s.parcElectriqueMilliers ≤ s.bornesMilliers * H.energie.vehiculesParBorne
+  s.parcElectriqueMilliers * H.energie.puissanceAfirParVehiculeW ≤ s.bornesMilliers * H.energie.puissanceParBorneW
 
 def ueAfir : Propriete :=
   .mk' "ue-afir-2030" "UE : recharge (AFIR) 2030"
-    "Règlement 2023/1804 : en 2030, un point de recharge public pour dix véhicules électriques."
+    "Règlement 2023/1804, art. 3 : en 2030, au moins 1,3 kW de puissance de recharge publique par voiture électrique à batterie."
     UeAfir2030 (annee := some 5)
 
 abbrev UeBalanceCourante (_H : Scenario) (_a s : Etat) : Prop := -400 ≤ s.balanceCourantePb

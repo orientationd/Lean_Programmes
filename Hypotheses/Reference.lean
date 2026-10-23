@@ -8,8 +8,61 @@ départ des projections (année 0). Chaque valeur cite sa source ; les
 valeurs marquées « dérivé » sont calculées à partir des évolutions publiées
 par l'INSEE (niveau 2025 = hausse publiée × (1 + 1 / taux de hausse)).
 
-Valeurs encore provisoires : SMIC (repère), émissions, âge légal (repère de
-64 ans, à rapprocher du calendrier en vigueur).
+Valeurs encore provisoires : SMIC (repère), émissions.
+
+## Lois en vigueur
+
+La projection à législation constante applique les textes votés dont les
+effets ne sont pas proportionnels au PIB :
+
+* **Âge légal** (loi n° 2023-270, suspendue par l'article 45 de la LFSS
+  pour 2026, loi n° 2025-1403) : 62 ans et 9 mois en 2025, gelé jusqu'en
+  janvier 2028, puis +3 mois par génération ; 64 ans atteints par la
+  génération 1969, en 2033. Calendrier par année : `calendrierAgeLegal`.
+  La tendance des dépenses de retraite et de la population active est
+  supposée intégrer la réforme de 2023 sans suspension (projections du COR
+  de juin 2025), soit 64 ans dès 2032 : `calendrierAgeTendanciel`. La
+  suspension coûte donc 3 mois de départs (≈ 1,9 Md€) de 2027 à 2032,
+  conformément au chiffrage du Gouvernement (1,9 Md€ en 2027).
+* **Loi de programmation militaire actualisée** (loi n° 2026-791) : crédits
+  de la mission Défense hors pensions de 57,1, 63,3, 68,3, 72,8 et 76,3 Md€
+  de 2026 à 2030, contre 50,5 Md€ en 2025. Échéancier de dépense :
+  écart à la reconduction tendancielle, en euros 2025 (voir
+  `echeancesDepart`) ; le niveau de 2030 est ensuite reconduit.
+* **ETS2** (directive 2003/87/CE modifiée par la directive 2023/959 ; début
+  reporté à 2028 par la loi européenne sur le climat 2040, JO de l'UE du
+  18 mars 2026) : quotas sur les carburants routiers et le chauffage. Recette
+  de ≈ 6,5 Md€ en 2028 (≈ 160 Mt à ≈ 50 €/t, moins la part du Fonds social
+  pour le climat), soit 5 950 M€ en euros 2025 ; la directive affecte le
+  produit au climat et au social : la moitié est supposée redistribuée en
+  dépense nouvelle (rénovation, chèques), l'autre moitié finançant des
+  dépenses existantes. Effet sur les émissions : déjà dans la tendance.
+* **Contribution exceptionnelle sur les bénéfices des grandes entreprises**
+  (loi n° 2025-127 ; reconduite une année par la loi de finances
+  pour 2026, loi n° 2026-103) : ≈ 8 Md€ en 2025, 7,5 Md€ en 2026 (acompte du
+  15 décembre 2026), puis rien à législation constante. Le PLF 2027 (article
+  15) propose une troisième année à taux réduits (5 Md€) : non retenu tant
+  qu'il n'est pas voté.
+* **CVAE** (loi n° 2025-127, art. 62, trajectoire confirmée par la loi de
+  finances pour 2026) : taux maximal de 0,28 % en 2026 et 2027, 0,19 % en
+  2028, 0,09 % en 2029, suppression en 2030. Rendement à 0,28 % ≈ 3,4 Md€
+  (le passage à 0,19 % coûtait ≈ 1,1 Md€ : Sénat, amendement I-31 au PLF
+  2026).
+* **Contribution différentielle sur les hauts revenus** (loi n° 2025-127) :
+  20 % d'imposition minimale au-delà de 250 000 € de revenu, due
+  jusqu'à ce que le déficit public passe sous 3 % du PIB ; ≈ 0,4 Md€
+  encaissés en 2025 (prévision initiale 1,9 Md€ ; Les Échos, La Tribune,
+  début 2026). Suivie dans l'état (`cdhrMeur`) : la projection l'éteint
+  l'année qui suit un déficit inférieur à 3 %.
+* **Fin des ventes de voitures thermiques neuves en 2035** (règlement (UE)
+  2023/851) : voir l'axe énergie ; érosion des accises et de la TVA sur les
+  carburants calculée dans la projection.
+* **AFIR** (règlement (UE) 2023/1804) : propriété `ue-afir-2030`.
+
+Lois dont les effets sont jugés inclus dans la tendance : loi de
+programmation de la recherche (marches d'≈ 0,5 Md€ par an, financées pour
+un quart dans le PLF 2026), LOPMI et loi de programmation de la justice
+(échéance 2027).
 -/
 
 namespace Hypotheses
@@ -92,11 +145,32 @@ def echeancesDepart : List Echeance := [
   { fonction := .affairesEconomiques, niveau := 4000, indice := 10000,
     restants := [3600, 3000, 2400, 1800, 1200, 600, 0] },        -- Grand Paris Express
   { fonction := .affairesEconomiques, niveau := 6500, indice := 10000,
-    restants := [6700, 6000, 5000, 3800, 2400, 1000, 0] } ]      -- France 2030
+    restants := [6700, 6000, 5000, 3800, 2400, 1000, 0] },       -- France 2030
+  { fonction := .defense, niveau := 0, indice := 10000,
+    restants := [5295, 9865, 12982, 15414, 16748] },             -- LPM actualisée (2026-2030)
+  { fonction := .logementEnvironnement, niveau := 0, indice := 10000,
+    restants := [0, 0, 2975] } ]                                 -- ETS2 : moitié redistribuée dès 2028
 
 def echeancesRecettesDepart : List EcheanceRecette := [
   { impot := some .csgCrds, niveau := 9000, indice := 10000,
-    restants := [9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 0] } ]  -- CRDS, fin de la CADES en 2033
+    restants := [9000, 9000, 9000, 9000, 9000, 9000, 9000, 9000, 0] },  -- CRDS, fin de la CADES en 2033
+  { impot := some .autres, niveau := 0, indice := 10000,
+    restants := [0, 0, 5950] },                                          -- ETS2, enchères dès 2028
+  { impot := some .impotSocietes, niveau := 8000, indice := 10000,
+    restants := [7280, 0] },                                             -- contribution exceptionnelle des grandes entreprises (7,5 Md€ courants en 2026)
+  { impot := some .autres, niveau := 3400, indice := 10000,
+    restants := [3400, 3400, 2310, 1090, 0] } ]                          -- CVAE : 0,28 % → 0,19 % → 0,09 % → 0
+
+/-- Hausses de l'âge légal, mois, de 2026 à 2033 : suspension jusqu'en
+janvier 2028 (LFSS pour 2026), puis +3 mois par génération (générations
+1965 à 1969). -/
+def calendrierAgeLegal : List Int := [0, 0, 3, 0, 3, 3, 3, 3]
+
+/-- Calendrier de la loi n° 2023-270 sans suspension (64 ans en 2032),
+supposé intégré à la tendance des dépenses et de la population active. -/
+def calendrierAgeReforme2023 : List Int := [0, 3, 3, 0, 3, 3, 3, 0]
+
+theorem calendriers_meme_cible : calendrierAgeLegal.sum = calendrierAgeReforme2023.sum := by decide
 
 def reference2026 : Reference where
   id := "ref-2025"
@@ -112,7 +186,7 @@ def reference2026 : Reference where
     operationsFinancieres := 0     -- flux nets tendanciels supposés nuls (à sourcer)
     smicMensuel := 1820            -- repère provisoire, brut
     emissionsMt := 370             -- à sourcer (inventaire national, Citepa)
-    ageLegalMois := 768            -- repère provisoire : 64 ans
+    ageLegalMois := 753            -- 62 ans et 9 mois, gelé par la LFSS pour 2026 (loi n° 2025-1403, art. 45)
     populationMilliers := 69100    -- population au 1er janvier 2026 (INSEE, bilan démographique 2025)
     actifs := 31834000             -- population active BIT 2025 (INSEE)
     emploi := emploi2025           -- chômage BIT 7,9 % fin 2025 (INSEE)
@@ -133,9 +207,12 @@ def reference2026 : Reference where
     electrificationAnnuelleMilliers := 0
     bornesAnnuellesMilliers := 0
     participationsEtat := 209100   -- portefeuille de l'APE, valeur estimée au 30 juin 2025 (86 entités)
+    cdhrMeur := 400                -- contribution différentielle sur les hauts revenus, encaissements 2025
     dividendesEtat := 4000         -- dividendes 2025 ≈ 6,5 Md€ (2024 et 2025) − 2,47 Md€ (2024) (APE, rapport d'activité) ; inclus dans les recettes non fiscales
     echeances := echeancesDepart
-    echeancesRecettes := echeancesRecettesDepart }
+    echeancesRecettes := echeancesRecettesDepart
+    calendrierAgeLegal := calendrierAgeLegal
+    calendrierAgeTendanciel := calendrierAgeReforme2023 }
   populationMilliers := 69100
   partPlus65Pb := 2220             -- 22,2 % au 1er janvier 2026 (INSEE)
   sources := [

@@ -74,11 +74,30 @@ structure Energie where
   prixReferenceDollars : Int
   /-- Effet sur le niveau du PIB de +10 $ par baril, pb (négatif). -/
   effetPibPar10DollarsPb : Int
-  /-- Électrification tendancielle du parc automobile, milliers de
-  véhicules par an. -/
+  /-- Ventes de voitures électriques neuves de l'année de départ, milliers :
+  premier flux d'électrification tendancielle du parc. -/
   electrificationTendancielleMilliers : Int
-  /-- Ouverture tendancielle de points de recharge publics, milliers par an. -/
+  /-- Hausse annuelle des ventes de voitures électriques neuves imposée par
+  le règlement (UE) 2023/851 (100 % des ventes neuves en 2035), milliers
+  par an. -/
+  hausseElectrificationMilliers : Int
+  /-- Ventes de voitures particulières neuves, milliers par an : plafond du
+  flux d'électrification (tendance et mesures confondues). -/
+  ventesNeuvesMilliers : Int
+  /-- Ouverture de points de recharge publics l'année de départ, milliers ;
+  elle suit ensuite les ventes tendancielles de voitures électriques. -/
   bornesTendanciellesMilliers : Int
+  /-- Accises perdues par voiture thermique remplacée par une électrique,
+  €/an (accise sur les carburants moins accise sur l'électricité). -/
+  accisesParVehiculeEuros : Int
+  /-- TVA perdue par voiture thermique remplacée, €/an (carburant moins
+  électricité). -/
+  tvaParVehiculeEuros : Int
+  /-- Puissance moyenne d'un point de recharge public, W. -/
+  puissanceParBorneW : Int
+  /-- Puissance publique exigée par voiture électrique à batterie, W
+  (règlement (UE) 2023/1804, AFIR, art. 3). -/
+  puissanceAfirParVehiculeW : Int
   /-- Décès annuels évités par million de voitures thermiques remplacées par
   des électriques (particules fines à l'échappement). -/
   decesEvitesParMillionVehicules : Int
@@ -252,6 +271,10 @@ abbrev ValideAxes (H : Scenario) : Prop :=
   0 < H.energie.prixBrentDollars ∧ 0 < H.energie.prixReferenceDollars ∧
   H.energie.effetPibPar10DollarsPb ≤ 0 ∧ -2000 ≤ H.energie.effetPibPar10DollarsPb ∧
   0 ≤ H.energie.electrificationTendancielleMilliers ∧ 0 ≤ H.energie.bornesTendanciellesMilliers ∧
+  0 ≤ H.energie.hausseElectrificationMilliers ∧
+  H.energie.electrificationTendancielleMilliers ≤ H.energie.ventesNeuvesMilliers ∧
+  0 ≤ H.energie.accisesParVehiculeEuros ∧ 0 ≤ H.energie.tvaParVehiculeEuros ∧
+  0 < H.energie.puissanceParBorneW ∧ 0 ≤ H.energie.puissanceAfirParVehiculeW ∧
   0 ≤ H.energie.decesEvitesParMillionVehicules ∧ 0 < H.energie.vehiculesParBorne ∧
   0 ≤ H.energie.factureEnergetiqueMeur ∧
   0 < H.droit.plafondDeficitPb ∧ 0 < H.droit.plafondEmissionsMt ∧

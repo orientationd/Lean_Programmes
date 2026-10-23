@@ -1254,11 +1254,15 @@ def section_moteurs(D: Donnees) -> list:
 def section_air(D: Donnees) -> list:
     a0, a1 = D.annees[0], D.annees[-1]
     out = [P("Voitures électriques, bornes et qualité de l'air", "h1"),
-           P("Le parc de voitures électriques croît tendanciellement et avec les mesures d'aide à "
-             "l'achat ou de remplacement. Chaque million de voitures thermiques remplacées évite "
+           P("Le parc de voitures électriques croît avec le règlement (UE) 2023/851 (ventes "
+             "d'électriques portées de 19,9 % des ventes neuves en 2025 à 100 % en 2035) et avec les "
+             "mesures d'aide à l'achat ou de remplacement, dans la limite des ventes neuves. Chaque "
+             "million de voitures thermiques remplacées évite "
              f"{nombre(D.var['central']['decesEvitesParMillionVehicules'])} décès par an attribuables aux particules fines (hypothèse de calcul : Santé publique "
-             "France, Citepa). La propriété « bornes suffisantes » exige un point de recharge public "
-             "pour dix véhicules électriques en 2035.")]
+             "France, Citepa) et retire de l'assiette fiscale 354 M€ d'accises et 155 M€ de TVA sur "
+             "les carburants par an. La propriété « bornes suffisantes » exige un point de recharge "
+             "public pour dix véhicules électriques en 2035 ; la propriété AFIR, 1,3 kW de puissance "
+             "publique par voiture électrique en 2030.")]
     for g in D.groupes:
         out.append(png(courbes(D, g, lambda e: e["decesPollutionAir"],
                                "Décès annuels attribuables à la pollution de l'air, scénario central",
@@ -1280,8 +1284,10 @@ def section_air(D: Donnees) -> list:
     out.append(Spacer(1, 3))
     out.append(tableau(ent, rows, [0.28, 0.15, 0.15, 0.13, 0.15, 0.14]))
     out.append(P("Décès évités : par rapport au tendanciel, même année. Le parc et les bornes de "
-                 f"départ sont des ordres de grandeur (Avere-France, fin {a0}) ; l'effet d'aubaine des "
-                 "primes et les émissions hors échappement (pneus, freins) ne sont pas modélisés.", "note"))
+                 f"départ sont des ordres de grandeur (Avere-France, fin {a0}). Les primes ne s'ajoutent "
+                 "aux ventes tendancielles que dans la limite des ventes neuves (au-delà : effet "
+                 "d'aubaine) ; leur effet d'aubaine en deçà et les émissions hors échappement (pneus, "
+                 "freins) ne sont pas modélisés.", "note"))
     return out
 
 
@@ -1377,6 +1383,13 @@ def section_annexes(D: Donnees) -> list:
         "publiques et n'est pas modélisée.",
         "Population active : tendance démographique et effet de l'âge légal (30 000 actifs par "
         "mois, INSEE). La natalité n'agit pas sur les actifs avant l'horizon.",
+        "Lois en vigueur : la référence applique le calendrier de l'âge légal suspendu par la LFSS "
+        "pour 2026 (64 ans en 2033), la loi de programmation militaire actualisée (76,3 Md€ en 2030), "
+        "l'ETS2 à partir de 2028, la fin de la contribution exceptionnelle des grandes entreprises "
+        "(après 2026) et de la CVAE (2030), la contribution différentielle sur les hauts revenus tant "
+        "que le déficit dépasse 3 % et l'érosion des accises par l'électrification du parc. La "
+        "tendance des dépenses de retraite est supposée intégrer la réforme de 2023 sans suspension ; "
+        "seul l'écart au calendrier de cette réforme a des effets.",
         f"Les hypothèses démographiques sont fixées à l'horizon des propriétés "
         f"({D.d['horizonProprietes']} ans). Au-delà, la synthèse prolonge au même rythme la hausse "
         "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "
@@ -1459,7 +1472,9 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_courbe(
         D, "Population active",
         "Nombre d'actifs (en emploi ou au chômage). Il dépend de la démographie et de l'âge légal "
-        "de départ à la retraite : chaque mois de recul ajoute environ 30 000 actifs (INSEE).",
+        "de départ à la retraite : chaque mois de recul ajoute environ 30 000 actifs (INSEE). "
+        "L'âge légal suit le calendrier en vigueur (62 ans et 9 mois jusqu'en 2027, 64 ans en "
+        "2033) ; les programmes qui le fixent s'en écartent par rapport à ce calendrier.",
         lambda e: e["actifs"] / 1e6, "Population active (millions), scénario central", 1, "",
         lambda v: nombre(v / 1e6, 3), valeur_table=lambda e: e["actifs"],
         note="Tableau en millions de personnes.")

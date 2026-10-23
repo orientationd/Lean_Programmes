@@ -47,8 +47,24 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
   let dIr := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuIrPm / tPfu
   let dCsg := if tPfu = 0 then 0 else dPerte * H.eco.tauxPfuCsgCrdsPm / tPfu
-  let impots := ((s.impots.croitre croissance).ajouter .ir (-dIr)
+  -- électrification du parc (règlement (UE) 2023/851) : les ventes
+  -- tendancielles de voitures électriques montent jusqu'aux ventes neuves ;
+  -- les mesures s'y ajoutent dans la même limite
+  let ventes := H.energie.ventesNeuvesMilliers
+  let elecTendance := min ventes (s.electrificationTendanceMilliers + H.energie.hausseElectrificationMilliers)
+  let dParc := max elecTendance (min ventes (elecTendance + s.electrificationAnnuelleMilliers))
+  -- chaque voiture thermique remplacée retire son carburant de l'assiette des
+  -- accises et de la TVA (nets des taxes sur l'électricité consommée)
+  let pertesAccises := dParc * H.energie.accisesParVehiculeEuros / 1000
+  let pertesTva := dParc * H.energie.tvaParVehiculeEuros / 1000
+  -- contribution différentielle sur les hauts revenus : elle suit l'IR tant
+  -- que le déficit de l'année écoulée atteint 3 % du PIB, puis s'éteint
+  let cdhrReconduite := s.cdhrMeur + appliquerPb s.cdhrMeur croissance
+  let cdhr := if s.deficitPb < 300 then 0 else cdhrReconduite
+  let impots := ((((s.impots.croitre croissance).ajouter .ir (-dIr)
     |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
+    |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
+    |>.ajouter .ir (cdhr - cdhrReconduite)
   -- participations de l'État : valorisation au rythme du PIB nominal, plus les
   -- prises de participation ; dividendes au rendement du portefeuille de départ
   let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
@@ -94,8 +110,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let actifs := s.actifs + actifsTendance + actifsMesures
   let dChomeursOkun := actifs * (croissance - H.eco.seuilOkunPb) * H.eco.okunPm / 10000000
   let emploisOkun := emploisPourChomeurs H dChomeursOkun
-  -- transports : parc électrique, bornes, décès évités par la baisse des particules
-  let dParc := H.energie.electrificationTendancielleMilliers + s.electrificationAnnuelleMilliers
+  -- transports : bornes ouvertes au rythme des ventes tendancielles
+  -- d'électriques (plus celles des mesures), décès évités par la baisse des
+  -- particules, carburant importé évité
+  let elec0 := H.energie.electrificationTendancielleMilliers
+  let dBornes := (if elec0 = 0 then H.energie.bornesTendanciellesMilliers
+    else H.energie.bornesTendanciellesMilliers * elecTendance / elec0) + s.bornesAnnuellesMilliers
+  let importsBase := s.importations - s.importsPonctuelles
   let s' : Etat := { s with
     pib := pib
     impots := impots
@@ -106,6 +127,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
     economieInteretsNumeriqueMeur := economieNum
     pertePfuMeur := pertePfu
+    cdhrMeur := cdhr
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres + s.investissementsParticipations
     participationsEtat := participations
     dividendesEtat := dividendes
@@ -118,9 +140,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     -- commerce extérieur : exportations et importations suivent le PIB nominal,
     -- plus les flux d'importations dus aux mesures
     exportations := s.exportations + appliquerPb s.exportations croissance
-    importations := s.importations + appliquerPb s.importations croissance + s.variationImportsAnnuelle
+    importations := importsBase + appliquerPb importsBase croissance + s.variationImportsAnnuelle
+      - dParc * H.energie.gainCommercialParVehiculeEuros / 1000
+    importsPonctuelles := 0
+    electrificationTendanceMilliers := elecTendance
     parcElectriqueMilliers := s.parcElectriqueMilliers + dParc
-    bornesMilliers := s.bornesMilliers + H.energie.bornesTendanciellesMilliers + s.bornesAnnuellesMilliers
+    bornesMilliers := s.bornesMilliers + dBornes
     decesPollutionAir := max 0 (s.decesPollutionAir
       - dParc * H.energie.decesEvitesParMillionVehicules / 1000) }
   let s₁ := ajouterEmploi H none (emploiTendance + emploisOkun) s'
@@ -166,13 +191,23 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       let prevu := x * indice / 10000
       ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit)
   let pasRecettes := s.echeancesRecettes.map pasR
-  pasRecettes.foldl
+  let s₄ := pasRecettes.foldl
     (fun (st : Etat) ((e, d) : EcheanceRecette × Int) =>
       match e.impot with
       | some i => effetDemande H none (-(appliquerPm d M.multiplicateurPrelevementsPm))
           { st with impots := st.impots.ajouter i d }
       | none => { st with autresRecettes := st.autresRecettes + d })
     ({ s₃ with echeancesRecettes := pasRecettes.map (·.1) } : Etat)
+  -- âge légal : le pas du calendrier tendanciel est déjà dans la tendance
+  -- (dépenses, population active) ; seul l'écart du calendrier effectif a
+  -- les effets d'un recul (ou d'une avance) du départ
+  let pasEffectif := s.calendrierAgeLegal.headD 0
+  let pasTendanciel := s.calendrierAgeTendanciel.headD 0
+  let s₅ : Etat := { s₄ with
+    ageLegalMois := s₄.ageLegalMois + pasTendanciel
+    calendrierAgeLegal := s.calendrierAgeLegal.tail
+    calendrierAgeTendanciel := s.calendrierAgeTendanciel.tail }
+  if pasEffectif = pasTendanciel then s₅ else reculDepart H ((pasEffectif - pasTendanciel) * 1000) s₅
 
 /-- Situation de départ du scénario : la référence observée, après le choc
 de niveau dû au prix du pétrole (nul au prix de référence). -/
@@ -185,7 +220,8 @@ def etatDepart (H : Scenario) : Etat :=
   let dImports := H.energie.factureEnergetiqueMeur
     * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / H.energie.prixReferenceDollars
   let s := { s with importations := s.importations + dImports, robotisationPb := H.eco.robotisationTendanciellePb
-                    tauxMarginalCourantPb := H.eco.tauxMarginalPb }
+                    tauxMarginalCourantPb := H.eco.tauxMarginalPb
+                    electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers }
   chocPib H none dPib s
 
 /-- `f` appliquée `n` fois. -/

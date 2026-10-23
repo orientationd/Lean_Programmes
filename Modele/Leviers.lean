@@ -43,7 +43,8 @@ inductive Levier where
   | prestationParHabitant (eurosParAn : Int)
   /-- Revalorisation du SMIC, pb. -/
   | revalorisationSmic (hausse : Int)
-  /-- Modification de l'âge légal, mois (positif = recul). -/
+  /-- Modification de l'âge légal, mois (positif = recul), par rapport au
+  calendrier en vigueur (qui continue de s'appliquer). -/
   | ageLegal (deltaMois : Int)
   /-- Investissement de transition : réduction d'émissions (MtCO₂e) pour un
   coût annuel (M€). -/
@@ -59,9 +60,11 @@ inductive Levier where
   de demande non modélisé (choix prudent). -/
   | depensePonctuelle (montant : Int)
   /-- Remplacement de véhicules par l'État (sous-modèle :
-  `Modele/Automobile.lean`). Effet macro : coût d'achat versé une fois.
-  Effet sur la balance commerciale : calculé par le sous-modèle et affiché
-  dans le rapport à 5 et 10 ans. -/
+  `Modele/Automobile.lean`). Effet macro : coût d'achat versé une fois,
+  importations du véhicule l'année de l'achat, puis, en niveau, carburant
+  importé évité et accises et TVA perdues. Effet sur la balance
+  commerciale cumulée : calculé par le sous-modèle et affiché dans le
+  rapport à 5 et 10 ans. -/
   | remplacementVehicules (operation : Remplacement)
   /-- Prélèvement nouveau affecté à un impôt identifié, rendement statique
   M€/an (négatif pour une baisse). `prelevement` seul va dans « autres
@@ -78,8 +81,10 @@ inductive Levier where
   prudent), pas plus que les remboursements au-delà de l'horizon. -/
   | pretEtat (montantAnnuel : Int)
   /-- Aide à l'achat de voitures électriques : `vehiculesParAn` véhicules
-  aidés par an à `primeEuros` chacun. Dépense annuelle ; le parc électrique
-  croît d'autant chaque année (effet d'aubaine non modélisé). -/
+  aidés par an à `primeEuros` chacun. Dépense annuelle ; le flux
+  d'électrification croît d'autant, dans la limite des ventes neuves (au-delà,
+  la prime ne paie que des achats que le règlement (UE) 2023/851 impose déjà :
+  effet d'aubaine). -/
   | aideAchatElectrique (vehiculesParAn : Int) (primeEuros : Int)
   /-- Déploiement de points de recharge publics : `bornesParAn` par an à
   `coutParBorne` € (dépense annuelle, emplois dans la construction). -/
@@ -169,6 +174,12 @@ inductive Levier where
   `partDepartsDureePm` des départs, liée à la durée, est retardée d'autant.
   Même effet par mois que `ageLegal`, au millième de mois près. -/
   | dureeCotisation (moisRequis : Int) (partDepartsDureePm : Int)
+  /-- Âge légal porté à `cibleMois`. Sous l'âge courant : baisse immédiate et
+  fin du calendrier légal. Au-dessus : le calendrier en vigueur est suivi
+  (`rythmeMois` = 0) ou remplacé par des hausses de `rythmeMois` mois par an,
+  jusqu'à la cible. Les effets sont ceux de `ageLegal`, mois par mois, par
+  écart au calendrier dont la tendance du scénario tient déjà compte. -/
+  | ageLegalCible (cibleMois : Int) (rythmeMois : Int)
   /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
   publics (accompagnement des entreprises, inspection, formation) et
   baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
@@ -284,6 +295,25 @@ def reculDepart (H : Scenario) (moisPm : Int) (s : Etat) : Etat :=
       emploi := s.emploi.repartir dEmploi none
       chomeursExcedentaires := s.chomeursExcedentaires + (dEquilibre - dEmploi) }
 
+/-- Hausses régulières de `pas` mois par an jusqu'à `reste` mois (dernière
+hausse partielle). Vide si `reste` ou `pas` n'est pas positif. -/
+def pasReguliers (reste pas : Int) : List Int :=
+  if reste ≤ 0 ∨ pas ≤ 0 then []
+  else List.replicate (reste / pas).toNat pas ++ (if reste % pas = 0 then [] else [reste % pas])
+
+/-- Calendrier qui suit `cal` en plafonnant la hausse cumulée à `reste` mois,
+puis monte de 3 mois par an (rythme de la réforme de 2023) jusqu'à `reste`. -/
+def calendrierVers : Int → List Int → List Int
+  | reste, [] => pasReguliers reste 3
+  | reste, x :: xs =>
+      let y := max 0 (min x reste)
+      y :: calendrierVers (reste - y) xs
+
+-- 63 ans et 6 mois depuis 62 ans et 9 mois (+9 mois), puis 65 ans (+27) :
+-- le calendrier légal est suivi, puis prolongé de 3 mois par an
+example : calendrierVers 9 [3, 0, 3, 3, 3, 3] = [3, 0, 3, 3, 0, 0] := by decide
+example : calendrierVers 27 [3, 0, 3, 3, 3, 3] = [3, 0, 3, 3, 3, 3, 3, 3, 3, 3] := by decide
+
 /-- Interprétation d'un levier sous un moteur et un scénario. -/
 def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depense m, s => appliquerDepense H none .nonVentile m s
@@ -303,6 +333,13 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
         { s with smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h })
   | .ageLegal d, s => reculDepart H (d * 1000) s
   | .dureeCotisation m part, s => reculDepart H (m * part) s
+  | .ageLegalCible c r, s =>
+      if c ≤ s.ageLegalMois then
+        reculDepart H ((c - s.ageLegalMois) * 1000) { s with calendrierAgeLegal := [] }
+      else
+        { s with calendrierAgeLegal :=
+            if r ≤ 0 then calendrierVers (c - s.ageLegalMois) s.calendrierAgeLegal
+            else pasReguliers (c - s.ageLegalMois) r }
   | .dureeTravail v, s =>
       chocHeures H v { s with heuresParEmploi := s.heuresParEmploi + appliquerPm s.heuresParEmploi v }
   -- IS : perte statique au prorata des taux, retour d'assiette, impulsion de demande
@@ -319,12 +356,18 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- en issue.
   | .amendeSRU _, s => s
   | .depensePonctuelle m, s => { s with dette := s.dette + m }
-  -- achat versé une fois ; parc électrique et décès évités dès l'année 0
+  -- achat versé une fois (importations du véhicule : l'année de l'achat
+  -- seulement) ; dès l'année 0, parc électrique, décès évités, carburant
+  -- importé en moins et accises et TVA perdues, en niveau (une seule fois)
   | .remplacementVehicules r, s =>
+      let achat := r.importsInitialesCts / 100000000
       { s with dette := s.dette + r.cout / 1000000
-               importations := s.importations + r.importsInitialesCts / 100000000
-               variationImportsAnnuelle := s.variationImportsAnnuelle
+               importations := s.importations + achat
                  - r.nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
+               importsPonctuelles := s.importsPonctuelles + achat
+               impots := (s.impots.ajouter .accisesEnergie
+                   (-(r.nombre * H.energie.accisesParVehiculeEuros / 1000000)))
+                 |>.ajouter .tva (-(r.nombre * H.energie.tvaParVehiculeEuros / 1000000))
                parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
                decesPollutionAir := s.decesPollutionAir
                  - r.nombre * H.energie.decesEvitesParMillionVehicules / 1000000 }

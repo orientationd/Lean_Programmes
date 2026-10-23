@@ -26,8 +26,8 @@ def mesures : List Mesure := [
     source := s!"{projet}, p. 55 ; +9,9 % par rapport à la référence du modèle (1 820 € brut)"
     leviers := [.revalorisationSmic 990] },
   { id := "E-02", titre := "Âge légal ramené de 64 à 62 ans, objectif 60 ans selon la pénibilité"
-    source := s!"{projet}, p. 116 ; −24 mois (l'objectif de 60 ans n'est pas modélisé)"
-    leviers := [.ageLegal (-24)] },
+    source := s!"{projet}, p. 116 ; 62 ans dès l'entrée en vigueur, écart au calendrier légal de 9 mois en 2027 et 24 mois en 2033 (l'objectif de 60 ans n'est pas modélisé)"
+    leviers := [.ageLegalCible 744 0] },
   { id := "E-03", titre := "Plan national d'adaptation au changement climatique"
     source := s!"{projet} : « 7 milliards d'euros par an d'ici 2032 » ; emplois dans la construction"
     leviers := [.depenseSur .logementEnvironnement 7000] },
