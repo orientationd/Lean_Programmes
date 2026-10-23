@@ -140,8 +140,15 @@ inductive Levier where
   /-- Dépense à échéancier sur la fonction `f` : `niveaux` = montants des
   années successives, M€ de l'année d'entrée en vigueur (le premier est
   versé tout de suite, les suivants dans la projection, indexés ; le dernier
-  est conservé). Voir `Echeance`. -/
+  est conservé). Des niveaux négatifs sont des économies (gel d'une
+  revalorisation…). L'impulsion de demande suit le niveau pondéré : un
+  niveau positif est une dépense (multiplicateur plein), un niveau négatif
+  une économie (pondérée par le moteur). Voir `Echeance`. -/
   | depenseEcheancier (f : Fonction) (niveaux : List Int)
+  /-- Variation du niveau des importations, M€ (substitution d'une énergie
+  importée par une production nationale…). Comme dans le sous-modèle
+  automobile, l'effet passe par la balance commerciale, pas par le PIB. -/
+  | importationsNiveau (deltaMeur : Int)
   /-- Prévention des accidents du travail : `fondsMeur` M€/an de fonds
   publics (accompagnement des entreprises, inspection, formation) et
   baisse du taux d'accidents de `baissePm` (pour mille du taux courant).
@@ -342,8 +349,9 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       chocDemandeTravail H none dEmploi s₂
   | .depenseEcheancier _ [], s => s
   | .depenseEcheancier f (n :: reste), s =>
-      appliquerDepense H f.secteur f n
-        { s with echeances := s.echeances ++ [{ fonction := f, restants := reste, niveau := n, indice := 10000 }] }
+      let s' := { s with echeances := s.echeances ++ [{ fonction := f, restants := reste, niveau := n, indice := 10000 }] }
+      if n < 0 then appliquerEconomie M H f (-n) s' else appliquerDepense H f.secteur f n s'
+  | .importationsNiveau d, s => { s with importations := s.importations + d }
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)

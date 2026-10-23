@@ -277,6 +277,40 @@ hypothèse). Retenu : le seul coût des enquêteurs (le temps libéré sert
 l'accès aux soins sans hypothèse de volume). Variante : le temps libéré
 devient des consultations remboursées, +458 M€/an pour l'assurance maladie.
 
+### O-28 à O-34 — Fiscalité, agriculture, logement, territoires
+
+Effets de chaque mesure seule en 2035, scénario central (moteur de
+demande ; moteur d'offre entre parenthèses quand il diffère).
+
+| Mesure | Chiffrage | Déficit | PIB | Emplois |
+|---|---|---|---|---|
+| **O-28** Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € bruts par mois | 1 % des retraités, 6 470 € en moyenne (DREES) ; part au-delà du seuil 2,85 Md€ ; 1,8 % d'inflation évitée par an : −50 M€ en 2027, −422 M€ (euros 2027) en 2035 | −0,01 pt | −0,02 % | −1 600 |
+| **O-29** TVA : taux normal 20 % → 22 % | 1 point ≈ 8 Md€ (FIPECO, IPP, Sénat) : 16 Md€ statiques, 12,8 Md€ après fuite fiscale | −0,35 pt (−0,15) | −0,21 % (−0,52 %) | −30 000 (−77 000) |
+| **O-30** Taxe forfaitaire de 3 000 € par atterrissage de jet privé | 85 000 atterrissages (84 885 départs en 2022, Greenpeace) : 255 M€ statiques | −0,01 pt | ≈ 0 | −500 |
+| **O-31** Conversion électrique de toutes les exploitations agricoles en dix ans | 389 000 exploitations × 30 000 € : 1,17 Md€ par an ; −1 Mt de CO₂ par an (10 Mt au total, énergie agricole) ; importations nettes −116 M€ par an | +0,02 pt | +0,02 % | +3 500 |
+| **O-32** Suppression du DPE dans les quartiers historiques ; climatisation réversible aidée | 50 000 logements × 2 000 € par an pendant dix ans : 100 M€ par an | ≈ 0 | ≈ 0 | +300 |
+| **O-33** Pas de tours dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay) | 20 000 logements × 10 000 € d'équipements publics : 200 M€ par an | ≈ 0 | ≈ 0 | +700 |
+| **O-34** TER 24 h sur 24 avec agents de sécurité (train, gare, parking) | 20 liaisons de 100 km, 10 trains par nuit, 23,40 € par train-km, 46 heures d'agents par nuit, 25 % de recettes : 136 M€ par an | ≈ 0 | ≈ 0 | +500 |
+
+Points d'attention :
+
+* **O-28** : la mesure suppose une loi qui s'impose aussi aux régimes
+  complémentaires (Agirc-Arrco). Variante : gel de toute la pension
+  au-delà du seuil (13,95 Md€ concernés, −2,07 Md€ en 2035), au prix
+  d'effets de seuil (une pension juste au-dessus finit sous une pension
+  juste en dessous).
+* **O-29** : le moteur d'offre pénalise la hausse des prélèvements
+  obligatoires (PIB −0,5 %) ; c'est la mesure la plus lourde du bloc.
+* **O-31** : les engins lourds électriques restent rares ; l'effet sur la
+  balance commerciale est compté, pas celui sur le PIB (même convention que
+  le sous-modèle automobile).
+* **O-32** : l'effet climatique (remplacement du chauffage fossile, moindre
+  rénovation sans DPE) est inférieur à la résolution du modèle (1 Mt) ; les
+  unités extérieures restent soumises à l'avis des Architectes des
+  bâtiments de France.
+* **O-34** : la nuit est la plage des travaux d'entretien du réseau, ce qui
+  limite le nombre de lignes exploitables 24 h sur 24.
+
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
 Le mécanisme d'USDC appliqué à la dette française : des **OAT numériques**

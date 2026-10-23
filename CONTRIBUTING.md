@@ -77,7 +77,11 @@ d'emploi propre aux personnes concernées et l'écart à l'emploi d'équilibre
 `suppressionPostes fonction postes coutParPosteEuros` supprime des emplois
 publics. `depenseEcheancier fonction niveaux` fixe une dépense année par
 année (indemnités jusqu'à la retraite, revalorisations cumulées) ; une
-mesure peut aussi être répétée (`repetitions := 5`).
+mesure peut aussi être répétée (`repetitions := 5`). Un niveau négatif est
+une économie, pondérée par le moteur comme `economieSur`.
+`importationsNiveau deltaMeur` déplace le niveau des importations
+(substitution d'énergie importée), sans effet sur le PIB, comme le
+sous-modèle automobile.
 
 Financement de la dette : `detteNumerique ciblePm rythmePm
 capitalisationPm partResidentsPm partImposeeAvantPm` (tranche de dette
