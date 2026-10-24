@@ -61,10 +61,19 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- que le déficit de l'année écoulée atteint 3 % du PIB, puis s'éteint
   let cdhrReconduite := s.cdhrMeur + appliquerPb s.cdhrMeur croissance
   let cdhr := if s.deficitPb < 300 then 0 else cdhrReconduite
+  -- droits de succession et de donation : leur assiette suit le flux
+  -- successoral (décès × patrimoine transmis par décès), et le rendement
+  -- monte plus vite que lui (abattements et barème non indexés)
+  let deces := s.decesMilliers + H.demo.hausseDecesMilliers
+  let dDecesPb := if s.decesMilliers = 0 then 0
+    else H.demo.hausseDecesMilliers * 10000 / s.decesMilliers
+  let tauxDroits := dDecesPb
+    + (croissance + H.eco.excesPatrimoineParDecesPb) * H.eco.elasticiteDroitsSuccessionPm / 1000
   let impots := ((((s.impots.croitre croissance).ajouter .ir (-dIr)
     |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
     |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
     |>.ajouter .ir (cdhr - cdhrReconduite)
+    |>.ajouter .droitsMutation (appliquerPb s.impots.droitsMutation (tauxDroits - croissance))
   -- participations de l'État : valorisation au rythme du PIB nominal, plus les
   -- prises de participation ; dividendes au rendement du portefeuille de départ
   let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
@@ -133,7 +142,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     dividendesEtat := dividendes
     emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
-      - H.demo.decesMilliers + solde
+      - deces + solde
+    decesMilliers := deces
     actifs := actifs + (emploisOkun - dChomeursOkun)
     chomeursExcedentaires := s.chomeursExcedentaires - absorption + (equilibreEntrants - emploiEntrants)
     depenseParTouriste := s.depenseParTouriste + appliquerPb s.depenseParTouriste croissance
@@ -221,7 +231,8 @@ def etatDepart (H : Scenario) : Etat :=
     * (H.energie.prixBrentDollars - H.energie.prixReferenceDollars) / H.energie.prixReferenceDollars
   let s := { s with importations := s.importations + dImports, robotisationPb := H.eco.robotisationTendanciellePb
                     tauxMarginalCourantPb := H.eco.tauxMarginalPb
-                    electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers }
+                    electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers
+                    decesMilliers := H.demo.decesMilliers }
   chocPib H none dPib s
 
 /-- `f` appliquée `n` fois. -/

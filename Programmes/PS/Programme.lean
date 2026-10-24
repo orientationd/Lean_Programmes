@@ -32,8 +32,8 @@ def mesures : List Mesure := [
     source := s!"{site}, chap. 16 « Imposer la justice fiscale » : « 11 milliards d'euros par an »"
     leviers := [.prelevement 11000] },
   { id := "P-04", titre := "Impôt sur les grandes successions"
-    source := s!"{site}, chap. 16 : rendement cumulé de 400 Md€ sur 2025-2040, soit 25 Md€/an en moyenne (400 / 16)"
-    leviers := [.prelevement 25000] },
+    source := s!"{site}, chap. 16 : rendement cumulé de 400 Md€ sur 2025-2040, soit 25 Md€/an en moyenne (400 / 16), imputés aux droits de succession et de donation dès 2027 ; l'assiette successorale croissant plus vite que le PIB, le rendement modélisé dépasse ensuite cette moyenne"
+    leviers := [.prelevementSur .droitsMutation 25000] },
   { id := "P-05", titre := "Suppression des doublons entre l'État et les collectivités"
     source := s!"{site}, chap. 18 « Achever la décentralisation » : économie de « plus de 7,5 Mds € »"
     leviers := [.economieSur .fonctionnement 7500] },

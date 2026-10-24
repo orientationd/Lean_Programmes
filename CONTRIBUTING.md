@@ -39,8 +39,9 @@ aucun ne convient, ouvrir une issue « Faire évoluer le modèle commun »
 plutôt que de forcer un levier inadapté.
 
 Quand la source précise l'impôt visé ou le secteur aidé, préférer
-`prelevementSur` (par exemple `.prelevementSur .impotSocietes 15000`) à
-`prelevement`, et `depenseSecteur` (par exemple
+`prelevementSur` (par exemple `.prelevementSur .impotSocietes 15000`, ou
+`.prelevementSur .droitsMutation` pour une mesure sur les successions et
+donations, dont l'assiette suit le flux successoral) à `prelevement`, et `depenseSecteur` (par exemple
 `.depenseSecteur .industrie 500`) à `depense` : la synthèse PDF attribue
 alors recettes et emplois au bon poste au lieu de « autres impôts » ou
 d'une répartition au prorata. Un financement par prêt ou prise de
@@ -112,7 +113,8 @@ PIB : calendrier de l'âge légal suspendu par la LFSS pour 2026 (seul
 l'écart au calendrier de la réforme de 2023, supposé dans la tendance, a
 des effets), LPM actualisée, ETS2 à partir de 2028, fin de la
 contribution exceptionnelle des grandes entreprises (2026) et de la CVAE
-(2030), contribution différentielle sur les hauts revenus éteinte l'année
+(2030), droits de succession et de donation portés par la hausse des
+décès et le gel des abattements, contribution différentielle sur les hauts revenus éteinte l'année
 qui suit un déficit sous 3 %, électrification réglementaire du parc avec
 érosion des accises et de la TVA sur les carburants. Une mesure qui
 revient sur l'une d'elles s'exprime par écart à la référence (exemple :
