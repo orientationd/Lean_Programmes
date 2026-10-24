@@ -77,7 +77,10 @@ Mesures (extrait) :
   élus plafonnés ; **O-51** fin du PFU ; **O-52** rachats d'actions ;
   **O-53** cabinets de conseil ; **O-54** à **O-58** trajectoire de baisse
   continue : CRDS prolongée, norme renforcée, aides aux entreprises,
-  niches, durée de cotisation.
+  niches, durée de cotisation ; **O-59** à **O-62** face aux lois en
+  vigueur ajoutées à la référence : CVAE maintenue, contribution
+  exceptionnelle des grandes entreprises pérennisée, deuxième étape sur les
+  aides aux entreprises et les niches.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -502,7 +505,8 @@ def nichesFiscales : Int := 8000
 def pacteDutreil : Int := 1950
 
 /-- Défense (O-43) : −1 Md€ par an sur le budget de la défense (53 Md€ en
-2025, COFOG), hors norme de dépense. -/
+2025, COFOG), hors norme de dépense, par rapport à la trajectoire de la LPM
+actualisée (loi n° 2026-791, 76,3 Md€ en 2030) que la référence applique. -/
 def economieDefense : Int := 1000
 
 /-- Durée de cotisation (O-44) : 174 trimestres au lieu de 172, soit six mois
@@ -666,6 +670,45 @@ def normeRenforceePb : Int := 100
 def baisseAidesEntreprises : Int := 1500
 def rabotNiches : Int := 2000
 
+/-- Lois de finances en vigueur que la référence applique désormais (O-59,
+O-60) :
+
+* O-59 : la CVAE disparaît par étapes (0,28 % en 2027, 0,19 % en 2028,
+  0,09 % en 2029, 0 en 2030 ; loi n° 2025-127, art. 62). Son maintien à
+  0,28 % rapporte, par rapport à la référence, 1,09 puis 2,31 puis
+  3,4 Md€ (euros 2025), soit ×1,0609 en euros 2027 (croissance nominale de
+  3 % par an du scénario central) : `cvaeMaintenue`.
+* O-60 : la contribution exceptionnelle sur les bénéfices des grandes
+  entreprises (7,5 Md€ en 2026) n'est pas reconduite à législation
+  constante. Pérennisée aux taux de 2026 (20,6 % et 41,2 % de l'IS dû au-delà
+  de 1,5 et 3 Md€ de chiffre d'affaires), elle porte sur l'IS des seuls
+  grands groupes, tous soumis au pilier 2 : avec O-08, leur taux effectif
+  est de 15 %, d'où 7,5 × 15 / 25 = 4,5 Md€ (euros 2026), 4,64 Md€ en euros
+  2027 : `contributionGrandesEntreprises`. -/
+def cvaeMaintenue : List Int := [0, 1156, 2451, 3607]
+
+/-- Deuxième étape de la trajectoire (O-61, O-62). Une fois la référence
+complétée par les lois en vigueur (LPM actualisée, érosion des accises par
+l'électrification, fin de la contribution exceptionnelle et de la CVAE),
+le déficit du Texte Orientation D stagne de 2029 à 2032 (≈ 4,6 %) : la
+LPM monte jusqu'en 2030, la charge d'intérêts continue de croître et l'âge
+moyen de départ cesse de suivre le calendrier légal en 2032 (O-07). Il
+faut ≈ 1,5 à 2 Md€ de rendement supplémentaire chaque année de 2029 à 2032
+(un peu plus du double en statique, la moitié étant reprise par la baisse
+d'activité au moteur de demande) :
+
+* O-61 : aides aux entreprises, deuxième étape : exonérations de
+  cotisations réduites de 1,5 Md€ de plus chaque année de 2029 à 2034, sous
+  conditions (emploi, salaires, investissement) ; avec O-38 et O-56, 22 Md€
+  sur ≈ 80 Md€ d'allègements généraux en 2034.
+* O-62 : niches fiscales : −1 Md€ de plus chaque année de 2029 à 2035 ;
+  avec O-40 et O-57, 25 Md€ sur 88,3 Md€ de dépenses fiscales en 2035 (hors
+  Pacte Dutreil, traité par O-41, et dispositifs des ménages modestes). -/
+def aidesSecondeEtape : Int := 1500
+def nichesSecondeEtape : Int := 1000
+def contributionGrandesEntreprises : Int :=
+  7500 * max tauxISCible tauxMinimumPilier2 / 2500 * 103 / 100
+
 /-- Dette numérique (O-24). OAT tokenisées, inscrites sur une chaîne de blocs
 et réglées en jetons de monnaie électronique euro conformes à MiCA
 (règlement (UE) 2023/1114) : c'est le mécanisme d'USDC (jeton adossé 1:1 à
@@ -804,10 +847,11 @@ def mesures : List Mesure := [
 
   { id := "O-07"
     titre := "Fin de l'âge légal : départ à la durée cotisée (172 trimestres, 174 avec O-44), réduite selon la pénibilité"
-    source := "Texte Orientation D, mesure 7. Conversion : le modèle ne connaît qu'un âge moyen de départ ; sans borne d'âge, les carrières commencées avant 21 ans partent avant 64 ans et la réduction pour pénibilité avance encore les métiers exposés : âge moyen de départ supposé avancé de 6 mois (hypothèse à étayer avec le COR), coût et actifs selon l'hypothèse économique du scénario"
-    leviers := [.ageLegal (-6)]
+    source := "Texte Orientation D, mesure 7. Conversion : le modèle ne connaît qu'un âge moyen de départ ; sans borne d'âge, les carrières commencées avant 21 ans partent avant l'âge légal et la réduction pour pénibilité avance encore les métiers exposés : âge moyen de départ supposé plafonné à 63 ans et 6 mois, 6 mois sous les 64 ans du calendrier légal (hypothèse à étayer avec le COR) : le calendrier est suivi jusqu'à 63 ans et 6 mois (2031), puis s'arrête ; coût et actifs selon l'hypothèse économique du scénario"
+    leviers := [.ageLegalCible 762 0]
     variantes := [
-      { nom := "âge moyen avancé de 12 mois (pénibilité large)", leviers := [.ageLegal (-12)] }] },
+      { nom := "âge moyen avancé de 12 mois (pénibilité large)", leviers := [.ageLegalCible 756 0] },
+      { nom := "écart de 6 mois au calendrier légal dès 2027", leviers := [.ageLegal (-6)] }] },
 
   { id := "O-08"
     titre := "Impôt sur les sociétés à deux points au-dessus du taux le plus bas de l'Union européenne (11 %)"
@@ -816,7 +860,8 @@ def mesures : List Mesure := [
     variantes := [
       { nom := "17 % (minimum de 15 % du pilier 2 + 2 points)", leviers := [.impotSocietes 1700 retourAssiette] },
       { nom := "aucun retour d'assiette", leviers := [.impotSocietes tauxISEffectif 0] },
-      { nom := "sans plancher du pilier 2 (11 % pour tous)", leviers := [.impotSocietes tauxISCible retourAssiette] }] },
+      { nom := "sans plancher du pilier 2 (11 % pour tous)", leviers := [.impotSocietes tauxISCible retourAssiette] },
+      { nom := "IS maintenu à 25 % (abandon de la baisse, piste vers l'équilibre)", leviers := [] }] },
 
   { id := "O-09"
     titre := "La démission ouvre des droits au chômage : six mois d'indemnités, une fois tous les cinq ans"
@@ -1048,7 +1093,7 @@ def mesures : List Mesure := [
 
   { id := "O-43"
     titre := "Budget de la défense : −1 Md€ par an"
-    source := s!"Texte Orientation D, mesure 43 ; {economieDefense} M€ par an sur 53 Md€ (2025)"
+    source := s!"Texte Orientation D, mesure 43 ; {economieDefense} M€ par an sur 53 Md€ (2025), en moins de la trajectoire de la LPM actualisée (loi n° 2026-791)"
     leviers := [.economieSur .defense economieDefense]
     debut := 0 },
 
@@ -1130,7 +1175,10 @@ def mesures : List Mesure := [
   { id := "O-55"
     titre := "Norme de dépense renforcée : dépenses pilotables à −0,5 % par an en volume (avec O-42)"
     source := s!"Texte Orientation D, mesure 55 ; +{normeRenforceePb} pb de modération, soit 150 pb avec O-42 : 1,3 % par an en valeur au lieu de 2,8 %"
-    leviers := [.normeDepense normeRenforceePb] },
+    leviers := [.normeDepense normeRenforceePb]
+    variantes := [
+      { nom := "norme renforcée de 100 pb de plus (250 pb avec O-42, piste vers l'équilibre)", leviers := [.normeDepense (normeRenforceePb + 100)] },
+      { nom := "norme renforcée de 200 pb de plus (350 pb avec O-42, piste vers l'équilibre)", leviers := [.normeDepense (normeRenforceePb + 200)] }] },
 
   { id := "O-56"
     titre := "Aides aux entreprises : exonérations de cotisations réduites de 1,5 Md€ par an pendant six ans, sous conditions"
@@ -1150,7 +1198,32 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 58 ; logique de la réforme de 2014 ; +1 mois de durée requise par an, {partDepartsDuree / 10} % des départs liés à la durée (hypothèse)"
     leviers := [.dureeCotisation 1 partDepartsDuree]
     debut := 1
-    repetitions := 8 }
+    repetitions := 8 },
+
+  { id := "O-59"
+    titre := "Maintien de la CVAE au taux de 0,28 %"
+    source := "Texte Orientation D, mesure 59 ; la loi n° 2025-127 (art. 62) supprime la CVAE par étapes de 2028 à 2030 ; rendement à 0,28 % ≈ 3,4 Md€ (Sénat, amendement I-31 au PLF 2026 : 1,1 Md€ pour 0,09 point) ; voir `cvaeMaintenue`"
+    leviers := [.recetteEcheancier (some .autres) cvaeMaintenue] },
+
+  { id := "O-60"
+    titre := "Pérennisation de la contribution exceptionnelle sur les bénéfices des grandes entreprises"
+    source := s!"Texte Orientation D, mesure 60 ; 7,5 Md€ en 2026 (loi n° 2026-103), non reconduite à législation constante (le PLF 2027 propose 5 Md€ pour 2027) ; aux taux de 2026 sur l'IS des grands groupes, imposés à {max tauxISCible tauxMinimumPilier2 / 100} % avec O-08 : {contributionGrandesEntreprises} M€ (euros 2027)"
+    leviers := [.recetteEcheancier (some .impotSocietes) [contributionGrandesEntreprises]] },
+
+  { id := "O-61"
+    titre := "Aides aux entreprises, deuxième étape : exonérations de cotisations réduites de 1,5 Md€ de plus par an de 2029 à 2034"
+    source := s!"Texte Orientation D, mesure 61 ; même base que O-56 (211 Md€ d'aides, commission d'enquête du Sénat, juillet 2025) ; {aidesSecondeEtape} M€ de plus chaque année de 2029 à 2034, sous conditions (voir `aidesSecondeEtape`)"
+    leviers := [.prelevementSur .cotisations aidesSecondeEtape]
+    debut := 2
+    repetitions := 6 },
+
+  { id := "O-62"
+    titre := "Niches fiscales : −1 Md€ de plus par an de 2029 à 2035"
+    source := s!"Texte Orientation D, mesure 62 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {nichesSecondeEtape} M€ de plus chaque année de 2029 à 2035 (IR, IS, TVA comme O-57)"
+    leviers := [.prelevementSur .ir (nichesSecondeEtape / 2), .prelevementSur .impotSocietes (nichesSecondeEtape / 4),
+                .prelevementSur .tva (nichesSecondeEtape / 4)]
+    debut := 2
+    repetitions := 7 }
 ]
 
 def programme : Programme where

@@ -81,8 +81,8 @@ def mesures : List Mesure := [
     source := s!"{page} : État 20 M€/an, pôle public bancaire et autres 30 M€/an"
     leviers := [.depenseSecteur .tertiaireMarchand 20] },
   { id := "L-10", titre := "Retraite à 60 ans après 40 annuités"
-    source := "L'Avenir en commun 2025, chap. 8 « Travailler tous, travailler moins, travailler mieux », § 8 (melenchon2027.fr/programme2025/livre/chapitre8/s8) ; −48 mois par rapport au repère de 64 ans du modèle, 40 annuités non modélisées ; le coût suit l'hypothèse économique du scénario"
-    leviers := [.ageLegal (-48)] },
+    source := "L'Avenir en commun 2025, chap. 8 « Travailler tous, travailler moins, travailler mieux », § 8 (melenchon2027.fr/programme2025/livre/chapitre8/s8) ; âge légal fixé à 60 ans dès l'entrée en vigueur (−33 mois en 2027, puis l'écart au calendrier légal se creuse jusqu'à 48 mois en 2033), 40 annuités non modélisées ; le coût suit l'hypothèse économique du scénario"
+    leviers := [.ageLegalCible 720 0] },
   { id := "L-11", titre := "SMIC porté à 1 600 € net"
     source := "L'Avenir en commun 2025 (melenchon2027.fr, « SMIC à 1600 € net »). Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +11,0 %"
     leviers := [.revalorisationSmic 1100] },

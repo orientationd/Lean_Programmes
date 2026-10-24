@@ -49,7 +49,10 @@ pèse sur la dette, pas sur le déficit. Une mesure qui n'entre en vigueur
 qu'après l'année de départ porte `debut := n` (années) : montée en charge
 ou décaissements différés. Les mesures automobiles ont leurs leviers :
 `aideAchatElectrique véhiculesParAn primeEuros` (parc électrique, décès
-évités) et `deploiementBornes bornesParAn coûtParBorne`.
+évités, carburant importé évité, accises et TVA perdues ; au-delà des
+ventes neuves, que le règlement (UE) 2023/851 électrifie entièrement en
+2035, la prime n'achète plus rien) et `deploiementBornes bornesParAn
+coûtParBorne`.
 
 Préférer `depenseSur fonction montant` et `economieSur fonction montant`
 (nomenclature COFOG agrégée : retraites, santé, famille, enseignement,
@@ -96,7 +99,24 @@ s'applique avant, et `debut` est compté depuis cette année.
 Propriétés de trajectoire : `Propriete.surTrajectoire` évalue un critère
 sur la liste des états de 0 à l'horizon (exemple : « Déficit en baisse
 chaque année »). Retraites : `dureeCotisation moisRequis partDepartsDureePm`
-(au millième de mois près ; `ageLegal` en mois entiers).
+(au millième de mois près ; `ageLegal` en mois entiers, par rapport au
+calendrier légal qui continue de s'appliquer). Pour fixer l'âge légal
+lui-même, utiliser `ageLegalCible cibleMois rythmeMois` : sous l'âge
+courant, baisse immédiate et fin du calendrier ; au-dessus, le calendrier
+en vigueur est suivi (`rythmeMois` = 0) ou remplacé par des hausses de
+`rythmeMois` mois par an jusqu'à la cible.
+
+Lois en vigueur : la référence (`Hypotheses/Reference.lean`, section « Lois
+en vigueur ») applique les textes votés dont les effets ne suivent pas le
+PIB : calendrier de l'âge légal suspendu par la LFSS pour 2026 (seul
+l'écart au calendrier de la réforme de 2023, supposé dans la tendance, a
+des effets), LPM actualisée, ETS2 à partir de 2028, fin de la
+contribution exceptionnelle des grandes entreprises (2026) et de la CVAE
+(2030), contribution différentielle sur les hauts revenus éteinte l'année
+qui suit un déficit sous 3 %, électrification réglementaire du parc avec
+érosion des accises et de la TVA sur les carburants. Une mesure qui
+revient sur l'une d'elles s'exprime par écart à la référence (exemple :
+`recetteEcheancier` pour maintenir la CVAE).
 
 Taux d'intérêt : le taux marginal du scénario est corrigé d'une prime de
 risque (`primeDeficitPb` par point de déficit au-dessus de celui de départ,

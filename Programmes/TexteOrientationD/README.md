@@ -90,17 +90,32 @@ an (1,2 Md€/an ; variante 6 000 € × 400 000). O-06 : 50 000 points de
 recharge publics par an à 8 000 € (0,4 Md€/an, emplois dans la
 construction). Le modèle commun en déduit le parc électrique, les décès
 évités par la baisse des particules fines (90 par million de véhicules
-remplacés, hypothèse documentée dans `Hypotheses/Energie.lean`) et vérifie
-la propriété « un point de recharge public pour dix véhicules en 2035 ».
+remplacés, hypothèse documentée dans `Hypotheses/Energie.lean`), le
+carburant importé évité et les accises et la TVA perdues sur les
+carburants (354 € et 155 € par voiture et par an), et vérifie les
+propriétés « un point de recharge public pour dix véhicules en 2035 » et
+AFIR (1,3 kW de puissance publique par voiture électrique en 2030).
 Montants : hypothèses à arbitrer.
+
+Le règlement (UE) 2023/851 porte déjà les ventes d'électriques de 19,9 %
+des ventes neuves en 2025 à 100 % en 2035 : dans la référence, elles
+montent de 133 000 par an. Les 300 000 voitures aidées s'y ajoutent dans
+la limite des ventes neuves (1,665 million) : à partir de 2034, la prime
+ne finance plus que des achats que le règlement impose déjà (effet
+d'aubaine) ; la dépense, elle, continue.
 
 ### O-07 — Retraite à la durée cotisée, sans âge légal
 
 La notion d'âge légal disparaît : on part dès que la durée cotisée atteint
 le seuil actuel (172 trimestres), réduit selon la pénibilité. Le modèle
 commun ne connaît qu'un âge moyen de départ : la mesure est traduite en un
-avancement moyen de 6 mois (variante : 12 mois), dont le coût et l'effet
-sur la population active suivent l'hypothèse économique du scénario.
+âge moyen plafonné à 63 ans et 6 mois, 6 mois sous les 64 ans du
+calendrier légal (variante : 63 ans). Le calendrier en vigueur (62 ans et
+9 mois jusqu'en 2027, suspension de la LFSS pour 2026, puis +3 mois par
+génération) est suivi jusqu'à 63 ans et 6 mois en 2031 ; l'écart à la
+référence est de 3 mois en 2032 et de 6 mois à partir de 2033 (variante :
+écart de 6 mois dès 2027). Coût et effet sur la population active suivent
+l'hypothèse économique du scénario.
 Hypothèse à étayer avec les données du COR (distribution des âges de
 début de carrière, part des métiers exposés).
 
@@ -341,27 +356,32 @@ variante.
 | **O-39** Train de vie de l'État | 3,1 Md€ (part du PS, moins O-21) | −0,06 pt | −0,08 % |
 | **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,11 % |
 | **O-41** Pacte Dutreil divisé par deux (75 % → 37,5 %), taxe sur les holdings élargie | 2,95 Md€ (Cour des comptes, proportionnel) | −0,07 pt | −0,04 % |
-| **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,55 pt | −0,75 % |
-| **O-43** Défense : −1 Md€ par an | 1 Md€ sur 53 | −0,02 pt | −0,03 % |
+| **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,54 pt | −0,74 % |
+| **O-43** Défense : −1 Md€ par an, par rapport à la LPM actualisée que la référence applique (76,3 Md€ en 2030) | 1 Md€ sur 53 | −0,02 pt | −0,03 % |
 | **O-44** Durée de cotisation : 174 trimestres au lieu de 172 | âge moyen de départ +5 mois (80 % des départs liés à la durée, hypothèse) : ≈ 3,3 Md€ de pensions, 150 000 actifs | −0,33 pt | +0,29 % |
 | **O-45** Lutte contre la fraude fiscale : facturation électronique (2,5 Md€ de TVA dès 2028 ; 2 à 3 Md€ attendus par l'administration), 1 500 agents de contrôle (105 M€) pour 1,5 Md€ d'encaissements | 4 Md€ | −0,08 pt | −0,05 % |
 | **O-46** CSG progressive : +2 points au-delà de 100 000 € par an et par personne | 2,0 Md€ (1 point = 17 Md€ ; 6 % de l'assiette au-delà du seuil, hypothèse) | −0,05 pt | −0,03 % |
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat (avec O-54 à O-58 ci-dessous) : le déficit du Texte Orientation
-D baisse chaque année de 2027 à 2035, de 4,6 % à 3,5 %** (dette stabilisée
-à 127 % du PIB, chômage 9,2 %), contre 8,4 % sans programme. Le programme
-entre en vigueur en 2027 (aucune mesure avant).
+**Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
+D baisse chaque année de 2027 à 2035, de 4,7 % à 3,7 %** (dette 128 % du
+PIB, chômage 9,1 %), contre 9,2 % sans programme (référence complétée
+des lois en vigueur : voir O-59 à O-62). Le programme entre en vigueur en
+2027 (aucune mesure avant).
 
 Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
-| En plus des mesures O-35 à O-58 | Déficit 2035 | Chômage 2035 |
+| En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,5 % | 9,2 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 2,7 % | 9,3 % |
+| Rien | 3,7 % | 9,1 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 3,0 % | 9,2 % |
 | … et norme renforcée de 100 pb supplémentaires | 1,7 % | 9,7 % |
-| … et de 200 pb supplémentaires | 0,7 % | 10,1 % |
+| … et de 200 pb supplémentaires | 0,3 % | 10,2 % |
+
+Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
+la synthèse les évalue une à une. (Avec l'IS maintenu à 25 %, O-60
+rapporterait 7,7 Md€ au lieu de 4,6 ; la variante ne le recalcule pas.)
 
 ### O-49 à O-53 — Hauts fonctionnaires, élus, capital, conseil
 
@@ -390,29 +410,58 @@ les intérêts.
 | Mesure | Chiffrage | Déficit 2035 | PIB 2035 |
 |---|---|---|---|
 | **O-54** CRDS prolongée au-delà de 2033 pour amortir la dette de l'ACOSS (≈ 65 Md€ fin 2026) | 9,55 Md€ (euros 2027) dès 2034 ; loi organique | −0,23 pt | −0,13 % |
-| **O-55** Norme de dépense renforcée : 150 pb avec O-42, dépenses pilotables à +1,3 % par an en valeur (≈ −0,5 % en volume) | | −1,21 pt | −1,45 % |
+| **O-55** Norme de dépense renforcée : 150 pb avec O-42, dépenses pilotables à +1,3 % par an en valeur (≈ −0,5 % en volume) | | −1,08 pt | −1,45 % |
 | **O-56** Aides aux entreprises (211 Md€, Sénat 2025) : exonérations de cotisations −1,5 Md€ de plus chaque année pendant six ans, sous conditions | 9 Md€ en 2032 | −0,17 pt | −0,11 % |
 | **O-57** Niches fiscales : −2 % de plus chaque année pendant cinq ans | ≈ 2 Md€ par an, 10 Md€ en 2031 | −0,20 pt | −0,12 % |
 | **O-58** Durée de cotisation : +1 trimestre tous les trois ans dès 2028 (logique de la réforme de 2014) | +1 mois de durée requise par an, 80 % des départs | −0,35 pt | +0,34 % |
+
+### O-59 à O-62 — Lois en vigueur et deuxième étape
+
+La référence applique désormais les lois votées dont les effets ne suivent
+pas le PIB (détail et sources : `Hypotheses/Reference.lean`, section
+« Lois en vigueur ») :
+
+| Loi | Effet sur la référence |
+|---|---|
+| Âge légal : réforme de 2023 suspendue par la LFSS pour 2026 | 62 ans et 9 mois jusqu'en 2027, +3 mois par génération, 64 ans en 2033 ; la suspension coûte ≈ 1,9 Md€ par an de 2027 à 2032 |
+| LPM actualisée (loi n° 2026-791) | défense hors pensions de 50,5 Md€ (2025) à 76,3 Md€ (2030) |
+| ETS2 (à partir de 2028) | ≈ 6,5 Md€ de recettes, dont la moitié redistribuée |
+| Contribution exceptionnelle des grandes entreprises (lois n° 2025-127 et 2026-103) | 8 Md€ en 2025, 7,5 Md€ en 2026, rien ensuite |
+| CVAE (loi n° 2025-127, art. 62) | 3,4 Md€, ramenés à 2,3 en 2028, 1,1 en 2029, 0 en 2030 |
+| Contribution différentielle sur les hauts revenus | ≈ 0,4 Md€, éteinte l'année qui suit un déficit sous 3 % |
+| Règlement (UE) 2023/851 (100 % de voitures neuves électriques en 2035) | 12,2 millions de voitures électriques en 2035 ; accises et TVA sur les carburants −5,4 Md€ (euros 2025) |
+
+Le déficit tendanciel 2035 passe de 8,4 % à 9,2 % du PIB. Avec O-54 à
+O-58 seulement, celui du Texte Orientation D stagnait vers 4,6 % de 2028 à
+2032 : la LPM monte jusqu'en 2030, la charge d'intérêts continue de croître
+et l'âge moyen de départ cesse de suivre le calendrier légal en 2032
+(O-07). Quatre mesures rétablissent la baisse :
+
+| Mesure | Chiffrage | Déficit 2035 | PIB 2035 |
+|---|---|---|---|
+| **O-59** Maintien de la CVAE à 0,28 % | 1,2 puis 2,5 puis 3,6 Md€ (euros 2027) de 2028 à 2030 | −0,10 pt | −0,05 % |
+| **O-60** Pérennisation de la contribution exceptionnelle sur les grandes entreprises, aux taux de 2026 | 7,5 Md€ × 15 % / 25 % (IS des grands groupes avec O-08) : 4,6 Md€ | −0,14 pt | −0,06 % |
+| **O-61** Aides aux entreprises, deuxième étape : exonérations de cotisations −1,5 Md€ de plus chaque année de 2029 à 2034 | 9 Md€ en 2034 ; 22 Md€ avec O-38 et O-56 | −0,15 pt | −0,10 % |
+| **O-62** Niches fiscales : −1 Md€ de plus chaque année de 2029 à 2035 | 7 Md€ en 2035 ; 25 Md€ sur 88,3 avec O-40 et O-57 | −0,11 pt | −0,08 % |
 
 Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,28 | 4,59 | 4,50 | 4,47 | 4,44 | 4,42 | 4,24 | 3,99 | 3,73 | 3,46 |
-| Offre | 5,28 | 4,50 | 4,37 | 4,32 | 4,27 | 4,23 | 3,99 | 3,72 | 3,43 | 3,15 |
+| Demande | 5,40 | 4,67 | 4,56 | 4,55 | 4,52 | 4,47 | 4,43 | 4,22 | 3,96 | 3,70 |
+| Offre | 5,40 | 4,58 | 4,42 | 4,39 | 4,35 | 4,30 | 4,22 | 4,01 | 3,76 | 3,52 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
-central sous les trois moteurs, et dans 16 à 18 des 36 scénarios de la
-matrice : avec un pétrole cher, la baisse s'interrompt en 2032. Entre
-2029 et 2031, la baisse n'est que de 0,03 point par an : c'est la période
-où les intérêts montent le plus vite.
+central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
+sous chaque moteur : toujours avec la croissance haute, jamais avec la
+croissance basse ; en croissance centrale, le pétrole cher ou le
+vieillissement accéléré l'interrompent. La marge est mince en 2029
+(−0,01 point) : c'est l'année où la LPM et les intérêts montent le plus
+vite.
 
-Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,5 %, ≈ 210 000
-emplois en 2035 au moteur de demande) ; le chômage du Texte Orientation D
-atteint 9,2 % en 2035. Variante sans O-58 (pas de nouvel allongement de la
-durée) : il faut une norme de 200 pb au total pour obtenir la même
-trajectoire.
+Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,45 %,
+≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
+Orientation D atteint 9,1 % en 2035.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 

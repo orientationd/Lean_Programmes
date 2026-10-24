@@ -41,8 +41,8 @@ def mesures : List Mesure := [
     source := s!"{dossier} : agrégat « ménages, fiscalité » −22,1 Md€ en 2031, dont −12,2 de TVA énergies (RN-01) : reste −9,9 Md€, imputé aux « autres impôts »"
     leviers := [.prelevementSur .autres (-9900)] },
   { id := "RN-05", titre := "Retraite à 62 ans avec 42 annuités"
-    source := s!"{dossier} : le parti chiffre 9 Md€/an ; le modèle applique son propre coût par mois d'âge légal (hypothèse économique du scénario)"
-    leviers := [.ageLegal (-24)] },
+    source := s!"{dossier} : le parti chiffre 9 Md€/an ; le modèle applique son propre coût par mois d'âge légal (hypothèse économique du scénario) ; 62 ans dès l'entrée en vigueur, écart au calendrier légal de 9 mois en 2027 et 24 mois en 2033"
+    leviers := [.ageLegalCible 744 0] },
   { id := "RN-06", titre := "Non-renouvellement de 201 000 postes publics"
     source := s!"{dossier} : ≈ 13,5 Md€/an en 2032 (presse)"
     leviers := [.economieSur .fonctionnement 13500] },

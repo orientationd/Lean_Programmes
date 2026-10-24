@@ -24,8 +24,8 @@ def emission : String := "É. Philippe, « L'Heure de vérité », France 2, 8 o
 
 def mesures : List Mesure := [
   { id := "H-01", titre := "Âge légal porté progressivement à 65 ans, 45 annuités"
-    source := s!"{emission} : 65 ans « en moins de dix ans », un tiers des salariés exemptés (non modélisé) ; +12 mois par rapport au repère de 64 ans du modèle, appliqués dès l'année 0"
-    leviers := [.ageLegal 12] },
+    source := s!"{emission} : 65 ans « en moins de dix ans », un tiers des salariés exemptés (non modélisé) ; +3 mois par an à partir de 2028, 65 ans atteints en 2036 (64 ans et 6 mois en 2033, contre 64 ans au calendrier légal)"
+    leviers := [.ageLegalCible 780 3] },
   { id := "H-02", titre := "Non-remplacement d'un fonctionnaire sur trois : 250 000 postes sur cinq ans"
     source := s!"{emission} : 250 000 postes sur 750 000 départs ; conversion : 62 500 € par poste et par an (ratio du plan Retailleau, 25 Md€ pour 400 000), soit 15,6 Md€/an en régime de croisière"
     leviers := [.economieSur .fonctionnement 15600] },

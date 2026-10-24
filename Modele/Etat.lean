@@ -497,6 +497,23 @@ structure Etat where
   elles accroissent la dette sans entrer dans le déficit (opérations
   financières) et augmentent le portefeuille. -/
   investissementsParticipations : Int := 0
+  /-- Calendrier légal de l'âge de départ : hausses des années suivantes,
+  mois par an (tête = année prochaine). -/
+  calendrierAgeLegal : List Int := []
+  /-- Hausses d'âge dont les effets (dépenses de retraite, population active)
+  sont déjà dans la tendance du scénario, mois par an. La projection
+  n'applique les effets que de l'écart entre les deux calendriers. -/
+  calendrierAgeTendanciel : List Int := []
+  /-- Ventes tendancielles de voitures électriques neuves de l'année,
+  milliers (flux porté par la projection). -/
+  electrificationTendanceMilliers : Int := 0
+  /-- Importations ponctuelles de l'année (achat unique), M€ : comprises dans
+  `importations`, retirées avant la projection de l'année suivante. -/
+  importsPonctuelles : Int := 0
+  /-- Contribution différentielle sur les hauts revenus, M€ (comprise dans
+  `impots.ir`) : due jusqu'à ce que le déficit public passe sous 3 % du PIB
+  (loi n° 2025-127) ; la projection la supprime l'année qui suit. -/
+  cdhrMeur : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
