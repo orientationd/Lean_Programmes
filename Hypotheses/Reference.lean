@@ -83,7 +83,9 @@ effets ne sont pas proportionnels au PIB :
   2027, 790 A bis prolongé jusqu'en 2030, votés en première lecture le
   16 octobre 2026) et les propositions de la Cour des comptes (note du
   21 septembre 2026 : barème −5 points, −2,1 Md€ ; Dutreil à 50 %,
-  +1,3 Md€ ; assurance-vie au barème dès la tranche à 20 %, +1,25 Md€).
+  +1,3 Md€ ; assurance-vie au barème dès la tranche à 20 %, +1,25 Md€,
+  proposition du Conseil des prélèvements obligatoires, rapport du
+  1er décembre 2025, recommandation n° 6 ; Texte Orientation D, O-70).
 * **Loi de programmation pour la refondation de Mayotte** (n° 2025-797 du
   11 août 2025) : 730 M€ d'autorisations d'engagement pour l'eau
   (350 M€ en 2025-2027, 380 M€ en 2028-2031), ≈ 0,1 Md€ par an, jugés
@@ -207,6 +209,21 @@ def calendrierAgeReforme2023 : List Int := [0, 3, 3, 0, 3, 3, 3, 0]
 
 theorem calendriers_meme_cible : calendrierAgeLegal.sum = calendrierAgeReforme2023.sum := by decide
 
+/-- Passifs implicites (« dettes cachées ») suivis par le modèle : heures
+supplémentaires non payées ni récupérées des policiers, 14,3 millions
+d'heures au 31 décembre 2022 (Sénat, rapport n° 34, 2024-2025, annexe
+« Sécurités » ; 23 millions fin 2018, Cour des comptes), dernier chiffre
+publié, supposé stable depuis (3,9 millions d'heures payées en 2023,
+≈ 30 M€ en 2024, et les 5,3 millions d'heures des Jeux de 2024 payées en
+totalité). Valeur au taux d'indemnisation de 13,22 € brut de l'heure
+(12,47 € relevés de 6 % en novembre 2020) : 189 M€ (calcul ; 366 M€ au
+coût complet retenu par la Cour des comptes en 2020, 25,6 €/h). Flux de
+nouvelles heures non payées : non publié, supposé nul. Non comptés : le
+stock de l'hôpital (18,5 millions d'heures, 463 M€ fin 2018) et de la
+fonction publique territoriale (6,2 millions d'heures), les congés non
+pris des gendarmes mobiles, les comptes épargne-temps. -/
+def passifsPolice2025 : Int := 189
+
 /-- Émissions territoriales 2025 par secteur, kt CO₂e hors puits (Citepa,
 inventaire Secten publié le 16 juin 2026, estimation 2025 ; déchets : niveau
 2024, non réestimé). Total 359,5 Mt ; 367,0 Mt en 2024, 546,9 Mt en 1990. -/
@@ -249,6 +266,7 @@ def reference2026 : Reference where
     electrificationAnnuelleMilliers := 0
     bornesAnnuellesMilliers := 0
     participationsEtat := 209100   -- portefeuille de l'APE, valeur estimée au 30 juin 2025 (86 entités)
+    passifsImplicites := passifsPolice2025  -- heures supplémentaires non payées des policiers
     cdhrMeur := 400                -- contribution différentielle sur les hauts revenus, encaissements 2025
     dividendesEtat := 4000         -- dividendes 2025 ≈ 6,5 Md€ (2024 et 2025) − 2,47 Md€ (2024) (APE, rapport d'activité) ; inclus dans les recettes non fiscales
     echeances := echeancesDepart

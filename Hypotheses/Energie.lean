@@ -100,6 +100,22 @@ voitures roulent moins que la moyenne, ce qui réduit l'effet (non modélisé).
   sur les travaux financés par les ménages (≈ 1 € par € d'aide, CAE) et la
   captation d'une partie de l'aide par les prix (IPP, travaux en cours).
 
+## Élasticités-prix des activités taxées (levier `taxeEnvironnementale`)
+
+Valeurs de long terme, en valeur absolue : recul de l'activité (et de ses
+émissions) pour +1 % de coût.
+* Vols intérieurs : 0,9 (demande nationale −0,8, courts-courriers ×1,1 :
+  InterVISTAS pour l'IATA, 2007 ; −0,4 à −1,1 à court terme pour le trafic
+  intérieur français, Sauvant, Notes de synthèse du SES, 2003).
+* Poids lourds : 0,5 (véhicules-kilomètres au prix au kilomètre, meilleure
+  estimation de long terme de 0,6 dans une fourchette de 0,1 à 0,5, report
+  modal compris : Significance et CE Delft pour la Commission européenne,
+  2010 ; valeur médiane retenue).
+* Carburants routiers : 0,6 (consommation de carburant au prix, long terme :
+  Goodwin, Dargay et Hanly, Transport Reviews, 2004).
+* Chauffage fossile : 0,3 (hypothèse ; non utilisée par les programmes à ce
+  jour).
+
 Outre-mer (zones non interconnectées) : l'électricité y coûte bien plus à
 produire que le tarif péréqué ne rapporte ; le surcoût est compensé par les
 charges de service public de l'énergie (3,18 Md€ en 2025, 3,27 Md€ en
@@ -166,6 +182,11 @@ def renovation : Renovation where
   accisesGazEurosMWh := 17
   tvaGazEurosMWh := 18
 
+/-- Élasticités-prix de long terme (valeur absolue, pm) : voir le docstring
+du module. -/
+def elasticitesPrix : ElasticitesPrix :=
+  { aerienInterieur := 900, poidsLourds := 500, carburantsRoutiers := 600, chauffageFossile := 300 }
+
 def bas : Energie where
   id := "petrole-bas"
   description := "Brent à 50 $"
@@ -183,6 +204,7 @@ def bas : Energie where
   co2EviteParVehiculeKg := 1700
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
+  elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
@@ -208,6 +230,7 @@ def central : Energie where
   co2EviteParVehiculeKg := 1700
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
+  elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
@@ -233,6 +256,7 @@ def haut : Energie where
   co2EviteParVehiculeKg := 1700
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
+  elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90

@@ -102,6 +102,20 @@ Les dépenses d'indemnisation suivent chaque année le nombre de chômeurs
 (`coutParChomeurEuros`, stabilisateur automatique) : un programme qui
 relève le chômage voit son déficit monter d'autant.
 
+Rémunérations publiques : `remunerationPublique nature fonction niveaux`
+(nature `.traitement`, `.primes` ou `.heuresSup`) pour des agents déjà en
+poste : le modèle retire les prélèvements qui reviennent (CSG-CRDS,
+cotisations, impôt sur le revenu selon la nature) et traite le net comme un
+transfert aux ménages, sans emplois publics en plus ; recruter reste un
+`depenseSur` (production et emplois). Passifs implicites (« dettes
+cachées », heures supplémentaires non payées…) : `apurementPassifs fonction
+partPm` paie une part du stock l'année même, `paiementFluxPassifs fonction
+partPm` paie le flux au fil de l'eau ; le rapport donne la dette étendue.
+Taxes environnementales : `taxeEnvironnementale activite impot
+emissionsViseesKt hausseCoutPm rendementStatique` (activités : vols
+intérieurs, poids lourds, carburants routiers, chauffage fossile) ; le
+modèle applique l'élasticité-prix de l'activité (axe énergie).
+
 Émissions : l'état les suit par secteur de l'inventaire (`emissionsKt` :
 transports, bâtiments, agriculture, industrie, énergie, déchets), chacun à
 sa tendance (`baisseEmissionsSecteurPm`). `transition secteur reductionMt

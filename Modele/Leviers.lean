@@ -218,6 +218,30 @@ inductive Levier where
   charges de service public de l'énergie, est une dépense annuelle
   (affaires économiques). -/
   | raccordementZni (foyers : Int)
+  /-- Rémunération supplémentaire d'agents publics déjà en poste (primes,
+  traitement, heures supplémentaires), échéancier de niveaux bruts annuels
+  (M€ de l'année d'entrée en vigueur ; négatif pour une baisse). Le modèle
+  en retire les prélèvements qui reviennent aussitôt (CSG-CRDS, cotisations,
+  impôt sur le revenu selon la nature) ; le net soutient la consommation
+  (effet de demande d'un transfert), sans production ni emplois publics en
+  plus. -/
+  | remunerationPublique (nature : NatureRemuneration) (fonction : Fonction) (niveaux : List Int)
+  /-- Apurement de `partPm` du stock de passifs implicites (« dettes
+  cachées » : heures supplémentaires non payées…), payé l'année même comme
+  des heures supplémentaires (dépense et déficit de l'année). -/
+  | apurementPassifs (fonction : Fonction) (partPm : Int)
+  /-- Paiement au fil de l'eau de `partPm` des nouveaux passifs implicites
+  (heures supplémentaires payées l'année où elles sont faites) : dépense
+  permanente, et le stock cesse de croître d'autant. -/
+  | paiementFluxPassifs (fonction : Fonction) (partPm : Int)
+  /-- Taxe environnementale sur une activité (kérosène des vols intérieurs,
+  poids lourds…) : rendement statique `rendementStatique` M€/an sur
+  l'impôt `impot`, hausse du coût de l'activité `hausseCoutPm`, émissions
+  de l'activité `emissionsViseesKt`. Le modèle applique l'élasticité-prix
+  de l'activité (axe énergie) : l'activité, donc ses émissions et
+  l'assiette de la taxe, reculent de élasticité × hausse. -/
+  | taxeEnvironnementale (activite : ActiviteTaxee) (impot : Impot) (emissionsViseesKt : Int)
+      (hausseCoutPm : Int) (rendementStatique : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -351,6 +375,35 @@ def depenseUneAnnee (H : Scenario) (f : Fonction) (secteur : Option Secteur) (pa
     { s with echeances := s.echeances ++ [e]
              depensesF := s.depensesF.ajouter f montant
              importations := s.importations + montant * (1000 - part) / 1000 }
+
+/-- Prélèvements qui reviennent sur une rémunération publique brute `brut`,
+selon sa nature : (CSG-CRDS, cotisations salariales, impôt sur le revenu). -/
+def retoursRemuneration (H : Scenario) (nature : NatureRemuneration) (brut : Int) : Int × Int × Int :=
+  let csg := appliquerPm brut H.eco.tauxCsgCrdsRemunerationPm
+  match nature with
+  | .traitement => (csg, appliquerPm brut H.eco.tauxCotisationsTraitementPm,
+      appliquerPm brut H.eco.tauxIrRemunerationPm)
+  | .primes => (csg, appliquerPm brut H.eco.tauxCotisationsPrimesPm,
+      appliquerPm brut H.eco.tauxIrRemunerationPm)
+  | .heuresSup => (csg, appliquerPm brut H.eco.tauxCotisationsHeuresSupPm, 0)
+
+/-- Effets d'une variation `brut` de rémunération publique, hors inscription
+de la dépense : prélèvements qui en reviennent, et effet de demande du
+revenu net (pondéré comme un transfert aux ménages). -/
+def effetRemuneration (M : Moteur) (H : Scenario) (nature : NatureRemuneration) (brut : Int)
+    (s : Etat) : Etat :=
+  let (csg, cot, ir) := retoursRemuneration H nature brut
+  effetDemande H none (appliquerPm (brut - csg - cot - ir) M.multiplicateurPrelevementsPm)
+    { s with impots := ((s.impots.ajouter .csgCrds csg).ajouter .cotisations cot).ajouter .ir ir }
+
+/-- Rémunération publique d'une seule année (apurement d'un arriéré) :
+inscrite dans les dépenses de l'année, retirée l'année suivante. -/
+def remunerationUneAnnee (M : Moteur) (H : Scenario) (nature : NatureRemuneration) (f : Fonction)
+    (montant : Int) (s : Etat) : Etat :=
+  let e : Echeance := { fonction := f, restants := [0], niveau := montant, indice := 10000,
+                        remuneration := some nature }
+  effetRemuneration M H nature montant
+    { s with echeances := s.echeances ++ [e], depensesF := s.depensesF.ajouter f montant }
 
 /-- Hausses régulières de `pas` mois par an jusqu'à `reste` mois (dernière
 hausse partielle). Vide si `reste` ou `pas` n'est pas positif. -/
@@ -530,6 +583,27 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                                 depensesF := s.depensesF.ajouter f n
                                 importations := s.importations + n * (1000 - part) / 1000 }
       effetDemande H (some .construction) (n * part / 1000) s'
+  | .remunerationPublique _ _ [], s => s
+  | .remunerationPublique nat f (n :: reste), s =>
+      let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
+                            remuneration := some nat }
+      effetRemuneration M H nat n
+        { s with echeances := s.echeances ++ [e], depensesF := s.depensesF.ajouter f n }
+  | .apurementPassifs f part, s =>
+      let montant := s.passifsImplicites * part / 1000
+      remunerationUneAnnee M H .heuresSup f montant
+        { s with passifsImplicites := s.passifsImplicites - montant }
+  | .paiementFluxPassifs f part, s =>
+      let montant := s.fluxPassifsImplicites * part / 1000
+      let e : Echeance := { fonction := f, restants := [], niveau := montant, indice := 10000,
+                            remuneration := some .heuresSup }
+      effetRemuneration M H .heuresSup montant
+        { s with echeances := s.echeances ++ [e], depensesF := s.depensesF.ajouter f montant
+                 fluxPassifsImplicites := s.fluxPassifsImplicites - montant }
+  | .taxeEnvironnementale act imp emissions hausse statique, s =>
+      let recul := H.energie.elasticitesPrix.get act * hausse / 1000
+      appliquerPrelevement M H imp (statique * (1000 - recul) / 1000)
+        (s.reduireEmissions act.secteur (emissions * recul / 1000))
   | .raccordementZni foyers, s =>
       appliquerDepense H none .affairesEconomiques
         (foyers * H.energie.consommationFoyerZniKWh * H.energie.surcoutPerequationZniEurosMWh / 1000000000) s

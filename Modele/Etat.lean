@@ -442,6 +442,18 @@ theorem tauxCroissance_norme (f : Fonction) (t r m : Int) (h : f ≠ .interets) 
 
 end ParFonction
 
+/-- Nature d'une rémunération publique supplémentaire : elle fixe les
+prélèvements qui en reviennent aussitôt aux administrations publiques. -/
+inductive NatureRemuneration where
+  /-- Traitement indiciaire : CSG-CRDS, retenue pour pension, impôt sur le revenu. -/
+  | traitement
+  /-- Primes et indemnités : CSG-CRDS, RAFP, impôt sur le revenu. -/
+  | primes
+  /-- Heures supplémentaires : CSG-CRDS ; exonérées d'impôt sur le revenu
+  (dans la limite de 7 500 € par an) et de la plupart des cotisations. -/
+  | heuresSup
+  deriving Repr, DecidableEq, Inhabited
+
 /-- Échéancier d'une dépense : niveaux annuels fixés à l'avance (indemnités
 versées jusqu'à la retraite, revalorisations cumulées…), exprimés en euros de
 l'année d'entrée en vigueur et indexés sur la croissance tendancielle de leur
@@ -454,6 +466,10 @@ structure Echeance where
   /-- Part de la dépense adressée à la production intérieure, pm ; le reste
   est importé (investissement outre-mer). -/
   partInterieurePm : Int := 1000
+  /-- Rémunération d'agents publics déjà en poste : pas de production ni
+  d'emplois en plus ; une part revient en prélèvements, le reste soutient la
+  consommation des ménages (effet de demande d'un transfert). -/
+  remuneration : Option NatureRemuneration := none
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/
@@ -617,6 +633,13 @@ structure Etat where
   (stabilisateur automatique : la projection ajuste ces dépenses à l'écart
   avec le nombre courant de chômeurs). -/
   chomeursComptes : Int := 0
+  /-- Passifs implicites de l'État (« dettes cachées ») : obligations nées
+  mais non payées ni inscrites dans la dette de Maastricht (heures
+  supplémentaires non payées…), M€. -/
+  passifsImplicites : Int := 0
+  /-- Nouveaux passifs implicites accumulés chaque année, M€/an (flux porté,
+  indexé sur le PIB nominal). -/
+  fluxPassifsImplicites : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
@@ -706,6 +729,9 @@ theorem reduireEmissions_total (sec : SecteurGes) (kt : Int) (s : Etat) :
     (s.reduireEmissions sec kt).emissionsKt.total = s.emissionsKt.total - kt := by
   simp [reduireEmissions, ParSecteurGes.total_ajouter]
   omega
+
+/-- Dette y compris passifs implicites, en pb du PIB. -/
+def detteEtenduePb (s : Etat) : Int := ratioPb (s.dette + s.passifsImplicites) s.pib
 
 /-- Dette en pb du PIB. -/
 def dettePb (s : Etat) : Int := ratioPb s.dette s.pib

@@ -82,7 +82,12 @@ Mesures (extrait) :
   exceptionnelle des grandes entreprises pérennisée, deuxième étape sur les
   aides aux entreprises et les niches ; **O-63** aide à la rénovation
   majorée de 25 % dans les territoires ruraux ; **O-64** à **O-66** eau
-  potable et électrification de tous les foyers des outre-mer.
+  potable et électrification de tous les foyers des outre-mer ; **O-67** et
+  **O-68** dettes cachées (heures supplémentaires des policiers, RIFSEEP
+  pour les enseignants) ; **O-69** à **O-73** troisième étape du
+  redressement (CIR recentré, assurance-vie au barème, contribution des
+  poids lourds, kérosène des vols intérieurs, fin de la défiscalisation des
+  heures supplémentaires).
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -753,6 +758,70 @@ production de l'électricité consommée par les 22 100 foyers raccordés
 (péréquation des zones non interconnectées, modèle commun),
 `foyersRaccordesParAn` = 7 367 par an pendant trois ans. -/
 def electrificationOutreMer : List Int := [70, 70, 71, 0]
+
+/-- Dettes cachées (O-67, O-68).
+
+* O-67 : paiement immédiat du stock d'heures supplémentaires non payées des
+  policiers (passif implicite suivi par le modèle commun : 189 M€, 14,3
+  millions d'heures à 13,22 €), en 2027, comme des heures supplémentaires
+  (exonérées d'impôt sur le revenu). Au coût complet retenu par la Cour
+  des comptes en 2020 (25,6 €/h), le stock vaudrait 366 M€.
+* O-68 : RIFSEEP pour les enseignants, c'est-à-dire l'alignement de leurs
+  primes sur celles des autres agents de catégorie A. Les primes font
+  17,2 % du salaire brut des enseignants contre 32,9 % pour les autres
+  agents de catégorie A (DGAFP, rapport annuel 2025, données 2023) ; le
+  rapport primes / traitement passe de 0,208 à 0,490, soit +0,283 × un
+  traitement de ≈ 38 750 € : ≈ 10 950 € bruts par enseignant et par an,
+  × 693 400 enseignants fonctionnaires du public (DEPP, rentrée 2025) =
+  7,6 Md€, 8,0 Md€ en euros 2027 (`rifseepEnseignants`). Les primes ne
+  donnent pas lieu à RAFP (déjà au plafond de 20 % du traitement) ; la
+  CSG et l'impôt sur le revenu en reviennent (≈ 24,5 %). Aucun chiffrage
+  officiel ni contentieux de rattrapage n'a été trouvé : chiffrage par le
+  programme. Variante : montée en charge sur cinq ans. -/
+def rifseepEnseignants : Int := 8000
+
+/-- Baisse du déficit, troisième étape (O-69 à O-73), pour financer O-67 et
+O-68 :
+
+* O-69 : crédit d'impôt recherche plafonné par groupe à 50 M€ et
+  suppression du taux de 5 % au-delà de 100 M€ de dépenses : ≥ 960 M€
+  (IGF, revue de dépenses, mars 2024) ; mesure défendue par le groupe
+  socialiste (amendements AN I-754 et Sénat I-674 au PLF 2026). Le CIR
+  coûte ≈ 8 Md€, les 50 premiers bénéficiaires en reçoivent 43 % ; sans
+  effet significatif sur la R&D des grandes entreprises (CNEPI, 2021).
+* O-70 : assurance-vie au barème des successions en ligne directe, à
+  partir de la tranche à 20 %, abattement de 152 500 € maintenu :
+  ≈ 1,25 Md€ à terme (Conseil des prélèvements obligatoires, rapport du
+  1er décembre 2025, recommandation n° 6) ; ligne des droits de succession.
+* O-71 : contribution kilométrique nationale des poids lourds sur le réseau
+  non concédé (≈ 15 000 km, l'assiette de l'écotaxe de 2014) : 1 129 M€
+  bruts à 0,13 €/km selon la Cour des comptes (rapport public 2017),
+  `ecotaxePoidsLourds` = 1 350 M€ avec ≈ 20 % d'inflation depuis 2014
+  (hypothèse). Assiette implicite : 8,7 milliards de véhicules-kilomètres,
+  ≈ 29 % du trafic des poids lourds (≈ 30 milliards, ordre de grandeur) :
+  émissions visées 29 % × 26,7 Mt (Citepa, 2024). Hausse du coût : 0,156 €
+  pour ≈ 1,4 € par kilomètre (coût complet, ordre de grandeur), 11 %. Le
+  modèle applique l'élasticité-prix (report modal compris).
+* O-72 : accise sur le kérosène des vols intérieurs métropolitains au taux
+  du gazole (59,40 €/MWh) : 0,476 Mt de kérosène (1,5 Mt de CO₂, DGAC 2024,
+  3,15 t de CO₂ par tonne), 5,7 TWh, ≈ 340 M€ avant comportements (calcul) ;
+  ≈ 13,6 € par passager pour ≈ 25 millions de passagers et un billet moyen
+  de ≈ 130 € (ordres de grandeur) : +10 % de coût. Outre-mer exclu
+  (continuité territoriale).
+* O-73 : fin de la défiscalisation des heures supplémentaires (loi de 2019),
+  comme en 2012 : exonération d'impôt sur le revenu, ≈ 2,0 Md€ en 2026
+  (1,79 Md€ en 2025, ≈ 2,3 Md€ en 2027, Voies et moyens), et réduction de
+  cotisations salariales, 2,31 Md€ en 2026 (annexe 4 du PLFSS 2026). La loi
+  TEPA n'avait pas augmenté les heures travaillées (Cahuc et Carcillo,
+  2014) : pas d'effet sur les heures, la fuite fiscale du modèle couvrant
+  l'optimisation des déclarations. -/
+def cirRecentre : Int := 960
+def assuranceVieBareme : Int := 1250
+def ecotaxePoidsLourds : Int := 1350
+def emissionsPoidsLourdsVisees : Int := 26700 * 29 / 100
+def kerosene : Int := 340
+def heuresSupIr : Int := 2000
+def heuresSupCotisations : Int := 2310
 def foyersRaccordesParAn : Int := 7367
 def contributionGrandesEntreprises : Int :=
   7500 * max tauxISCible tauxMinimumPilier2 / 2500 * 103 / 100
@@ -1009,7 +1078,7 @@ def mesures : List Mesure := [
   { id := "O-25"
     titre := "Rémunération des enseignants : +2 % par an"
     source := s!"Texte Orientation D, mesure 25 ; masse salariale hors CAS Pensions 59,23 Md€ en 2026 (PLF 2026), base 2027 {masseEnseignants2027} M€ ; +2 %/an au-delà de la tendance de 2027 à 2035 : {revalorisationsEnseignants.head!} M€ la première année, {revalorisationsEnseignants[8]!} M€ (euros 2027) la neuvième (2035)"
-    leviers := [.depenseEcheancier .enseignement revalorisationsEnseignants]
+    leviers := [.remunerationPublique .traitement .enseignement revalorisationsEnseignants]
     debut := 0 },
 
   { id := "O-26"
@@ -1186,8 +1255,8 @@ def mesures : List Mesure := [
   { id := "O-49"
     titre := "Rémunération des hauts fonctionnaires : −5 %"
     source := s!"Texte Orientation D, mesure 49 ; encadrement supérieur et dirigeant (21 500 agents, DGAFP), coût complet ≈ {masseHautsFonctionnaires} M€ : économie {economieHautsFonctionnaires} M€"
-    leviers := [.economieSur .fonctionnement (economieHautsFonctionnaires * 3 / 4),
-                .economieSur .sante (economieHautsFonctionnaires - economieHautsFonctionnaires * 3 / 4)]
+    leviers := [.remunerationPublique .traitement .fonctionnement [-(economieHautsFonctionnaires * 3 / 4)],
+                .remunerationPublique .traitement .sante [-(economieHautsFonctionnaires - economieHautsFonctionnaires * 3 / 4)]]
     debut := 0 },
 
   { id := "O-50"
@@ -1294,13 +1363,53 @@ def mesures : List Mesure := [
     titre := "Électrification des outre-mer : électricité des foyers raccordés (péréquation tarifaire)"
     source := s!"Texte Orientation D, mesure 65 (suite) ; {foyersRaccordesParAn} foyers raccordés par an de 2027 à 2029, consommation et surcoût de production des zones non interconnectées : axe énergie du modèle commun"
     leviers := [.raccordementZni foyersRaccordesParAn]
-    repetitions := 3 }
+    repetitions := 3 },
+
+  { id := "O-67"
+    titre := "Dettes cachées : paiement immédiat des heures supplémentaires non payées des policiers"
+    source := "Texte Orientation D, mesure 67 ; 14,3 millions d'heures au 31 décembre 2022 (Sénat, rapport n° 34, 2024-2025), 13,22 € l'heure : 189 M€ payés en 2027 (passif implicite du modèle commun)"
+    leviers := [.apurementPassifs .securiteJustice 1000] },
+
+  { id := "O-68"
+    titre := "Dettes cachées : RIFSEEP pour les enseignants, primes alignées sur les autres agents de catégorie A"
+    source := s!"Texte Orientation D, mesure 68 ; primes à 17,2 % du brut contre 32,9 % pour la catégorie A (DGAFP 2025) ; ≈ 10 950 € par enseignant × 693 400 fonctionnaires (DEPP 2025) : {rifseepEnseignants} M€ par an (euros 2027), primes (voir `rifseepEnseignants`)"
+    leviers := [.remunerationPublique .primes .enseignement [rifseepEnseignants]]
+    variantes := [
+      { nom := "montée en charge sur cinq ans", leviers := [.remunerationPublique .primes .enseignement
+          [rifseepEnseignants / 5, 2 * rifseepEnseignants / 5, 3 * rifseepEnseignants / 5, 4 * rifseepEnseignants / 5, rifseepEnseignants]] }] },
+
+  { id := "O-69"
+    titre := "Crédit d'impôt recherche recentré : plafond de 50 M€ par groupe, fin du taux de 5 %"
+    source := s!"Texte Orientation D, mesure 69 ; IGF (revue de dépenses, mars 2024) : au moins {cirRecentre} M€ ; amendements PS au PLF 2026 (AN I-754, Sénat I-674)"
+    leviers := [.prelevementSur .impotSocietes cirRecentre] },
+
+  { id := "O-70"
+    titre := "Assurance-vie au barème des successions au-delà de 152 500 €"
+    source := s!"Texte Orientation D, mesure 70 ; Conseil des prélèvements obligatoires (1er décembre 2025, recommandation n° 6) : ≈ {assuranceVieBareme} M€ à terme"
+    leviers := [.prelevementSur .droitsMutation assuranceVieBareme] },
+
+  { id := "O-71"
+    titre := "Contribution kilométrique des poids lourds sur le réseau national non concédé"
+    source := s!"Texte Orientation D, mesure 71 ; écotaxe de 2014 : 1 129 M€ bruts à 0,13 €/km (Cour des comptes, 2017), {ecotaxePoidsLourds} M€ actualisés ; émissions visées {emissionsPoidsLourdsVisees} kt, coût +11 % ; élasticité-prix du modèle commun"
+    leviers := [.taxeEnvironnementale .poidsLourds .autres emissionsPoidsLourdsVisees 110 ecotaxePoidsLourds] },
+
+  { id := "O-72"
+    titre := "Accise sur le kérosène des vols intérieurs métropolitains"
+    source := s!"Texte Orientation D, mesure 72 ; 1,5 Mt de CO₂ (DGAC, 2024), taux du gazole : ≈ {kerosene} M€ avant comportements, billets +10 % ; élasticité-prix du modèle commun"
+    leviers := [.taxeEnvironnementale .aerienInterieur .accisesEnergie 1500 100 kerosene] },
+
+  { id := "O-73"
+    titre := "Fin de la défiscalisation des heures supplémentaires (impôt sur le revenu et cotisations salariales)"
+    source := s!"Texte Orientation D, mesure 73 ; exonération d'IR ≈ {heuresSupIr} M€ (Voies et moyens) et réduction de cotisations salariales {heuresSupCotisations} M€ (PLFSS 2026) ; suppression déjà votée en 2012"
+    leviers := [.prelevementSur .ir heuresSupIr, .prelevementSur .cotisations heuresSupCotisations]
+    variantes := [
+      { nom := "impôt sur le revenu seulement (cotisations maintenues)", leviers := [.prelevementSur .ir heuresSupIr] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, fin de la défiscalisation des heures supplémentaires."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

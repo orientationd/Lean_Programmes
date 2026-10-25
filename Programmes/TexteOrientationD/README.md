@@ -382,7 +382,7 @@ variante.
 
 **Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
 D baisse chaque année de 2027 à 2035, de 4,8 % à 3,7 %** (dette 128 % du
-PIB, chômage 8,9 %), contre 9,0 % sans programme (référence complétée
+PIB, chômage 9,0 %), contre 9,0 % sans programme (référence complétée
 des lois en vigueur : voir O-59 à O-62 ; IS à 12 % et réponse de
 l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
 2027 (aucune mesure avant).
@@ -391,10 +391,10 @@ Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,7 % | 8,9 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 2,8 % | 9,0 % |
-| … et norme renforcée de 100 pb supplémentaires | 1,5 % | 9,6 % |
-| … et de 200 pb supplémentaires | 0,3 % | 10,1 % |
+| Rien | 3,7 % | 9,0 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 2,8 % | 9,2 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,5 % | 9,7 % |
+| … et de 200 pb supplémentaires | 0,3 % | 10,2 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
 la synthèse les évalue une à une (section « Variantes des mesures »). (Avec l'IS maintenu à 25 %, O-60
@@ -466,8 +466,8 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,81 | 4,66 | 4,64 | 4,59 | 4,54 | 4,51 | 4,28 | 3,99 | 3,71 |
-| Offre | 5,38 | 4,71 | 4,51 | 4,47 | 4,41 | 4,35 | 4,26 | 4,04 | 3,77 | 3,53 |
+| Demande | 5,38 | 4,81 | 4,66 | 4,63 | 4,59 | 4,54 | 4,50 | 4,27 | 3,98 | 3,70 |
+| Offre | 5,38 | 4,72 | 4,53 | 4,49 | 4,46 | 4,42 | 4,38 | 4,19 | 3,96 | 3,74 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
@@ -480,7 +480,7 @@ avec lui.
 
 Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,45 %,
 ≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
-Orientation D atteint 8,9 % en 2035.
+Orientation D atteint 9,0 % en 2035.
 
 ### O-63 — Aide à la rénovation majorée de 25 % dans les territoires ruraux
 
@@ -563,6 +563,46 @@ sectoriel de la SNBC-3, ni le budget carbone 2029-2033 : comme tous les
 programmes du dépôt. L'agriculture s'en approche (68,9 Mt pour 68, grâce à
 O-31). Combler l'écart demanderait une baisse de 5,1 % par an des
 émissions, contre 2,1 % observés en 2025.
+
+### O-67 à O-73 — Dettes cachées et troisième étape du redressement
+
+**Nouveaux mécanismes du modèle commun.**
+
+* **Passifs implicites** : l'état suit les obligations nées mais non payées
+  ni comptées dans la dette de Maastricht. Seul stock publié et suivi :
+  les heures supplémentaires non payées des policiers, 14,3 millions
+  d'heures (Sénat, fin 2022), 189 M€ à 13,22 € l'heure. Le rapport
+  calcule une « dette étendue » (dette + passifs implicites).
+* **Rémunérations publiques** : une hausse de rémunération d'agents déjà en
+  poste coûte le brut, dont une part revient aussitôt (CSG-CRDS 9,5 %,
+  retenue pour pension 11,1 % sur le traitement, impôt sur le revenu ≈ 15 % ;
+  heures supplémentaires : CSG seule). Le net soutient la consommation
+  comme un transfert ; il ne crée ni production ni emplois publics. O-25
+  (enseignants +2 % par an) et O-49 (hauts fonctionnaires −5 %) passent
+  par ce mécanisme : O-25 ne crée plus que 14 000 emplois en 2035, contre
+  58 000 quand le modèle la traitait comme des postes nouveaux.
+* **Taxes environnementales** : une taxe sur une activité (vols intérieurs,
+  poids lourds) en réduit le volume selon une élasticité-prix du modèle
+  commun (0,9 pour l'aérien intérieur, 0,5 pour les poids lourds) ; les
+  émissions et l'assiette baissent d'autant.
+
+| Mesure | Chiffrage | Déficit 2035 (mesure seule) | Emplois 2035 |
+|---|---|---|---|
+| **O-67** Heures supplémentaires des policiers payées en 2027 | 189 M€ une fois (passif implicite apuré) | ≈ 0 | ≈ 0 |
+| **O-68** RIFSEEP pour les enseignants : primes alignées sur la catégorie A (17,2 % → 32,9 % du brut) | ≈ 10 950 € par enseignant × 693 400 fonctionnaires : 8,0 Md€ par an, dont ≈ 24,5 % revient en CSG et impôt | +0,17 pt | +11 000 |
+| **O-69** CIR plafonné à 50 M€ par groupe, fin du taux de 5 % | ≥ 960 M€ (IGF 2024 ; amendements PS) | −0,02 pt | −1 700 |
+| **O-70** Assurance-vie au barème des successions au-delà de 152 500 € | ≈ 1,25 Md€ (CPO, décembre 2025) | −0,04 pt | −2 300 |
+| **O-71** Contribution kilométrique des poids lourds (réseau non concédé) | 1,35 Md€ statiques ; trafic visé −5,5 % ; −0,36 Mt de CO₂ | −0,03 pt | −2 300 |
+| **O-72** Accise sur le kérosène des vols intérieurs métropolitains | 340 M€ statiques ; trafic −9 % ; −0,12 Mt de CO₂ | −0,01 pt | −600 |
+| **O-73** Fin de la défiscalisation des heures supplémentaires | IR ≈ 2,0 Md€ et cotisations 2,31 Md€ | −0,10 pt | −7 800 |
+
+Les mesures O-69 à O-73 financent O-67 et O-68 : le déficit 2035 du Texte
+Orientation D reste à 3,7 %, et sa baisse chaque année est préservée (sans
+O-69 à O-73, il remonterait en 2032). Le RIFSEEP n'a pas de chiffrage
+officiel ; une montée en charge sur cinq ans (variante) ne change presque
+rien en 2035. Les heures supplémentaires de l'hôpital (18,5 millions
+d'heures fin 2018) et de la fonction publique territoriale ne sont pas
+comptées, faute de chiffre récent.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
