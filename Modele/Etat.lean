@@ -713,6 +713,21 @@ structure Etat where
   mesures (allègements de cotisations par tranche), personnes : la demande
   de travail s'ajuste progressivement (`ajustementCoutTravailPm`). -/
   emploisCoutTravailRestants : Int := 0
+  /-- Indice des prix (base 10 000 l'année de départ) : déflate le PIB pour le
+  RNB par habitant en volume de l'IDH. -/
+  indicePrix : Int := 10000
+  /-- Espérance de vie à la naissance tendancielle, centièmes d'année (hors
+  effets des mesures). -/
+  esperanceVieTendanceCentiemes : Int := 0
+  /-- Années de vie gagnées chaque année grâce aux mesures (décès évités ×
+  années de vie que chacun aurait perdues), années. -/
+  anneesVieGagneesParAn : Int := 0
+  /-- Durée attendue de scolarisation, et durée moyenne de scolarisation des
+  25 ans et plus, centièmes d'année (IDH). -/
+  dureeAttendueCentiemes : Int := 0
+  dureeMoyenneCentiemes : Int := 0
+  /-- Indice de développement humain de l'année, millionièmes (calculé). -/
+  idhMillioniemes : Int := 0
   /-- Les mêmes, pondérés par le coût du travail par emploi de leur tranche
   rapporté à la moyenne (un emploi au voisinage du SMIC produit moins qu'un
   emploi moyen) : base de l'effet sur le PIB, personnes. -/

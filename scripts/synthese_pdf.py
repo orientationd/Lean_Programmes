@@ -511,7 +511,8 @@ PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee":
                "ue-dette-1pt": "UE : dette −1 pt", "ue-climat-2030": "UE : climat 2030", "ue-esr-2030": "UE : effort 2030",
                "snbc-secteurs-2030": "SNBC : secteurs 2030", "budget-carbone-2029-2033": "Budget carbone 4",
                "parc-electrique-2030": "15 % d'électriques 2030",
-               "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant"}
+               "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant",
+               "idh-non-degrade": "IDH non dégradé"}
 
 
 def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool = False) -> Table:
@@ -1622,6 +1623,17 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
         note="Tableau en millions de personnes.")
     story.append(CondPageBreak(150 * mm))
     story += section_emploi(D)
+    story.append(CondPageBreak(110 * mm))
+    story += section_courbe(
+        D, "Indice de développement humain",
+        "IDH selon la formule du PNUD : moyenne géométrique des indices d'espérance de vie à la "
+        "naissance, de scolarisation (durée attendue et durée moyenne) et de RNB par habitant en "
+        "volume (logarithme, dollars PPA constants). L'espérance de vie suit la tendance de "
+        "l'INSEE, plus les années de vie gagnées par les mesures (décès évités) ; la scolarisation, "
+        "les tendances observées et les mesures d'éducation ; le RNB par habitant, le PIB en volume "
+        "et la population.",
+        lambda e: e["idhMillioniemes"] / 1e6, "IDH, scénario central", 3, "",
+        lambda v: nombre(v / 1e6, 4), valeur_table=lambda e: e["idhMillioniemes"])
     story.append(PageBreak())
     story += section_impots(D)
     story.append(CondPageBreak(110 * mm))

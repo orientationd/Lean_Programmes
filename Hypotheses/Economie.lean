@@ -327,6 +327,7 @@ def centrale : Economie where
   incidencePrelevementPm := incidencePrelevements
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
+  inflationPb := 175
   elasticiteChomageSmicPm := 100
   economieParMoisRetraite := 650
   tauxMarginalPb := 330
@@ -384,6 +385,7 @@ def croissanceBasse : Economie where
   incidencePrelevementPm := incidencePrelevements
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
+  inflationPb := 125
   elasticiteChomageSmicPm := 150
   economieParMoisRetraite := 650
   tauxMarginalPb := 380
@@ -441,6 +443,7 @@ def croissanceHaute : Economie where
   incidencePrelevementPm := incidencePrelevements
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
+  inflationPb := 200
   elasticiteChomageSmicPm := 50
   economieParMoisRetraite := 650
   tauxMarginalPb := 300

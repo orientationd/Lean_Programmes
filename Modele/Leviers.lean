@@ -1,4 +1,5 @@
 import Modele.Scenario
+import Modele.Idh
 import Modele.Moteur
 import Modele.Logement
 import Modele.Automobile

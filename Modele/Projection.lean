@@ -282,7 +282,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     ageLegalMois := s₄.ageLegalMois + pasTendanciel
     calendrierAgeLegal := s.calendrierAgeLegal.tail
     calendrierAgeTendanciel := s.calendrierAgeTendanciel.tail }
-  if pasEffectif = pasTendanciel then s₅ else reculDepart H ((pasEffectif - pasTendanciel) * 1000) s₅
+  let s₆ := if pasEffectif = pasTendanciel then s₅ else reculDepart H ((pasEffectif - pasTendanciel) * 1000) s₅
+  -- IDH : prix, tendances de l'espérance de vie et de la scolarisation, puis
+  -- calcul de l'indice
+  let s₇ : Etat := { s₆ with
+    indicePrix := s.indicePrix + appliquerPb s.indicePrix H.eco.inflationPb
+    esperanceVieTendanceCentiemes := s.esperanceVieTendanceCentiemes + H.demo.gainEsperanceVieCentiemes
+    dureeMoyenneCentiemes := s.dureeMoyenneCentiemes + H.reference.hausseDureeMoyenneCentiemes }
+  { s₇ with idhMillioniemes := calculerIdh H s₇ }
 
 /-- Situation de départ du scénario : la référence observée, après le choc
 de niveau dû au prix du pétrole (nul au prix de référence). -/
@@ -299,7 +306,8 @@ def etatDepart (H : Scenario) : Etat :=
                     electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers
                     decesMilliers := H.demo.decesMilliers
                     chomeursComptes := s.actifs - s.emploiTotal }
-  chocPib H none dPib s
+  let s := chocPib H none dPib s
+  { s with idhMillioniemes := calculerIdh H s }
 
 /-- `f` appliquée `n` fois. -/
 def iterer (f : Etat → Etat) : Nat → Etat → Etat

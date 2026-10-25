@@ -36,6 +36,13 @@ structure Reference where
   défaut : aucune règle. -/
   seuilChomageContracyclePb : Int := 10000
   surcoutComplementChomageMeur : Int := 0
+  /-- IDH : RNB par habitant de départ, dollars PPA constants, et
+  ln(RNB / 100) en millionièmes (calculé une fois) ; hausse tendancielle
+  annuelle de la durée moyenne de scolarisation (renouvellement des
+  générations), centièmes d'année. -/
+  rnbParHabitantPpaDollars : Int := 0
+  lnRnbSur100Millioniemes : Int := 0
+  hausseDureeMoyenneCentiemes : Int := 0
   sources : List String
   deriving Repr
 
@@ -57,6 +64,9 @@ structure Demographie where
   croissanceActifsPb : Int
   /-- Part du solde migratoire qui entre dans la population active, pm. -/
   partActiveMigrantsPm : Int
+  /-- Gain tendanciel annuel d'espérance de vie à la naissance, centièmes
+  d'année. -/
+  gainEsperanceVieCentiemes : Int := 0
   sources : List String
   deriving Repr
 
@@ -257,6 +267,9 @@ structure Economie where
   public (bâtiments, infrastructures), qui la soutient davantage. -/
   incidenceDepensePm : ParFonction
   incidenceInvestissementPm : Int
+  /-- Inflation annuelle (déflateur du PIB), pb : sépare le volume des prix
+  pour le RNB par habitant de l'IDH. -/
+  inflationPb : Int
   /-- Hausse du chômage (pb) par pb de hausse du SMIC, pm. -/
   elasticiteChomageSmicPm : Int
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
