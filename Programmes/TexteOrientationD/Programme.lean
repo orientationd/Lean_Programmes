@@ -65,8 +65,8 @@ Mesures (extrait) :
   exploitations agricoles, DPE et climatisation réversible dans les
   quartiers historiques, urbanisme (pas de tours en quartier historique,
   quartiers de gare), TER 24 h sur 24 avec agents de sécurité.
-* **O-35** à **O-42** — redressement compatible avec les positions du PS :
-  taxe Zucman, CSG sur les gros héritages, taxe numérique à 15 %,
+* **O-36** à **O-42** — redressement compatible avec les positions du PS :
+  CSG sur les gros héritages, taxe numérique à 15 %,
   exonérations de cotisations, fraude fiscale et train de vie de l'État,
   niches fiscales, Pacte Dutreil divisé par deux et holdings, norme de
   dépense ; **O-43** défense −1 Md€ par an ; **O-44** 174 trimestres ;
@@ -91,7 +91,9 @@ Mesures (extrait) :
   payées des hôpitaux publics ; **O-75** 100 000 places de prison en
   cellule individuelle ; **O-76** et **O-77** déficit et chômage en baisse
   à la fois (allègements recentrés sous 2 SMIC, accompagnement renforcé des
-  demandeurs d'emploi).
+  demandeurs d'emploi) ; **O-78** à **O-81** indice de développement
+  humain (prix minimum de l'alcool, prix du tabac, dépistage du cancer
+  colorectal, scolarisation des 18-24 ans).
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -156,9 +158,10 @@ def pretEPR2Total : Int := 6067
 
 /-! ## O-07 à O-11 — Hypothèses de chiffrage -/
 
-/-- Impôt sur les sociétés à trois points au-dessus du taux le plus bas de
-l'UE : 9 % (Hongrie) + 3 = `tauxISCible` = 12 %, contre 25 % en France
-(11 % dans la version précédente, relevé d'un point).
+/-- Impôt sur les sociétés à 15 % (`tauxISCible`), le taux minimal du
+pilier 2, contre 25 % en France (12 % dans la version précédente : taux
+hongrois de 9 %, le plus bas de l'Union, plus trois points). À 15 %, le
+plancher du pilier 2 ne joue plus : tous les groupes paient le même taux.
 
 Le modèle commun applique désormais lui-même (levier `impotSocietes`, axe
 économique) :
@@ -174,7 +177,7 @@ Le modèle commun applique désormais lui-même (levier `impotSocietes`, axe
 
 `tauxMinimumPilier2` ne sert plus qu'au calcul de O-60 (taux des grands
 groupes). -/
-def tauxISCible : Int := 1200
+def tauxISCible : Int := 1500
 def tauxMinimumPilier2 : Int := 1500
 
 /-- Démission indemnisée six mois, une fois tous les cinq ans. Hypothèse :
@@ -476,7 +479,8 @@ def coutTerNuit : Int :=
   liaisonsTerNuit * 365 * (trainsParNuit * distanceTerKm * coutTrainKmCentimes / 100
     + heuresAgentsParNuit * coutHeureAgent) * (1000 - couvertureRecettesPm) / 1000000000
 
-/-- Redressement compatible avec les positions du PS (O-35 à O-42). Base :
+/-- Redressement compatible avec les positions du PS (O-36 à O-42 ; la taxe
+Zucman, O-35, a été retirée). Base :
 propositions du groupe socialiste à l'Assemblée (16 septembre 2026 : taxe
 Zucman 15 Md€, CSG sur les gros héritages 10 Md€, taxe sur les géants du
 numérique 10 Md€, reconfiguration des exonérations de cotisations 4 Md€,
@@ -486,10 +490,7 @@ fiscalité du patrimoine (septembre 2026) et une revue des niches fiscales.
 Les rendements sont statiques ; le modèle retire sa fuite fiscale (20 % au
 scénario central) et calcule l'effet d'activité.
 
-* `taxeZucman` = 6,5 Md€ : 15 à 25 Md€ selon ses promoteurs, ≈ 5 Md€
-  selon sept économistes (Le Monde, septembre 2025) et 4,6 à 5,5 Md€ avec
-  imputation de l'IS (Institut de l'entreprise, 2026). Retenu : 6,5 Md€
-  statiques, ≈ 5,2 Md€ nets de la fuite fiscale. Variante : chiffrage PS.
+* Taxe Zucman (ancienne O-35) : retirée du programme.
 * `csgHeritages` = 10 Md€ : chiffrage du groupe PS, sans contre-expertise
   connue (droits de succession et donations : 20,7 Md€ en 2025). Imputée
   à la ligne des droits de succession, dont elle partage l'assiette.
@@ -519,7 +520,6 @@ scénario central) et calcule l'effet d'activité.
   soit +0,5 % en volume pour 1,8 % d'inflation. Retraites, famille,
   enseignement et défense sont hors norme. Variante : zéro volume (100 pb).
 -/
-def taxeZucman : Int := 6500
 def csgHeritages : Int := 10000
 def taxeNumerique : Int := 3100
 def exonerationsCotisations : Int := 4000
@@ -942,6 +942,35 @@ def partAllegementsAuDela2Smic : Int := 343
 def conseillersFranceTravail : Int := 10000
 def coutConseillerEuros : Int := 80000
 
+/-- Indice de développement humain (O-78 à O-81). L'IDH de la France (0,920
+en 2023, 26e rang, PNUD) est surtout en retard sur l'éducation : une année
+de durée attendue de scolarisation vaut ≈ 0,010 d'IDH, deux fois une année
+d'espérance de vie (calcul). Mesures dont l'effet est documenté :
+
+* O-78 : prix minimum de 0,50 € par verre standard d'alcool : −15 % de
+  consommation, −22 % de décès par cancers liés à l'alcool (Etilé et al.,
+  INCa-MILDECA, 2022) ; en Écosse, −13,4 % des décès entièrement dus à
+  l'alcool (Lancet, 2023) ; sans effet net sur les finances publiques.
+* O-79 : prix du tabac +20 % (paquet de ≈ 12,50 € à ≈ 15 €) par les
+  accises : élasticité-prix −0,4 (Santé publique France), −8 % de
+  consommation, décès attribuables (68 000 en 2023) en baisse d'autant à
+  terme ; recettes calculées par le modèle commun (achats transfrontaliers
+  compris dans la fuite fiscale). Le paquet de mesures de 2016-2019 (prix,
+  paquet neutre, Mois sans tabac) gagne 644 000 années de vie d'ici 2050
+  (OCDE et Santé publique France, Tobacco Control, 2024).
+* O-80 : dépistage organisé du cancer colorectal porté de 30,7 % à 65 % de
+  participation (Barré et al., 2020 : −22 % de mortalité de 34 % à 65 %) :
+  ≈ 3 700 décès évités à terme ; coût des dépistages supplémentaires
+  (hypothèse du modèle commun : 70 €).
+* O-81 : scolarisation des 18-24 ans relevée d'un point par an pendant trois
+  ans (places en BTS, IUT et universités, bourses) : +0,21 an de durée
+  attendue de scolarisation, ≈ 2,2 Md€ par an à terme (13 300 € par
+  étudiant, DEPP). Variante : +5 points (250 000 places, comme LFI). -/
+def prixMinimumAlcoolCentimes : Int := 50
+def hausseprixTabacPm : Int := 200
+def participationDepistageCible : Int := 650
+def hausseScolarisationParAn : Int := 10
+
 theorem placesPrisonNouvelles_eq : placesPrisonNouvelles = 27108 := by decide
 theorem calendrierConstruction_total : calendrierConstructionPm.foldl (· + ·) 0 = 1000 := by decide
 theorem prisons_cible : placesOperationnelles2026 + placesPlan15000Restantes
@@ -1095,11 +1124,11 @@ def mesures : List Mesure := [
       { nom := "écart de 6 mois au calendrier légal dès 2027", leviers := [.ageLegal (-6)] }] },
 
   { id := "O-08"
-    titre := "Impôt sur les sociétés à trois points au-dessus du taux le plus bas de l'Union européenne (12 %)"
-    source := s!"Texte Orientation D, mesure 8 ; taux le plus bas de l'UE : Hongrie 9 % (Commission européenne, Taxation trends 2025), +3 points = {tauxISCible / 100} % ; plancher du pilier 2 et réponse de l'assiette appliqués par le modèle commun (axe économique)"
+    titre := "Impôt sur les sociétés à 15 %, le taux minimal du pilier 2"
+    source := s!"Texte Orientation D, mesure 8 ; {tauxISCible / 100} %, taux minimal de la directive (UE) 2022/2523 (pilier 2) ; réponse de l'assiette appliquée par le modèle commun (axe économique)"
     leviers := [.impotSocietes tauxISCible]
     variantes := [
-      { nom := "11 % (deux points au-dessus du taux le plus bas, version précédente)", leviers := [.impotSocietes 1100] },
+      { nom := "12 % (trois points au-dessus du taux hongrois de 9 %, version précédente)", leviers := [.impotSocietes 1200] },
       { nom := "17 % (minimum de 15 % du pilier 2 + 2 points)", leviers := [.impotSocietes 1700] },
       { nom := "IS maintenu à 25 % (abandon de la baisse, piste vers l'équilibre)", leviers := [] }] },
 
@@ -1279,13 +1308,6 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 34 ; {liaisonsTerNuit} liaisons de {distanceTerKm} km, {trainsParNuit} trains par nuit, 23,40 € par train-km (IFRAP 2024), {heuresAgentsParNuit} heures d'agents par nuit à {coutHeureAgent} €, {couvertureRecettesPm / 10} % couverts par les recettes : {coutTerNuit} M€ par an"
     leviers := [.depenseSur .affairesEconomiques coutTerNuit]
     debut := 0 },
-
-  { id := "O-35"
-    titre := "Impôt plancher sur les très hauts patrimoines (taxe Zucman)"
-    source := s!"Texte Orientation D, mesure 35 ; proposition du groupe PS (15 Md€) ; retenu {taxeZucman} M€ statiques (≈ 5 Md€ selon sept économistes, 4,6 à 5,5 Md€ avec imputation de l'IS)"
-    leviers := [.prelevementSur .patrimoine taxeZucman]
-    debut := 0
-    variantes := [{ nom := "chiffrage du groupe PS (15 Md€)", leviers := [.prelevementSur .patrimoine 15000] }] },
 
   { id := "O-36"
     titre := "CSG sur les gros héritages"
@@ -1559,13 +1581,36 @@ def mesures : List Mesure := [
     leviers := [.accompagnementDemandeurs conseillersFranceTravail coutConseillerEuros]
     variantes := [
       { nom := "5 000 conseillers", leviers := [.accompagnementDemandeurs (conseillersFranceTravail / 2) coutConseillerEuros] },
-      { nom := "15 000 conseillers", leviers := [.accompagnementDemandeurs (conseillersFranceTravail * 3 / 2) coutConseillerEuros] }] }
+      { nom := "15 000 conseillers", leviers := [.accompagnementDemandeurs (conseillersFranceTravail * 3 / 2) coutConseillerEuros] }] },
+
+  { id := "O-78"
+    titre := "Prix minimum de l'alcool : 0,50 € par verre standard"
+    source := s!"Texte Orientation D, mesure 78 ; Etilé et al., INCa-MILDECA (2022) : −22 % de décès par cancers liés à l'alcool pour {prixMinimumAlcoolCentimes} centimes ; Écosse : −13,4 % des décès entièrement dus à l'alcool (Lancet, 2023) ; décès et délais d'effet du modèle commun"
+    leviers := [.prixMinimumAlcool prixMinimumAlcoolCentimes] },
+
+  { id := "O-79"
+    titre := "Prix du tabac +20 % par les accises (paquet ≈ 15 €)"
+    source := s!"Texte Orientation D, mesure 79 ; élasticité-prix −0,4 (Santé publique France), 68 000 décès attribuables en 2023 ; hausse de {hausseprixTabacPm / 10} % ; recettes et décès évités calculés par le modèle commun"
+    leviers := [.prixTabac hausseprixTabacPm] },
+
+  { id := "O-80"
+    titre := "Dépistage organisé du cancer colorectal : 65 % de participation"
+    source := s!"Texte Orientation D, mesure 80 ; participation de 30,7 % en 2024-2025 ; Barré et al. (2020) : −22 % de mortalité de 34 % à 65 % ; coût par dépistage du modèle commun (hypothèse)"
+    leviers := [.depistageColorectal participationDepistageCible] },
+
+  { id := "O-81"
+    titre := "Scolarisation des 18-24 ans : +1 point par an pendant trois ans (places, bourses)"
+    source := s!"Texte Orientation D, mesure 81 ; +{hausseScolarisationParAn / 10} point de scolarisation à chaque âge de 18 à 24 ans par an, 13 300 € par étudiant (DEPP 2024) ; durée attendue de scolarisation de l'IDH"
+    leviers := [.scolarisationJeunes hausseScolarisationParAn]
+    repetitions := 3
+    variantes := [
+      { nom := "+5 points (250 000 places)", leviers := [.scolarisationJeunes 17] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
