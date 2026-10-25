@@ -381,7 +381,7 @@ variante.
 (Scénario central, moteur de demande, mesures prises isolément.)
 
 **Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
-D baisse chaque année de 2027 à 2035, de 4,8 % à 3,7 %** (dette 128 % du
+D baisse chaque année de 2027 à 2035, de 4,9 % à 3,8 %** (dette 129 % du
 PIB, chômage 9,0 %), contre 9,0 % sans programme (référence complétée
 des lois en vigueur : voir O-59 à O-62 ; IS à 12 % et réponse de
 l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
@@ -391,10 +391,10 @@ Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,7 % | 9,0 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 2,8 % | 9,2 % |
-| … et norme renforcée de 100 pb supplémentaires | 1,5 % | 9,7 % |
-| … et de 200 pb supplémentaires | 0,3 % | 10,2 % |
+| Rien | 3,8 % | 9,0 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 2,9 % | 9,2 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,6 % | 9,7 % |
+| … et de 200 pb supplémentaires | 0,4 % | 10,2 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
 la synthèse les évalue une à une (section « Variantes des mesures »). (Avec l'IS maintenu à 25 %, O-60
@@ -466,15 +466,15 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,81 | 4,66 | 4,63 | 4,59 | 4,54 | 4,50 | 4,27 | 3,98 | 3,70 |
-| Offre | 5,38 | 4,72 | 4,53 | 4,49 | 4,46 | 4,42 | 4,38 | 4,19 | 3,96 | 3,74 |
+| Demande | 5,38 | 4,86 | 4,71 | 4,68 | 4,64 | 4,59 | 4,57 | 4,35 | 4,07 | 3,79 |
+| Offre | 5,38 | 4,77 | 4,58 | 4,54 | 4,50 | 4,46 | 4,43 | 4,23 | 4,00 | 3,78 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
 sous chaque moteur : toujours avec la croissance haute, jamais avec la
 croissance basse ; en croissance centrale, le pétrole cher ou le
 vieillissement accéléré l'interrompent. La baisse est la plus faible en
-2029 et en 2032 (−0,02 et −0,03 point) : la LPM et les intérêts montent, et
+2029 et en 2032 (−0,03 et −0,02 point) : la LPM et les intérêts montent, et
 l'indemnisation du chômage, désormais liée au nombre de chômeurs, croît
 avec lui.
 
@@ -591,14 +591,16 @@ O-31). Combler l'écart demanderait une baisse de 5,1 % par an des
 | **O-67** Heures supplémentaires des policiers payées en 2027 | 189 M€ une fois (passif implicite apuré) | ≈ 0 | ≈ 0 |
 | **O-68** RIFSEEP pour les enseignants : primes alignées sur la catégorie A (17,2 % → 32,9 % du brut) | ≈ 10 950 € par enseignant × 693 400 fonctionnaires : 8,0 Md€ par an, dont ≈ 24,5 % revient en CSG et impôt | +0,17 pt | +11 000 |
 | **O-69** CIR plafonné à 50 M€ par groupe, fin du taux de 5 % | ≥ 960 M€ (IGF 2024 ; amendements PS) | −0,02 pt | −1 700 |
-| **O-70** Assurance-vie au barème des successions au-delà de 152 500 € | ≈ 1,25 Md€ (CPO, décembre 2025) | −0,04 pt | −2 300 |
+| **O-70** Assurance-vie au barème des successions au-delà de 250 000 € par bénéficiaire | ≈ 625 M€ (moitié des 1,25 Md€ chiffrés par le CPO avec le seuil actuel de 152 500 € ; hypothèse) | −0,02 pt | −1 100 |
 | **O-71** Contribution kilométrique des poids lourds (réseau non concédé) | 1,35 Md€ statiques ; trafic visé −5,5 % ; −0,36 Mt de CO₂ | −0,03 pt | −2 300 |
 | **O-72** Accise sur le kérosène des vols intérieurs métropolitains | 340 M€ statiques ; trafic −9 % ; −0,12 Mt de CO₂ | −0,01 pt | −600 |
-| **O-73** Fin de la défiscalisation des heures supplémentaires | IR ≈ 2,0 Md€ et cotisations 2,31 Md€ | −0,10 pt | −7 800 |
+| **O-73** Défiscalisation des heures supplémentaires réduite de moitié | moitié de l'exonération d'IR (≈ 2,0 Md€) et de la réduction de cotisations (2,31 Md€) : ≈ 2,2 Md€ | −0,05 pt | −3 900 |
 
-Les mesures O-69 à O-73 financent O-67 et O-68 : le déficit 2035 du Texte
-Orientation D reste à 3,7 %, et sa baisse chaque année est préservée (sans
-O-69 à O-73, il remonterait en 2032). Le RIFSEEP n'a pas de chiffrage
+Les mesures O-69 à O-73 financent l'essentiel de O-67 et O-68 : le déficit
+2035 du Texte Orientation D passe de 3,7 % à 3,8 %, et sa baisse chaque
+année est préservée, de justesse en 2032 (−0,02 point). Variantes :
+suppression totale de la défiscalisation (−0,06 point en 2035) et seuil
+actuel de 152 500 € pour l'assurance-vie (−0,02 point). Le RIFSEEP n'a pas de chiffrage
 officiel ; une montée en charge sur cinq ans (variante) ne change presque
 rien en 2035. Les heures supplémentaires de l'hôpital (18,5 millions
 d'heures fin 2018) et de la fonction publique territoriale ne sont pas

@@ -790,9 +790,16 @@ O-68 :
   coûte ≈ 8 Md€, les 50 premiers bénéficiaires en reçoivent 43 % ; sans
   effet significatif sur la R&D des grandes entreprises (CNEPI, 2021).
 * O-70 : assurance-vie au barème des successions en ligne directe, à
-  partir de la tranche à 20 %, abattement de 152 500 € maintenu :
-  ≈ 1,25 Md€ à terme (Conseil des prélèvements obligatoires, rapport du
-  1er décembre 2025, recommandation n° 6) ; ligne des droits de succession.
+  partir de la tranche à 20 %, au-delà de 250 000 € par bénéficiaire (au
+  lieu des 152 500 € d'abattement actuels). Le Conseil des prélèvements
+  obligatoires chiffre à ≈ 1,25 Md€ à terme la même réforme avec
+  l'abattement de 152 500 € (rapport du 1er décembre 2025, recommandation
+  n° 6). Relever le seuil de 97 500 € allège tous les bénéficiaires de plus
+  de 152 500 € (jusqu'à 97 500 × 20 % = 19 500 € chacun), alors que le gain
+  du barème vient des très gros contrats (≈ 2 000 défunts, 7 M€ en
+  moyenne) : rendement retenu, la moitié, `assuranceVieBareme` = 625 M€
+  (hypothèse ; aucun chiffrage publié pour ce seuil). Ligne des droits de
+  succession.
 * O-71 : contribution kilométrique nationale des poids lourds sur le réseau
   non concédé (≈ 15 000 km, l'assiette de l'écotaxe de 2014) : 1 129 M€
   bruts à 0,13 €/km selon la Cour des comptes (rapport public 2017),
@@ -808,20 +815,25 @@ O-68 :
   ≈ 13,6 € par passager pour ≈ 25 millions de passagers et un billet moyen
   de ≈ 130 € (ordres de grandeur) : +10 % de coût. Outre-mer exclu
   (continuité territoriale).
-* O-73 : fin de la défiscalisation des heures supplémentaires (loi de 2019),
-  comme en 2012 : exonération d'impôt sur le revenu, ≈ 2,0 Md€ en 2026
-  (1,79 Md€ en 2025, ≈ 2,3 Md€ en 2027, Voies et moyens), et réduction de
-  cotisations salariales, 2,31 Md€ en 2026 (annexe 4 du PLFSS 2026). La loi
-  TEPA n'avait pas augmenté les heures travaillées (Cahuc et Carcillo,
-  2014) : pas d'effet sur les heures, la fuite fiscale du modèle couvrant
-  l'optimisation des déclarations. -/
+* O-73 : défiscalisation des heures supplémentaires (loi de 2019) réduite
+  de moitié : exonération d'impôt sur le revenu (≈ 2,0 Md€ en 2026 ;
+  1,79 Md€ en 2025, ≈ 2,3 Md€ en 2027, Voies et moyens) et réduction de
+  cotisations salariales (2,31 Md€ en 2026, annexe 4 du PLFSS 2026)
+  divisées par deux, par exemple plafond d'exonération ramené de 7 500 € à
+  3 750 € et réduction de cotisations de 11,31 % à 5,66 % : la moitié des
+  deux coûts, `partDefiscalisationSupprimeePm` = 500 (rendement supposé
+  proportionnel). La loi TEPA n'avait pas augmenté les heures travaillées
+  (Cahuc et Carcillo, 2014) : pas d'effet sur les heures, la fuite fiscale
+  du modèle couvrant l'optimisation des déclarations. -/
 def cirRecentre : Int := 960
-def assuranceVieBareme : Int := 1250
+def assuranceVieBareme : Int := 625
+def assuranceVieBaremeCpo : Int := 1250
 def ecotaxePoidsLourds : Int := 1350
 def emissionsPoidsLourdsVisees : Int := 26700 * 29 / 100
 def kerosene : Int := 340
 def heuresSupIr : Int := 2000
 def heuresSupCotisations : Int := 2310
+def partDefiscalisationSupprimeePm : Int := 500
 def foyersRaccordesParAn : Int := 7367
 def contributionGrandesEntreprises : Int :=
   7500 * max tauxISCible tauxMinimumPilier2 / 2500 * 103 / 100
@@ -1384,9 +1396,11 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .impotSocietes cirRecentre] },
 
   { id := "O-70"
-    titre := "Assurance-vie au barème des successions au-delà de 152 500 €"
-    source := s!"Texte Orientation D, mesure 70 ; Conseil des prélèvements obligatoires (1er décembre 2025, recommandation n° 6) : ≈ {assuranceVieBareme} M€ à terme"
-    leviers := [.prelevementSur .droitsMutation assuranceVieBareme] },
+    titre := "Assurance-vie au barème des successions au-delà de 250 000 € par bénéficiaire"
+    source := s!"Texte Orientation D, mesure 70 ; {assuranceVieBaremeCpo} M€ avec le seuil actuel de 152 500 € (Conseil des prélèvements obligatoires, 1er décembre 2025, recommandation n° 6) ; seuil relevé à 250 000 € : ≈ {assuranceVieBareme} M€ (hypothèse, voir `assuranceVieBareme`)"
+    leviers := [.prelevementSur .droitsMutation assuranceVieBareme]
+    variantes := [
+      { nom := "seuil actuel de 152 500 € (proposition du CPO)", leviers := [.prelevementSur .droitsMutation assuranceVieBaremeCpo] }] },
 
   { id := "O-71"
     titre := "Contribution kilométrique des poids lourds sur le réseau national non concédé"
@@ -1399,11 +1413,12 @@ def mesures : List Mesure := [
     leviers := [.taxeEnvironnementale .aerienInterieur .accisesEnergie 1500 100 kerosene] },
 
   { id := "O-73"
-    titre := "Fin de la défiscalisation des heures supplémentaires (impôt sur le revenu et cotisations salariales)"
-    source := s!"Texte Orientation D, mesure 73 ; exonération d'IR ≈ {heuresSupIr} M€ (Voies et moyens) et réduction de cotisations salariales {heuresSupCotisations} M€ (PLFSS 2026) ; suppression déjà votée en 2012"
-    leviers := [.prelevementSur .ir heuresSupIr, .prelevementSur .cotisations heuresSupCotisations]
+    titre := "Défiscalisation des heures supplémentaires réduite de moitié (impôt sur le revenu et cotisations salariales)"
+    source := s!"Texte Orientation D, mesure 73 ; exonération d'IR ≈ {heuresSupIr} M€ (Voies et moyens) et réduction de cotisations salariales {heuresSupCotisations} M€ (PLFSS 2026), réduites de {partDefiscalisationSupprimeePm / 10} %"
+    leviers := [.prelevementSur .ir (heuresSupIr * partDefiscalisationSupprimeePm / 1000),
+                .prelevementSur .cotisations (heuresSupCotisations * partDefiscalisationSupprimeePm / 1000)]
     variantes := [
-      { nom := "impôt sur le revenu seulement (cotisations maintenues)", leviers := [.prelevementSur .ir heuresSupIr] }] }
+      { nom := "suppression totale (comme en 2012)", leviers := [.prelevementSur .ir heuresSupIr, .prelevementSur .cotisations heuresSupCotisations] }] }
 ]
 
 def programme : Programme where
