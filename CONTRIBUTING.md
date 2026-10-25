@@ -93,7 +93,23 @@ en chômage ; les emplois s'en déduisent avec l'effet de flexion
 travail des mesures (âge de départ, migrations, réallocations par
 `automatisation gainPibPb emplois sortiesActivite`) entrent au taux
 d'emploi propre aux personnes concernées et l'écart à l'emploi d'équilibre
-(`chomeursExcedentaires`) se résorbe au rythme du scénario.
+(`chomeursExcedentaires`) se résorbe au rythme du scénario. Une demande
+adressée à un secteur y crée des emplois selon son intensité en
+main-d'œuvre (`intensiteEmploiSecteurPm`, valeur ajoutée par emploi de
+l'INSEE : construction et non-marchand au-dessus de la moyenne, industrie
+en dessous) ; une dépense qui s'arrête détruit les emplois du même secteur.
+Les dépenses d'indemnisation suivent chaque année le nombre de chômeurs
+(`coutParChomeurEuros`, stabilisateur automatique) : un programme qui
+relève le chômage voit son déficit monter d'autant.
+
+Émissions : l'état les suit par secteur de l'inventaire (`emissionsKt` :
+transports, bâtiments, agriculture, industrie, énergie, déchets), chacun à
+sa tendance (`baisseEmissionsSecteurPm`). `transition secteur reductionMt
+coutAnnuel` impute la réduction à un secteur ; les voitures électriques
+ajoutées par les mesures réduisent les transports, la rénovation les
+bâtiments. Objectifs vérifiés : SNBC-3 par secteur en 2030 et budget
+carbone 2029-2033, total de 276 Mt en 2030, répartition de l'effort
+européenne, 15 % de voitures électriques en 2030.
 `suppressionPostes fonction postes coutParPosteEuros` supprime des emplois
 publics. `depenseEcheancier fonction niveaux` fixe une dépense année par
 année (indemnités jusqu'à la retraite, revalorisations cumulées) ; une

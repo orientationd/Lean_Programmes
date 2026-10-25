@@ -1064,7 +1064,7 @@ def mesures : List Mesure := [
     titre := "Plan de conversion à l'électrique de l'ensemble des exploitations agricoles (dix ans)"
     source := s!"Texte Orientation D, mesure 31 ; {exploitationsAgricoles} exploitations (RA 2020) × {aideConversion} € sur dix ans (hypothèse) ; énergie agricole ≈ 37 TWh de produits pétroliers, {emissionsEnergieAgricole} Mt de CO₂ ; importations nettes −{(carburantAgricoleImporte - electriciteNonExportee) / 10} M€ par an"
     leviers := [.depenseEcheancier .affairesEconomiques [exploitationsAgricoles * aideConversion / 10 / 1000000, 0],
-                .transition (emissionsEnergieAgricole / 10) 0,
+                .transition .agriculture (emissionsEnergieAgricole / 10) 0,
                 .importationsNiveau (-((carburantAgricoleImporte - electriciteNonExportee) / 10))]
     debut := 0
     repetitions := 10 },

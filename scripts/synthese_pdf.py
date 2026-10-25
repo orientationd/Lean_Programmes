@@ -158,6 +158,7 @@ class Donnees:
         self.groupes = [self.progs[i:i + taille] for i in range(0, len(self.progs), taille)]
         self.secteurs = d["secteurs"]
         self.impots = d["impots"]
+        self.secteurs_ges = d.get("secteursGes", [])
         self.moteurs = d["moteurs"]
         self.fonctions = d["fonctions"]
         self.standard = d["moteurStandard"]
@@ -507,7 +508,9 @@ PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee":
                "emplois-annonces-realisables": "Emplois annoncés",
                "balance-courante-non-degradee": "Solde courant", "accidents-travail-norme-ue": "Accidents du travail",
                "ue-deficit-3pct": "UE : déficit 3 %", "ue-ajustement-0-5": "UE : ajust. 0,5 pt",
-               "ue-dette-1pt": "UE : dette −1 pt", "ue-climat-2030": "UE : climat 2030",
+               "ue-dette-1pt": "UE : dette −1 pt", "ue-climat-2030": "UE : climat 2030", "ue-esr-2030": "UE : effort 2030",
+               "snbc-secteurs-2030": "SNBC : secteurs 2030", "budget-carbone-2029-2033": "Budget carbone 4",
+               "parc-electrique-2030": "15 % d'électriques 2030",
                "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant"}
 
 
@@ -632,6 +635,64 @@ def section_courbe(D, titre, intro, valeur, titre_fig, dec, suffixe, fmt_table,
         out.append(P(note, "note"))
     else:
         out.append(Spacer(1, 6))
+    return out
+
+
+def correlation(xs: list, ys: list) -> float:
+    """Coefficient de corrélation de Pearson (statistique d'affichage)."""
+    n = len(xs)
+    if n < 3:
+        return float("nan")
+    mx, my = sum(xs) / n, sum(ys) / n
+    sxy = sum((a - mx) * (b - my) for a, b in zip(xs, ys))
+    sxx = sum((a - mx) ** 2 for a in xs)
+    syy = sum((b - my) ** 2 for b in ys)
+    return sxy / (sxx * syy) ** 0.5 if sxx > 0 and syy > 0 else float("nan")
+
+
+def nuage_deficit_chomage(D: Donnees):
+    """Déficit et chômage : un point par programme en fin de période (et le
+    tendanciel), avec le chemin parcouru depuis l'entrée en vigueur."""
+    fig, ax = figure(3.6)
+    a1 = D.annees[-1]
+    pts = []
+    for pid, nom in D.lignes():
+        t = D.traj("central", pid)
+        xs = [e["chomagePb"] / 100 for e in t[2:]]
+        ys = [e["deficitPb"] / 100 for e in t[2:]]
+        c = TENDANCIEL if pid is None else D.couleur[pid]
+        mk = "s" if pid is None else D.marqueur[pid]
+        ax.plot(xs, ys, color=c, lw=0.7, alpha=0.45, zorder=2)
+        ax.plot([xs[-1]], [ys[-1]], mk, ms=5.5, color=c, mec="white", mew=1.0, zorder=3)
+        # étiquettes voisines décalées verticalement pour ne pas se chevaucher
+        voisins = sum(1 for (x0, y0) in pts if abs(x0 - xs[-1]) < 0.35 and abs(y0 - ys[-1]) < 0.45)
+        ax.annotate(court_nom("Tendanciel" if pid is None else nom, 22), (xs[-1], ys[-1]),
+                    xytext=(4, 2 - 8 * voisins), textcoords="offset points", fontsize=6.2, color=INK2)
+        pts.append((xs[-1], ys[-1]))
+    r = correlation([p[0] for p in pts], [p[1] for p in pts])
+    ax.set_xlabel(f"Taux de chômage {a1} (%)")
+    ax.set_ylabel(f"Déficit public {a1} (% du PIB)")
+    ax.xaxis.set_major_formatter(fmt_axe(1, NBSP + "%"))
+    ax.yaxis.set_major_formatter(fmt_axe(1, NBSP + "%"))
+    ax.set_title(f"Déficit et chômage, scénario central (chemin 2027-{a1}, point = {a1})")
+    return fig, r
+
+
+def section_deficit_chomage(D: Donnees) -> list:
+    a1 = D.annees[-1]
+    fig, r = nuage_deficit_chomage(D)
+    out = [P("Déficit et chômage", "h1"),
+           P("Le chômage pèse sur le déficit par deux canaux : les recettes, qui suivent l'activité, et "
+             "l'indemnisation, que le modèle ajuste chaque année au nombre de chômeurs (≈ 10 000 € par "
+             "chômeur supplémentaire, assurance chômage et solidarité ; stabilisateur automatique). Le "
+             "solde réagit ainsi de ≈ 0,57 point par point de PIB, la valeur des lois de programmation. "
+             "En sens inverse, une consolidation budgétaire réduit l'activité et relève le chômage. Le "
+             "graphe place chaque programme selon son chômage et son déficit."),
+           png(fig),
+           P(f"Corrélation entre déficit et chômage en {a1} d'un programme à l'autre (coefficient de "
+             f"Pearson, statistique d'affichage) : {nombre(r, 2)}. Une corrélation négative signale que "
+             "les programmes qui réduisent le plus le déficit le font au prix d'un chômage plus élevé ; "
+             "elle ne dit rien de la causalité.", "note")]
     return out
 
 
@@ -1275,6 +1336,48 @@ def section_moteurs(D: Donnees) -> list:
     return out
 
 
+OBJECTIFS_SNBC_2030 = {"transports": 92, "batiments": 37, "agriculture": 68, "industrie": 42,
+                       "energie": 25, "dechets": 12}
+GES_COURT = {"transports": "Transp.", "batiments": "Bâtim.", "agriculture": "Agric.",
+             "industrie": "Indus.", "energie": "Énergie", "dechets": "Déchets"}
+
+
+def section_climat(D: Donnees) -> list:
+    a0, a1 = D.annees[0], D.annees[-1]
+    i30 = D.annees.index(2030) if 2030 in D.annees else min(5, len(D.annees) - 1)
+    out = [P("Climat : émissions par secteur et objectifs", "h1"),
+           P(f"Émissions territoriales brutes de gaz à effet de serre (hors puits), par secteur de "
+             f"l'inventaire du Citepa : {nombre(D.traj('central', None)[0]['emissionsMt'])} Mt CO₂e en {a0}. "
+             "Chaque secteur baisse à son rythme tendanciel, calé sur le scénario « avec mesures "
+             "existantes » du ministère (326 Mt en 2030) ; les mesures agissent sur leur secteur "
+             "(voitures électriques : transports ; rénovation : bâtiments ; conversion des "
+             "exploitations : agriculture). Objectifs vérifiés par les propriétés : SNBC-3 (décret "
+             "n° 2026-636) par secteur en 2030 et budget carbone 2029-2033 (262 Mt par an), total "
+             "brut de 276 Mt en 2030, répartition de l'effort européenne (−47,5 % par rapport à 2005), "
+             "15 % de voitures électriques dans le parc en 2030.")]
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: e["emissionsMt"],
+                               "Émissions territoriales brutes (Mt CO₂e), scénario central", 0, "",
+                               reference=(276, "Objectif SNBC-3 2030 : 276 Mt"))))
+    secs = D.secteurs_ges
+    if secs:
+        ent = [f"2030, Mt CO₂e"] + [GES_COURT.get(s["id"], s["nom"]) for s in secs] + ["Total"]
+        rows = []
+        for pid, nom in D.lignes():
+            e = D.traj("central", pid)[i30]
+            vals = [e["emissionsSecteursKt"][s["id"]] / 1000 for s in secs]
+            rows.append([nom] + [nombre(v, 1) for v in vals] + [nombre(sum(vals), 1)])
+        rows.append(["Objectif SNBC-3"] + [nombre(OBJECTIFS_SNBC_2030.get(s["id"], 0), 0) for s in secs]
+                    + ["276"])
+        larg = [0.30] + [0.70 / (len(secs) + 1)] * (len(secs) + 1)
+        out.append(Spacer(1, 3))
+        out.append(tableau(ent, rows, larg, surligner_premiere=True))
+        out.append(P("Les secteurs au-dessus de leur objectif 2030 font échouer la propriété « SNBC : "
+                     "secteurs 2030 ». La SNBC-3 demande une baisse de 5,1 % par an de 2025 à 2030, "
+                     "contre 2,1 % observés en 2025 (Citepa).", "note"))
+    return out
+
+
 def section_air(D: Donnees) -> list:
     a0, a1 = D.annees[0], D.annees[-1]
     out = [P("Voitures électriques, bornes et qualité de l'air", "h1"),
@@ -1492,6 +1595,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
         "niveau d'avant choc.",
         lambda e: e["chomagePb"] / 100, "Taux de chômage (%), scénario central", 1, NBSP + "%",
         lambda v: pct_pb(v, 2), valeur_table=lambda e: e["chomagePb"])
+    story.append(CondPageBreak(150 * mm))
+    story += section_deficit_chomage(D)
     story.append(CondPageBreak(110 * mm))
     story += section_courbe(
         D, "Population active",
@@ -1518,6 +1623,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_petrole(D)
     story.append(CondPageBreak(120 * mm))
     story += section_natalite(D)
+    story.append(PageBreak())
+    story += section_climat(D)
     story.append(PageBreak())
     story += section_air(D)
     story.append(PageBreak())

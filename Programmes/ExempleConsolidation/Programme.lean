@@ -24,7 +24,7 @@ def mesures : List Mesure := [
     leviers := [.baissePrelevement 8000] },
   { id := "C-04", titre := "Rénovation thermique ciblée"
     source := "Exemple fictif, §4"
-    leviers := [.transition 12 6000] },
+    leviers := [.transition .batiments 12 6000] },
   { id := "C-05", titre := "Sous-indexation temporaire des prestations"
     source := "Exemple fictif, §5"
     leviers := [.economieSur .famille 10000] }

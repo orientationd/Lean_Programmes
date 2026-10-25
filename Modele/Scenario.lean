@@ -87,6 +87,9 @@ structure Renovation where
   aubainePm : Int
   /-- Économie d'énergie finale par rénovation, kWh/an. -/
   economieKWhParRenovation : Int
+  /-- Coût moyen des travaux d'une rénovation aidée, € (aide et part des
+  ménages). -/
+  coutTravauxMoyenEuros : Int
   /-- Parts du fioul et du gaz dans le chauffage des logements rénovés, pm. -/
   partFioulNationalPm : Int
   partGazNationalPm : Int
@@ -237,6 +240,13 @@ structure Economie where
   semiElasticiteAssietteISPm : Int
   /-- Contenu en importations de l'investissement public outre-mer, pm. -/
   contenuImportOutreMerPm : Int
+  /-- Intensité en emplois relative de chaque secteur (part de l'emploi /
+  part de la valeur ajoutée), pm : une demande adressée à un secteur y crée
+  d'autant plus d'emplois qu'il est riche en main-d'œuvre. -/
+  intensiteEmploiSecteurPm : ParSecteur
+  /-- Dépense d'indemnisation par chômeur supplémentaire (assurance chômage
+  et solidarité), € de l'année de départ, indexée sur le PIB nominal. -/
+  coutParChomeurEuros : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
   /-- Élasticité du PIB au volume d'heures travaillées, pm (`650` : part du
@@ -264,8 +274,9 @@ structure Economie where
   /-- Taux d'accidents du travail de la moyenne de l'Union européenne, pour
   10 000 personnes en emploi (norme visée par certaines mesures). -/
   tauxAccidentsUEPdm : Int
-  /-- Baisse tendancielle annuelle des émissions, pm. -/
-  baisseEmissionsPm : Int
+  /-- Baisse tendancielle annuelle des émissions de chaque secteur, pm du
+  niveau (politiques en vigueur). -/
+  baisseEmissionsSecteurPm : ParSecteurGes
   /-- Prélèvement forfaitaire unique sur les revenus de capitaux mobiliers,
   par affectation, pm : part impôt sur le revenu (État), CSG + CRDS
   (Sécurité sociale, CADES), prélèvement de solidarité (État). -/
@@ -344,7 +355,7 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.tauxMinimumPilier2Pb ∧ H.eco.tauxMinimumPilier2Pb ≤ H.eco.tauxISPb ∧
   0 ≤ H.eco.semiElasticiteAssietteISPm ∧ H.eco.semiElasticiteAssietteISPm ≤ 50 ∧
   0 ≤ H.eco.contenuImportOutreMerPm ∧ H.eco.contenuImportOutreMerPm ≤ 1000 ∧
-  0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
+  0 ≤ H.eco.coutParChomeurEuros ∧
   0 ≤ H.eco.coutSanteParPbPlus65 ∧
   0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧
   0 ≤ H.eco.robotisationTendanciellePb ∧ H.eco.robotisationTendanciellePb ≤ 500 ∧
@@ -382,17 +393,27 @@ abbrev ValideAxes (H : Scenario) : Prop :=
   0 < H.droit.plafondDeficitPb ∧ 0 < H.droit.plafondEmissionsMt ∧
   1 ≤ H.horizon ∧ H.horizon ≤ 20
 
+/-- Bornes sur les tendances d'émissions par secteur. -/
+abbrev ValideClimat (H : Scenario) : Prop :=
+  -100 ≤ H.eco.baisseEmissionsSecteurPm.transports ∧ H.eco.baisseEmissionsSecteurPm.transports ≤ 200 ∧
+  -100 ≤ H.eco.baisseEmissionsSecteurPm.batiments ∧ H.eco.baisseEmissionsSecteurPm.batiments ≤ 200 ∧
+  -100 ≤ H.eco.baisseEmissionsSecteurPm.agriculture ∧ H.eco.baisseEmissionsSecteurPm.agriculture ≤ 200 ∧
+  -100 ≤ H.eco.baisseEmissionsSecteurPm.industrie ∧ H.eco.baisseEmissionsSecteurPm.industrie ≤ 200 ∧
+  -100 ≤ H.eco.baisseEmissionsSecteurPm.energie ∧ H.eco.baisseEmissionsSecteurPm.energie ≤ 200 ∧
+  -100 ≤ H.eco.baisseEmissionsSecteurPm.dechets ∧ H.eco.baisseEmissionsSecteurPm.dechets ≤ 200
+
 /-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
 *juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
-  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes
+  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
 instance (H : Scenario) : Decidable H.ValideReference := inferInstance
 instance (H : Scenario) : Decidable H.ValideEco := inferInstance
 instance (H : Scenario) : Decidable H.ValideAxes := inferInstance
+instance (H : Scenario) : Decidable H.ValideClimat := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario

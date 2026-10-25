@@ -108,10 +108,17 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let avecNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
     s.moderationDepensesPb
   let economieNorme := sansNorme.total - avecNorme.total
-  let depensesF := ((avecNorme
+  -- stabilisateur automatique : l'indemnisation suit le nombre de chômeurs
+  -- (écart à ceux que les dépenses inscrites couvrent déjà)
+  let chomeurs := s.actifs - s.emploiTotal
+  let indemnisation := if H.reference.etat.pib = 0 then 0
+    else (chomeurs - s.chomeursComptes) * H.eco.coutParChomeurEuros * s.pib
+      / (H.reference.etat.pib * 1000000)
+  let depensesF := (((avecNorme
     |>.ajouter .retraites surcoutVieillissement)
     |>.ajouter .sante surcoutSante)
-    |>.ajouter .interets (interets - s.depensesF.interets)
+    |>.ajouter .interets (interets - s.depensesF.interets))
+    |>.ajouter .famille indemnisation
   let depenses := depensesF.total
   -- population active : tendance démographique et migrations du scénario
   -- d'une part, migrations dues aux mesures d'autre part
@@ -149,10 +156,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     economieInteretsNumeriqueMeur := economieNum
     pertePfuMeur := pertePfu
     cdhrMeur := cdhr
+    chomeursComptes := chomeurs
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres + s.investissementsParticipations
     participationsEtat := participations
     dividendesEtat := dividendes
-    emissionsMt := s.emissionsMt - appliquerPm s.emissionsMt H.eco.baisseEmissionsPm
+    emissionsKt := s.emissionsKt.baisser H.eco.baisseEmissionsSecteurPm
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - deces + solde
     decesMilliers := deces
@@ -176,12 +184,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- émissions) et les rénovations des mesures
   let ktVoitures := (dParc - elecTendance) * H.energie.co2EviteParVehiculeKg / 1000
   let ktRenovation := (fioul * R.co2FioulKgMWh + gaz * R.co2GazKgMWh) / 1000000
-  let s' := s'.reduireEmissionsKt (ktVoitures + ktRenovation)
+  let s' := (s'.reduireEmissions .transports ktVoitures).reduireEmissions .batiments ktRenovation
   let s₁ := ajouterEmploi H none (emploiTendance + emploisOkun) s'
   -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
   -- du scénario (la tendance est déjà dans la croissance)
   let dEmploiMesures := emploiEntrants + absorption
-  let s₂ := effetDemande H none (-(appliquerPm economieNorme M.multiplicateurEconomiesPm))
+  let s₂ := effetDemande H none (appliquerPm indemnisation M.multiplicateurPrelevementsPm
+      - appliquerPm economieNorme M.multiplicateurEconomiesPm)
     (chocEmploi H dEmploiMesures (ajouterEmploi H none dEmploiMesures s₁))
   -- dépenses à échéancier : niveau prévu (indexé) moins niveau reconduit. Effet
   -- de demande cohérent avec les leviers ponctuels : un niveau positif est une
@@ -208,7 +217,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- pas l'activité intérieure et suit les importations
   let s₃ : Etat := pasEcheances.foldl
     (fun (st : Etat) ((e, d, impulsion) : Echeance × Int × Int) =>
-      let secteur := if impulsion < 0 then none else (e.secteur <|> e.fonction.secteur)
+      -- une dépense qui baisse ou s'arrête détruit les emplois du secteur
+      -- qu'elle avait créés (intensité en emplois symétrique) ; une économie
+      -- (niveau négatif) n'a pas de secteur
+      let secteur := if e.niveau < 0 then none else (e.secteur <|> e.fonction.secteur)
       effetDemande H secteur (impulsion * e.partInterieurePm / 1000)
         { st with depensesF := st.depensesF.ajouter e.fonction d
                   importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
@@ -255,7 +267,8 @@ def etatDepart (H : Scenario) : Etat :=
   let s := { s with importations := s.importations + dImports, robotisationPb := H.eco.robotisationTendanciellePb
                     tauxMarginalCourantPb := H.eco.tauxMarginalPb
                     electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers
-                    decesMilliers := H.demo.decesMilliers }
+                    decesMilliers := H.demo.decesMilliers
+                    chomeursComptes := s.actifs - s.emploiTotal }
   chocPib H none dPib s
 
 /-- `f` appliquée `n` fois. -/

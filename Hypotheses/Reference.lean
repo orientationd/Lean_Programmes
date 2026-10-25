@@ -8,7 +8,7 @@ départ des projections (année 0). Chaque valeur cite sa source ; les
 valeurs marquées « dérivé » sont calculées à partir des évolutions publiées
 par l'INSEE (niveau 2025 = hausse publiée × (1 + 1 / taux de hausse)).
 
-Valeurs encore provisoires : SMIC (repère), émissions.
+Valeur encore provisoire : SMIC (repère).
 
 ## Lois en vigueur
 
@@ -207,6 +207,13 @@ def calendrierAgeReforme2023 : List Int := [0, 3, 3, 0, 3, 3, 3, 0]
 
 theorem calendriers_meme_cible : calendrierAgeLegal.sum = calendrierAgeReforme2023.sum := by decide
 
+/-- Émissions territoriales 2025 par secteur, kt CO₂e hors puits (Citepa,
+inventaire Secten publié le 16 juin 2026, estimation 2025 ; déchets : niveau
+2024, non réestimé). Total 359,5 Mt ; 367,0 Mt en 2024, 546,9 Mt en 1990. -/
+def emissions2025 : ParSecteurGes :=
+  { transports := 122900, batiments := 54900, agriculture := 76600, industrie := 58400,
+    energie := 31400, dechets := 15300 }
+
 def reference2026 : Reference where
   id := "ref-2025"
   description := "Situation observée en 2025 (INSEE), départ des projections"
@@ -220,7 +227,7 @@ def reference2026 : Reference where
     dette := 3460500               -- dette de Maastricht fin 2025 (INSEE)
     operationsFinancieres := 0     -- flux nets tendanciels supposés nuls (à sourcer)
     smicMensuel := 1820            -- repère provisoire, brut
-    emissionsMt := 370             -- à sourcer (inventaire national, Citepa)
+    emissionsKt := emissions2025   -- 359,4 Mt CO₂e hors puits (Citepa, Secten 2026, estimation 2025)
     ageLegalMois := 753            -- 62 ans et 9 mois, gelé par la LFSS pour 2026 (loi n° 2025-1403, art. 45)
     populationMilliers := 69100    -- population au 1er janvier 2026 (INSEE, bilan démographique 2025)
     actifs := 31834000             -- population active BIT 2025 (INSEE)

@@ -98,6 +98,43 @@ importés et les matériaux de construction y coûtent 35 à 39 % de plus
 qu'en métropole (Autorité de la concurrence, avis 18-A-09). Contre 30 %
 pour la demande nationale (`contenuImportDemandePm`).
 
+Émissions : `baisseEmissionsSecteurPm`, baisse annuelle par secteur à
+politiques constantes, calée sur le scénario « avec mesures existantes » du
+ministère (326 Mt en 2030, scénario AME 2024 publié par le ministère de la
+Transition écologique, mesures adoptées jusqu'au 31 décembre 2023) en partant des émissions de 2025 (Citepa, Secten
+2026) et des baisses récentes par secteur (2024-2025 : transports −1,9 %,
+bâtiments −2,1 %, agriculture −1,3 %, industrie −5,2 % et −3,6 % en
+2023-2024, déchets −2,2 % ; énergie très variable). Identique dans les trois
+variantes (la croissance n'agit pas sur les émissions dans ce modèle).
+
+Emplois par secteur : `intensiteEmploiSecteurPm` = valeur ajoutée par
+personne en emploi de l'ensemble (87,0 k€) / celle du secteur, 2025 (INSEE,
+comptes nationaux base 2020 : valeur ajoutée publiée le 29 mai 2026, emploi
+intérieur par branche, tableaux 6.208 et 6.209) : agriculture
+87,0 / 59,8 = 1,46 ; industrie 87,0 / 115,4 = 0,75 ; construction
+87,0 / 74,1 = 1,17 ; tertiaire marchand 87,0 / 96,8 = 0,90 ; tertiaire non
+marchand 87,0 / 64,7 = 1,34. Une demande adressée à un secteur y crée autant
+d'emplois de plus (ou de moins) que la loi d'Okun en donne pour une demande
+moyenne, multipliés par cette intensité. Ordre de grandeur obtenu pour la
+construction : ≈ 5 emplois par M€ de dépense (Okun, à court terme), contre
+6,5 à 7 emplois directs et ≈ 16 emplois directs et indirects par M€ de
+travaux dans les études de contenu en emplois (FNTP 2025 ; ADEME, marché
+2019 ; CERC Nouvelle-Aquitaine 2018), qui comptent les emplois mobilisés
+sans tenir compte de ceux qu'ils prennent ailleurs.
+
+Stabilisateur automatique : `coutParChomeurEuros` = 10 000 € par chômeur
+BIT supplémentaire. Les dépenses de chômage (allocations et aides de
+l'Unédic, 37,2 Md€ en 2025, et allocation de solidarité) ont une élasticité de
+−3,23 à l'écart de production (DG Trésor, document de travail 2025/2, août
+2025, paramètres de la LPFP 2023-2027) : 1 % de PIB, soit 0,4 point de
+chômage avec la loi d'Okun du modèle (127 000 chômeurs), fait varier ces
+dépenses de 1,27 Md€, ≈ 10 000 € par chômeur (contre 14 200 € par
+indemnisé en moyenne : 37,2 Md€ pour 2,624 millions d'allocataires en 2025,
+Unédic, juin 2026 ; les indemnisés ne sont qu'une partie des chômeurs). Côté recettes, l'élasticité unitaire au PIB
+du modèle donne une semi-élasticité de ≈ 0,52 ; avec le chômage, le solde
+réagit de ≈ 0,57 point par point de PIB, la valeur retenue par la LPFP (0,63
+pour la Commission européenne, Mourre et al., 2019).
+
 Marché du travail. L'emploi ne suit plus mécaniquement la population
 active : la tendance démographique est absorbée au taux d'emploi courant
 (chômage tendanciel inchangé), mais les chocs d'offre de travail des
@@ -130,6 +167,16 @@ dès le départ, plutôt qu'une valeur « officielle ».
 namespace Hypotheses.Eco
 open Modele
 
+/-- Baisse tendancielle des émissions par secteur, pm par an (voir le
+docstring du module). -/
+def baisseEmissionsAME : ParSecteurGes :=
+  { transports := 19, batiments := 21, agriculture := 10, industrie := 30, energie := 20, dechets := 22 }
+
+/-- Intensité en emplois relative par secteur, 2025 (INSEE), pm. -/
+def intensiteEmploi2025 : ParSecteur :=
+  { agriculture := 1455, industrie := 754, construction := 1174,
+    tertiaireMarchand := 899, tertiaireNonMarchand := 1345 }
+
 def centrale : Economie where
   id := "eco-centrale"
   description := "Croissance nominale 3 %, paramètres médians"
@@ -151,6 +198,8 @@ def centrale : Economie where
   tauxMinimumPilier2Pb := 1500
   semiElasticiteAssietteISPm := 10
   contenuImportOutreMerPm := 500
+  intensiteEmploiSecteurPm := intensiteEmploi2025
+  coutParChomeurEuros := 10000
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -162,7 +211,7 @@ def centrale : Economie where
   joursPerdusParAccident := 70
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
-  baisseEmissionsPm := 30
+  baisseEmissionsSecteurPm := baisseEmissionsAME
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
@@ -193,6 +242,8 @@ def croissanceBasse : Economie where
   tauxMinimumPilier2Pb := 1500
   semiElasticiteAssietteISPm := 10
   contenuImportOutreMerPm := 500
+  intensiteEmploiSecteurPm := intensiteEmploi2025
+  coutParChomeurEuros := 10000
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -204,7 +255,7 @@ def croissanceBasse : Economie where
   joursPerdusParAccident := 70
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
-  baisseEmissionsPm := 20
+  baisseEmissionsSecteurPm := baisseEmissionsAME
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
@@ -235,6 +286,8 @@ def croissanceHaute : Economie where
   tauxMinimumPilier2Pb := 1500
   semiElasticiteAssietteISPm := 10
   contenuImportOutreMerPm := 500
+  intensiteEmploiSecteurPm := intensiteEmploi2025
+  coutParChomeurEuros := 10000
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -246,7 +299,7 @@ def croissanceHaute : Economie where
   joursPerdusParAccident := 70
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
-  baisseEmissionsPm := 40
+  baisseEmissionsSecteurPm := baisseEmissionsAME
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75

@@ -56,10 +56,10 @@ def mesures : List Mesure := [
     leviers := [] },
   { id := "PC-06", titre := "Décarbonation du bâtiment : −53 % d'émissions d'ici 2030"
     source := s!"{plan}, B.2 Logement, p. 20 et 25 : « −53 % d'ici 2030 », sortie du fioul en 2030, pompes à chaleur dans 65 % des logements. Conversion : 60 Mt CO₂e d'émissions du bâtiment en 2023 (Citepa, hypothèse) × 53 % ≈ 32 Mt ; coût porté par PC-03 et PC-04"
-    leviers := [.transition 32 0] },
+    leviers := [.transition .batiments 32 0] },
   { id := "PC-07", titre := "Décarbonation des transports : −11 % d'émissions en 2030"
     source := s!"{plan}, B.1 Transports, p. 13 et 19 : « baisse de 11 % en 2030, 43 % en 2035 » ; fin des ventes de véhicules thermiques neufs en 2035. Conversion : 126 Mt CO₂e des transports en 2023 (Citepa, hypothèse) × 11 % ≈ 14 Mt ; coût porté par PC-01 et PC-02"
-    leviers := [.transition 14 0] },
+    leviers := [.transition .transports 14 0] },
   { id := "PC-08", titre := "Programme nucléaire : 20 EPR2 et 12 SMR d'ici 2050"
     source := s!"Discours de présentation du plan (F. Roussel, 6 novembre 2023) : « 20 réacteurs EPR2 et 12 réacteurs modulaires (SMR NUWARD) d'ici 2050 », prolongation du parc au-delà de 60 ans. Financement : hypothèse du schéma gouvernemental (voir `pretEPR`), soit {pretEPR} M€/an de prêt de l'État à EDF"
     leviers := [.pretEtat pretEPR]

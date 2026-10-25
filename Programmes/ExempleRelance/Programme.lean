@@ -27,7 +27,7 @@ theorem baremeSRU_valide : baremeSRU.Valide := by decide
 def mesures : List Mesure := [
   { id := "R-01", titre := "Plan d'investissement de transition"
     source := "Exemple fictif, §1"
-    leviers := [.transition 30 30000] },
+    leviers := [.transition .energie 30 30000] },
   { id := "R-02", titre := "Revalorisation du SMIC de 8 %"
     source := "Exemple fictif, §2"
     leviers := [.revalorisationSmic 800] },

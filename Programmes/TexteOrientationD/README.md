@@ -381,8 +381,8 @@ variante.
 (Scénario central, moteur de demande, mesures prises isolément.)
 
 **Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
-D baisse chaque année de 2027 à 2035, de 4,8 % à 3,6 %** (dette 128 % du
-PIB, chômage 9,1 %), contre 9,0 % sans programme (référence complétée
+D baisse chaque année de 2027 à 2035, de 4,8 % à 3,7 %** (dette 128 % du
+PIB, chômage 8,9 %), contre 9,0 % sans programme (référence complétée
 des lois en vigueur : voir O-59 à O-62 ; IS à 12 % et réponse de
 l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
 2027 (aucune mesure avant).
@@ -391,10 +391,10 @@ Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,6 % | 9,1 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 2,7 % | 9,2 % |
-| … et norme renforcée de 100 pb supplémentaires | 1,3 % | 9,7 % |
-| … et de 200 pb supplémentaires | 0,0 % (équilibre) | 10,2 % |
+| Rien | 3,7 % | 8,9 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 2,8 % | 9,0 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,5 % | 9,6 % |
+| … et de 200 pb supplémentaires | 0,3 % | 10,1 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
 la synthèse les évalue une à une (section « Variantes des mesures »). (Avec l'IS maintenu à 25 %, O-60
@@ -466,20 +466,21 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,81 | 4,65 | 4,61 | 4,56 | 4,49 | 4,43 | 4,18 | 3,89 | 3,59 |
-| Offre | 5,38 | 4,72 | 4,51 | 4,45 | 4,39 | 4,31 | 4,20 | 3,96 | 3,68 | 3,41 |
+| Demande | 5,38 | 4,81 | 4,66 | 4,64 | 4,59 | 4,54 | 4,51 | 4,28 | 3,99 | 3,71 |
+| Offre | 5,38 | 4,71 | 4,51 | 4,47 | 4,41 | 4,35 | 4,26 | 4,04 | 3,77 | 3,53 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
 sous chaque moteur : toujours avec la croissance haute, jamais avec la
 croissance basse ; en croissance centrale, le pétrole cher ou le
 vieillissement accéléré l'interrompent. La baisse est la plus faible en
-2029 (−0,04 point) : c'est l'année où la LPM et les intérêts montent le
-plus vite.
+2029 et en 2032 (−0,02 et −0,03 point) : la LPM et les intérêts montent, et
+l'indemnisation du chômage, désormais liée au nombre de chômeurs, croît
+avec lui.
 
 Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,45 %,
 ≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
-Orientation D atteint 9,1 % en 2035.
+Orientation D atteint 8,9 % en 2035.
 
 ### O-63 — Aide à la rénovation majorée de 25 % dans les territoires ruraux
 
@@ -502,8 +503,11 @@ accises et TVA du fioul et du gaz.
 | Économies de fioul et de gaz ajoutées chaque année | 32 000 MWh |
 | CO₂ évité en 2035 | 64 kt |
 
-Effets en 2035 (mesure seule, moteur de demande) : +0,02 point de déficit,
-2 500 emplois, surtout dans le bâtiment. La majoration profite d'abord aux
+Effets en 2035 (mesure seule, moteur de demande) : +0,01 point de déficit,
+3 000 emplois, dont 2 400 dans le bâtiment : le modèle compte désormais les
+travaux entiers des rénovations suscitées (33 000 € en moyenne, aide et part
+des ménages), et l'intensité en main-d'œuvre de la construction (1,17 fois
+la moyenne). La majoration profite d'abord aux
 ménages qui rénovaient déjà : la moitié du coût est un effet d'aubaine.
 Variante à 50 % : le double du coût, +0,02 point de plus.
 
@@ -525,11 +529,40 @@ l'effet sanitaire n'est pas chiffré.
 Le modèle commun traite ces investissements avec un contenu en
 importations de 50 % (contre 30 % en métropole ; hypothèse : canalisations,
 membranes, panneaux et batteries importés) : chaque euro soutient moins
-l'activité. En 2029, O-64 dépense 351 M€, crée ≈ 850 emplois et accroît les
-importations de 157 M€ ; l'effet s'éteint à la fin des travaux. Coût en
+l'activité. En 2029, O-64 dépense 342 M€ et crée ≈ 980 emplois, presque tous dans la
+construction ; l'effet s'éteint à la fin des travaux. Le chômage atteint
+25 % à Mayotte et 17 % en Guyane (INSEE, 2025) : ces emplois y trouvent sans
+peine des candidats, ce que le marché du travail unique du modèle ne
+distingue pas. Coût en
 déficit : +0,01 point pendant le programme. Les collectivités du
 Pacifique (Polynésie : 62 % de la population desservie en eau conforme ;
 Nouvelle-Calédonie, Wallis-et-Futuna) ne sont pas chiffrées.
+
+### Emplois, chômage et objectifs écologiques
+
+Le modèle commun distingue désormais :
+
+* **l'intensité en emplois des secteurs** (valeur ajoutée par emploi de
+  l'INSEE, 2025) : une dépense dans la construction ou les services
+  publics crée plus d'emplois par euro qu'une dépense industrielle ;
+* **l'indemnisation du chômage**, ajustée chaque année au nombre de
+  chômeurs (≈ 10 000 € par chômeur supplémentaire) : la norme de dépense,
+  qui relève le chômage, coûte ainsi une partie de ce qu'elle économise ;
+* **les émissions par secteur**, comparées aux objectifs 2030 de la SNBC-3
+  (décret n° 2026-636).
+
+| 2030, Mt CO₂e | Transports | Bâtiments | Agriculture | Industrie | Énergie | Déchets | Total |
+|---|---|---|---|---|---|---|---|
+| Tendanciel | 111,7 | 49,4 | 72,8 | 50,2 | 28,4 | 13,7 | 326 |
+| Texte Orientation D | 110,1 | 49,4 | 68,9 | 50,2 | 28,4 | 13,7 | 321 |
+| Objectif SNBC-3 | 92 | 37 | 68 | 42 | 25 | 12 | 276 |
+
+Le Texte Orientation D tient l'objectif de 15 % de voitures électriques
+dans le parc en 2030 (6,2 millions, grâce à O-05), mais aucun objectif
+sectoriel de la SNBC-3, ni le budget carbone 2029-2033 : comme tous les
+programmes du dépôt. L'agriculture s'en approche (68,9 Mt pour 68, grâce à
+O-31). Combler l'écart demanderait une baisse de 5,1 % par an des
+émissions, contre 2,1 % observés en 2025.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
