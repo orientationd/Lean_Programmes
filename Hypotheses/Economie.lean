@@ -196,6 +196,24 @@ docstring du module). -/
 def baisseEmissionsAME : ParSecteurGes :=
   { transports := 19, batiments := 21, agriculture := 10, industrie := 30, energie := 20, dechets := 22 }
 
+/-- Effet sur la demande de chaque prélèvement, relativement à l'effet moyen
+d'un prélèvement fixé par le moteur, pm (voir le docstring du module). -/
+def incidencePrelevements : ParImpot :=
+  { tva := 1000, ir := 1000, csgCrds := 1000, cotisations := 1000, impotSocietes := 1000,
+    accisesEnergie := 1000, taxeFonciere := 1000, droitsMutation := 1000, patrimoine := 1000,
+    autres := 1000 }
+
+/-- Élasticité de l'emploi au coût du travail par tranche, pm (voir le
+docstring du module). -/
+def elasticitesCoutTravail : ParTranche := { bas := 0, intermediaire := 0, haut := 0 }
+
+/-- Emploi salarié privé par tranche de salaire, milliers (voir le docstring
+du module). -/
+def emploiPriveTranche2025 : ParTranche := { bas := 1, intermediaire := 1, haut := 1 }
+
+/-- Coût du travail par tranche, M€ (voir le docstring du module). -/
+def coutTravailTranche2025 : ParTranche := { bas := 1, intermediaire := 1, haut := 1 }
+
 /-- Intensité en emplois relative par secteur, 2025 (INSEE), pm. -/
 def intensiteEmploi2025 : ParSecteur :=
   { agriculture := 1455, industrie := 754, construction := 1174,
@@ -211,6 +229,7 @@ def centrale : Economie where
   chomageFrictionnelPb := 450
   multiplicateurPm := 800
   fuiteFiscalePm := 200
+  incidencePrelevementPm := incidencePrelevements
   elasticiteChomageSmicPm := 100
   economieParMoisRetraite := 650
   tauxMarginalPb := 330
@@ -248,6 +267,11 @@ def centrale : Economie where
   tauxEmploiSeniorsMaintenusPm := 720
   tauxEmploiMigrantsPm := 876
   absorptionChomagePm := 200
+  elasticiteEmploiCoutTravailPm := elasticitesCoutTravail
+  emploiPriveTrancheMilliers := emploiPriveTranche2025
+  coutTravailTrancheMeur := coutTravailTranche2025
+  ajustementCoutTravailPm := 500
+  chomeursEvitesParConseiller := 0
   sources := ["À COMPLÉTER"]
 
 def croissanceBasse : Economie where
@@ -260,6 +284,7 @@ def croissanceBasse : Economie where
   chomageFrictionnelPb := 450
   multiplicateurPm := 500
   fuiteFiscalePm := 350
+  incidencePrelevementPm := incidencePrelevements
   elasticiteChomageSmicPm := 150
   economieParMoisRetraite := 650
   tauxMarginalPb := 380
@@ -297,6 +322,11 @@ def croissanceBasse : Economie where
   tauxEmploiSeniorsMaintenusPm := 720
   tauxEmploiMigrantsPm := 876
   absorptionChomagePm := 200
+  elasticiteEmploiCoutTravailPm := elasticitesCoutTravail
+  emploiPriveTrancheMilliers := emploiPriveTranche2025
+  coutTravailTrancheMeur := coutTravailTranche2025
+  ajustementCoutTravailPm := 500
+  chomeursEvitesParConseiller := 0
   sources := ["À COMPLÉTER"]
 
 def croissanceHaute : Economie where
@@ -309,6 +339,7 @@ def croissanceHaute : Economie where
   chomageFrictionnelPb := 450
   multiplicateurPm := 1100
   fuiteFiscalePm := 100
+  incidencePrelevementPm := incidencePrelevements
   elasticiteChomageSmicPm := 50
   economieParMoisRetraite := 650
   tauxMarginalPb := 300
@@ -346,6 +377,11 @@ def croissanceHaute : Economie where
   tauxEmploiSeniorsMaintenusPm := 720
   tauxEmploiMigrantsPm := 876
   absorptionChomagePm := 200
+  elasticiteEmploiCoutTravailPm := elasticitesCoutTravail
+  emploiPriveTrancheMilliers := emploiPriveTranche2025
+  coutTravailTrancheMeur := coutTravailTranche2025
+  ajustementCoutTravailPm := 500
+  chomeursEvitesParConseiller := 0
   sources := ["À COMPLÉTER"]
 
 def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute]

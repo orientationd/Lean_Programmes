@@ -102,6 +102,73 @@ def repartir (v : ParSecteur) (d : Int) : Option Secteur → ParSecteur
 
 end ParSecteur
 
+/-! ## Tranches de salaire -/
+
+/-- Tranches de salaire du secteur privé, en multiples du SMIC (allègements
+généraux de cotisations patronales, coût du travail). -/
+inductive TrancheSalaire where
+  /-- De 1 à 1,6 SMIC. -/
+  | bas
+  /-- De 1,6 à 2,5 SMIC. -/
+  | intermediaire
+  /-- Au-delà de 2,5 SMIC. -/
+  | haut
+  deriving Repr, DecidableEq, Inhabited
+
+namespace TrancheSalaire
+
+def tous : List TrancheSalaire := [.bas, .intermediaire, .haut]
+
+def id : TrancheSalaire → String
+  | .bas => "bas"
+  | .intermediaire => "intermediaire"
+  | .haut => "haut"
+
+def nom : TrancheSalaire → String
+  | .bas => "1 à 1,6 SMIC"
+  | .intermediaire => "1,6 à 2,5 SMIC"
+  | .haut => "Au-delà de 2,5 SMIC"
+
+end TrancheSalaire
+
+/-- Une valeur par tranche de salaire. -/
+structure ParTranche where
+  bas : Int := 0
+  intermediaire : Int := 0
+  haut : Int := 0
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParTranche
+
+def get (v : ParTranche) : TrancheSalaire → Int
+  | .bas => v.bas
+  | .intermediaire => v.intermediaire
+  | .haut => v.haut
+
+def ajouter (v : ParTranche) (t : TrancheSalaire) (d : Int) : ParTranche :=
+  match t with
+  | .bas => { v with bas := v.bas + d }
+  | .intermediaire => { v with intermediaire := v.intermediaire + d }
+  | .haut => { v with haut := v.haut + d }
+
+def total (v : ParTranche) : Int := v.bas + v.intermediaire + v.haut
+
+/-- Chaque tranche croît du même taux (pb). -/
+def croitre (v : ParTranche) (tauxPb : Int) : ParTranche :=
+  { bas := v.bas + appliquerPb v.bas tauxPb
+    intermediaire := v.intermediaire + appliquerPb v.intermediaire tauxPb
+    haut := v.haut + appliquerPb v.haut tauxPb }
+
+/-- Toutes les composantes sont dans `[lo, hi]`. -/
+def toutEntre (v : ParTranche) (lo hi : Int) : Bool :=
+  TrancheSalaire.tous.all fun t => decide (lo ≤ v.get t ∧ v.get t ≤ hi)
+
+theorem total_ajouter (v : ParTranche) (t : TrancheSalaire) (d : Int) :
+    (v.ajouter t d).total = v.total + d := by
+  cases t <;> simp [ajouter, total] <;> omega
+
+end ParTranche
+
 /-! ## Émissions de gaz à effet de serre par secteur -/
 
 /-- Secteurs d'émission (inventaire national, format SECTEN du Citepa). -/
@@ -183,14 +250,19 @@ end ParSecteurGes
 /-- Grands prélèvements obligatoires. -/
 inductive Impot where
   | tva | ir | csgCrds | cotisations | impotSocietes | accisesEnergie | taxeFonciere
-  | droitsMutation | autres
+  | droitsMutation
+  /-- Impôts sur le stock de patrimoine (IFI, taxes sur la fortune ou sur les
+  holdings) : payés par les ménages les plus aisés, d'où un faible effet sur
+  la demande (voir `Economie.incidencePrelevementPm`). -/
+  | patrimoine
+  | autres
   deriving Repr, DecidableEq, Inhabited
 
 namespace Impot
 
 def tous : List Impot :=
   [.tva, .ir, .csgCrds, .cotisations, .impotSocietes, .accisesEnergie, .taxeFonciere,
-   .droitsMutation, .autres]
+   .droitsMutation, .patrimoine, .autres]
 
 def nom : Impot → String
   | .tva => "TVA"
@@ -201,6 +273,7 @@ def nom : Impot → String
   | .accisesEnergie => "Accise sur les énergies (TICPE)"
   | .taxeFonciere => "Taxe foncière"
   | .droitsMutation => "Droits de succession et de donation"
+  | .patrimoine => "Impôts sur le patrimoine (IFI, fortune)"
   | .autres => "Autres impôts"
 
 def id : Impot → String
@@ -212,6 +285,7 @@ def id : Impot → String
   | .accisesEnergie => "accisesEnergie"
   | .taxeFonciere => "taxeFonciere"
   | .droitsMutation => "droitsMutation"
+  | .patrimoine => "patrimoine"
   | .autres => "autres"
 
 end Impot
@@ -228,6 +302,8 @@ structure ParImpot where
   /-- Droits de mutation à titre gratuit (successions et donations). Leur
   assiette suit le flux successoral, pas le PIB (voir la projection). -/
   droitsMutation : Int
+  /-- Impôts sur le stock de patrimoine (IFI…). -/
+  patrimoine : Int
   autres : Int
   deriving Repr, DecidableEq, Inhabited
 
@@ -242,6 +318,7 @@ def get (v : ParImpot) : Impot → Int
   | .accisesEnergie => v.accisesEnergie
   | .taxeFonciere => v.taxeFonciere
   | .droitsMutation => v.droitsMutation
+  | .patrimoine => v.patrimoine
   | .autres => v.autres
 
 def ajouter (v : ParImpot) (i : Impot) (d : Int) : ParImpot :=
@@ -254,11 +331,16 @@ def ajouter (v : ParImpot) (i : Impot) (d : Int) : ParImpot :=
   | .accisesEnergie => { v with accisesEnergie := v.accisesEnergie + d }
   | .taxeFonciere => { v with taxeFonciere := v.taxeFonciere + d }
   | .droitsMutation => { v with droitsMutation := v.droitsMutation + d }
+  | .patrimoine => { v with patrimoine := v.patrimoine + d }
   | .autres => { v with autres := v.autres + d }
 
 def total (v : ParImpot) : Int :=
   v.tva + v.ir + v.csgCrds + v.cotisations + v.impotSocietes + v.accisesEnergie
-    + v.taxeFonciere + v.droitsMutation + v.autres
+    + v.taxeFonciere + v.droitsMutation + v.patrimoine + v.autres
+
+/-- Toutes les composantes sont dans `[lo, hi]`. -/
+def toutEntre (v : ParImpot) (lo hi : Int) : Bool :=
+  Impot.tous.all fun i => decide (lo ≤ v.get i ∧ v.get i ≤ hi)
 
 /-- Chaque prélèvement croît du même taux (pb), assiettes supposées
 proportionnelles au PIB nominal. -/
@@ -270,6 +352,7 @@ def croitre (v : ParImpot) (tauxPb : Int) : ParImpot :=
     accisesEnergie := v.accisesEnergie + appliquerPb v.accisesEnergie tauxPb
     taxeFonciere := v.taxeFonciere + appliquerPb v.taxeFonciere tauxPb
     droitsMutation := v.droitsMutation + appliquerPb v.droitsMutation tauxPb
+    patrimoine := v.patrimoine + appliquerPb v.patrimoine tauxPb
     autres := v.autres + appliquerPb v.autres tauxPb }
 
 /-- Répartit `d` au prorata des prélèvements, parts arrondies vers zéro (reste
@@ -286,11 +369,12 @@ def repartir (v : ParImpot) (d : Int) : ParImpot :=
   let g := part v.accisesEnergie
   let h := part v.taxeFonciere
   let m := part v.droitsMutation
+  let p := part v.patrimoine
   { tva := v.tva + a, ir := v.ir + b, csgCrds := v.csgCrds + c
     cotisations := v.cotisations + e, impotSocietes := v.impotSocietes + f
     accisesEnergie := v.accisesEnergie + g, taxeFonciere := v.taxeFonciere + h
-    droitsMutation := v.droitsMutation + m
-    autres := v.autres + (d - a - b - c - e - f - g - h - m) }
+    droitsMutation := v.droitsMutation + m, patrimoine := v.patrimoine + p
+    autres := v.autres + (d - a - b - c - e - f - g - h - m - p) }
 
 end ParImpot
 
@@ -621,6 +705,17 @@ structure Etat where
   d'avant le choc × variation de la population active. Résorbé chaque année
   au taux `absorptionChomagePm` du scénario. -/
   chomeursExcedentaires : Int := 0
+  /-- Emplois encore à venir des variations du coût du travail dues aux
+  mesures (allègements de cotisations par tranche), personnes : la demande
+  de travail s'ajuste progressivement (`ajustementCoutTravailPm`). -/
+  emploisCoutTravailRestants : Int := 0
+  /-- Allègements généraux de cotisations patronales en vigueur, par tranche
+  de salaire, M€ (indexés sur le PIB nominal ; déjà retranchés des
+  cotisations). -/
+  allegementsTranche : ParTranche := {}
+  /-- Dépense d'assurance chômage due au franchissement du seuil de chômage
+  des règles contracycliques (complément de fin de droits), M€ (suivi). -/
+  complementChomageMeur : Int := 0
   /-- Norme de dépense : moindre croissance annuelle des fonctions pilotables
 (`Fonction.pilotable`), pb. -/
   moderationDepensesPb : Int := 0

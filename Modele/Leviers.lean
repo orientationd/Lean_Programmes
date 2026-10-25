@@ -247,6 +247,21 @@ inductive Levier where
   l'assiette de la taxe, reculent de élasticité × hausse. -/
   | taxeEnvironnementale (activite : ActiviteTaxee) (impot : Impot) (emissionsViseesKt : Int)
       (hausseCoutPm : Int) (rendementStatique : Int)
+  /-- Allègements généraux de cotisations patronales sur la tranche de
+  salaire `tranche` relevés de `montant` M€/an (négatif : réduits, le coût
+  du travail de la tranche monte). Les cotisations varient d'autant ;
+  l'emploi de la tranche répond au coût du travail selon l'élasticité de
+  l'axe économique, progressivement (`ajustementCoutTravailPm`), et produit
+  (volume d'heures) ; le reste agit sur les marges des entreprises (effet de
+  demande d'un prélèvement sur les bénéfices). Une baisse ne peut dépasser
+  les allègements en vigueur sur la tranche. -/
+  | allegementsCotisations (tranche : TrancheSalaire) (montant : Int)
+  /-- Accompagnement des demandeurs d'emploi : `conseillers` conseillers de
+  plus au service public de l'emploi, à `coutParConseillerEuros` € par an
+  chacun (dépense de la fonction famille-chômage). Le chômage d'équilibre
+  baisse de `chomeursEvitesParConseiller` (axe économique) par conseiller ;
+  l'écart se résorbe au rythme du scénario (`absorptionChomagePm`). -/
+  | accompagnementDemandeurs (conseillers : Int) (coutParConseillerEuros : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -325,13 +340,19 @@ de moins), à durée du travail inchangée. -/
 def chocEmploi (H : Scenario) (dEmploi : Int) (s : Etat) : Etat :=
   chocHeuresRatio H dEmploi s.emploiTotal s
 
+/-- Poids de l'impulsion de demande d'un prélèvement sur l'impôt `i`, pm du
+multiplicateur de dépense : niveau moyen fixé par le moteur, réparti selon
+l'incidence de chaque impôt (axe économique). -/
+def poidsPrelevement (M : Moteur) (H : Scenario) (i : Impot) : Int :=
+  M.multiplicateurPrelevementsPm * H.eco.incidencePrelevementPm.get i / 1000
+
 /-- Prélèvement nouveau (rendement statique `r`, négatif pour une baisse) sur
 l'impôt `i`. Le rendement est réduit de la fuite fiscale ; l'impulsion de
-demande est pondérée par le moteur (moitié du multiplicateur de dépense dans
-le moteur standard). -/
+demande est pondérée par le moteur et l'incidence de l'impôt (en moyenne,
+moitié du multiplicateur de dépense dans le moteur standard). -/
 def appliquerPrelevement (M : Moteur) (H : Scenario) (i : Impot) (r : Int) (s : Etat) : Etat :=
   let rendement := r - appliquerPm r H.eco.fuiteFiscalePm
-  effetDemande H none (-(appliquerPm r M.multiplicateurPrelevementsPm))
+  effetDemande H none (-(appliquerPm r (poidsPrelevement M H i)))
     { s with impots := s.impots.ajouter i rendement }
 
 /-- Recul de l'âge moyen de départ de `moisPm` millièmes de mois : actifs
@@ -467,7 +488,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       -- recettes après réponse de l'assiette : IS × tEff/t0 × (1 + ε × (t0 − tEff)/100)
       let apres := s.impots.impotSocietes * tEff
         * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tEff)) / (t0 * 100000)
-      effetDemande H none (-(appliquerPm statique M.multiplicateurPrelevementsPm))
+      effetDemande H none (-(appliquerPm statique (poidsPrelevement M H .impotSocietes)))
         { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes) }
   | .transition sec r c, s =>
       appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec (r * 1000))
@@ -549,7 +570,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let s' : Etat := { s with echeancesRecettes := s.echeancesRecettes ++ [e] }
       match i with
       | some imp =>
-          effetDemande H none (-(appliquerPm n M.multiplicateurPrelevementsPm))
+          effetDemande H none (-(appliquerPm n (poidsPrelevement M H imp)))
             { s' with impots := s'.impots.ajouter imp n }
       | none => { s' with autresRecettes := s'.autresRecettes + n }
   | .prisesDeParticipation m, s =>
@@ -626,5 +647,22 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .deploiementBornes n cout, s =>
       appliquerDepense H (some .construction) .affairesEconomiques (n * cout / 1000000)
         { s with bornesAnnuellesMilliers := s.bornesAnnuellesMilliers + n / 1000 }
+  -- coût du travail : emplois visés = élasticité × variation relative du
+  -- coût du travail de la tranche × emploi de la tranche (coût du travail et
+  -- emploi de l'année de départ, coût ramené au PIB courant) ; ils
+  -- s'ajoutent progressivement dans la projection
+  | .allegementsCotisations t m, s =>
+      let m' := if m < 0 then max m (-(s.allegementsTranche.get t)) else m
+      let cout := H.eco.coutTravailTrancheMeur.get t
+      let emplois := if s.pib = 0 ∨ cout = 0 then 0
+        else m' * H.eco.elasticiteEmploiCoutTravailPm.get t * H.eco.emploiPriveTrancheMilliers.get t
+          * H.reference.etat.pib / (cout * s.pib)
+      effetDemande H none (appliquerPm m' (poidsPrelevement M H .impotSocietes))
+        { s with impots := s.impots.ajouter .cotisations (-m')
+                 allegementsTranche := s.allegementsTranche.ajouter t m'
+                 emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois }
+  | .accompagnementDemandeurs n cout, s =>
+      appliquerDepense H Fonction.famille.secteur .famille (n * cout / 1000000)
+        { s with chomeursExcedentaires := s.chomeursExcedentaires + n * H.eco.chomeursEvitesParConseiller }
 
 end Modele

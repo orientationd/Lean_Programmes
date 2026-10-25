@@ -144,7 +144,8 @@ def impots2025 : ParImpot where
   accisesEnergie := 30500  -- TICPE, 30,5 Md€ en 2022, dernier chiffre publié (MTE, via Journal de l'Automobile)
   taxeFonciere := 44100    -- dérivé : TFPB +1,2 Md€ soit +2,8 % (DGCL, note REI 2025)
   droitsMutation := 20700  -- successions 16,2 + donations 4,5 Md€ en 2025 (Legifiscal, 23/09/2026)
-  autres := 235700         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
+  patrimoine := 2300       -- IFI ≈ 2,3 Md€ en 2025, 193 600 foyers (DGFiP, via Previssima)
+  autres := 233400         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
 
 /-- Éléments temporaires de la situation de départ : dépenses et recettes de
 2025 dont la fin est prévue par les textes ou les calendriers en vigueur.
