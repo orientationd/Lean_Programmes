@@ -7,7 +7,11 @@ import Proprietes
 
 Transcription **partielle et non officielle** du Projet socialiste adopté
 par les adhérents en 2026 (projet-socialiste.fr, consulté le 21 octobre
-2026). La source ne publie pas de chiffrage global.
+2026). La source ne publie pas de chiffrage global. Complété par le
+contre-budget 2027 des députés socialistes (16 septembre 2026, chiffres du
+parti rapportés par la presse ; document non consulté directement).
+Candidat issu de la primaire « Choisir 2027 » (9-11 octobre 2026) :
+R. Glucksmann, dont les propositions ne sont pas transcrites ici.
 
 Règle de transcription : une proposition devient un levier seulement si la
 source donne un montant annuel, ou un paramètre que le modèle commun
@@ -20,6 +24,9 @@ namespace Programmes.PS
 open Modele
 
 def site : String := "projet-socialiste.fr"
+
+def contreBudget : String :=
+  "Contre-budget 2027 des députés socialistes, 16 septembre 2026 (Selectra, JDN, LCP, Planet ; chiffres du parti, sans contre-expertise)"
 
 def mesures : List Mesure := [
   { id := "P-01", titre := "SMIC porté à 1 690 € net"
@@ -45,13 +52,35 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .securiteJustice 2600] },
   { id := "P-08", titre := "Aide humanitaire d'urgence portée à 1 Md€ par an"
     source := s!"{site}, chap. 19 : de 500 M€ en 2025 à 1 Md€ par an, soit +500 M€/an"
-    leviers := [.depenseSur .fonctionnement 500] }
+    leviers := [.depenseSur .fonctionnement 500] },
+  { id := "P-09", titre := "CSG progressive sur les revenus d'activité jusqu'à 2 700 € net"
+    source := s!"{contreBudget} : ≈ 10 Md€ de moindres recettes (21 millions d'actifs ; CSG au SMIC de 9,2 % à moins de 1 %)"
+    leviers := [.prelevementSur .csgCrds (-10000)] },
+  { id := "P-10", titre := "Taxe sur les géants du numérique"
+    source := s!"{contreBudget} : +10 Md€ (l'assiette dépasserait de loin celle de la taxe actuelle, ≈ 0,7 Md€)"
+    leviers := [.prelevementSur .autres 10000] },
+  { id := "P-11", titre := "Accès aux soins : hôpitaux et EHPAD publics, mutuelle publique gratuite pour les 18-25 ans"
+    source := s!"{contreBudget} : +5 Md€ (3 Md€ hôpitaux et EHPAD, 1 Md€ mutuelle des 18-25 ans)"
+    leviers := [.depenseSur .sante 5000] },
+  { id := "P-12", titre := "Climat : fonds de sécurité climatique, fonds vert des collectivités"
+    source := s!"{contreBudget} : +10 Md€ pour le climat (dont 5 Md€ de fonds de sécurité climatique et 1,5 Md€ de fonds vert)"
+    leviers := [.depenseSur .logementEnvironnement 10000] },
+  { id := "P-13", titre := "École, agriculteurs, sécurité civile"
+    source := s!"{contreBudget} : +2 Md€ (école), +2 Md€ (agriculteurs), sécurité civile doublée à 1 Md€ (+0,5 Md€, calcul)"
+    leviers := [.depenseSur .enseignement 2000, .depenseSur .affairesEconomiques 2000, .depenseSur .securiteJustice 500] },
+  { id := "P-14", titre := "Révision des exonérations de cotisations patronales"
+    source := s!"{contreBudget} : +4 Md€ ; sans ciblage précisé, réduction au prorata des allègements (modèle commun). Recouvrement possible avec P-03 (niches sociales)"
+    leviers := [.reductionAllegements 4000] },
+  { id := "P-15", titre := "Fraude, travail dissimulé, économies sur l'État et sur les marges du secteur de la santé"
+    source := s!"{contreBudget} : fraude fiscale 2,4 Md€, travail dissimulé 1,1 Md€, État 3,6 Md€, santé 4 Md€ (Selectra ; 15,1 Md€ détaillés sur 17,5 annoncés)"
+    leviers := [.prelevementSur .autres 2400, .prelevementSur .cotisations 1100,
+                .economieSur .fonctionnement 3600, .economieSur .sante 4000] }
 ]
 
 def programme : Programme where
   id := "PS"
   nom := "Parti socialiste — Le Projet socialiste (2026)"
-  description := "Transcription partielle et non officielle du Projet socialiste : 8 propositions chiffrées ou directement modélisables sur environ 400 ; la source ne publie pas de chiffrage global."
+  description := "Transcription partielle et non officielle du Projet socialiste (8 propositions chiffrées ou directement modélisables sur environ 400) et du contre-budget 2027 des députés socialistes (16 septembre 2026 : CSG progressive, taxe numérique, santé, climat, école, exonérations, fraude et économies)."
   mainteneurs := ["@orientationd"]
   source := "https://projet-socialiste.fr/ (consulté le 21 octobre 2026)"
   mesures := mesures

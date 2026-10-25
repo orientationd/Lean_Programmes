@@ -65,6 +65,25 @@ Objectifs d'emplois annoncés (levier déclaratif `annonceEmplois`, vérifié
 par la propriété « emplois annoncés réalisables ») : plus de 40 000 emplois
 pour le plan automobile, 10 000 soignants, 10 000 enseignants.
 
+## Ajouts : brochure budgétaire du 14 octobre 2026 (chiffres du parti)
+
+| Mesure | Levier |
+|---|---|
+| L-26 Logement d'urgence et réquisitions | +3 Md€/an (logement) |
+| L-27 Université : 250 000 places | +4,5 points de scolarisation de 18 à 24 ans : ≈ 3,4 Md€ calculés par le modèle (3,5 Md€ selon le parti), durée attendue de scolarisation de l'IDH |
+| L-28 Violences sexistes et sexuelles, violences faites aux enfants | +2,6 et +2 Md€/an |
+| L-29 Réindexation des budgets ministériels coupés en 2026 | +7 Md€/an, non ventilés |
+| L-30 Superprofits, multinationales, CVAE, IS | +13 Md€ d'IS, +3 Md€ d'impôts de production |
+| L-31 Taxe numérique de 3 % à 15 % | +3,9 Md€ |
+| L-32 Fraude fiscale et crypto-actifs | +3 Md€ |
+| L-33 Fin des exonérations au-delà de 2 SMIC | allègements de 2 à 2,5 SMIC et au-delà supprimés (≈ 4,2 Md€, calcul du modèle ; non chiffré par le parti) |
+
+Recettes de la brochure désormais toutes transcrites (106,4 Md€) ; dépenses :
+72,7 Md€ sur 81,7. Non transcrit : blocage du carburant à 1,70 €/l (non
+chiffré ; la remise de 2022 avait coûté ≈ 8 Md€), impôt sur le revenu à
+14 tranches. Recalibrages publiés depuis, non appliqués : SMIC à 1 700 €
+net, retraite d'abord à 62 ans (9 Md€).
+
 ## Ce qui ne l'est pas, faute de montant dans la source
 
 * Sanctions des flottes d'entreprises : seuil d'achat électrique porté à

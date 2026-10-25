@@ -27,6 +27,14 @@ n'en représentent qu'une fraction : le reste n'est pas détaillé.
 Le financement annoncé (« économies sur les dépenses sociales ») n'a pas
 de montant : le modèle montre donc le coût brut de la mesure.
 
+## Ajouts (octobre 2026)
+
+| Mesure | Levier |
+|---|---|
+| RE-06 « Frein d'urgence » sur les dépenses sociales | −10 Md€ au-delà de l'année blanche (20 Md€ annoncés, dont RE-03) : 6 Md€ retraites, 4 Md€ autres prestations (hypothèse) |
+| RE-07 Impôt des classes moyennes, pensions alimentaires non imposables | −3 Md€ d'IR (chiffrages du parti) |
+| RE-08 1 000 € d'épargne retraite par naissance | +0,66 Md€ |
+
 ## Non modélisé, faute de montant dans les sources
 
 * Retraite universelle par points (« un euro cotisé ouvre les mêmes

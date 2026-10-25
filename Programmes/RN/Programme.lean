@@ -72,13 +72,32 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .logementEnvironnement 3800] },
   { id := "RN-15", titre := "Recherche publique"
     source := s!"{dossier} : +9 Md€/an (presse)"
-    leviers := [.depenseSur .enseignement 9000] }
+    leviers := [.depenseSur .enseignement 9000] },
+  { id := "RN-16", titre := "Fin des subventions aux énergies renouvelables"
+    source := "Contre-budget 2027 (J.-P. Tanguy, cité par Planète Grandes Écoles, 7 octobre 2026) : +5 Md€ la première année (chiffrage du parti) ; recouvrement possible avec RN-13 (certificats d'économies d'énergie)"
+    leviers := [.economieSur .affairesEconomiques 5000] },
+  { id := "RN-17", titre := "Taxe de 1 000 € par an et par salarié extra-européen"
+    source := "Contre-budget 2027, p. 24 ; amendement au PLF 2027 rejeté en commission (Public Sénat, 9 octobre 2026) : 1,3 million de salariés × 1 000 € = 1,3 Md€ bruts (le parti compte 1,0 Md€ nets de 300 000 emplois perdus ; le modèle commun calcule les effets)"
+    leviers := [.prelevementSur .autres 1300] },
+  { id := "RN-18", titre := "Jeunesse : permis de conduire gratuit, prime d'activité étudiante"
+    source := "LCP, 6 octobre 2026 : 0,7 Md€ (700 000 × 1 000 €, « estimation basse ») et 0,6 Md€ (chiffrage du parti)"
+    leviers := [.depenseSur .enseignement 700, .depenseSur .famille 600] },
+  { id := "RN-19", titre := "Proches aidants, soins dentaires"
+    source := "Contre-budget 2027 (Contrepoints, 6 octobre 2026) : 2 Md€ (aidants) et 1,4 Md€ (dentaire), chiffrage du parti"
+    leviers := [.depenseSur .famille 2000, .depenseSur .sante 1400] },
+  { id := "RN-20", titre := "30 000 places de prison"
+    source := "Comparateur IFRAP 2027 ; non chiffré : 30 000 × 236 k€ = 7,1 Md€ sur cinq ans (Institut Montaigne, 2022), puis ≈ 45 000 € par place ouverte et par an (surveillants, entretien : hypothèse du modèle commun, voir Texte Orientation D, O-75), places ouvertes de 2029 à 2033"
+    leviers := [.investissementEcheancier .securiteJustice [1420, 1420, 1420, 1420, 1420, 0],
+                .depenseEcheancier .securiteJustice [0, 0, 270, 540, 810, 1080, 1350]] },
+  { id := "RN-21", titre := "7 000 policiers et gendarmes de plus"
+    source := "Comparateur IFRAP 2027 ; ≈ 85 000 € par poste (Institut Montaigne, 2022, coût d'un recrutement dans la justice, hypothèse) : ≈ 0,6 Md€"
+    leviers := [.depenseSur .securiteJustice 600, .annonceEmplois 7000] }
 ]
 
 def programme : Programme where
   id := "RN"
   nom := "Rassemblement national — contre-budget 2027"
-  description := "Transcription partielle et non officielle du dossier « Pour la Renaissance de la France » (6 octobre 2026) : baisses de TVA et d'impôts de production, retraite à 62 ans, économies sur l'État, les collectivités, l'Union européenne, les prestations et la Sécurité sociale. Le RN annonce 141,7 Md€ d'amélioration du solde en 2031."
+  description := "Transcription partielle et non officielle du dossier « Pour la Renaissance de la France » (6 octobre 2026) : baisses de TVA et d'impôts de production, retraite à 62 ans, économies sur l'État, les collectivités, l'Union européenne, les prestations et la Sécurité sociale. Le RN annonce 141,7 Md€ d'amélioration du solde en 2031. Ajouts : fin des subventions aux renouvelables, taxe sur les salariés extra-européens, jeunesse, aidants et dentaire, 30 000 places de prison, 7 000 policiers et gendarmes."
   mainteneurs := ["@orientationd"]
   source := "Dossier de presse du 6 octobre 2026, via Institut de l'Entreprise (note IDEP) et presse (consultés le 21 octobre 2026)"
   mesures := mesures

@@ -24,6 +24,20 @@ La source ne publie pas de chiffrage global.
 | E-08 AAH +250 €/mois | — | +3,9 Md€ (1,3 million d'allocataires, hypothèse) |
 | E-09 32 heures dans les métiers pénibles ou de nuit | p. 57 | −1,3 % d'heures par emploi (15 % des salariés, hypothèse) |
 
+## Ajouts (contre-budget du 30 septembre 2026, programme du 13 juillet 2026)
+
+| Mesure | Levier |
+|---|---|
+| E-10 Contribution pour les générations futures (grosses successions) | +10 Md€ en 2027, 15 Md€ à terme (chiffrage du parti) |
+| E-11 Taxe pétro-gazière et chèque carburant de 450 € | +2,8 Md€ et +2,7 Md€ en 2027 seulement |
+| E-12 Classes à 19 élèves (12 en éducation prioritaire) | jusqu'à 6,8 Md€ en cinq ans (Institut Montaigne 2022, hypothèse) |
+| E-13 Garantie d'autonomie à 50 % du SMIC net | 6,6 Md€ (RSA jeunes, DG Trésor 2016 ; hypothèse basse) |
+| E-14 APL +10 %, allocations dès le premier enfant | +1,6 et +2,8 Md€ |
+| E-15 Taxe numérique de 3 % à 5 % | +0,47 Md€ (calcul) |
+
+Non transcrit : plan d'investissement climat de ≈ 10 Md€ (recouvrement
+probable avec E-03), 2 000 centres de santé (non chiffré).
+
 ## Non modélisé, faute de montant dans les sources lues
 
 * Garantie d'autonomie à 50 % du SMIC net dès 18 ans, en remplacement du

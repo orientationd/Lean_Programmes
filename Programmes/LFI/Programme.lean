@@ -127,13 +127,37 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .famille 3000] },
   { id := "L-25", titre := "10 000 postes d'enseignants"
     source := s!"{budget} : 0,5 Md€/an"
-    leviers := [.depenseSur .enseignement 500, .annonceEmplois 10000] }
+    leviers := [.depenseSur .enseignement 500, .annonceEmplois 10000] },
+  { id := "L-26", titre := "Logement d'urgence et réquisitions contre le sans-abrisme"
+    source := s!"{budget} : +3 Md€/an (chiffrage du parti)"
+    leviers := [.depenseSur .logementEnvironnement 3000] },
+  { id := "L-27", titre := "Université : 250 000 places supplémentaires"
+    source := s!"{budget} : +3,5 Md€/an (chiffrage du parti) ; 250 000 places = +4,5 points de scolarisation à chaque âge de 18 à 24 ans (800 000 jeunes par génération) : coût et durée attendue de scolarisation calculés par le modèle commun (≈ 3,4 Md€)"
+    leviers := [.scolarisationJeunes 45] },
+  { id := "L-28", titre := "Violences sexistes et sexuelles, violences faites aux enfants"
+    source := s!"{budget} : +2,6 Md€ (budget demandé par les associations) et +2 Md€ (plan contre les violences faites aux enfants), chiffrage du parti"
+    leviers := [.depenseSur .securiteJustice 2600, .depenseSur .famille 2000] },
+  { id := "L-29", titre := "Réindexation des budgets ministériels coupés en 2026 (travail, logement, culture, sport, diplomatie, aide au développement)"
+    source := s!"{budget} : +7 Md€/an, sans ventilation (chiffrage du parti) : non ventilé"
+    leviers := [.depense 7000] },
+  { id := "L-30", titre := "Grandes entreprises : taxe sur les superprofits, taxe universelle sur les multinationales, CVAE rétablie, IS réformé"
+    source := s!"{budget} : 5 + 5 + 3 Md€ d'IS et 3 Md€ de CVAE (chiffrage du parti, sans contre-expertise ; « les 100 milliards ne seraient pas du tout 100 milliards », M. Plane, OFCE, AFP 14/10/2026)"
+    leviers := [.prelevementSur .impotSocietes 13000, .prelevementSur .autres 3000] },
+  { id := "L-31", titre := "Taxe sur les géants du numérique de 3 % à 15 %"
+    source := s!"{budget} : +3,9 Md€ (chiffrage du parti ; la taxe actuelle rapportait ≈ 0,7 Md€ en 2024, Sénat)"
+    leviers := [.prelevementSur .autres 3900] },
+  { id := "L-32", titre := "Fraude fiscale et crypto-actifs"
+    source := s!"{budget} : +2 Md€ (fraude) et +1 Md€ (crypto-actifs), chiffrage du parti"
+    leviers := [.prelevementSur .autres 3000] },
+  { id := "L-33", titre := "Fin des exonérations de cotisations au-delà de 2 SMIC"
+    source := s!"{budget} : non chiffré par le parti ; modèle commun : allègements de 2 à 2,5 SMIC (34,3 % de la tranche 1,6-2,5 SMIC, calcul avec le barème de 2026) et au-delà de 2,5 SMIC, soit ≈ 4,2 Md€ (2025)"
+    leviers := [.allegementsCotisations .intermediaire (-(8850 * 343 / 1000)), .allegementsCotisations .haut (-1200)] }
 ]
 
 def programme : Programme where
   id := "LFI"
   nom := "La France insoumise — Mélenchon 2027 (extraits)"
-  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025), recettes (83,5 Md€ détaillées sur 106,4) et dépenses (54,6 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026."
+  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025), recettes (106,4 Md€, toutes transcrites) et dépenses (72,7 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026, université (250 000 places), fin des exonérations au-delà de 2 SMIC."
   mainteneurs := ["@orientationd"]
   source := "https://melenchon2027.fr/programme/plans-investissement/automobile/ (consulté le 21 octobre 2026)"
   mesures := mesures

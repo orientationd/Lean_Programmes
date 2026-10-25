@@ -31,6 +31,16 @@ une opération financière : il pèse sur la dette, pas sur le déficit, et
 l'activité des chantiers (hors administrations publiques) n'est pas
 modélisée.
 
+## Ajouts : propositions de 2026 (F. Roussel candidat, pas de programme 2027 chiffré)
+
+| Mesure | Levier |
+|---|---|
+| PC-11 Allocations familiales dès le premier enfant | +2,8 Md€ bruts (direction de la Sécurité sociale, proposition de loi adoptée en première lecture en 2025) |
+| PC-12 90 000 enseignants et personnels scolaires | ≈ 3,4 Md€ (hypothèse : 150 M€ pour 4 000 postes) |
+| PC-13 5 Md€ pour la jeunesse et le bâti scolaire | +5 Md€ |
+| PC-14 Refus de la hausse du budget militaire du PLF 2027 | −7 Md€ sur la défense |
+| PC-15 ISF rétabli et triplé | ≈ +10 Md€ d'impôts sur le patrimoine (hypothèse : ISF de 2017 × 3, moins l'IFI) |
+
 ## Non modélisé
 
 * **Parc social** (PC-05) : « jusqu'à 8 Md€/an », financeur non précisé.

@@ -28,13 +28,23 @@ déficit sous 3 % du PIB en 2031 et de 2,2 % en fin de quinquennat.
 | LR-09 Chômage et prestations plafonnées à 70 % du SMIC | −30 Md€ |
 | LR-10 Jour de carence d'ordre public | −4 Md€ |
 | LR-11 Collectivités de plus de 10 M€ de budget | −10 Md€ |
-| LR-12 Suppression des impôts de production | −30 Md€ d'autres impôts |
+| LR-12 Impôts de production | −15 Md€ d'autres impôts (voir ci-dessous) |
 | LR-13 Heures supplémentaires et allègements des ménages | −21 Md€ de cotisations |
 
 Les montants sont lus comme des économies annuelles en régime de
 croisière (2032) et appliqués dès l'année 0. Les économies transcrites
 totalisent 182 Md€ et 5 Md€ de recettes, pour 197 Md€ annoncés : la
 différence n'est pas détaillée dans les sources.
+
+## Ajouts et correction (octobre 2026)
+
+| Mesure | Levier |
+|---|---|
+| LR-12 (corrigée) Impôts de production | −15 Md€ : les 30 Md€ pour les entreprises se répartissent entre impôts de production et cotisations patronales (comparateur IFRAP) |
+| LR-14 Cotisations patronales | +15 Md€ d'allègements, au prorata des tranches |
+| LR-15 Revenu familial dès le premier enfant ; congé de naissance de six mois | −1,4 Md€ nets (calcul : 40,3 Md€ financés par 41 Md€ d'aides et 0,7 Md€ de gestion) ; +0,7 Md€ |
+| LR-16 Réduction d'impôt sur les intérêts d'emprunt des familles | −0,27 Md€ par génération de prêts, cumulés (hypothèse) |
+| LR-17 Fin des 35 heures (1 623 heures au lieu de 1 607) | +1,0 % de durée du travail |
 
 ## Non modélisé
 
