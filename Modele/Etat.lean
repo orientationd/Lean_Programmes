@@ -512,6 +512,10 @@ def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) (moderationPb : 
   | .interets => 0
   | _ => tauxPb
 
+/-- Toutes les composantes sont dans `[lo, hi]`. -/
+def toutEntre (v : ParFonction) (lo hi : Int) : Bool :=
+  Fonction.tous.all fun f => decide (lo ≤ v.get f ∧ v.get f ≤ hi)
+
 /-- Cohérence : hors intérêts, `croitrePrimaires` fait croître chaque fonction
 exactement de son `tauxCroissance` (utilisé pour indexer les échéanciers). -/
 theorem croitrePrimaires_get (v : ParFonction) (t r m : Int) (f : Fonction) (h : f ≠ .interets) :

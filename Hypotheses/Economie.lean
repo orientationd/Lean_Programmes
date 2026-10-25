@@ -208,6 +208,22 @@ cotisations montent avec les années, IR et CSG plus tôt) ne sont pas
 modélisés ; la Banque de France (FR-BDF, 2020) trouve des effets de court
 terme environ deux fois plus faibles.
 
+Incidence des dépenses (`incidenceDepensePm`, `incidenceInvestissementPm`).
+Le multiplicateur du scénario est celui d'une dépense de consommation
+publique ; une dépense le module selon sa nature. Multiplicateurs à 2 à
+5 ans pour un point de PIB : dépense générique 1,01 puis 0,88, baisse des
+pensions 0,80 puis 0,80, investissement public 1,29 puis 0,8 à 1,1 (Mésange :
+DG Trésor pour le COR, mars 2026 ; Bourgeois et Favetto, document de travail
+de l'INSEE 2024-07) ; transferts généraux 0,2 à 0,5 et transferts ciblés sur
+les ménages contraints 0,7 à 0,9 contre 0,8 à 1,0 pour les achats publics la
+première année (Commission européenne, QUEST, in 't Veld 2012) ;
+prestations bien en dessous de la consommation publique à court terme
+(Banque de France, FR-BDF, 2020). D'où : retraites 0,85 ; famille,
+chômage, solidarité 0,90 (transferts plus ciblés) ; affaires économiques
+0,85 (subventions aux entreprises) ; défense 0,85 (contenu importé des
+équipements, hypothèse) ; autres fonctions 1,00 ; investissement public
+1,25. La moyenne pondérée par les dépenses de 2025 vaut ≈ 0,92.
+
 Coût du travail par tranche de salaire (levier `allegementsCotisations`).
 Emploi salarié privé ≈ 20 millions, dont ≈ 2/3 sous 1,6 SMIC, 89 % sous
 2,5 SMIC, 98 % sous 3,5 SMIC (Bozio et Wasmer, rapport d'étape, mai 2024,
@@ -274,6 +290,14 @@ example : (221100 * 1100 + 103800 * 1100 + 167200 * 1100 + 446300 * 1050 + 58900
     + 30500 * 1000 + 44100 * 550 + 20700 * 200 + 2300 * 200 + 233400 * 800)
     / (221100 + 103800 + 167200 + 446300 + 58900 + 30500 + 44100 + 20700 + 2300 + 233400) = 969 := by decide
 
+/-- Effet sur la demande d'une dépense selon sa fonction, relativement à la
+consommation publique, pm (voir le docstring du module). -/
+def incidenceDepenses : ParFonction :=
+  { retraites := 850, sante := 1000, famille := 900, enseignement := 1000,
+    affairesEconomiques := 850, defense := 850, securiteJustice := 1000,
+    logementEnvironnement := 1000, culture := 1000, interets := 0, fonctionnement := 1000,
+    nonVentile := 1000 }
+
 /-- Élasticité de l'emploi au coût du travail par tranche, pm (voir le
 docstring du module). -/
 def elasticitesCoutTravail : ParTranche := { bas := 400, intermediaire := 250, haut := 50 }
@@ -301,6 +325,8 @@ def centrale : Economie where
   multiplicateurPm := 800
   fuiteFiscalePm := 200
   incidencePrelevementPm := incidencePrelevements
+  incidenceDepensePm := incidenceDepenses
+  incidenceInvestissementPm := 1250
   elasticiteChomageSmicPm := 100
   economieParMoisRetraite := 650
   tauxMarginalPb := 330
@@ -356,6 +382,8 @@ def croissanceBasse : Economie where
   multiplicateurPm := 500
   fuiteFiscalePm := 350
   incidencePrelevementPm := incidencePrelevements
+  incidenceDepensePm := incidenceDepenses
+  incidenceInvestissementPm := 1250
   elasticiteChomageSmicPm := 150
   economieParMoisRetraite := 650
   tauxMarginalPb := 380
@@ -411,6 +439,8 @@ def croissanceHaute : Economie where
   multiplicateurPm := 1100
   fuiteFiscalePm := 100
   incidencePrelevementPm := incidencePrelevements
+  incidenceDepensePm := incidenceDepenses
+  incidenceInvestissementPm := 1250
   elasticiteChomageSmicPm := 50
   economieParMoisRetraite := 650
   tauxMarginalPb := 300

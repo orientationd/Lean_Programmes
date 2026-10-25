@@ -251,7 +251,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       -- qu'elle avait créés (intensité en emplois symétrique) ; une économie
       -- (niveau négatif) n'a pas de secteur
       let secteur := if e.niveau < 0 then none else (e.secteur <|> e.fonction.secteur)
-      effetDemande H secteur (impulsion * e.partInterieurePm / 1000)
+      effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) (poidsEcheance H e))
         { st with depensesF := st.depensesF.ajouter e.fonction d
                   importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
     ({ s₂ with echeances := pasEcheances.map (·.1) } : Etat)

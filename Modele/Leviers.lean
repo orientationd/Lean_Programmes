@@ -325,11 +325,26 @@ def effetDemande (H : Scenario) (cible : Option Secteur) (impulsion : Int) (s : 
 /-- Dépense nouvelle sur une fonction (partagée par plusieurs leviers). -/
 def appliquerDepense (H : Scenario) (cible : Option Secteur) (f : Fonction) (montant : Int)
     (s : Etat) : Etat :=
-  effetDemande H cible montant { s with depensesF := s.depensesF.ajouter f montant }
+  effetDemande H cible (appliquerPm montant (H.eco.incidenceDepensePm.get f))
+    { s with depensesF := s.depensesF.ajouter f montant }
 
-/-- Économie de dépense : l'impulsion négative est pondérée par le moteur. -/
+/-- Investissement public imputé à la fonction `f` : emplois dans la
+construction, effet sur la demande de l'investissement. -/
+def appliquerInvestissement (H : Scenario) (f : Fonction) (montant : Int) (s : Etat) : Etat :=
+  effetDemande H (some .construction) (appliquerPm montant H.eco.incidenceInvestissementPm)
+    { s with depensesF := s.depensesF.ajouter f montant }
+
+/-- Poids de l'impulsion de demande d'une dépense à échéancier : celui de
+l'investissement si elle va à la construction, sinon celui de sa fonction. -/
+def poidsEcheance (H : Scenario) (e : Echeance) : Int :=
+  if e.secteur = some .construction then H.eco.incidenceInvestissementPm
+  else H.eco.incidenceDepensePm.get e.fonction
+
+/-- Économie de dépense : l'impulsion négative est pondérée par le moteur et
+la nature de la dépense. -/
 def appliquerEconomie (M : Moteur) (H : Scenario) (f : Fonction) (montant : Int) (s : Etat) : Etat :=
-  effetDemande H none (-(appliquerPm montant M.multiplicateurEconomiesPm))
+  effetDemande H none (-(appliquerPm (appliquerPm montant M.multiplicateurEconomiesPm)
+      (H.eco.incidenceDepensePm.get f)))
     { s with depensesF := s.depensesF.ajouter f (-montant) }
 
 /-- Choc d'offre de travail : variation relative `num / den` du volume
@@ -407,7 +422,7 @@ def depenseUneAnnee (H : Scenario) (f : Fonction) (secteur : Option Secteur) (pa
     (s : Etat) : Etat :=
   let e : Echeance := { fonction := f, restants := [0], niveau := montant, indice := 10000,
                         secteur := secteur, partInterieurePm := part }
-  effetDemande H secteur (montant * part / 1000)
+  effetDemande H secteur (appliquerPm (montant * part / 1000) (poidsEcheance H e))
     { s with echeances := s.echeances ++ [e]
              depensesF := s.depensesF.ajouter f montant
              importations := s.importations + montant * (1000 - part) / 1000 }
@@ -489,7 +504,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .economie m, s => appliquerEconomie M H .nonVentile m s
   | .depenseSur f m, s => appliquerDepense H f.secteur f m s
   | .economieSur f m, s => appliquerEconomie M H f m s
-  | .investissement f m, s => appliquerDepense H (some .construction) f m s
+  | .investissement f m, s => appliquerInvestissement H f m s
   | .prelevement r, s => appliquerPrelevement M H .autres r s
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
@@ -553,7 +568,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
   | .migration d, s => { s with migrationAnnuelleMilliers := s.migrationAnnuelleMilliers + d }
   | .accueilTouristique zones cout hT hD, s =>
-      let s₁ := appliquerDepense H (some .construction) .affairesEconomiques (zones * cout) s
+      let s₁ := appliquerInvestissement H .affairesEconomiques (zones * cout) s
       let s₂ := { s₁ with touristesMilliers := s₁.touristesMilliers + appliquerPm s₁.touristesMilliers hT
                           depenseParTouriste := s₁.depenseParTouriste + appliquerPm s₁.depenseParTouriste hD }
       let dExport := s₂.recettesTourisme - s₁.recettesTourisme
@@ -637,7 +652,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .investissementEcheancier f (n :: reste), s =>
       let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
                             secteur := some .construction }
-      appliquerDepense H (some .construction) f n { s with echeances := s.echeances ++ [e] }
+      appliquerInvestissement H f n { s with echeances := s.echeances ++ [e] }
   | .investissementOutreMer _ [], s => s
   | .investissementOutreMer f (n :: reste), s =>
       let part := partInterieureOutreMer H
@@ -646,7 +661,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let s' : Etat := { s with echeances := s.echeances ++ [e]
                                 depensesF := s.depensesF.ajouter f n
                                 importations := s.importations + n * (1000 - part) / 1000 }
-      effetDemande H (some .construction) (n * part / 1000) s'
+      effetDemande H (some .construction) (appliquerPm (n * part / 1000) H.eco.incidenceInvestissementPm) s'
   | .remunerationPublique _ _ [], s => s
   | .remunerationPublique nat f (n :: reste), s =>
       let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
@@ -678,7 +693,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                decoteDetteNumeriquePm := cap * tPfu / 1000
                partDefiscaliseePm := res * imp / 1000 }
   | .deploiementBornes n cout, s =>
-      appliquerDepense H (some .construction) .affairesEconomiques (n * cout / 1000000)
+      appliquerInvestissement H .affairesEconomiques (n * cout / 1000000)
         { s with bornesAnnuellesMilliers := s.bornesAnnuellesMilliers + n / 1000 }
   -- coût du travail : emplois visés = élasticité × variation relative du
   -- coût du travail de la tranche × emploi de la tranche (coût du travail et

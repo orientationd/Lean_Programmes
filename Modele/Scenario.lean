@@ -250,6 +250,13 @@ structure Economie where
   pm (`1000` = effet moyen) : qui le paie (propension à consommer), délai de
   transmission aux prix et aux salaires. -/
   incidencePrelevementPm : ParImpot
+  /-- Effet sur la demande d'une dépense selon sa fonction, relativement à
+  une dépense de consommation publique, pm (`1000`) : les transferts aux
+  ménages (pensions) et aux entreprises soutiennent moins l'activité que la
+  consommation publique ; `incidenceInvestissementPm` pour l'investissement
+  public (bâtiments, infrastructures), qui la soutient davantage. -/
+  incidenceDepensePm : ParFonction
+  incidenceInvestissementPm : Int
   /-- Hausse du chômage (pb) par pb de hausse du SMIC, pm. -/
   elasticiteChomageSmicPm : Int
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
@@ -473,6 +480,8 @@ abbrev ValideClimat (H : Scenario) : Prop :=
 l'assurance chômage. -/
 abbrev ValideTravail (H : Scenario) : Prop :=
   H.eco.incidencePrelevementPm.toutEntre 0 3000 = true ∧
+  H.eco.incidenceDepensePm.toutEntre 0 3000 = true ∧
+  0 ≤ H.eco.incidenceInvestissementPm ∧ H.eco.incidenceInvestissementPm ≤ 3000 ∧
   H.eco.elasticiteEmploiCoutTravailPm.toutEntre 0 3000 = true ∧
   H.eco.emploiPriveTrancheMilliers.toutEntre 0 30000 = true ∧
   H.eco.coutTravailTrancheMeur.toutEntre 1 2000000 = true ∧
