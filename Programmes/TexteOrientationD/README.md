@@ -265,9 +265,13 @@ en cours) ; les gains de souveraineté et de sécurité ne sont pas chiffrés.
 
 ### O-20 à O-23 — Économies et recettes
 
-* **O-20** Aide à l'apprentissage réservée à l'infra-bac et aux PME :
-  −2 Md€/an (Cour des comptes 2025 : 6 Md€ dont la moitié pour des bac+3
-  et plus).
+* **O-20** Aide à l'apprentissage réservée à l'infra-bac et aux PME. La
+  référence éteint désormais l'aide exceptionnelle pour les contrats
+  conclus à partir de 2027 (décret n° 2026-168, législation constante) :
+  l'aide ciblée que maintient le programme coûte ≈ 1 Md€/an (3,9 Md€ en
+  2024 moins les 2,94 Md€ d'économies que la Cour des comptes attend du
+  recentrage), au lieu de l'économie de 2 Md€ comptée tant que l'aide de
+  2025 était reconduite.
 * **O-21** Commande publique (centrales d'achat, standardisation,
   ententes) : −3 Md€/an sur les services généraux (hypothèse médiane).
 * **O-22** Médicaments et dispositifs : −2 Md€/an (génériques,
@@ -328,12 +332,12 @@ demande ; moteur d'offre entre parenthèses quand il diffère).
 
 | Mesure | Chiffrage | Déficit | PIB | Emplois |
 |---|---|---|---|---|
-| **O-28** Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € bruts par mois | 1 % des retraités, 6 470 € en moyenne (DREES) ; part au-delà du seuil 2,85 Md€ ; 1,8 % d'inflation évitée par an : −50 M€ en 2027, −422 M€ (euros 2027) en 2035 | −0,01 pt | −0,02 % | −1 600 |
-| **O-29** TVA : taux normal 20 % → 22 % | 1 point ≈ 8 Md€ (FIPECO, IPP, Sénat) : 16 Md€ statiques, 12,8 Md€ après fuite fiscale | −0,35 pt (−0,15) | −0,21 % (−0,52 %) | −30 000 (−77 000) |
-| **O-30** Taxe forfaitaire de 3 000 € par atterrissage de jet privé | 85 000 atterrissages (84 885 départs en 2022, Greenpeace) : 255 M€ statiques | −0,01 pt | ≈ 0 | −500 |
-| **O-31** Conversion électrique de toutes les exploitations agricoles en dix ans | 389 000 exploitations × 30 000 € : 1,17 Md€ par an ; −1 Mt de CO₂ par an (10 Mt au total, énergie agricole) ; importations nettes −116 M€ par an | +0,02 pt | +0,02 % | +3 500 |
+| **O-28** Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € bruts par mois | 1 % des retraités, 6 470 € en moyenne (DREES) ; part au-delà du seuil 2,85 Md€ ; 1,8 % d'inflation évitée par an : −50 M€ en 2027, −422 M€ (euros 2027) en 2035 | −0,01 pt | −0,02 % | −1 500 |
+| **O-29** TVA : taux normal 20 % → 22 % | 1 point ≈ 8 Md€ (FIPECO, IPP, Sénat) : 16 Md€ statiques, 12,8 Md€ après fuite fiscale | −0,34 pt (−0,12) | −0,22 % (−0,53 %) | −32 000 (−78 500) |
+| **O-30** Taxe forfaitaire de 3 000 € par atterrissage de jet privé | 85 000 atterrissages (84 885 départs en 2022, Greenpeace) : 255 M€ statiques | −0,01 pt | −0,01 % | −400 |
+| **O-31** Conversion électrique de toutes les exploitations agricoles en dix ans | 389 000 exploitations × 30 000 € : 1,17 Md€ par an ; −1 Mt de CO₂ par an (10 Mt au total, énergie agricole) ; importations nettes −116 M€ par an | +0,02 pt | +0,02 % | +3 400 |
 | **O-32** Suppression du DPE dans les quartiers historiques ; climatisation réversible aidée | 50 000 logements × 2 000 € par an pendant dix ans : 100 M€ par an | ≈ 0 | ≈ 0 | +300 |
-| **O-33** Pas de tours dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay) | 20 000 logements × 10 000 € d'équipements publics : 200 M€ par an | ≈ 0 | ≈ 0 | +700 |
+| **O-33** Pas de tours dans les quartiers historiques ; quartiers nouveaux autour des pôles très desservis (Val de Fontenay) | 20 000 logements × 10 000 € d'équipements publics : 200 M€ par an | ≈ 0 | ≈ 0 | +900 |
 | **O-34** TER 24 h sur 24 avec agents de sécurité (train, gare, parking) | 20 liaisons de 100 km, 10 trains par nuit, 23,40 € par train-km, 46 heures d'agents par nuit, 25 % de recettes : 136 M€ par an | ≈ 0 | ≈ 0 | +500 |
 
 Points d'attention :
@@ -365,36 +369,36 @@ variante.
 
 | Mesure | Rendement statique | Déficit 2035 | PIB 2035 |
 |---|---|---|---|
-| **O-35** Taxe Zucman (impôt plancher sur les très hauts patrimoines) | 6,5 Md€ (PS : 15 ; sept économistes : ≈ 5) | −0,14 pt | −0,09 % |
-| **O-36** CSG sur les gros héritages, imputée aux droits de succession dont elle suit l'assiette | 10 Md€ (chiffrage PS) | −0,28 pt | −0,13 % |
-| **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,07 pt | −0,04 % |
-| **O-38** Reconfiguration des exonérations de cotisations | 4 Md€ (PS) | −0,09 pt | −0,06 % |
+| **O-35** Taxe Zucman (impôt plancher sur les très hauts patrimoines) | 6,5 Md€ (PS : 15 ; sept économistes : ≈ 5) | −0,20 pt | −0,02 % |
+| **O-36** CSG sur les gros héritages, imputée aux droits de succession dont elle suit l'assiette | 10 Md€ (chiffrage PS) | −0,36 pt | −0,03 % |
+| **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,08 pt | −0,04 % |
+| **O-38** Reconfiguration des exonérations de cotisations, au prorata des allègements en vigueur (voir O-76) | 4 Md€ (PS) ; −51 000 emplois | −0,09 pt | −0,08 % |
 | **O-39** Train de vie de l'État | 3,1 Md€ (part du PS, moins O-21) | −0,06 pt | −0,08 % |
-| **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,11 % |
-| **O-41** Pacte Dutreil divisé par deux (75 % → 37,5 %), taxe sur les holdings élargie | 2,95 Md€ (Cour des comptes, proportionnel) | −0,07 pt | −0,04 % |
-| **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,54 pt | −0,74 % |
+| **O-40** Niches fiscales −10 % (hors Dutreil et ménages modestes) | 8 Md€ sur 88,3 | −0,18 pt | −0,10 % |
+| **O-41** Pacte Dutreil divisé par deux (75 % → 37,5 %), taxe sur les holdings élargie | 2,95 Md€ (Cour des comptes, proportionnel) | −0,10 pt | −0,01 % |
+| **O-42** Norme de dépense : +0,5 % en volume sur les dépenses pilotables | 50 pb par an sur ≈ 739 Md€ | −0,53 pt | −0,73 % |
 | **O-43** Défense : −1 Md€ par an, par rapport à la LPM actualisée que la référence applique (76,3 Md€ en 2030) | 1 Md€ sur 53 | −0,02 pt | −0,03 % |
-| **O-44** Durée de cotisation : 174 trimestres au lieu de 172 | âge moyen de départ +5 mois (80 % des départs liés à la durée, hypothèse) : ≈ 3,3 Md€ de pensions, 150 000 actifs | −0,33 pt | +0,29 % |
+| **O-44** Durée de cotisation : 174 trimestres au lieu de 172 | âge moyen de départ +5 mois (80 % des départs liés à la durée, hypothèse) : ≈ 3,3 Md€ de pensions, 150 000 actifs | −0,32 pt | +0,28 % |
 | **O-45** Lutte contre la fraude fiscale : facturation électronique (2,5 Md€ de TVA dès 2028 ; 2 à 3 Md€ attendus par l'administration), 1 500 agents de contrôle (105 M€) pour 1,5 Md€ d'encaissements | 4 Md€ | −0,08 pt | −0,05 % |
-| **O-46** CSG progressive : +2 points au-delà de 100 000 € par an et par personne | 2,0 Md€ (1 point = 17 Md€ ; 6 % de l'assiette au-delà du seuil, hypothèse) | −0,05 pt | −0,03 % |
+| **O-46** CSG progressive : +2 points au-delà de 100 000 € par an et par personne | 2,0 Md€ (1 point = 17 Md€ ; 6 % de l'assiette au-delà du seuil, hypothèse) | −0,04 pt | −0,03 % |
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
-D baisse chaque année de 2027 à 2035, de 4,9 % à 3,8 %** (dette 129 % du
-PIB, chômage 9,0 %), contre 9,0 % sans programme (référence complétée
-des lois en vigueur : voir O-59 à O-62 ; IS à 12 % et réponse de
-l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
+**Résultat (avec O-54 à O-62 et O-76, O-77 ci-dessous) : le déficit du Texte
+Orientation D baisse chaque année de 2027 à 2035, de 4,9 % à 3,9 %** (dette
+129 % du PIB, chômage 9,2 %), contre 9,1 % sans programme (référence
+complétée des lois en vigueur : voir O-59 à O-62 et O-76 ; IS à 12 % et
+réponse de l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
 2027 (aucune mesure avant).
 
 Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,8 % | 9,0 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 3,0 % | 9,1 % |
-| … et norme renforcée de 100 pb supplémentaires | 1,6 % | 9,7 % |
-| … et de 200 pb supplémentaires | 0,4 % | 10,2 % |
+| Rien | 3,9 % | 9,2 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 2,9 % | 9,3 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,6 % | 9,8 % |
+| … et de 200 pb supplémentaires | 0,4 % | 10,3 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
 la synthèse les évalue une à une (section « Variantes des mesures »). (Avec l'IS maintenu à 25 %, O-60
@@ -406,8 +410,8 @@ rapporterait 7,7 Md€ au lieu de 4,6 ; la variante ne le recalcule pas.)
 |---|---|---|
 | **O-49** Hauts fonctionnaires −5 % | 21 500 agents de l'encadrement supérieur et dirigeant (DGAFP), coût complet ≈ 2,9 Md€ : 147 M€ | ≈ 0 |
 | **O-50** Revenus des élus plafonnés à 10 000 € par mois | Le plafond de cumul en vigueur est déjà de 8 897,93 € bruts (CGCT, art. L. 2123-20 II) : sans effet, sauf à l'étendre aux rémunérations qui y échappent | 0 (pour mémoire) |
-| **O-51** Fin du PFU, revenus du capital au barème | +3,2 à 3,6 Md€ à comportements inchangés (Institut Montaigne) ; variante −0,7 Md€ si l'assiette revient à 2017 | −0,08 pt |
-| **O-52** Taxe sur les rachats d'actions de 8 % à 20 % | 3 Md€ mécaniques, 1,5 Md€ retenus (report vers les dividendes) | −0,03 pt |
+| **O-51** Fin du PFU, revenus du capital au barème | +3,2 à 3,6 Md€ à comportements inchangés (Institut Montaigne) ; variante −0,7 Md€ si l'assiette revient à 2017 | −0,07 pt |
+| **O-52** Taxe sur les rachats d'actions de 8 % à 20 % | 3 Md€ mécaniques, 1,5 Md€ retenus (report vers les dividendes) | −0,04 pt |
 | **O-53** Cabinets de conseil divisés par deux | 893,9 M€ en 2021 (Sénat) : 400 M€ | −0,01 pt |
 
 Pour O-50, un plafond à 10 000 € est moins strict que le droit actuel. Pour
@@ -426,11 +430,11 @@ les intérêts.
 
 | Mesure | Chiffrage | Déficit 2035 | PIB 2035 |
 |---|---|---|---|
-| **O-54** CRDS prolongée au-delà de 2033 pour amortir la dette de l'ACOSS (≈ 65 Md€ fin 2026) | 9,55 Md€ (euros 2027) dès 2034 ; loi organique | −0,23 pt | −0,13 % |
-| **O-55** Norme de dépense renforcée : 150 pb avec O-42, dépenses pilotables à +1,3 % par an en valeur (≈ −0,5 % en volume) | | −1,08 pt | −1,45 % |
-| **O-56** Aides aux entreprises (211 Md€, Sénat 2025) : exonérations de cotisations −1,5 Md€ de plus chaque année pendant six ans, sous conditions | 9 Md€ en 2032 | −0,17 pt | −0,11 % |
+| **O-54** CRDS prolongée au-delà de 2033 pour amortir la dette de l'ACOSS (≈ 65 Md€ fin 2026) | 9,55 Md€ (euros 2027) dès 2034 ; loi organique | −0,22 pt | −0,13 % |
+| **O-55** Norme de dépense renforcée : 150 pb avec O-42, dépenses pilotables à +1,3 % par an en valeur (≈ −0,5 % en volume) | | −1,04 pt | −1,44 % |
+| **O-56** Aides aux entreprises (211 Md€, Sénat 2025) : exonérations de cotisations −1,5 Md€ de plus chaque année pendant six ans, sous conditions | 9 Md€ en 2032 ; −99 000 emplois | −0,18 pt | −0,16 % |
 | **O-57** Niches fiscales : −2 % de plus chaque année pendant cinq ans | ≈ 2 Md€ par an, 10 Md€ en 2031 | −0,20 pt | −0,12 % |
-| **O-58** Durée de cotisation : +1 trimestre tous les trois ans dès 2028 (logique de la réforme de 2014) | +1 mois de durée requise par an, 80 % des départs | −0,35 pt | +0,34 % |
+| **O-58** Durée de cotisation : +1 trimestre tous les trois ans dès 2028 (logique de la réforme de 2014) | +1 mois de durée requise par an, 80 % des départs | −0,34 pt | +0,34 % |
 
 ### O-59 à O-62 — Lois en vigueur et deuxième étape
 
@@ -457,30 +461,31 @@ et l'âge moyen de départ cesse de suivre le calendrier légal en 2032
 
 | Mesure | Chiffrage | Déficit 2035 | PIB 2035 |
 |---|---|---|---|
-| **O-59** Maintien de la CVAE à 0,28 % | 1,2 puis 2,5 puis 3,6 Md€ (euros 2027) de 2028 à 2030 | −0,10 pt | −0,05 % |
-| **O-60** Pérennisation de la contribution exceptionnelle sur les grandes entreprises, aux taux de 2026 | 7,5 Md€ × 15 % / 25 % (IS des grands groupes avec O-08) : 4,6 Md€ | −0,14 pt | −0,06 % |
-| **O-61** Aides aux entreprises, deuxième étape : exonérations de cotisations −1,5 Md€ de plus chaque année de 2029 à 2034 | 9 Md€ en 2034 ; 22 Md€ avec O-38 et O-56 | −0,15 pt | −0,10 % |
-| **O-62** Niches fiscales : −1 Md€ de plus chaque année de 2029 à 2035 | 7 Md€ en 2035 ; 25 Md€ sur 88,3 avec O-40 et O-57 | −0,11 pt | −0,08 % |
+| **O-59** Maintien de la CVAE à 0,28 % | 1,2 puis 2,5 puis 3,6 Md€ (euros 2027) de 2028 à 2030 | −0,11 pt | −0,04 % |
+| **O-60** Pérennisation de la contribution exceptionnelle sur les grandes entreprises, aux taux de 2026 | 7,5 Md€ × 15 % / 25 % (IS des grands groupes avec O-08) : 4,6 Md€ | −0,16 pt | −0,04 % |
+| **O-61** Aides aux entreprises, deuxième étape : exonérations de cotisations −1,5 Md€ de plus chaque année de 2029 à 2034 | 9 Md€ en 2034 ; 22 Md€ avec O-38 et O-56 ; −78 000 emplois | −0,17 pt | −0,14 % |
+| **O-62** Niches fiscales : −1 Md€ de plus chaque année de 2029 à 2035 | 7 Md€ en 2035 ; 25 Md€ sur 88,3 avec O-40 et O-57 | −0,12 pt | −0,08 % |
 
 Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,88 | 4,71 | 4,69 | 4,66 | 4,62 | 4,61 | 4,40 | 4,11 | 3,83 |
-| Offre | 5,38 | 4,79 | 4,58 | 4,55 | 4,52 | 4,49 | 4,47 | 4,28 | 4,04 | 3,82 |
+| Demande | 5,38 | 4,92 | 4,74 | 4,69 | 4,64 | 4,58 | 4,56 | 4,34 | 4,07 | 3,91 |
+| Offre | 5,37 | 4,83 | 4,61 | 4,55 | 4,50 | 4,46 | 4,43 | 4,25 | 4,04 | 3,95 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
 sous chaque moteur : toujours avec la croissance haute, jamais avec la
 croissance basse ; en croissance centrale, le pétrole cher ou le
 vieillissement accéléré l'interrompent. La baisse est la plus faible en
-2029 et en 2032 (−0,02 et −0,01 point) : la LPM et les intérêts montent, et
-l'indemnisation du chômage, désormais liée au nombre de chômeurs, croît
-avec lui.
+2032 (−0,02 point) : la LPM et les intérêts montent, et l'indemnisation du
+chômage, liée au nombre de chômeurs, croît avec lui ; en 2035, le
+complément de fin de droits de l'assurance chômage (chômage de 9,05 % en
+2034) coûte 5,5 Md€.
 
-Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,45 %,
+Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,44 %,
 ≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
-Orientation D atteint 9,0 % en 2035.
+Orientation D atteint 9,2 % en 2035.
 
 ### O-63 — Aide à la rénovation majorée de 25 % dans les territoires ruraux
 
@@ -657,6 +662,83 @@ Avec O-74 et O-75, le déficit 2035 du Texte Orientation D passe de 3,79 % à
 trois moteurs (toujours 16 scénarios sur 36), mais de 0,01 point seulement
 en 2032, quand les places ouvertes font monter le fonctionnement alors que
 la construction est à son maximum.
+
+### O-76 et O-77 — Baisser à la fois le déficit et le chômage
+
+**Ce que le modèle commun voit désormais.**
+
+* *Incidence des prélèvements* : l'effet d'un impôt sur l'activité dépend de
+  qui le paie. Relativement à l'effet moyen d'un prélèvement : TVA, IR, CSG
+  1,1 ; IS 0,55 ; droits de succession et impôts sur le patrimoine 0,2
+  (Mésange, OFCE, Commission européenne, CBO ; propension à consommer le
+  patrimoine quasi nulle en haut de la distribution). La taxe Zucman (O-35)
+  et la taxe sur les holdings (O-41) passent sur la nouvelle ligne
+  « patrimoine » : elles pèsent presque dix fois moins sur l'activité ; la
+  CSG sur les gros héritages (O-36) aussi.
+* *Coût du travail* : les allègements généraux de cotisations patronales
+  (≈ 75 Md€, dont 87 % entre 1 et 1,6 SMIC avec la réduction unique de 2026)
+  sont suivis par tranche de salaire, et l'emploi y répond au coût du
+  travail : ≈ 14 500 emplois par Md€ sous 1,6 SMIC, ≈ 5 100 de 1,6 à
+  2,5 SMIC, presque rien au-delà (CAE 2019, Bozio et Wasmer 2024, Groupe
+  d'experts sur le SMIC 2025), en cinq ans environ. **Les réductions
+  d'exonérations O-38, O-56 et O-61 (22 Md€ en 2034), réparties comme les
+  allègements, coûtent ensemble ≈ 230 000 emplois** : c'est la première
+  cause du chômage du programme. Leur rendement net reste réel (−0,4 point
+  de déficit en 2035), mais plus du tiers du rendement statique est repris
+  par la baisse de l'emploi.
+* *Lois en vigueur* : contribution à l'Union (27,9 Md€ en 2026, puis le
+  remboursement de NextGenerationEU), fin de l'aide exceptionnelle à
+  l'apprentissage (voir O-20), prime d'activité revalorisée, ruptures
+  conventionnelles, et le complément de fin de droits de l'assurance
+  chômage, déclenché quand le chômage atteint 9 %.
+
+**Mesures retenues** (recherche des évaluations chiffrées qui baissent les
+deux à la fois ; aucune n'a de preuve causale sur le chômage d'ensemble, le
+double effet documenté venant de la réallocation) :
+
+| Mesure | Chiffrage | Déficit 2035 | Chômage 2035 | Emplois 2035 |
+|---|---|---|---|---|
+| **O-76** Allègements recentrés : sortie à 2 SMIC au lieu de 3, l'économie reversée aux salaires de 1 à 1,6 SMIC, à coût constant | ≈ 4,3 Md€ déplacés (2025) ; le CAE (2019) recommandait de supprimer les allègements au-delà de 2,5 SMIC ; Bozio et Wasmer : +50 000 emplois pour la suppression des bandeaux avec recyclage | −0,04 pt | −0,12 pt | +44 000 |
+| **O-77** Accompagnement renforcé : 10 000 conseillers de plus à France Travail | 0,8 Md€ par an (80 000 € par conseiller, hypothèse) ; −5 chômeurs par conseiller, éviction comprise (expériences aléatoires en France, Autriche, Allemagne) | −0,06 pt | −0,14 pt | +44 000 |
+
+(Scénario central, mesures prises isolément ; les trois moteurs donnent les
+mêmes ordres de grandeur.) Après O-76, les réductions d'O-56 et d'O-61
+portent sur les seuls allègements restants, au voisinage du SMIC.
+
+**Résultat** : déficit 2035 de 3,91 % (moteur de demande), chômage de 9,2 %,
+baisse du déficit chaque année préservée sous les trois moteurs (16
+scénarios sur 36), avec une marge minimale de 0,02 point (2032). Sans O-76
+ni O-77 : 4,06 % et 9,4 %, le seuil de 9 % franchi dès 2033.
+
+**Effet de seuil** : le chômage atteint 9,05 % en 2034 ; le complément de
+fin de droits (règles contracycliques, décret n° 2023-33) coûte alors
+5,5 Md€ en 2035 (+0,14 point). Rester sous 9 % rapporte donc d'un coup
+≈ 0,15 point de déficit. Deux variantes y parviennent (évaluées dans la
+synthèse) :
+
+| Variante | Déficit 2035 | Chômage 2035 |
+|---|---|---|
+| O-76 avec sortie à 1,6 SMIC (tout reversé sous 1,6 SMIC) | 3,76 % | 9,10 % |
+| O-77 avec 15 000 conseillers | 3,76 % | 9,15 % |
+
+La sortie à 1,6 SMIC accentue la pente du barème entre 1 et 1,6 SMIC, que
+Bozio et Wasmer jugent déjà trop forte (« trappe à bas salaires ») ; l'effet
+d'un accompagnement à plus grande échelle n'est pas documenté. Renoncer à
+O-61 ramènerait le chômage à 9,0 %, mais le déficit 2035 à 4,05 % et
+interromprait sa baisse en 2032.
+
+Autres pistes examinées, non retenues : suppression des aides à l'embauche
+à fort effet d'aubaine (emplois francs, déjà supprimés en 2026) ; formation
+qualifiante (chômage en baisse, déficit en hausse) ; crèches et Territoires
+zéro chômeur (coût net par emploi de 11 000 à 14 000 €) ; régularisation des
+travailleurs sans papiers (≈ 4 000 € de cotisations par personne et par an
+en Espagne, sans chiffrage français, effet sur le chômage mesuré ambigu) ;
+TVA sociale (à budget constant ; la hausse de TVA d'O-29 finance déjà le
+redressement) ; dégressivité et plafonnement des allocations chômage
+élevées (+4,5 points de retour à l'emploi pour les hauts salaires,
+0,5 à 1,5 Md€ ; peu compatible avec la démission indemnisée d'O-09) ; et
+les mesures déjà prises par le programme (heures supplémentaires,
+apprentissage, fraude).
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
