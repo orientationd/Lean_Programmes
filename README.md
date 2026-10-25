@@ -43,7 +43,7 @@ Trois choix structurants :
 3. **Tout est entier et décidable.** Montants en M€, taux en points de base,
    coefficients en pour mille (`Modele/Unites.lean`). Chaque propriété se
    décide par `decide +kernel` : pas de Mathlib, pas de flottants. La CI
-   complète, rejeu des preuves compris, tient en deux minutes environ.
+   complète, rejeu des preuves compris, tient en un quart d'heure environ.
 
 Un **moteur** (`Hypotheses/Moteurs.lean`) est un jeu de règles
 d'interprétation des leviers : « demande » (effets de demande permanents
@@ -101,7 +101,7 @@ hypothèse ajoutée plus tard par n'importe qui.
 | `Engagements.lean` | preuve que tous les engagements sont tenus |
 | `Rapport.lean` | exécutable `rapport` : JSON + Markdown, export `--synthese` |
 | `Audit.lean` | refuse `sorry`, `native_decide` et tout `axiom` |
-| `scripts/` | garde-fou syntaxique, diff de rapports, contrôle du registre, synthèse PDF |
+| `scripts/` | garde-fou syntaxique, diff de rapports, contrôle du registre, synthèse PDF, programme complet en PDF |
 | `.github/` | CI, commentaire de PR, CODEOWNERS, modèles d'issue et de PR |
 
 ## En local
@@ -137,10 +137,21 @@ pip install matplotlib reportlab
 python3 scripts/synthese_pdf.py out/synthese.json out/synthese.pdf
 ```
 
-Le workflow `synthese.yml` la régénère à chaque fusion dans `main` (et à la
-demande, onglet Actions) et la publie en artefact `synthese`. Le script ne
-calcule rien : tous les chiffres sortent de `Rapport.lean`, donc du même
-code que la matrice d'évaluation.
+`scripts/programme_pdf.py` produit le **programme complet** d'un seul
+programme : chiffres clés et courbes (déficit, dette, chômage, IDH),
+déficit sous chaque moteur, propriétés vérifiées, sections « Points à
+arbitrer » et « Pistes pour compléter » du README s'il en a, chaque mesure
+avec sa source, son chiffrage, ses variantes et son effet isolé (déficit,
+chômage, emplois, IDH), puis le reste du README.
+
+```sh
+python3 scripts/programme_pdf.py out/synthese.json TexteOrientationD out/programme-TexteOrientationD.pdf
+```
+
+Le workflow `synthese.yml` régénère la synthèse et les programmes complets
+à chaque fusion dans `main` (et à la demande, onglet Actions) et les publie
+en artefact `synthese`. Les scripts ne calculent rien : tous les chiffres
+sortent de `Rapport.lean`, donc du même code que la matrice d'évaluation.
 
 ## CI
 
