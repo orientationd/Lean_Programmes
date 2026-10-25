@@ -197,7 +197,7 @@ def etatJson (s : Etat) : Json :=
     ("chomeursExcedentaires", toJson s.chomeursExcedentaires),
     ("emploisCoutTravailRestants", toJson s.emploisCoutTravailRestants),
     ("idhMillioniemes", toJson s.idhMillioniemes),
-    ("esperanceVieCentiemes", toJson (esperanceVieCentiemes s)),
+    ("esperanceVieTendanceCentiemes", toJson s.esperanceVieTendanceCentiemes),
     ("dureeAttendueCentiemes", toJson s.dureeAttendueCentiemes),
     ("dureeMoyenneCentiemes", toJson s.dureeMoyenneCentiemes),
     ("anneesVieGagneesParAn", toJson s.anneesVieGagneesParAn),

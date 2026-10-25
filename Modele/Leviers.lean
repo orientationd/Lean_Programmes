@@ -273,6 +273,25 @@ inductive Levier where
   baisse de `chomeursEvitesParConseiller` (axe économique) par conseiller ;
   l'écart se résorbe au rythme du scénario (`absorptionChomagePm`). -/
   | accompagnementDemandeurs (conseillers : Int) (coutParConseillerEuros : Int)
+  /-- Prix du tabac relevé de `hausseprixPm` par une hausse des accises : la
+  consommation baisse selon l'élasticité-prix (axe économique), les accises
+  en face (fuite fiscale comprise : achats transfrontaliers) ; les décès
+  attribuables au tabac baissent comme la consommation, au rythme du délai
+  d'effet (axe démographique). -/
+  | prixTabac (hausseprixPm : Int)
+  /-- Prix minimum de l'alcool, `centimesParVerre` par verre standard : les
+  décès attribuables à l'alcool baissent selon l'axe économique (évaluation
+  française), au rythme du délai d'effet ; sans effet net sur les finances
+  publiques (la hausse de prix va aux vendeurs). -/
+  | prixMinimumAlcool (centimesParVerre : Int)
+  /-- Dépistage organisé du cancer colorectal porté à une participation de
+  `participationCiblePm` : coût des dépistages supplémentaires (santé), et
+  décès évités par point de participation (axe économique). -/
+  | depistageColorectal (participationCiblePm : Int)
+  /-- Taux de scolarisation de chaque âge de 18 à 24 ans relevé de
+  `hausseTauxPm` (places, bourses) : coût (dépense par étudiant) et durée
+  attendue de scolarisation de l'IDH. -/
+  | scolarisationJeunes (hausseTauxPm : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -563,7 +582,10 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                  |>.ajouter .tva (-(r.nombre * H.energie.tvaParVehiculeEuros / 1000000))
                parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
                decesPollutionAir := s.decesPollutionAir
-                 - r.nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000 }
+                 - r.nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000
+               anneesVieGagneesParAn := s.anneesVieGagneesParAn
+                 + r.nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000
+                   * H.demo.anneesVieParDecesPollutionDixiemes / 10 }
   | .prelevementSur i r, s => appliquerPrelevement M H i r s
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
@@ -584,7 +606,9 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       -- journées rendues au travail : 7 h chacune, rapportées au volume d'heures
       let heures : Int := evites * H.eco.joursPerdusParAccident * 7
       chocHeuresRatio H heures (s₂.heuresTotales * 1000000)
-        { s₂ with depensesF := s₂.depensesF.ajouter .famille (-economie) }
+        { s₂ with depensesF := s₂.depensesF.ajouter .famille (-economie)
+                  anneesVieGagneesParAn := s₂.anneesVieGagneesParAn
+                    + evites * H.eco.letaliteAccidentsPdm / 10000 * H.demo.anneesVieParDecesAccidentDixiemes / 10 }
   -- réallocation : l'écart à l'emploi d'équilibre (taux d'emploi courant
   -- appliqué à la population active restante) est résorbé dans la projection
   | .automatisation g emplois sorties, s =>
@@ -715,6 +739,27 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let h := a.haut * partH / 1000
       varierAllegements M H .bas (i + h)
         (varierAllegements M H .haut (-h) (varierAllegements M H .intermediaire (-i) s))
+  | .prixTabac h, s =>
+      let e := H.eco.elasticitePrixTabacPm
+      -- accises × ((1 + h)(1 − e·h) − 1), proportionnelles au PIB courant
+      let base := if H.reference.etat.pib = 0 then 0 else H.eco.accisesTabacMeur * s.pib / H.reference.etat.pib
+      let statique := base * ((1000 + h) * (1000000 - e * h) - 1000000000) / 1000000000
+      appliquerPrelevement M H .autres statique
+        { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter .tabac (e * h / 1000) }
+  | .prixMinimumAlcool c, s =>
+      { s with baisseMortaliteCiblePm :=
+          s.baisseMortaliteCiblePm.ajouter .alcool (c * H.eco.baisseDecesAlcoolPar10CentimesPm / 10) }
+  | .depistageColorectal cible, s =>
+      let points := max 0 (cible - H.eco.participationDepistagePm)
+      let cout := points * H.eco.populationDepistageMilliers * H.eco.coutParDepistageEuros / 1000000
+      appliquerDepense H Fonction.sante.secteur .sante cout
+        { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter .cancerColorectal
+                   (points * H.eco.baisseDecesColorectalParPointPm / 10) }
+  | .scolarisationJeunes h, s =>
+      let etudiants := 7 * H.eco.jeunesParGenerationMilliers * h   -- milliers × pm → personnes
+      appliquerDepense H Fonction.enseignement.secteur .enseignement
+        (etudiants * H.eco.depenseParEtudiantEuros / 1000000)
+        { s with dureeAttendueCentiemes := s.dureeAttendueCentiemes + 7 * h / 10 }
   | .accompagnementDemandeurs n cout, s =>
       appliquerDepense H Fonction.famille.secteur .famille (n * cout / 1000000)
         { s with chomeursExcedentaires := s.chomeursExcedentaires + n * H.eco.chomeursEvitesParConseiller }

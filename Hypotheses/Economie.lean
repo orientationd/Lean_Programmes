@@ -264,6 +264,25 @@ annuler l'effet net (Crépon et al., QJE 2013 ; Dares-IPP, juin 2026, pour
 l'accompagnement des bénéficiaires du RSA) : 26 réduit de 40 % (sorties
 vers l'inactivité) et de moitié (éviction), d'où ≈ 5 à 8 ; 5 retenus.
 
+IDH (`Modele/Idh.lean`). `inflationPb` = 175, 125 et 200 (hypothèses : la
+croissance réelle vaut alors 1,25 %, 0,75 % et 2 %) : déflate le PIB pour le
+RNB par habitant en volume. Santé publique : élasticité-prix du tabac 0,4
+(Santé publique France) ; accises sur le tabac 13,2 Md€ (2024) ; prix
+minimum de l'alcool de 0,50 € par verre : −22 % de décès par cancers liés à
+l'alcool (Etilé et al., INCa-MILDECA, 2022), soit ≈ 3 500 décès, 8,5 % des
+41 000 décès attribuables, 17 ‰ par tranche de 10 centimes (estimation
+basse : les autres causes ne sont pas comptées ; en Écosse, −13,4 % des
+décès entièrement dus à l'alcool, Lancet 2023) ; dépistage du cancer
+colorectal : participation de 30,7 % (2024-2025), et de 34 % à 65 % de
+participation −22 % de mortalité (Barré et al., 2020), soit 0,7 ‰ des décès
+par point ; 21,5 millions de personnes de 50 à 74 ans invitées tous les deux
+ans (≈ 10,75 millions par an) ; 70 € par dépistage supplémentaire
+(hypothèse : test et analyse, coloscopie pour les tests positifs).
+Scolarisation : ≈ 800 000 jeunes par génération (hypothèse) ; 13 300 € par
+étudiant (DEPP, 2024) ; +1 point de scolarisation à chaque âge de 18 à
+24 ans = +0,07 an de durée attendue de scolarisation (taux INSEE, rentrée
+2023 ; la durée attendue est la somme des taux de scolarisation par âge).
+
 C'est l'axe le plus disputé : multiplicateur, élasticités et fuite fiscale
 déterminent l'essentiel des écarts entre programmes. D'où trois variantes
 dès le départ, plutôt qu'une valeur « officielle ».
@@ -328,6 +347,15 @@ def centrale : Economie where
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
   inflationPb := 175
+  elasticitePrixTabacPm := 400
+  accisesTabacMeur := 13200
+  baisseDecesAlcoolPar10CentimesPm := 17
+  participationDepistagePm := 307
+  baisseDecesColorectalParPointPm := 7
+  populationDepistageMilliers := 10750
+  coutParDepistageEuros := 70
+  jeunesParGenerationMilliers := 800
+  depenseParEtudiantEuros := 13300
   elasticiteChomageSmicPm := 100
   economieParMoisRetraite := 650
   tauxMarginalPb := 330
@@ -386,6 +414,15 @@ def croissanceBasse : Economie where
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
   inflationPb := 125
+  elasticitePrixTabacPm := 400
+  accisesTabacMeur := 13200
+  baisseDecesAlcoolPar10CentimesPm := 17
+  participationDepistagePm := 307
+  baisseDecesColorectalParPointPm := 7
+  populationDepistageMilliers := 10750
+  coutParDepistageEuros := 70
+  jeunesParGenerationMilliers := 800
+  depenseParEtudiantEuros := 13300
   elasticiteChomageSmicPm := 150
   economieParMoisRetraite := 650
   tauxMarginalPb := 380
@@ -444,6 +481,15 @@ def croissanceHaute : Economie where
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
   inflationPb := 200
+  elasticitePrixTabacPm := 400
+  accisesTabacMeur := 13200
+  baisseDecesAlcoolPar10CentimesPm := 17
+  participationDepistagePm := 307
+  baisseDecesColorectalParPointPm := 7
+  populationDepistageMilliers := 10750
+  coutParDepistageEuros := 70
+  jeunesParGenerationMilliers := 800
+  depenseParEtudiantEuros := 13300
   elasticiteChomageSmicPm := 50
   economieParMoisRetraite := 650
   tauxMarginalPb := 300

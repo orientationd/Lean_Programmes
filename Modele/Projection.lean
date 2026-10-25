@@ -194,7 +194,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     parcElectriqueMilliers := s.parcElectriqueMilliers + dParc
     bornesMilliers := s.bornesMilliers + dBornes
     decesPollutionAir := max 0 (s.decesPollutionAir
-      - dParc * H.energie.decesEvitesParMillionVehicules / 1000) }
+      - dParc * H.energie.decesEvitesParMillionVehicules / 1000)
+    -- années de vie gagnées : décès évités par les voitures électriques
+    -- ajoutées par les mesures (au-delà des ventes tendancielles)
+    anneesVieGagneesParAn := s.anneesVieGagneesParAn
+      + (dParc - elecTendance) * H.energie.decesEvitesParMillionVehicules / 1000
+        * H.demo.anneesVieParDecesPollutionDixiemes / 10 }
   -- émissions : les voitures électriques ajoutées par les mesures (au-delà
   -- des ventes tendancielles, déjà dans la baisse tendancielle des
   -- émissions) et les rénovations des mesures
@@ -285,7 +290,18 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let s₆ := if pasEffectif = pasTendanciel then s₅ else reculDepart H ((pasEffectif - pasTendanciel) * 1000) s₅
   -- IDH : prix, tendances de l'espérance de vie et de la scolarisation, puis
   -- calcul de l'indice
+  -- santé publique : la baisse atteinte des décès de chaque cause rejoint la
+  -- cible d'un pas égal à cible / délai par an
+  let avancer (c : CauseDeces) (v : ParCause) : ParCause :=
+    let cible := s₆.baisseMortaliteCiblePm.get c
+    let atteinte := s₆.baisseMortaliteAtteintePm.get c
+    let delai := max 1 (H.demo.delaiEffetMortaliteAns.get c)
+    let pasAn := max 1 (cible / delai)
+    v.ajouter c (if atteinte < cible then min pasAn (cible - atteinte)
+                 else if atteinte > cible then -(min pasAn (atteinte - cible)) else 0)
+  let atteinte := CauseDeces.tous.foldl (fun v c => avancer c v) s₆.baisseMortaliteAtteintePm
   let s₇ : Etat := { s₆ with
+    baisseMortaliteAtteintePm := atteinte
     indicePrix := s.indicePrix + appliquerPb s.indicePrix H.eco.inflationPb
     esperanceVieTendanceCentiemes := s.esperanceVieTendanceCentiemes + H.demo.gainEsperanceVieCentiemes
     dureeMoyenneCentiemes := s.dureeMoyenneCentiemes + H.reference.hausseDureeMoyenneCentiemes }

@@ -1526,7 +1526,14 @@ def section_annexes(D: Donnees) -> list:
         "(TVA, IR et CSG 1,1 fois l'effet moyen ; IS 0,55 ; successions et patrimoine 0,2). Les "
         "allègements de cotisations patronales sont suivis par tranche de salaire (75 Md€, dont "
         "87 % entre 1 et 1,6 SMIC) ; l'emploi y répond au coût du travail (≈ 14 500 emplois par "
-        "Md€ sous 1,6 SMIC, ≈ 5 100 de 1,6 à 2,5 SMIC, presque rien au-delà), en cinq ans environ.",
+        "Md€ sous 1,6 SMIC, ≈ 5 100 de 1,6 à 2,5 SMIC, presque rien au-delà), en cinq ans environ. "
+        "Une dépense soutient l'activité selon sa nature : retraites 0,85 fois une dépense de "
+        "consommation publique, famille-chômage 0,90, investissement public 1,25.",
+        "IDH : formule du PNUD (espérance de vie, scolarisation, RNB par habitant en volume). "
+        "L'espérance de vie suit la tendance de l'INSEE (+0,12 an par an) plus les années de vie "
+        "gagnées par les décès évités (pollution, accidents du travail, tabac, alcool, dépistage ; "
+        "années de vie par décès et délais d'effet : hypothèses) ; l'inflation (1,75 % au scénario "
+        "central) est une hypothèse.",
         f"Les hypothèses démographiques sont fixées à l'horizon des propriétés "
         f"({D.d['horizonProprietes']} ans). Au-delà, la synthèse prolonge au même rythme la hausse "
         "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "

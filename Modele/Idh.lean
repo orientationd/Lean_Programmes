@@ -56,9 +56,13 @@ def borneIndice (x : Int) : Int := max 0 (min 1000000 x)
 de l'année (approximation de la population stationnaire : supprimer `N`
 décès qui auraient coûté `L` années chacun allonge l'espérance de vie de
 `N × L / décès`). -/
-def esperanceVieCentiemes (s : Etat) : Int :=
+def esperanceVieCentiemes (H : Scenario) (s : Etat) : Int :=
+  let parCauses := CauseDeces.tous.foldl (fun acc c =>
+    acc + H.demo.decesAttribuables.get c * s.baisseMortaliteAtteintePm.get c / 1000
+      * H.demo.anneesVieParDecesDixiemes.get c / 10) 0
   s.esperanceVieTendanceCentiemes
-    + (if s.decesMilliers ≤ 0 then 0 else s.anneesVieGagneesParAn * 100 / (s.decesMilliers * 1000))
+    + (if s.decesMilliers ≤ 0 then 0
+       else (s.anneesVieGagneesParAn + parCauses) * 100 / (s.decesMilliers * 1000))
 
 /-- RNB par habitant en dollars PPA constants : celui de départ × PIB en
 volume (PIB nominal déflaté par l'indice des prix) par habitant, relatif au
@@ -71,7 +75,7 @@ def rnbParHabitantPpa (H : Scenario) (s : Etat) : Int :=
 
 /-- Indices dimensionnels (santé, éducation, niveau de vie), millionièmes. -/
 def indicesIdh (H : Scenario) (s : Etat) : Int × Int × Int :=
-  let sante := borneIndice ((esperanceVieCentiemes s - 2000) * 1000000 / 6500)
+  let sante := borneIndice ((esperanceVieCentiemes H s - 2000) * 1000000 / 6500)
   let attendue := borneIndice (s.dureeAttendueCentiemes * 1000000 / 1800)
   let moyenne := borneIndice (s.dureeMoyenneCentiemes * 1000000 / 1500)
   let education := (attendue + moyenne) / 2
