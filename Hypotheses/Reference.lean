@@ -94,11 +94,75 @@ effets ne sont pas proportionnels au PIB :
   2023/851) : voir l'axe énergie ; érosion des accises et de la TVA sur les
   carburants calculée dans la projection.
 * **AFIR** (règlement (UE) 2023/1804) : propriété `ue-afir-2030`.
+* **Allègements généraux de cotisations patronales** (LFSS pour 2025, loi
+  n° 2025-199, art. 18 ; décret n° 2025-887 du 4 septembre 2025) : depuis le
+  1er janvier 2026, une réduction générale dégressive unique (RGDU) remplace
+  la réduction générale et les bandeaux maladie et famille ; coefficient
+  0,02 + 0,3813 × [½ × (3 SMIC / salaire − 1)]^1,75 (entreprises de 50
+  salariés et plus), 40,13 % au SMIC, 5,37 % à 2 SMIC, nul à 3 SMIC.
+  Montant : 62,2 Md€ en 2025 pour les régimes de base (annexe 4 du PLFSS
+  2026), ≈ 75 Md€ avec les parts des retraites complémentaires et de
+  l'assurance chômage (75,4 Md€ en 2024, Groupe d'experts sur le SMIC,
+  rapport du 25 novembre 2025). Répartition par tranche : non publiée ;
+  calculée avec le barème de 2026 et la distribution des salaires (Bozio et
+  Wasmer, 2024) : 86,6 % de 1 à 1,6 SMIC, 11,8 % de 1,6 à 2,5 SMIC, 1,6 %
+  au-delà (`allegementsTranche`, calcul). Le gel du SMIC de référence pour
+  2026 (décret n° 2026-509 du 12 juin 2026 : 2,2 Md€, Sénat, avis n° 747)
+  ne vaut que pour 2026 : recette de la seule année 2026.
+* **Assurance chômage, règles contracycliques** (décret n° 2023-33,
+  art. 9 et 9 bis) : durée d'indemnisation de 0,75 fois la période de
+  référence tant que le taux de chômage (BIT, France hors Mayotte) reste
+  sous 9 % ; à 9 % ou au-delà (ou après une hausse de 0,8 point en un
+  trimestre, non modélisée), un complément de fin de droits porte la durée à
+  100 %. Économie de la règle : ≈ 4,5 Md€ par an en régime de croisière
+  (Unédic, décembre 2025) ; surcoût du complément non chiffré, au plus du
+  même ordre : 4,3 Md€ (euros 2025) dès l'année qui suit un chômage d'au
+  moins 9 % (prudent : le complément ne touche que les fins de droits).
+  Depuis juillet 2026, l'INSEE publie un taux y compris Mayotte (+0,06
+  point) ; la loi « plein emploi » a ajouté ≈ 0,4 point au chômage mesuré
+  depuis fin 2024 (inscriptions des bénéficiaires du RSA, effet
+  comptable selon l'INSEE).
+* **Ruptures conventionnelles** : durée d'indemnisation ramenée à 15 mois
+  avant 55 ans et à 20,5 mois après (loi n° 2026-470 du 11 juin 2026, fins
+  de contrat depuis le 1er septembre 2026) : économies de 0,02, 0,27, 0,76
+  puis 0,94 Md€ par an (Sénat, rapport n° 488) ; contribution patronale
+  sur les indemnités de rupture conventionnelle et de mise à la retraite
+  portée de 30 % à 40 % (LFSS pour 2026) : ≈ 260 M€ par an.
+* **Contribution au budget de l'Union** (prélèvement sur recettes) : 23,0 Md€
+  en 2025, 27,9 Md€ en 2026 (loi de finances pour 2026, révisée ; Sénat,
+  Banque des Territoires), soit 4,15 Md€ (euros 2025) au-dessus de la
+  reconduction tendancielle, maintenus ; remboursement de l'emprunt
+  NextGenerationEU à partir de 2028 (décision (UE, Euratom) 2020/2053) :
+  ≈ 2,5 Md€ de plus par an pour la France (Cour des comptes, note
+  d'exécution budgétaire 2025). Le cadre financier 2028-2034, en
+  négociation (35 à 42 Md€ par an selon la direction du budget et le Sénat),
+  et les 30,9 Md€ proposés pour 2027 (PLF 2027, art. 55) ne sont pas
+  retenus.
+* **Prime d'activité** (loi de finances pour 2026) : bonification maximale
+  portée de 184 € à 239 € au 1er avril 2026, ≈ +50 € par mois pour
+  ≈ 3 millions de foyers : ≈ 1,8 Md€ par an (calcul ; coût officiel non
+  publié).
+* **Aide exceptionnelle à l'apprentissage** (décret n° 2026-168 du 6 mars
+  2026) : 5 000, 4 500 ou 2 000 € selon le diplôme (moins de 250 salariés),
+  pour les seuls contrats conclus avant le 1er janvier 2027 ; 3,1 Md€
+  d'autorisations d'engagement en 2025, 2,2 Md€ en 2026 (Sénat, PLF 2026).
+  À législation constante, elle s'éteint : −1,0, −2,4 puis −3,1 Md€ par
+  rapport à 2025 de 2026 à 2028 (calcul, versements étalés sur la première
+  année du contrat).
+* **Contribution exceptionnelle des organismes complémentaires** (LFSS pour
+  2026) : ≈ 1,0 Md€, pour 2026 seulement.
 
 Lois dont les effets sont jugés inclus dans la tendance : loi de
-programmation de la recherche (marches d'≈ 0,5 Md€ par an, financées pour
-un quart dans le PLF 2026), LOPMI et loi de programmation de la justice
-(échéance 2027).
+programmation de la recherche (marches de 500 à 600 M€ par an jusqu'en
+2030, exécutées pour un quart à un cinquième en 2026), LOPMI et loi de
+programmation de la justice (échéance 2027 : 25,35 et 10,75 Md€). Sans
+effet sur le solde consolidé : hausse des cotisations employeurs à la
+CNRACL (+3 points par an jusqu'en 2028, décret n° 2025-86), prélèvements de
+l'État sur l'Unédic. Sans effet net mesuré sur l'emploi : loi « plein
+emploi » (Dares-IPP, juin 2026). Non chiffrées : taxe sur les holdings
+patrimoniales (loi de finances pour 2026, art. 7, rendement jugé « faible
+ou nul »), convention d'assurance chômage de 2024 (≈ 1,5 Md€ d'économies,
+déjà dans le niveau de 2025-2026).
 -/
 
 namespace Hypotheses
@@ -187,7 +251,15 @@ def echeancesDepart : List Echeance := [
   { fonction := .defense, niveau := 0, indice := 10000,
     restants := [5295, 9865, 12982, 15414, 16748] },             -- LPM actualisée (2026-2030)
   { fonction := .logementEnvironnement, niveau := 0, indice := 10000,
-    restants := [0, 0, 2975] } ]                                 -- ETS2 : moitié redistribuée dès 2028
+    restants := [0, 0, 2975] },                                  -- ETS2 : moitié redistribuée dès 2028
+  { fonction := .fonctionnement, niveau := 0, indice := 10000,
+    restants := [4150, 4150, 6530] },                            -- contribution à l'UE, puis remboursement de NextGenerationEU
+  { fonction := .famille, niveau := 0, indice := 10000,
+    restants := [1310, 1700] },                                  -- prime d'activité revalorisée (avril 2026)
+  { fonction := .famille, niveau := 0, indice := 10000,
+    restants := [-970, -2400, -3100] },                          -- fin de l'aide exceptionnelle à l'apprentissage
+  { fonction := .famille, niveau := 0, indice := 10000,
+    restants := [-20, -260, -720, -880] } ]                      -- durée d'indemnisation des ruptures conventionnelles
 
 def echeancesRecettesDepart : List EcheanceRecette := [
   { impot := some .csgCrds, niveau := 9000, indice := 10000,
@@ -197,7 +269,13 @@ def echeancesRecettesDepart : List EcheanceRecette := [
   { impot := some .impotSocietes, niveau := 8000, indice := 10000,
     restants := [7280, 0] },                                             -- contribution exceptionnelle des grandes entreprises (7,5 Md€ courants en 2026)
   { impot := some .autres, niveau := 3400, indice := 10000,
-    restants := [3400, 3400, 2310, 1090, 0] } ]                          -- CVAE : 0,28 % → 0,19 % → 0,09 % → 0
+    restants := [3400, 3400, 2310, 1090, 0] },                           -- CVAE : 0,28 % → 0,19 % → 0,09 % → 0
+  { impot := some .cotisations, niveau := 0, indice := 10000,
+    restants := [250] },                                                 -- contribution patronale sur les ruptures conventionnelles à 40 %
+  { impot := some .cotisations, niveau := 0, indice := 10000,
+    restants := [2140, 0] },                                             -- gel du SMIC de référence des allègements, 2026 seulement
+  { impot := some .autres, niveau := 0, indice := 10000,
+    restants := [970, 0] } ]                                             -- contribution des complémentaires santé, 2026 seulement
 
 /-- Hausses de l'âge légal, mois, de 2026 à 2033 : suspension jusqu'en
 janvier 2028 (LFSS pour 2026), puis +3 mois par génération (générations
@@ -282,6 +360,7 @@ def reference2026 : Reference where
     participationsEtat := 209100   -- portefeuille de l'APE, valeur estimée au 30 juin 2025 (86 entités)
     passifs := { police := passifsPolice2025, hopital := passifsHopital2025 }  -- heures supplémentaires non payées
     cdhrMeur := 400                -- contribution différentielle sur les hauts revenus, encaissements 2025
+    allegementsTranche := { bas := 64950, intermediaire := 8850, haut := 1200 }  -- allègements généraux ≈ 75 Md€, répartis selon la RGDU 2026 (calcul)
     dividendesEtat := 4000         -- dividendes 2025 ≈ 6,5 Md€ (2024 et 2025) − 2,47 Md€ (2024) (APE, rapport d'activité) ; inclus dans les recettes non fiscales
     echeances := echeancesDepart
     echeancesRecettes := echeancesRecettesDepart
@@ -289,6 +368,8 @@ def reference2026 : Reference where
     calendrierAgeTendanciel := calendrierAgeReforme2023 }
   populationMilliers := 69100
   partPlus65Pb := 2220             -- 22,2 % au 1er janvier 2026 (INSEE)
+  seuilChomageContracyclePb := 900 -- décret n° 2023-33, art. 9 bis
+  surcoutComplementChomageMeur := 4300  -- complément de fin de droits (≈ économie de la règle, Unédic)
   sources := [
     "INSEE, Informations rapides n°78, comptes des APU 2025 (27 mars 2026)",
     "APE, rapport d'activité 2025 (portefeuille 209,1 Md€, dividendes)",

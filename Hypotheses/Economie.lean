@@ -183,6 +183,71 @@ le taux de chômage ne dépend donc pas de la taille de la population active
   l'ancienneté de résidence, retour au taux d'avant choc en 5 à 10 ans dans
   la littérature sur les chocs migratoires.
 
+Incidence des prélèvements (`incidencePrelevementPm`). Le moteur fixe
+l'effet moyen d'un prélèvement sur la demande (moitié de celui d'une dépense
+au moteur de demande) ; l'axe économique le répartit selon l'impôt, la
+moyenne pondérée par les prélèvements de 2025 restant proche de l'effet
+moyen (970 ‰). Repères,
+multiplicateurs à 2 à 5 ans pour un point de PIB : dépense publique
+générique 1,0 puis 0,9 ; IR et CSG ≈ 0,8 ; TVA 0,66 puis 0,8 ; cotisations
+salariés 0,75 (Mésange : DG Trésor pour le COR, 26 mars 2026, tableaux 1 à
+3 ; Institut Avant-garde, 2025, tableau 7) ; IS 0,3 à 0,4 (OFCE, Policy
+Brief 25, 2017) ; impôts sur le patrimoine et le foncier 0 à 0,2, très hauts
+revenus 0,1 à 0,6 (Commission européenne, QUEST, in 't Veld 2012 ; CBO
+2014). Propension à consommer le patrimoine financier : 0,115 pour la
+moitié la moins dotée des ménages, 0,001 entre les 90e et 99e centiles
+(Arrondel, Lamarche et Savignac, Économie et Statistique 472-473, 2014) ;
+taux d'épargne de 27 % pour le quintile le plus aisé (INSEE Focus 338,
+2024). D'où, relativement à l'effet moyen : TVA, IR, CSG 1,10 ;
+cotisations 1,05 (prélèvement sans tranche : surtout des cotisations
+salariales, les allègements patronaux passant par le coût du travail) ;
+accises 1,00 (Mésange vert : un peu moins que la TVA) ; autres impôts 0,80
+(impôts de production, taxes diverses) ; IS et taxe foncière 0,55 ;
+successions et patrimoine 0,20. Les profils dans le temps (TVA et
+cotisations montent avec les années, IR et CSG plus tôt) ne sont pas
+modélisés ; la Banque de France (FR-BDF, 2020) trouve des effets de court
+terme environ deux fois plus faibles.
+
+Coût du travail par tranche de salaire (levier `allegementsCotisations`).
+Emploi salarié privé ≈ 20 millions, dont ≈ 2/3 sous 1,6 SMIC, 89 % sous
+2,5 SMIC, 98 % sous 3,5 SMIC (Bozio et Wasmer, rapport d'étape, mai 2024,
+p. 27) : `emploiPriveTranche2025` = 13 340, 4 460 et 2 200 milliers. Coût du
+travail (salaires bruts et cotisations patronales après allègements) :
+salaire moyen de 1,3, 2,0 et 4,5 SMIC ; ≈ 367, 219 et 484 Md€ (calcul,
+total ≈ 1 070 Md€, rémunérations du secteur privé des comptes nationaux).
+Élasticités (valeur absolue) : 0,4 de 1 à 1,6 SMIC (−1 à −1,5 de 1 à
+1,3 SMIC, ≈ −0,5 de 1,3 à 1,6 SMIC : Crépon et Desplatz 2001, Bunel et
+L'Horty 2012, note CAE n° 49, 2019 ; Bozio et Wasmer, 2024, révisent ces
+valeurs à la baisse), soit ≈ 14 500 emplois par Md€ (CAE : 23 000 à 57 000
+pour 4 points de baisse au SMIC ; Groupe d'experts SMIC, 2025 : 17 000 à
+25 000 en moyenne de tous les allègements ; Bozio et Wasmer : 7 500 à
+10 800 dans leurs scénarios de hausse) ; 0,25 de 1,6 à 2,5 SMIC, soit
+≈ 5 100 emplois par Md€ (bandeaux maladie et famille : 61 000 ETP pour
+12,1 Md€, Bozio et Wasmer ; CICE : 5 500 à 9 000, France Stratégie 2020) ;
+0,05 au-delà (effets « très faibles et peu significatifs », CAE). Pour une
+hausse uniforme des cotisations patronales, on obtient ≈ 8 600 emplois par
+Md€, contre 12 000 à 14 000 pour Mésange (calcul). Ajustement :
+`ajustementCoutTravailPm` = 350, soit 35 % de l'effet à un an, 58 % à deux
+ans, 88 % à cinq ans (Mésange 2026 : 23 %, 57 %, 87 %). Le PIB suit les
+emplois pondérés par le coût du travail par emploi de la tranche (un emploi
+au voisinage du SMIC coûte ≈ 0,5 fois la moyenne).
+
+Accompagnement des demandeurs d'emploi (`chomeursEvitesParConseiller` = 5,
+hypothèse prudente). Autriche, expérience aléatoire de 2015 : portefeuille
+ramené de 250 à 100 demandeurs par conseiller, chômage plus court de
+62 jours (−14 %), sorties vers l'emploi +4,8 points et vers l'inactivité
++3,0, gain net pour les finances publiques de 1 075 € par bénéficiaire hors
+éviction (Böheim, Eppel et Mahringer, WIFO, 2022) : ≈ 26 années de chômage
+évitées par conseiller et par an (calcul : 390 € par bénéficiaire, soit
+≈ 150 bénéficiaires pour un conseiller). France, expérience de 2007 :
++9 à +10 points de sortie vers l'emploi à six mois avec 40 demandeurs par
+conseiller contre 120 (Behaghel, Crépon et Gurgand, 2014). Allemagne :
+490 conseillers de plus dans 14 agences, taux de chômage local −0,5 point
+(Hainmueller, Hofmann, Krug et Wolf, 2016). Les effets d'éviction peuvent
+annuler l'effet net (Crépon et al., QJE 2013 ; Dares-IPP, juin 2026, pour
+l'accompagnement des bénéficiaires du RSA) : 26 réduit de 40 % (sorties
+vers l'inactivité) et de moitié (éviction), d'où ≈ 5 à 8 ; 5 retenus.
+
 C'est l'axe le plus disputé : multiplicateur, élasticités et fuite fiscale
 déterminent l'essentiel des écarts entre programmes. D'où trois variantes
 dès le départ, plutôt qu'une valeur « officielle ».
@@ -199,20 +264,26 @@ def baisseEmissionsAME : ParSecteurGes :=
 /-- Effet sur la demande de chaque prélèvement, relativement à l'effet moyen
 d'un prélèvement fixé par le moteur, pm (voir le docstring du module). -/
 def incidencePrelevements : ParImpot :=
-  { tva := 1000, ir := 1000, csgCrds := 1000, cotisations := 1000, impotSocietes := 1000,
-    accisesEnergie := 1000, taxeFonciere := 1000, droitsMutation := 1000, patrimoine := 1000,
-    autres := 1000 }
+  { tva := 1100, ir := 1100, csgCrds := 1100, cotisations := 1050, impotSocietes := 550,
+    accisesEnergie := 1000, taxeFonciere := 550, droitsMutation := 200, patrimoine := 200,
+    autres := 800 }
+
+-- moyenne pondérée par les prélèvements de 2025 : 970 ‰ (le moteur garde à
+-- peu près son niveau moyen)
+example : (221100 * 1100 + 103800 * 1100 + 167200 * 1100 + 446300 * 1050 + 58900 * 550
+    + 30500 * 1000 + 44100 * 550 + 20700 * 200 + 2300 * 200 + 233400 * 800)
+    / (221100 + 103800 + 167200 + 446300 + 58900 + 30500 + 44100 + 20700 + 2300 + 233400) = 969 := by decide
 
 /-- Élasticité de l'emploi au coût du travail par tranche, pm (voir le
 docstring du module). -/
-def elasticitesCoutTravail : ParTranche := { bas := 0, intermediaire := 0, haut := 0 }
+def elasticitesCoutTravail : ParTranche := { bas := 400, intermediaire := 250, haut := 50 }
 
 /-- Emploi salarié privé par tranche de salaire, milliers (voir le docstring
 du module). -/
-def emploiPriveTranche2025 : ParTranche := { bas := 1, intermediaire := 1, haut := 1 }
+def emploiPriveTranche2025 : ParTranche := { bas := 13340, intermediaire := 4460, haut := 2200 }
 
 /-- Coût du travail par tranche, M€ (voir le docstring du module). -/
-def coutTravailTranche2025 : ParTranche := { bas := 1, intermediaire := 1, haut := 1 }
+def coutTravailTranche2025 : ParTranche := { bas := 367000, intermediaire := 219000, haut := 484000 }
 
 /-- Intensité en emplois relative par secteur, 2025 (INSEE), pm. -/
 def intensiteEmploi2025 : ParSecteur :=
@@ -270,8 +341,8 @@ def centrale : Economie where
   elasticiteEmploiCoutTravailPm := elasticitesCoutTravail
   emploiPriveTrancheMilliers := emploiPriveTranche2025
   coutTravailTrancheMeur := coutTravailTranche2025
-  ajustementCoutTravailPm := 500
-  chomeursEvitesParConseiller := 0
+  ajustementCoutTravailPm := 350
+  chomeursEvitesParConseiller := 5
   sources := ["À COMPLÉTER"]
 
 def croissanceBasse : Economie where
@@ -325,8 +396,8 @@ def croissanceBasse : Economie where
   elasticiteEmploiCoutTravailPm := elasticitesCoutTravail
   emploiPriveTrancheMilliers := emploiPriveTranche2025
   coutTravailTrancheMeur := coutTravailTranche2025
-  ajustementCoutTravailPm := 500
-  chomeursEvitesParConseiller := 0
+  ajustementCoutTravailPm := 350
+  chomeursEvitesParConseiller := 5
   sources := ["À COMPLÉTER"]
 
 def croissanceHaute : Economie where
@@ -380,8 +451,8 @@ def croissanceHaute : Economie where
   elasticiteEmploiCoutTravailPm := elasticitesCoutTravail
   emploiPriveTrancheMilliers := emploiPriveTranche2025
   coutTravailTrancheMeur := coutTravailTranche2025
-  ajustementCoutTravailPm := 500
-  chomeursEvitesParConseiller := 0
+  ajustementCoutTravailPm := 350
+  chomeursEvitesParConseiller := 5
   sources := ["À COMPLÉTER"]
 
 def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute]

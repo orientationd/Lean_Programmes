@@ -128,7 +128,11 @@ change donc son effet sur l'activité. Coût du travail :
 généraux de cotisations patronales ; l'emploi de la tranche répond au coût
 du travail selon l'élasticité de l'axe économique, progressivement ; une
 baisse ne peut dépasser les allègements en vigueur sur la tranche
-(`allegementsTranche`, dans l'état). Un `prelevementSur .cotisations`
+(`allegementsTranche`, dans l'état). `reductionAllegements montant` réduit
+les allègements au prorata des tranches (réduction sans ciblage, donc
+surtout au voisinage du SMIC) ; `recentrageAllegements partIntermediairePm
+partHautPm` reverse au voisinage du SMIC, à coût constant, une part des
+allègements des tranches supérieures. Un `prelevementSur .cotisations`
 reste une hausse de cotisations sans tranche (incidence moyenne).
 Accompagnement des demandeurs d'emploi : `accompagnementDemandeurs
 conseillers coutParConseillerEuros` (dépense, et baisse du chômage

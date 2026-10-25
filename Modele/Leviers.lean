@@ -256,6 +256,16 @@ inductive Levier where
   demande d'un prélèvement sur les bénéfices). Une baisse ne peut dépasser
   les allègements en vigueur sur la tranche. -/
   | allegementsCotisations (tranche : TrancheSalaire) (montant : Int)
+  /-- Allègements généraux réduits de `montant` M€/an, répartis entre les
+  tranches au prorata des allègements en vigueur (réduction sans ciblage :
+  aujourd'hui surtout au voisinage du SMIC). Effets de
+  `allegementsCotisations` sur chaque tranche. -/
+  | reductionAllegements (montant : Int)
+  /-- Recentrage à coût constant : les parts `partIntermediairePm` (1,6 à
+  2,5 SMIC) et `partHautPm` (au-delà) des allègements en vigueur sont
+  supprimées et reversées aux salaires de 1 à 1,6 SMIC. Effets de
+  `allegementsCotisations` sur chaque tranche. -/
+  | recentrageAllegements (partIntermediairePm : Int) (partHautPm : Int)
   /-- Accompagnement des demandeurs d'emploi : `conseillers` conseillers de
   plus au service public de l'emploi, à `coutParConseillerEuros` € par an
   chacun (dépense de la fonction famille-chômage). Le chômage d'équilibre
@@ -430,6 +440,29 @@ def remunerationUneAnnee (M : Moteur) (H : Scenario) (nature : NatureRemuneratio
                         remuneration := some nature }
   effetRemuneration M H nature montant
     { s with echeances := s.echeances ++ [e], depensesF := s.depensesF.ajouter f montant }
+
+/-- Variation de `m` M€ des allègements généraux de la tranche `t` (négatif :
+réduction, bornée par les allègements en vigueur sur la tranche) :
+cotisations, emplois visés (élasticité × variation relative du coût du
+travail × emploi de la tranche, à coût du travail de l'année de départ
+ramené au PIB courant), ajoutés progressivement par la projection ; le
+reste agit sur les marges (incidence d'un prélèvement sur les bénéfices). -/
+def varierAllegements (M : Moteur) (H : Scenario) (t : TrancheSalaire) (m : Int) (s : Etat) : Etat :=
+  let m' := if m < 0 then max m (-(s.allegementsTranche.get t)) else m
+  let cout := H.eco.coutTravailTrancheMeur.get t
+  let emploiT := H.eco.emploiPriveTrancheMilliers.get t
+  let emplois := if s.pib = 0 ∨ cout = 0 then 0
+    else m' * H.eco.elasticiteEmploiCoutTravailPm.get t * emploiT * H.reference.etat.pib / (cout * s.pib)
+  -- pondération : coût par emploi de la tranche / coût par emploi moyen
+  let coutTotal := H.eco.coutTravailTrancheMeur.total
+  let emploiTotalT := H.eco.emploiPriveTrancheMilliers.total
+  let ponderes := if emploiT = 0 ∨ coutTotal = 0 then 0
+    else emplois * cout * emploiTotalT / (emploiT * coutTotal)
+  effetDemande H none (appliquerPm m' (poidsPrelevement M H .impotSocietes))
+    { s with impots := s.impots.ajouter .cotisations (-m')
+             allegementsTranche := s.allegementsTranche.ajouter t m'
+             emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois
+             emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants + ponderes }
 
 /-- Hausses régulières de `pas` mois par an jusqu'à `reste` mois (dernière
 hausse partielle). Vide si `reste` ou `pas` n'est pas positif. -/
@@ -651,16 +684,21 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- coût du travail de la tranche × emploi de la tranche (coût du travail et
   -- emploi de l'année de départ, coût ramené au PIB courant) ; ils
   -- s'ajoutent progressivement dans la projection
-  | .allegementsCotisations t m, s =>
-      let m' := if m < 0 then max m (-(s.allegementsTranche.get t)) else m
-      let cout := H.eco.coutTravailTrancheMeur.get t
-      let emplois := if s.pib = 0 ∨ cout = 0 then 0
-        else m' * H.eco.elasticiteEmploiCoutTravailPm.get t * H.eco.emploiPriveTrancheMilliers.get t
-          * H.reference.etat.pib / (cout * s.pib)
-      effetDemande H none (appliquerPm m' (poidsPrelevement M H .impotSocietes))
-        { s with impots := s.impots.ajouter .cotisations (-m')
-                 allegementsTranche := s.allegementsTranche.ajouter t m'
-                 emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois }
+  | .allegementsCotisations t m, s => varierAllegements M H t m s
+  | .reductionAllegements m, s =>
+      let a := s.allegementsTranche
+      let tot := a.total
+      if tot ≤ 0 then s else
+      let mb := m * a.bas / tot
+      let mi := m * a.intermediaire / tot
+      varierAllegements M H .haut (-(m - mb - mi))
+        (varierAllegements M H .intermediaire (-mi) (varierAllegements M H .bas (-mb) s))
+  | .recentrageAllegements partI partH, s =>
+      let a := s.allegementsTranche
+      let i := a.intermediaire * partI / 1000
+      let h := a.haut * partH / 1000
+      varierAllegements M H .bas (i + h)
+        (varierAllegements M H .haut (-h) (varierAllegements M H .intermediaire (-i) s))
   | .accompagnementDemandeurs n cout, s =>
       appliquerDepense H Fonction.famille.secteur .famille (n * cout / 1000000)
         { s with chomeursExcedentaires := s.chomeursExcedentaires + n * H.eco.chomeursEvitesParConseiller }

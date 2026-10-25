@@ -709,6 +709,10 @@ structure Etat where
   mesures (allègements de cotisations par tranche), personnes : la demande
   de travail s'ajuste progressivement (`ajustementCoutTravailPm`). -/
   emploisCoutTravailRestants : Int := 0
+  /-- Les mêmes, pondérés par le coût du travail par emploi de leur tranche
+  rapporté à la moyenne (un emploi au voisinage du SMIC produit moins qu'un
+  emploi moyen) : base de l'effet sur le PIB, personnes. -/
+  emploisPonderesCoutTravailRestants : Int := 0
   /-- Allègements généraux de cotisations patronales en vigueur, par tranche
   de salaire, M€ (indexés sur le PIB nominal ; déjà retranchés des
   cotisations). -/

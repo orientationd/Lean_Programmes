@@ -206,8 +206,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- visé par les variations d'allègements (emplois des entreprises, qui
   -- produisent : volume d'heures)
   let ajustCout := appliquerPm s.emploisCoutTravailRestants H.eco.ajustementCoutTravailPm
-  let s₁ := chocEmploi H ajustCout (chocDemandeTravail H (some .tertiaireMarchand) ajustCout
-    { s₁ with emploisCoutTravailRestants := s.emploisCoutTravailRestants - ajustCout })
+  let ajustPonderes := appliquerPm s.emploisPonderesCoutTravailRestants H.eco.ajustementCoutTravailPm
+  let s₁ := chocEmploi H ajustPonderes (chocDemandeTravail H (some .tertiaireMarchand) ajustCout
+    { s₁ with emploisCoutTravailRestants := s.emploisCoutTravailRestants - ajustCout
+              emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants - ajustPonderes })
   -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
   -- du scénario (la tendance est déjà dans la croissance)
   let dEmploiMesures := emploiEntrants + absorption
