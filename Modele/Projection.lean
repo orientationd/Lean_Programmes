@@ -55,8 +55,19 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let dParc := max elecTendance (min ventes (elecTendance + s.electrificationAnnuelleMilliers))
   -- chaque voiture thermique remplacée retire son carburant de l'assiette des
   -- accises et de la TVA (nets des taxes sur l'électricité consommée)
+  -- rénovations des mesures : les économies de fioul et de gaz acquises
+  -- s'accroissent chaque année du flux porté ; elles retirent l'assiette des
+  -- accises et de la TVA sur ces énergies
+  let R := H.energie.renovation
+  let fioul := s.economiesFioulMWhAnnuelles
+  let gaz := s.economiesGazMWhAnnuelles
+  -- accise sur le fioul : avec la TICPE (accises sur les énergies) ; accise
+  -- sur le gaz naturel : avec les autres impôts
   let pertesAccises := dParc * H.energie.accisesParVehiculeEuros / 1000
+    + fioul * R.accisesFioulEurosMWh / 1000000
+  let pertesAcciseGaz := gaz * R.accisesGazEurosMWh / 1000000
   let pertesTva := dParc * H.energie.tvaParVehiculeEuros / 1000
+    + (fioul * R.tvaFioulEurosMWh + gaz * R.tvaGazEurosMWh) / 1000000
   -- contribution différentielle sur les hauts revenus : elle suit l'IR tant
   -- que le déficit de l'année écoulée atteint 3 % du PIB, puis s'éteint
   let cdhrReconduite := s.cdhrMeur + appliquerPb s.cdhrMeur croissance
@@ -72,6 +83,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let impots := ((((s.impots.croitre croissance).ajouter .ir (-dIr)
     |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
     |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
+    |>.ajouter .autres (-pertesAcciseGaz)
     |>.ajouter .ir (cdhr - cdhrReconduite)
     |>.ajouter .droitsMutation (appliquerPb s.impots.droitsMutation (tauxDroits - croissance))
   -- participations de l'État : valorisation au rythme du PIB nominal, plus les
@@ -125,7 +137,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let elec0 := H.energie.electrificationTendancielleMilliers
   let dBornes := (if elec0 = 0 then H.energie.bornesTendanciellesMilliers
     else H.energie.bornesTendanciellesMilliers * elecTendance / elec0) + s.bornesAnnuellesMilliers
-  let importsBase := s.importations - s.importsPonctuelles
+  let importsBase := s.importations
   let s' : Etat := { s with
     pib := pib
     impots := impots
@@ -152,12 +164,19 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     exportations := s.exportations + appliquerPb s.exportations croissance
     importations := importsBase + appliquerPb importsBase croissance + s.variationImportsAnnuelle
       - dParc * H.energie.gainCommercialParVehiculeEuros / 1000
-    importsPonctuelles := 0
+      - (fioul * R.importFioulEurosMWh * H.energie.prixBrentDollars / H.energie.prixReferenceDollars
+          + gaz * R.importGazEurosMWh) / 1000000
     electrificationTendanceMilliers := elecTendance
     parcElectriqueMilliers := s.parcElectriqueMilliers + dParc
     bornesMilliers := s.bornesMilliers + dBornes
     decesPollutionAir := max 0 (s.decesPollutionAir
       - dParc * H.energie.decesEvitesParMillionVehicules / 1000) }
+  -- émissions : les voitures électriques ajoutées par les mesures (au-delà
+  -- des ventes tendancielles, déjà dans la baisse tendancielle des
+  -- émissions) et les rénovations des mesures
+  let ktVoitures := (dParc - elecTendance) * H.energie.co2EviteParVehiculeKg / 1000
+  let ktRenovation := (fioul * R.co2FioulKgMWh + gaz * R.co2GazKgMWh) / 1000000
+  let s' := s'.reduireEmissionsKt (ktVoitures + ktRenovation)
   let s₁ := ajouterEmploi H none (emploiTendance + emploisOkun) s'
   -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
   -- du scénario (la tendance est déjà dans la croissance)
@@ -185,10 +204,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit,
         poids prevu - poids reconduit)
   let pasEcheances := s.echeances.map pas
+  -- la part importée de la dépense (investissement outre-mer) ne soutient
+  -- pas l'activité intérieure et suit les importations
   let s₃ : Etat := pasEcheances.foldl
     (fun (st : Etat) ((e, d, impulsion) : Echeance × Int × Int) =>
-      effetDemande H (if impulsion < 0 then none else e.fonction.secteur) impulsion
-        { st with depensesF := st.depensesF.ajouter e.fonction d })
+      let secteur := if impulsion < 0 then none else (e.secteur <|> e.fonction.secteur)
+      effetDemande H secteur (impulsion * e.partInterieurePm / 1000)
+        { st with depensesF := st.depensesF.ajouter e.fonction d
+                  importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
     ({ s₂ with echeances := pasEcheances.map (·.1) } : Etat)
   -- recettes à échéancier : indexées sur le PIB nominal (comme les assiettes) ;
   -- un impôt a l'effet de demande d'un prélèvement, une recette non fiscale aucun

@@ -68,6 +68,36 @@ en ligne indirecte et les tranches (hypothèse). Les droits ont progressé de
 4 % par an de 2014 à 2022 (Institut Montaigne), contre ≈ 2,6 % pour le PIB
 nominal.
 
+Impôt sur les sociétés. Le levier `impotSocietes` applique le plancher du
+pilier 2 (directive (UE) 2022/2523 ; impôt complémentaire national de la loi
+de finances pour 2024) : `tauxMinimumPilier2Pb` = 1 500 pour la part
+`partISPilier2Pm` = 400 de l'IS acquittée par les groupes de plus de
+750 M€ de chiffre d'affaires. Aucune part publiée pour ce seuil : les
+grandes entreprises acquittent 33 % de l'IS brut (23,5 Md€ sur 71,2 Md€ en
+2021, INSEE, Les entreprises en France, édition 2023, fiche 3.6) et une
+partie des ETI appartient à des groupes de cette taille ; 40 % retenus
+(fourchette 35 à 50 %). Le pilier 2 rapporte ≈ 0,5 Md€ en 2026 (Voies et
+moyens, PLF 2026 ; audition du directeur de la législation fiscale,
+commission des finances de l'Assemblée, 1er avril 2026).
+`semiElasticiteAssietteISPm` = 10 : un point de taux effectif en moins
+accroît les bénéfices déclarés en France de 1 % (transfert de bénéfices :
+valeur de consensus 0,98, Beer, de Mooij et Liu, Journal of Economic
+Surveys, 2020 ; 0,8 pour Heckemeyer et Overesch, 2017 ; 1,5 en fin de
+période chez Beer et al.). Les effets réels (investissement, localisation)
+porteraient la semi-élasticité totale vers 3 (de Mooij et Ederveen, 2008,
+cité de seconde main) ; ils ne sont pas retenus ici, le moteur d'offre
+traitant à part l'effet des prélèvements sur la croissance.
+
+Outre-mer : `contenuImportOutreMerPm` = 500 (hypothèse). Aucune étude du
+contenu importé de l'investissement dans les outre-mer n'a été trouvée ;
+les importations y valent 31,5 % du PIB à La Réunion, 34,6 % en
+Martinique, 38,9 % en Guadeloupe (INSEE, comptes 2025, calcul), mais les
+investissements de réseaux (canalisations, pompes, membranes de
+dessalement, panneaux solaires, batteries) sont presque entièrement
+importés et les matériaux de construction y coûtent 35 à 39 % de plus
+qu'en métropole (Autorité de la concurrence, avis 18-A-09). Contre 30 %
+pour la demande nationale (`contenuImportDemandePm`).
+
 Marché du travail. L'emploi ne suit plus mécaniquement la population
 active : la tendance démographique est absorbée au taux d'emploi courant
 (chômage tendanciel inchangé), mais les chocs d'offre de travail des
@@ -117,6 +147,10 @@ def centrale : Economie where
   primeDeficitPb := 25
   excesPatrimoineParDecesPb := 40
   elasticiteDroitsSuccessionPm := 1200
+  partISPilier2Pm := 400
+  tauxMinimumPilier2Pb := 1500
+  semiElasticiteAssietteISPm := 10
+  contenuImportOutreMerPm := 500
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -155,6 +189,10 @@ def croissanceBasse : Economie where
   primeDeficitPb := 25
   excesPatrimoineParDecesPb := 40
   elasticiteDroitsSuccessionPm := 1200
+  partISPilier2Pm := 400
+  tauxMinimumPilier2Pb := 1500
+  semiElasticiteAssietteISPm := 10
+  contenuImportOutreMerPm := 500
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -193,6 +231,10 @@ def croissanceHaute : Economie where
   primeDeficitPb := 25
   excesPatrimoineParDecesPb := 40
   elasticiteDroitsSuccessionPm := 1200
+  partISPilier2Pm := 400
+  tauxMinimumPilier2Pb := 1500
+  semiElasticiteAssietteISPm := 10
+  contenuImportOutreMerPm := 500
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500

@@ -84,6 +84,10 @@ effets ne sont pas proportionnels au PIB :
   16 octobre 2026) et les propositions de la Cour des comptes (note du
   21 septembre 2026 : barème −5 points, −2,1 Md€ ; Dutreil à 50 %,
   +1,3 Md€ ; assurance-vie au barème dès la tranche à 20 %, +1,25 Md€).
+* **Loi de programmation pour la refondation de Mayotte** (n° 2025-797 du
+  11 août 2025) : 730 M€ d'autorisations d'engagement pour l'eau
+  (350 M€ en 2025-2027, 380 M€ en 2028-2031), ≈ 0,1 Md€ par an, jugés
+  inclus dans la tendance.
 * **Fin des ventes de voitures thermiques neuves en 2035** (règlement (UE)
   2023/851) : voir l'axe énergie ; érosion des accises et de la TVA sur les
   carburants calculée dans la projection.

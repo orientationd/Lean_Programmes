@@ -62,8 +62,24 @@ culture, fonctionnement) à `depense` / `economie`, qui vont dans « non
 ventilé » : la synthèse décompose le déficit par fonction. `investissement fonction montant` : dépense d'équipement imputée à une
 fonction, emplois dans la construction. Durée du
 travail : `dureeTravail variationPm` (le PIB suit le volume d'heures).
-Taux de l'IS : `impotSocietes tauxPb retourAssiettePm`, avec un
-coefficient de retour d'assiette explicite.
+Taux de l'IS : `impotSocietes tauxPb` (taux normal) ; le modèle applique le
+plancher du pilier 2 aux grands groupes et la réponse de l'assiette au taux
+effectif (semi-élasticité de l'axe économique) : un programme ne fixe plus
+son propre retour d'assiette.
+
+Rénovation énergétique : `bonusRenovation territoire bonusEuros` (`.rural`
+ou `.national`) relève l'aide par rénovation ; le sous-modèle de l'axe
+énergie en déduit le coût, les rénovations suscitées (effet d'aubaine) et
+chaque année les économies de fioul et de gaz (importations, accises, TVA,
+CO₂). Outre-mer : `investissementOutreMer fonction niveaux` (échéancier,
+emplois dans la construction, contenu importé propre aux outre-mer) et
+`raccordementZni foyers` (surcoût de péréquation de l'électricité des zones
+non interconnectées). Achats ponctuels (`depensePonctuelle`,
+`remplacementVehicules`) : inscrits dans les dépenses de l'année, retirés
+l'année suivante. Les voitures retirées par `remplacementVehicules` portent
+leur vignette Crit'Air (`vignetteCritAir`), dont dépendent les particules
+évitées ; chaque voiture électrique ajoutée par une mesure évite du CO₂
+(réductions sous le million de tonnes cumulées dans `emissionsResiduKt`).
 
 Accidents du travail : `preventionAccidents fondsMeur baissePm` (fonds
 publics et baisse du taux d'accidents ; le sous-modèle calcule coûts
