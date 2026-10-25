@@ -48,7 +48,11 @@ Trois choix structurants :
 Un **moteur** (`Hypotheses/Moteurs.lean`) est un jeu de règles
 d'interprétation des leviers : « demande » (effets de demande permanents
 et symétriques) et « offre » (économies à demi-multiplicateur, effet des
-prélèvements obligatoires sur la croissance). Tous les programmes sont
+prélèvements obligatoires sur la croissance). Le moteur fixe l'effet moyen
+d'un prélèvement sur la demande ; l'axe économique le répartit selon l'impôt
+(TVA, IR, CSG au-dessus de la moyenne ; IS, successions, patrimoine bien
+en dessous). Les allègements de cotisations patronales passent par le coût
+du travail, tranche de salaire par tranche de salaire. Tous les programmes sont
 évalués sous tous les moteurs ; un engagement précise le sien. Toute
 personne autorisée peut **ajouter son moteur** dans `Moteurs/<Nom>/`
 (même contrôle d'accès que les programmes : fichier `PROPRIETAIRES`),
