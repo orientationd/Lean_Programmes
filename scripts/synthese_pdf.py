@@ -1568,7 +1568,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story.append(CondPageBreak(110 * mm))
     story += section_courbe(
         D, "Dette publique", "Dette au sens de Maastricht, en % du PIB. Les passifs implicites (« dettes "
-        "cachées » : heures supplémentaires non payées des policiers, 189 M€ en 2025) n'y figurent pas ; "
+        "cachées » : heures supplémentaires non payées des policiers, 189 M€, et des hôpitaux publics, "
+        "720 M€, en 2025) n'y figurent pas ; "
         "le rapport les suit à part (dette étendue), et une mesure qui les apure les fait passer dans "
         "le déficit de l'année.",
         lambda e: e["dettePb"] / 100, "Dette publique (% du PIB), scénario central", 0,

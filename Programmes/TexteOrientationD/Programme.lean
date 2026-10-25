@@ -86,8 +86,10 @@ Mesures (extrait) :
   **O-68** dettes cachées (heures supplémentaires des policiers, RIFSEEP
   pour les enseignants) ; **O-69** à **O-73** troisième étape du
   redressement (CIR recentré, assurance-vie au barème, contribution des
-  poids lourds, kérosène des vols intérieurs, fin de la défiscalisation des
-  heures supplémentaires).
+  poids lourds, kérosène des vols intérieurs, défiscalisation des heures
+  supplémentaires réduite de moitié) ; **O-74** heures supplémentaires non
+  payées des hôpitaux publics ; **O-75** 100 000 places de prison en
+  cellule individuelle.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -835,6 +837,73 @@ def heuresSupIr : Int := 2000
 def heuresSupCotisations : Int := 2310
 def partDefiscalisationSupprimeePm : Int := 500
 def foyersRaccordesParAn : Int := 7367
+
+/-- Hôpitaux et prisons (O-74, O-75).
+
+* O-74 : paiement immédiat du stock d'heures supplémentaires non payées ni
+  récupérées des hôpitaux publics (passif implicite suivi par le modèle
+  commun, `passifsHopital2025` = 720 M€ : 20,8 heures par agent non médical
+  et 6,1 demi-journées par médecin, bilan social ATIH 2022, rapportés aux
+  effectifs DREES 2024 ; 463 M€ fin 2018 selon la Cour des comptes), en
+  2027, comme des heures supplémentaires, sur la fonction santé (les
+  hôpitaux publics sont des administrations de sécurité sociale, financées
+  à 76,8 % par l'Assurance maladie, DREES 2026). Les comptes épargne-temps
+  (≈ 2,6 Md€, provisionnés au moins en partie) ne sont pas payés.
+* O-75 : 100 000 places de prison, toutes en cellule individuelle. Au
+  1er août 2026 : 63 303 places opérationnelles pour 89 668 détenus
+  (densité 141,6 %, 7 956 matelas au sol, 32,3 % des détenus seuls en
+  cellule ; ministère de la Justice). Le principe de l'encellulement
+  individuel (1875, loi pénitentiaire de 2009) est suspendu par moratoire
+  jusqu'au 31 décembre 2027 : la mesure le rend effectif à mesure que les
+  places ouvrent. Le plan 15 000 (5 411 places nettes livrées en
+  septembre 2025, achèvement en 2031-2032, 5,7 Md€ ; Cour des comptes,
+  17 décembre 2025) apporte encore `placesPlan15000Restantes` = 9 589
+  places, financées par les crédits immobiliers de l'administration
+  pénitentiaire que la tendance des dépenses reconduit (hypothèse) ; la
+  mesure finance le reste, `placesPrisonNouvelles` = 27 108 places.
+  - Construction : 270 k€ par place nette, coût moyen du plan 15 000 (Cour
+    des comptes ; 450 k€ pour les centres pénitentiaires, variante ;
+    ≈ 200 k€ en modulaire selon le ministère), soit 7,3 Md€, versés de 2027
+    à 2035 (`calendrierConstructionPm`) ; premières places en 2030 en
+    construction modulaire (≈ 18 mois), établissements classiques ensuite
+    (≈ 7 ans de la recherche foncière à la livraison). Livrer 36 700 places
+    de 2030 à 2035, plan 15 000 compris, suppose un rythme près de sept fois
+    celui du plan 15 000 ; le rapport Hetzel (Assemblée nationale, 2023)
+    juge un tel programme irréalisable en moins de dix ans : délai à
+    risque, coût de l'horizon prudent.
+  - Fonctionnement des places ouvertes (`ouverturePlacesPm`) : 0,48
+    surveillant par place (2 587 emplois ouverts pour 5 411 places, Cour
+    des comptes) × 80 800 € (2,9 Md€ pour 35 879 agents de surveillance,
+    PAP 2026) = 38 784 €, plus 6 200 € d'entretien et d'énergie (moitié des
+    frais hors personnel de la journée de détention, 129,33 € dont 95,48 €
+    de personnel en 2024 ; hypothèse : alimentation et frais par détenu
+    inchangés, les détenus étant déjà incarcérés) : 44 984 € par place et
+    par an, 1,22 Md€ et ≈ 13 000 surveillants une fois les places ouvertes,
+    en plus du déficit actuel de 4 000 à 6 000 postes. -/
+def placesPrisonCible : Int := 100000
+def placesOperationnelles2026 : Int := 63303
+def placesPlan15000Restantes : Int := 15000 - 5411
+def placesPrisonNouvelles : Int := placesPrisonCible - placesOperationnelles2026 - placesPlan15000Restantes
+def coutPlacePrisonKEuros : Int := 270
+def coutPlacePrisonCpKEuros : Int := 450
+/-- Part du coût de construction versée chaque année, de 2027 à 2035, ‰. -/
+def calendrierConstructionPm : List Int := [20, 41, 82, 150, 191, 191, 164, 109, 52, 0]
+/-- Part des places nouvelles ouvertes, de 2027 à 2035, ‰. -/
+def ouverturePlacesPm : List Int := [0, 0, 0, 55, 184, 369, 590, 812, 1000]
+def surveillantsParPlacePm : Int := 480
+def coutSurveillantEuros : Int := 80800
+def fonctionnementPlaceEuros : Int := 6200
+def coutAnnuelPlaceEuros : Int :=
+  surveillantsParPlacePm * coutSurveillantEuros / 1000 + fonctionnementPlaceEuros
+def constructionPrisons (coutPlaceKEuros : Int) : List Int :=
+  calendrierConstructionPm.map fun p => placesPrisonNouvelles * coutPlaceKEuros / 1000 * p / 1000
+def fonctionnementPrisons : List Int :=
+  ouverturePlacesPm.map fun p => placesPrisonNouvelles * p / 1000 * coutAnnuelPlaceEuros / 1000000
+
+theorem placesPrisonNouvelles_eq : placesPrisonNouvelles = 27108 := by decide
+theorem calendrierConstruction_total : calendrierConstructionPm.foldl (· + ·) 0 = 1000 := by decide
+theorem prisons_cible : placesOperationnelles2026 + placesPlan15000Restantes
+    + placesPrisonNouvelles * (ouverturePlacesPm.getLast?.getD 0) / 1000 = placesPrisonCible := by decide
 def contributionGrandesEntreprises : Int :=
   7500 * max tauxISCible tauxMinimumPilier2 / 2500 * 103 / 100
 
@@ -1380,7 +1449,7 @@ def mesures : List Mesure := [
   { id := "O-67"
     titre := "Dettes cachées : paiement immédiat des heures supplémentaires non payées des policiers"
     source := "Texte Orientation D, mesure 67 ; 14,3 millions d'heures au 31 décembre 2022 (Sénat, rapport n° 34, 2024-2025), 13,22 € l'heure : 189 M€ payés en 2027 (passif implicite du modèle commun)"
-    leviers := [.apurementPassifs .securiteJustice 1000] },
+    leviers := [.apurementPassifs .heuresSupPolice .securiteJustice 1000] },
 
   { id := "O-68"
     titre := "Dettes cachées : RIFSEEP pour les enseignants, primes alignées sur les autres agents de catégorie A"
@@ -1418,13 +1487,28 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .ir (heuresSupIr * partDefiscalisationSupprimeePm / 1000),
                 .prelevementSur .cotisations (heuresSupCotisations * partDefiscalisationSupprimeePm / 1000)]
     variantes := [
-      { nom := "suppression totale (comme en 2012)", leviers := [.prelevementSur .ir heuresSupIr, .prelevementSur .cotisations heuresSupCotisations] }] }
+      { nom := "suppression totale (comme en 2012)", leviers := [.prelevementSur .ir heuresSupIr, .prelevementSur .cotisations heuresSupCotisations] }] },
+
+  { id := "O-74"
+    titre := "Dettes cachées : paiement immédiat des heures supplémentaires non payées des hôpitaux publics"
+    source := "Texte Orientation D, mesure 74 ; 18,5 millions d'heures, 463 M€ fin 2018 (Cour des comptes, 2020) ; ≈ 720 M€ d'après le bilan social des hôpitaux 2022 (ATIH) et les effectifs DREES 2024 : payés en 2027 (passif implicite du modèle commun)"
+    leviers := [.apurementPassifs .heuresSupHopital .sante 1000] },
+
+  { id := "O-75"
+    titre := "100 000 places de prison en cellule individuelle : construction, surveillants et fonctionnement"
+    source := s!"Texte Orientation D, mesure 75 ; 63 303 places pour 89 668 détenus au 1er août 2026 (ministère de la Justice) ; plan 15 000 en cours ({placesPlan15000Restantes} places restantes, dans la tendance) ; {placesPrisonNouvelles} places de plus à {coutPlacePrisonKEuros} k€ la place nette (Cour des comptes, décembre 2025), ouvertes de 2030 à 2035 ; {coutAnnuelPlaceEuros} € par place ouverte et par an (0,48 surveillant par place, voir `placesPrisonNouvelles`)"
+    leviers := [.investissementEcheancier .securiteJustice (constructionPrisons coutPlacePrisonKEuros),
+                .depenseEcheancier .securiteJustice fonctionnementPrisons]
+    variantes := [
+      { nom := "coût des centres pénitentiaires (450 k€ la place)", leviers :=
+          [.investissementEcheancier .securiteJustice (constructionPrisons coutPlacePrisonCpKEuros),
+           .depenseEcheancier .securiteJustice fonctionnementPrisons] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, fin de la défiscalisation des heures supplémentaires."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

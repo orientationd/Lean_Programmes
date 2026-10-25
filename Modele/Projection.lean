@@ -158,8 +158,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     cdhrMeur := cdhr
     chomeursComptes := chomeurs
     -- passifs implicites : le stock s'accroît du flux, qui suit les salaires
-    passifsImplicites := s.passifsImplicites + s.fluxPassifsImplicites
-    fluxPassifsImplicites := s.fluxPassifsImplicites + appliquerPb s.fluxPassifsImplicites croissance
+    passifs := { police := s.passifs.police + s.fluxPassifs.police
+                 hopital := s.passifs.hopital + s.fluxPassifs.hopital }
+    fluxPassifs := { police := s.fluxPassifs.police + appliquerPb s.fluxPassifs.police croissance
+                     hopital := s.fluxPassifs.hopital + appliquerPb s.fluxPassifs.hopital croissance }
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres + s.investissementsParticipations
     participationsEtat := participations
     dividendesEtat := dividendes
