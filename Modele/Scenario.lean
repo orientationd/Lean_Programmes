@@ -184,6 +184,96 @@ def partGaz (r : Renovation) : Territoire → Int
 
 end Renovation
 
+/-- Système électrique (`anneeSuivante`) : les capacités de chaque filière
+croissent des installations tendancielles et de celles des mesures ; la
+production en découle aux facteurs de charge, sur la capacité moyenne de
+l'année ; la consommation est une tendance, plus les voitures électriques
+du parc et les mesures. La production au-delà de ce que la consommation et
+le solde exportateur maximal absorbent est retirée au nucléaire
+(modulation). -/
+structure Electricite where
+  /-- Facteurs de charge par filière, pm (production / (capacité moyenne de
+  l'année × 8 760 h)). -/
+  facteurChargePm : ParFiliere
+  /-- Capacités installées chaque année à législation constante, MW/an
+  (positives), pour les premières années (élément `k` = année `k + 1`) ;
+  au-delà : `ajoutsLongTermeMw`. -/
+  ajoutsTendanceMw : List ParFiliere
+  ajoutsLongTermeMw : ParFiliere
+  /-- Évolution annuelle de la consommation hors voitures électriques et
+  hors mesures, pb. -/
+  croissanceConsommationBasePb : Int
+  /-- Consommation annuelle d'une voiture électrique, kWh. -/
+  consommationVoitureKwh : Int
+  /-- Écart maximal entre production et consommation : solde exportateur
+  plafonné par les interconnexions, pompage des STEP, écart entre flux
+  physiques et commerciaux, GWh. -/
+  ecartProductionMaxGwh : Int
+  /-- Surfaces de production : part du solaire installé au sol, pm ; emprise
+  par MW de solaire au sol et par MW d'éolien terrestre, centièmes d'ha. -/
+  partSolaireSolPm : Int
+  haParMwSolaireCentiemes : Int
+  haParMwEolienCentiemes : Int
+  sources : List String
+  deriving Repr
+
+namespace Electricite
+
+/-- Installations tendancielles de l'année `k + 1`, MW. -/
+def ajoutsA (E : Electricite) (k : Nat) : ParFiliere := E.ajoutsTendanceMw.getD k E.ajoutsLongTermeMw
+
+end Electricite
+
+/-- Consommation d'espaces naturels, agricoles et forestiers (ENAF) sous le
+régime de zéro artificialisation nette (ZAN, loi Climat et résilience,
+art. 191 et 194) : la consommation 2021-2031 ne dépasse pas une part de
+celle de 2011-2021. Ce qui reste de l'enveloppe après la consommation
+constatée est réparti également sur les années restantes de la tranche,
+puis ce rythme est prolongé (la loi ne chiffre pas encore la tranche
+2031-2041). Sans ZAN, la consommation revient au rythme de la décennie de
+référence. -/
+structure Sols where
+  id : String
+  description : String
+  /-- Consommation d'ENAF du 1er janvier 2011 au 1er janvier 2021, ha. -/
+  reference20112021Ha : Int
+  /-- Part de cette consommation permise sur 2021-2031, pm. -/
+  partEnveloppePm : Int
+  /-- Consommation d'ENAF du 1er janvier 2021 à la fin de l'année de
+  départ, ha. -/
+  consommeDepuis2021Ha : Int
+  /-- Années de projection restantes dans la première tranche. -/
+  anneesRestantes : Int
+  /-- Répartition de la consommation sous ZAN par destination, pm (énergie
+  exclue). -/
+  structureZanPm : ParDestination
+  /-- Consommation annuelle sans ZAN, par destination, ha/an (énergie
+  exclue). -/
+  consommationSansZanHa : ParDestination
+  sources : List String
+  deriving Repr
+
+namespace Sols
+
+/-- Enveloppe de consommation d'ENAF de la tranche 2021-2031, ha. -/
+def enveloppeHa (S : Sols) : Int := S.reference20112021Ha * S.partEnveloppePm / 1000
+
+/-- Rythme annuel compatible avec l'enveloppe, ha/an. -/
+def rythmeZanHa (S : Sols) : Int :=
+  if S.anneesRestantes ≤ 0 then 0 else max 0 (S.enveloppeHa - S.consommeDepuis2021Ha) / S.anneesRestantes
+
+/-- Consommation d'espaces sous le ZAN, chaque année, par destination, ha. -/
+def zan (S : Sols) : ParDestination := S.structureZanPm.echelle S.rythmeZanHa
+
+/-- Surfaces consommées dans l'année, hors énergie : sous le ZAN (écart 0),
+l'enveloppe est un plafond où s'imputent les surfaces des mesures ; sans
+ZAN (écart 1 000 pm), elles s'ajoutent au rythme d'avant la loi ; entre
+les deux, interpolation. -/
+def surfacesAnnee (S : Sols) (ecartPm : Int) (mesures : ParDestination) : ParDestination :=
+  (S.zan.imputer mesures).interpoler (S.consommationSansZanHa.plus mesures) ecartPm
+
+end Sols
+
 /-- Hypothèse sur le prix du pétrole, appliquée comme un choc de niveau sur
 le PIB de départ, identique pour le tendanciel et pour chaque programme. -/
 structure Energie where
@@ -238,6 +328,8 @@ structure Energie where
   /-- Décès annuels évités par million de voitures thermiques remplacées par
   des électriques (particules fines à l'échappement). -/
   decesEvitesParMillionVehicules : Int
+  /-- Système électrique. -/
+  electricite : Electricite
   /-- Véhicules électriques par point de recharge public, cible
   d'infrastructure suffisante. -/
   vehiculesParBorne : Int
@@ -614,6 +706,8 @@ structure Scenario where
   eco : Economie
   energie : Energie
   droit : CadreJuridique
+  /-- Surfaces artificialisées. -/
+  sols : Sols
   /-- Nombre d'années projetées. -/
   horizon : Nat
   deriving Repr
@@ -712,6 +806,24 @@ abbrev ValideAssiettes (H : Scenario) : Prop :=
   0 < H.reference.etat.remunerationParEmploiEuros ∧ 0 < H.reference.etat.consommationMenages ∧
   H.reference.etat.masseSalariale * H.eco.assiettes.partSalairesPm < H.reference.etat.pib * H.eco.assiettes.partValeurAjouteePm
 
+/-- Électricité et sols : facteurs de charge entre 0 et 1, installations
+tendancielles positives, parts et emprises positives, surfaces positives,
+structure de la consommation sous ZAN de total 1 000 pm, sans énergie. -/
+abbrev ValideElectriciteSols (H : Scenario) : Prop :=
+  let E := H.energie.electricite
+  let S := H.sols
+  Filiere.tous.all (fun f => decide (0 ≤ E.facteurChargePm.get f ∧ E.facteurChargePm.get f ≤ 1000 ∧
+    0 ≤ E.ajoutsLongTermeMw.get f)) = true ∧
+  E.ajoutsTendanceMw.all (fun v => Filiere.tous.all (fun f => decide (0 ≤ v.get f))) = true ∧
+  -500 ≤ E.croissanceConsommationBasePb ∧ E.croissanceConsommationBasePb ≤ 1000 ∧
+  0 ≤ E.consommationVoitureKwh ∧ E.consommationVoitureKwh ≤ 10000 ∧ 0 ≤ E.ecartProductionMaxGwh ∧
+  0 ≤ E.partSolaireSolPm ∧ E.partSolaireSolPm ≤ 1000 ∧
+  0 ≤ E.haParMwSolaireCentiemes ∧ 0 ≤ E.haParMwEolienCentiemes ∧
+  Destination.tous.all (fun d => decide (0 ≤ S.consommationSansZanHa.get d ∧ 0 ≤ S.structureZanPm.get d)) = true ∧
+  S.structureZanPm.total = 1000 ∧ S.structureZanPm.energie = 0 ∧ S.consommationSansZanHa.energie = 0 ∧
+  0 < S.reference20112021Ha ∧ 0 ≤ S.partEnveloppePm ∧ S.partEnveloppePm ≤ 1000 ∧
+  0 ≤ S.consommeDepuis2021Ha ∧ 0 < S.anneesRestantes
+
 /-- Bornes sur les axes démographie, natalité, énergie et droit. -/
 abbrev ValideAxes (H : Scenario) : Prop :=
   0 ≤ H.demo.partPlus65Pb ∧ H.demo.partPlus65Pb ≤ 10000 ∧
@@ -768,7 +880,7 @@ abbrev ValideTravail (H : Scenario) : Prop :=
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
   H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail ∧
-  H.ValideTrajectoires ∧ H.ValideAssiettes
+  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.

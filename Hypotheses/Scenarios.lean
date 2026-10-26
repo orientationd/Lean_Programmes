@@ -4,6 +4,7 @@ import Hypotheses.Economie
 import Hypotheses.Droit
 import Hypotheses.Natalite
 import Hypotheses.Energie
+import Hypotheses.Sols
 
 /-!
 # Scénarios : produit cartésien des axes
@@ -29,7 +30,7 @@ Natalité et prix du pétrole prennent par défaut leur valeur centrale. -/
 def scenario (d : Demographie) (e : Economie) (j : CadreJuridique)
     (n : Natalite := Natalite.centrale) (en : Energie := Energie.central) : Scenario :=
   { reference := reference2026, demo := d, natalite := n, eco := e, energie := en, droit := j,
-    horizon := horizon }
+    sols := Sols.central, horizon := horizon }
 
 /-- Produit cartésien démographie × économie × prix du pétrole × droit.
 La natalité, sans effet sur les propriétés à l'horizon, est fixée à sa

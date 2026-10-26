@@ -1,4 +1,6 @@
 import Modele
+import Hypotheses.Electricite
+import Hypotheses.Sols
 
 /-!
 # Situation de départ
@@ -387,6 +389,11 @@ def reference2026 : Reference where
     robotisationPb := 0
     decesPollutionAir := 40000     -- décès attribuables aux PM2,5 (Santé publique France, 2021)
     parcElectriqueMilliers := 1600 -- voitures 100 % électriques en circulation fin 2025 (Avere-France, ordre de grandeur)
+    capacitesMw := Hypotheses.Electricite.capacites2025      -- RTE, Bilan électrique 2025, p. 23
+    productionGwh := Hypotheses.Electricite.production2025   -- RTE, Bilan électrique 2025, p. 21-22
+    consommationBaseGwh := Hypotheses.Electricite.consommationBase2025  -- consommation brute hors voitures électriques
+    consommationGwh := Hypotheses.Electricite.consommation2025          -- consommation brute 2025, pertes incluses (BE2025 p. 12)
+    surfacesHa := Hypotheses.Sols.surfaces2025               -- ENAF consommés depuis le 1er janvier 2021 (Cerema, millésime 2025)
     bornesMilliers := 175          -- points de recharge ouverts au public fin 2025 (Avere-France, ordre de grandeur)
     electrificationAnnuelleMilliers := 0
     bornesAnnuellesMilliers := 0

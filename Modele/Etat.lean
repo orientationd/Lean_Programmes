@@ -278,6 +278,212 @@ theorem total_ajouter (v : ParSecteurGes) (s : SecteurGes) (d : Int) :
 
 end ParSecteurGes
 
+/-! ## Électricité et sols -/
+
+/-- Filières de production d'électricité (nomenclature du bilan électrique de
+RTE). -/
+inductive Filiere where
+  | nucleaire | hydraulique | eolienTerrestre | eolienMer | solaire | thermique | bioenergies
+  deriving Repr, DecidableEq, Inhabited
+
+namespace Filiere
+
+def tous : List Filiere :=
+  [.nucleaire, .hydraulique, .eolienTerrestre, .eolienMer, .solaire, .thermique, .bioenergies]
+
+def id : Filiere → String
+  | .nucleaire => "nucleaire"
+  | .hydraulique => "hydraulique"
+  | .eolienTerrestre => "eolienTerrestre"
+  | .eolienMer => "eolienMer"
+  | .solaire => "solaire"
+  | .thermique => "thermique"
+  | .bioenergies => "bioenergies"
+
+def nom : Filiere → String
+  | .nucleaire => "Nucléaire"
+  | .hydraulique => "Hydraulique"
+  | .eolienTerrestre => "Éolien terrestre"
+  | .eolienMer => "Éolien en mer"
+  | .solaire => "Solaire"
+  | .thermique => "Thermique fossile"
+  | .bioenergies => "Bioénergies"
+
+end Filiere
+
+/-- Une valeur par filière (capacités en MW, production en GWh, facteurs de
+charge en pm). -/
+structure ParFiliere where
+  nucleaire : Int := 0
+  hydraulique : Int := 0
+  eolienTerrestre : Int := 0
+  eolienMer : Int := 0
+  solaire : Int := 0
+  thermique : Int := 0
+  bioenergies : Int := 0
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParFiliere
+
+def get (v : ParFiliere) : Filiere → Int
+  | .nucleaire => v.nucleaire
+  | .hydraulique => v.hydraulique
+  | .eolienTerrestre => v.eolienTerrestre
+  | .eolienMer => v.eolienMer
+  | .solaire => v.solaire
+  | .thermique => v.thermique
+  | .bioenergies => v.bioenergies
+
+def ajouter (v : ParFiliere) (f : Filiere) (d : Int) : ParFiliere :=
+  match f with
+  | .nucleaire => { v with nucleaire := v.nucleaire + d }
+  | .hydraulique => { v with hydraulique := v.hydraulique + d }
+  | .eolienTerrestre => { v with eolienTerrestre := v.eolienTerrestre + d }
+  | .eolienMer => { v with eolienMer := v.eolienMer + d }
+  | .solaire => { v with solaire := v.solaire + d }
+  | .thermique => { v with thermique := v.thermique + d }
+  | .bioenergies => { v with bioenergies := v.bioenergies + d }
+
+def total (v : ParFiliere) : Int :=
+  v.nucleaire + v.hydraulique + v.eolienTerrestre + v.eolienMer + v.solaire + v.thermique + v.bioenergies
+
+/-- Somme terme à terme ; une capacité ne devient jamais négative. -/
+def plusPositif (v w : ParFiliere) : ParFiliere :=
+  { nucleaire := max 0 (v.nucleaire + w.nucleaire), hydraulique := max 0 (v.hydraulique + w.hydraulique)
+    eolienTerrestre := max 0 (v.eolienTerrestre + w.eolienTerrestre)
+    eolienMer := max 0 (v.eolienMer + w.eolienMer), solaire := max 0 (v.solaire + w.solaire)
+    thermique := max 0 (v.thermique + w.thermique), bioenergies := max 0 (v.bioenergies + w.bioenergies) }
+
+/-- Somme terme à terme. -/
+def plus (v w : ParFiliere) : ParFiliere :=
+  { nucleaire := v.nucleaire + w.nucleaire, hydraulique := v.hydraulique + w.hydraulique
+    eolienTerrestre := v.eolienTerrestre + w.eolienTerrestre, eolienMer := v.eolienMer + w.eolienMer
+    solaire := v.solaire + w.solaire, thermique := v.thermique + w.thermique
+    bioenergies := v.bioenergies + w.bioenergies }
+
+/-- Plancher nul terme à terme (des installations annuelles ne sont jamais
+négatives : un levier réduit les installations nouvelles, il ne démantèle
+pas). -/
+def plancherNul (v : ParFiliere) : ParFiliere :=
+  { nucleaire := max 0 v.nucleaire, hydraulique := max 0 v.hydraulique
+    eolienTerrestre := max 0 v.eolienTerrestre, eolienMer := max 0 v.eolienMer
+    solaire := max 0 v.solaire, thermique := max 0 v.thermique, bioenergies := max 0 v.bioenergies }
+
+/-- Moyenne terme à terme (capacité moyenne de l'année : début et fin). -/
+def moyenne (v w : ParFiliere) : ParFiliere :=
+  { nucleaire := (v.nucleaire + w.nucleaire) / 2, hydraulique := (v.hydraulique + w.hydraulique) / 2
+    eolienTerrestre := (v.eolienTerrestre + w.eolienTerrestre) / 2
+    eolienMer := (v.eolienMer + w.eolienMer) / 2, solaire := (v.solaire + w.solaire) / 2
+    thermique := (v.thermique + w.thermique) / 2, bioenergies := (v.bioenergies + w.bioenergies) / 2 }
+
+/-- Production annuelle, GWh, de capacités `c` (MW) aux facteurs de charge
+`fc` (pm) : MW × fc × 8 760 h. -/
+def production (c fc : ParFiliere) : ParFiliere :=
+  let p (x f : Int) := x * f * 876 / 100000
+  { nucleaire := p c.nucleaire fc.nucleaire, hydraulique := p c.hydraulique fc.hydraulique
+    eolienTerrestre := p c.eolienTerrestre fc.eolienTerrestre, eolienMer := p c.eolienMer fc.eolienMer
+    solaire := p c.solaire fc.solaire, thermique := p c.thermique fc.thermique
+    bioenergies := p c.bioenergies fc.bioenergies }
+
+end ParFiliere
+
+/-- Destinations des surfaces consommées. Les quatre premières suivent la
+nomenclature des fichiers fonciers du Cerema (habitat, activité,
+infrastructures routières et ferroviaires ; « mixte » et « inconnu »
+regroupés) ; l'énergie est l'emprise des installations nouvelles de
+production d'électricité, calculée par le sous-modèle électrique. -/
+inductive Destination where
+  | logement | activites | infrastructures | autres | energie
+  deriving Repr, DecidableEq, Inhabited
+
+namespace Destination
+
+def tous : List Destination := [.logement, .activites, .infrastructures, .autres, .energie]
+
+/-- Destinations décomptées dans la consommation d'espaces naturels,
+agricoles et forestiers (ENAF) au sens de la loi Climat et résilience. -/
+def enaf : List Destination := [.logement, .activites, .infrastructures, .autres]
+
+def id : Destination → String
+  | .logement => "logement"
+  | .activites => "activites"
+  | .infrastructures => "infrastructures"
+  | .autres => "autres"
+  | .energie => "energie"
+
+def nom : Destination → String
+  | .logement => "Logement"
+  | .activites => "Activités et industrie"
+  | .infrastructures => "Infrastructures de transport"
+  | .autres => "Mixte, équipements, non renseigné"
+  | .energie => "Énergie (emprise solaire au sol et éolien)"
+
+end Destination
+
+/-- Une surface par destination, ha. -/
+structure ParDestination where
+  logement : Int := 0
+  activites : Int := 0
+  infrastructures : Int := 0
+  autres : Int := 0
+  energie : Int := 0
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParDestination
+
+def get (v : ParDestination) : Destination → Int
+  | .logement => v.logement
+  | .activites => v.activites
+  | .infrastructures => v.infrastructures
+  | .autres => v.autres
+  | .energie => v.energie
+
+def ajouter (v : ParDestination) (d : Destination) (x : Int) : ParDestination :=
+  match d with
+  | .logement => { v with logement := v.logement + x }
+  | .activites => { v with activites := v.activites + x }
+  | .infrastructures => { v with infrastructures := v.infrastructures + x }
+  | .autres => { v with autres := v.autres + x }
+  | .energie => { v with energie := v.energie + x }
+
+def total (v : ParDestination) : Int :=
+  v.logement + v.activites + v.infrastructures + v.autres + v.energie
+
+/-- Consommation d'espaces naturels, agricoles et forestiers (hors
+emprise énergétique). -/
+def totalEnaf (v : ParDestination) : Int := v.total - v.energie
+
+/-- Application terme à terme. -/
+def map (f : Int → Int) (v : ParDestination) : ParDestination :=
+  { logement := f v.logement, activites := f v.activites, infrastructures := f v.infrastructures
+    autres := f v.autres, energie := f v.energie }
+
+/-- Combinaison terme à terme. -/
+def zip (f : Int → Int → Int) (v w : ParDestination) : ParDestination :=
+  { logement := f v.logement w.logement, activites := f v.activites w.activites
+    infrastructures := f v.infrastructures w.infrastructures, autres := f v.autres w.autres
+    energie := f v.energie w.energie }
+
+def plus (v w : ParDestination) : ParDestination := zip (· + ·) v w
+
+/-- Répartition d'un total `x` selon une structure `v` en pm. -/
+def echelle (v : ParDestination) (x : Int) : ParDestination := v.map (· * x / 1000)
+
+/-- `v + part × (w − v)`, part en pm, terme à terme. -/
+def interpoler (v w : ParDestination) (partPm : Int) : ParDestination :=
+  zip (fun a b => a + (b - a) * partPm / 1000) v w
+
+/-- Plafond `v` dans lequel s'imputent les surfaces `m` : chaque
+destination de `v` cède, au prorata de son poids, le total de `m` (sans
+devenir négative), puis reçoit sa part de `m`. Le total vaut celui de `v`
+tant que `m` y tient. -/
+def imputer (v m : ParDestination) : ParDestination :=
+  let t := v.total
+  let mt := m.total
+  zip (fun a b => (if t = 0 then 0 else max 0 (a - mt * a / t)) + b) v m
+
+end ParDestination
+
 /-! ## Impôts et cotisations -/
 
 /-- Grands prélèvements obligatoires. -/
@@ -959,6 +1165,37 @@ structure Etat where
   croissanceBeneficePb : Int := 0
   /-- Même croissance, l'exercice d'avant, pb. -/
   croissanceBeneficeAvantPb : Int := 0
+  /-- Capacités installées de production d'électricité, MW. -/
+  capacitesMw : ParFiliere := {}
+  /-- Capacités ajoutées chaque année par les mesures, MW/an (flux porté ;
+  négatif : moins d'installations que la tendance). -/
+  ajoutsCapaciteMw : ParFiliere := {}
+  /-- Production d'électricité de l'année, par filière, GWh. -/
+  productionGwh : ParFiliere := {}
+  /-- Production nucléaire écartée faute de débouchés (consommation et
+  plafond du solde exportateur), GWh. -/
+  modulationGwh : Int := 0
+  /-- Consommation d'électricité hors voitures électriques et hors mesures,
+  GWh (tendance du scénario). -/
+  consommationBaseGwh : Int := 0
+  /-- Consommation d'électricité ajoutée par les mesures, GWh/an (niveau). -/
+  consommationMesuresGwh : Int := 0
+  /-- Consommation d'électricité de l'année, GWh : base, voitures
+  électriques du parc, mesures. -/
+  consommationGwh : Int := 0
+  /-- Surfaces consommées depuis le 1er janvier 2021 (début de la première
+  tranche du ZAN), par destination, ha. -/
+  surfacesHa : ParDestination := {}
+  /-- Surfaces consommées dans l'année, ha. -/
+  surfacesAnneeHa : ParDestination := {}
+  /-- Surfaces que les mesures consommeront, ha, année par année (élément 0 :
+  prochaine année projetée) ; sous le ZAN, elles s'imputent sur
+  l'enveloppe. -/
+  surfacesMesuresHa : List ParDestination := []
+  /-- Écart au régime de zéro artificialisation nette choisi par les
+  mesures, pm : 0 = ZAN en vigueur, 1000 = abrogé (consommation d'espaces de
+  la décennie précédant la loi). -/
+  ecartZanPm : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat

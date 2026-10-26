@@ -459,6 +459,8 @@ STYLES = {
     "celld": style("celld", taille=7.2, interligne=9.0, alignment=2),
     "cellg": style("cellg", "Sans-Bold", 7.2, 9.0, couleur=INK2),
     "cellgd": style("cellgd", "Sans-Bold", 7.2, 9.0, couleur=INK2, alignment=2),
+    "cellpc": style("cellpc", taille=6.4, interligne=7.6, alignment=1),
+    "cellgpc": style("cellgpc", "Sans-Bold", 6.0, 7.2, couleur=INK2, alignment=1),
     "petit": style("petit", taille=7, interligne=9, couleur=INK2, leftIndent=10, spaceAfter=1.5),
 }
 
@@ -511,7 +513,7 @@ PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee":
                "ue-deficit-3pct": "UE : déficit 3 %", "ue-ajustement-0-5": "UE : ajust. 0,5 pt",
                "ue-dette-1pt": "UE : dette −1 pt", "ue-climat-2030": "UE : climat 2030", "ue-esr-2030": "UE : effort 2030",
                "snbc-secteurs-2030": "SNBC : secteurs 2030", "budget-carbone-2029-2033": "Budget carbone 4",
-               "parc-electrique-2030": "15 % d'électriques 2030",
+               "parc-electrique-2030": "15 % d'électriques 2030", "zan-enveloppe-2031": "ZAN 2021-2031",
                "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant",
                "idh-non-degrade": "IDH non dégradé"}
 
@@ -527,12 +529,45 @@ def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool =
     def cellule(p, q):
         nb = p["matrice"][mid][q["id"]]
         if not avec_central:
-            return f"{nb} / {n}"
+            return P(f"{nb}/{n}", "cellpc")
         ok = p["central"][mid][q["id"]]
-        return f"{'✓' if ok else '✗'}  {nb}/{n}"
+        return P(f"{'✓' if ok else '✗'}<br/>{nb}/{n}", "cellpc")
 
+    # colonnes étroites : en-têtes et cellules en petit corps, statut et
+    # nombre de scénarios sur deux lignes
+    ent = [ent[0]] + [P(echap(h), "cellgpc") for h in ent[1:]]
     rows = [[nom_court(p["nom"])] + [cellule(p, q) for q in props] for p in D.progs]
-    return tableau(ent, rows, [0.2] + [0.8 / len(props)] * len(props))
+    t = tableau(ent, rows, [0.17] + [0.83 / len(props)] * len(props))
+    t.setStyle(TableStyle([("LEFTPADDING", (1, 0), (-1, -1), 1), ("RIGHTPADDING", (1, 0), (-1, -1), 1)]))
+    return t
+
+
+def puces_electricite_sols(D: Donnees) -> list:
+    """Électricité et sols en une ligne chacun (si le rapport les contient)."""
+    a0, a1 = D.annees[0], D.annees[-1]
+    base = D.fin("central", None)
+    if "productionGwh" not in base or "surfacesHa" not in base:
+        return []
+    conso = [(D.fin("central", pid)["consommationGwh"] / 8760, nom) for pid, nom in D.lignes() if pid]
+    cmin, cmax = min(conso), max(conso)
+
+    def enaf(pid):
+        tr = D.traj("central", pid)
+        return sum(tr[-1]["surfacesHa"][x] - tr[0]["surfacesHa"][x] for x in tr[0]["surfacesHa"] if x != "energie")
+    abroges = [nom for pid, nom in D.lignes() if pid and D.fin("central", pid).get("ecartZanPm", 0) >= 1000]
+    texte_sols = (f"Sols : {nombre(enaf(None))} ha d'espaces naturels, agricoles et forestiers consommés de "
+                  f"{a0 + 1} à {a1} sous le ZAN (enveloppe 2021-2031 tenue)")
+    if abroges:
+        pid_max = max((pid for pid, _ in D.lignes() if pid), key=enaf)
+        texte_sols += (f", jusqu'à {nombre(enaf(pid_max))} ha pour les programmes qui l'abrogent "
+                       f"({echap(', '.join(abroges))})")
+    return [
+        f"Électricité en {a1}, sans programme : {nombre(sum(base['productionGwh'].values()) / 8760, 1)} GW "
+        f"moyens produits pour {nombre(base['consommationGwh'] / 8760, 1)} GW consommés (de "
+        f"{nombre(cmin[0], 1)} à {nombre(cmax[0], 1)} GW selon le programme) ; "
+        f"{nombre(base.get('modulationGwh', 0) / 8760, 1)} GW de nucléaire modulé faute de débouchés.",
+        texte_sols + ".",
+    ]
 
 
 def section_resume(D: Donnees, meta) -> list:
@@ -596,7 +631,7 @@ def section_resume(D: Donnees, meta) -> list:
         f"{nombre(D.fin('natalite-haute', None)['populationMilliers'] / 1000, 1)} millions en {a1}) "
         "et le PIB par habitant : les enfants nés d'ici là n'arrivent pas sur le marché du travail "
         "avant l'horizon.",
-    ])
+    ] + puces_electricite_sols(D))
     out.append(P(f"Propriétés partagées, moteur « {D.nom_moteur(D.standard)} »", "h2"))
     out.append(table_proprietes(D, avec_central=True))
     out.append(P(f"✓/✗ : statut au scénario central ; puis nombre de scénarios (démographie × "
@@ -1467,6 +1502,134 @@ def section_climat(D: Donnees) -> list:
     return out
 
 
+def gw_moyens(gwh: float) -> float:
+    """Puissance moyenne sur l'année, GW, d'une énergie annuelle en GWh."""
+    return gwh / 8760
+
+
+FILIERES_COURT = {"nucleaire": "Nucléaire", "hydraulique": "Hydraulique", "eolienTerrestre": "Éolien terrestre",
+                  "eolienMer": "Éolien en mer", "solaire": "Solaire", "thermique": "Thermique fossile",
+                  "bioenergies": "Bioénergies"}
+
+
+def section_electricite(D: Donnees) -> list:
+    if "productionGwh" not in D.traj("central", None)[0]:
+        return []
+    a0, a1 = D.annees[0], D.annees[-1]
+    tend = D.traj("central", None)
+    e0 = tend[0]
+    prod0 = gw_moyens(sum(e0["productionGwh"].values()))
+    cons0 = gw_moyens(e0["consommationGwh"])
+    out = [P("Électricité : production et consommation", "h1"),
+           P(f"Puissance moyenne produite et consommée sur l'année (GW moyens = TWh / 8,76) : "
+             f"{nombre(prod0, 1)} GW produits et {nombre(cons0, 1)} GW consommés en {a0} (RTE), l'écart "
+             "allant aux exportations et au pompage. Les capacités de chaque filière croissent des "
+             "installations de la programmation pluriannuelle de l'énergie (PPE3, décret du 12 février "
+             "2026) et de celles des mesures ; la production en découle aux facteurs de charge observés "
+             "(nucléaire : 365 TWh par an de référence, RTE). La consommation suit la trajectoire "
+             "« décarbonation lente » de RTE, plus les voitures électriques du parc (celles des mesures "
+             "comprises). Les interconnexions plafonnant le solde exportateur vers 100 TWh, la production "
+             "qui ne trouve pas de débouché est retirée au nucléaire (modulation). Aucun nouveau réacteur "
+             "(EPR2, SMR) n'entre en service avant 2035.")]
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: gw_moyens(sum(e["productionGwh"].values())),
+                               "Électricité produite (GW moyens), scénario central", 1, NBSP + "GW")))
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: gw_moyens(e["consommationGwh"]),
+                               "Électricité consommée (GW moyens), scénario central", 1, NBSP + "GW")))
+    # tendanciel par filière
+    jalons = [i for i, a in enumerate(D.annees) if a in (a0, 2030, a1)]
+    ent = ["Tendanciel"] + [x for i in jalons for x in (f"{D.annees[i]} GW", f"{D.annees[i]} TWh")]
+    rows = []
+    for f, nomf in FILIERES_COURT.items():
+        rows.append([nomf] + [x for i in jalons for x in (nombre(tend[i]["capacitesMw"][f] / 1000, 1),
+                                                           nombre(tend[i]["productionGwh"][f] / 1000, 0))])
+    rows.append(["Total produit"] + [x for i in jalons for x in
+                                     (nombre(sum(tend[i]["capacitesMw"].values()) / 1000, 1),
+                                      nombre(sum(tend[i]["productionGwh"].values()) / 1000, 0))])
+    rows.append(["Consommation"] + [x for i in jalons for x in ("", nombre(tend[i]["consommationGwh"] / 1000, 0))])
+    rows.append(["Nucléaire modulé"] + [x for i in jalons for x in ("", nombre(tend[i].get("modulationGwh", 0) / 1000, 0))])
+    out.append(KeepTogether([Spacer(1, 3), tableau(ent, rows, [0.22] + [0.13] * (2 * len(jalons)))]))
+    ent = [f"{a1}", "Nucl. (GW)", "Éolien (GW)", "Solaire (GW)", "Autres (GW)",
+           "Produit", "Consommé", "Solde", "Modulé"]
+    rows = []
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        c = e["capacitesMw"]
+        prod = gw_moyens(sum(e["productionGwh"].values()))
+        cons = gw_moyens(e["consommationGwh"])
+        rows.append([nom, nombre(c["nucleaire"] / 1000, 1),
+                     nombre((c["eolienTerrestre"] + c["eolienMer"]) / 1000, 1),
+                     nombre(c["solaire"] / 1000, 1),
+                     nombre((c["hydraulique"] + c["thermique"] + c["bioenergies"]) / 1000, 1),
+                     nombre(prod, 1), nombre(cons, 1), signe(prod - cons, 1),
+                     nombre(gw_moyens(e.get("modulationGwh", 0)), 1)])
+    out.append(Spacer(1, 4))
+    out.append(tableau(ent, rows, [0.25, 0.08, 0.08, 0.09, 0.09, 0.10, 0.11, 0.10, 0.10],
+                       surligner_premiere=True))
+    out.append(P("Capacités installées en fin d'année ; « autres » : hydraulique, thermique fossile, "
+                 "bioénergies. Produit, consommé, solde (exportations et pompage) et production nucléaire "
+                 "modulée en GW moyens. La fin des soutiens aux nouvelles installations solaires et "
+                 "éoliennes (LR-04, RN-16) retire les volumes des appels d'offres de la PPE3 ; le nucléaire "
+                 "module alors moins. Sources : RTE (bilans électriques 2023 à 2025, bilan prévisionnel "
+                 "2025), décret PPE3 (voir Hypotheses/Electricite.lean).", "note"))
+    return out
+
+
+DEST_COURT = {"logement": "Logement", "activites": "Activités", "infrastructures": "Infra.",
+              "autres": "Autres", "energie": "Énergie"}
+
+
+def regime_zan(pm: int) -> str:
+    if pm <= 0:
+        return "ZAN"
+    if pm >= 1000:
+        return "abrogé"
+    return f"assoupli ({pm // 10} %)"
+
+
+def section_sols(D: Donnees) -> list:
+    if "surfacesHa" not in D.traj("central", None)[0]:
+        return []
+    a0, a1 = D.annees[0], D.annees[-1]
+    dests = [x["id"] for x in D.d.get("destinations", [])]
+    enaf = [x for x in dests if x != "energie"]
+    env = D.d.get("enveloppeZanHa", 0)
+    out = [P("Sols : surfaces consommées", "h1"),
+           P("Consommation d'espaces naturels, agricoles et forestiers (ENAF) depuis le 1er janvier 2021, "
+             "début de la première tranche du zéro artificialisation nette (ZAN, lois du 22 août 2021 et "
+             f"du 20 juillet 2023). L'enveloppe 2021-2031 est la moitié de la consommation 2011-2021, soit "
+             f"{nombre(env)} ha (Cerema, millésime 2025) ; ce qu'il en reste fin {a0} permet "
+             f"{nombre(D.d.get('rythmeZanHa', 0))} ha par an jusqu'en 2030, rythme prolongé ensuite, "
+             f"contre 15 119 ha consommés en 2024. Un programme qui abroge le ZAN revient au "
+             f"rythme de 2011-2021 ({nombre(D.d.get('rythmeSansZanHa', 0))} ha par an). Sous le ZAN, "
+             "l'enveloppe est un plafond : les surfaces des mesures (lignes nouvelles, prisons) s'y "
+             "imputent et évincent d'autant les autres usages ; sans ZAN, elles s'ajoutent. L'emprise "
+             "des installations nouvelles de solaire au sol et d'éolien terrestre (surface clôturée, "
+             "couverte de panneaux pour 25 à 40 %) est comptée à part, en « énergie ».")]
+    for g in D.groupes:
+        out.append(png(courbes(D, g, lambda e: sum(e["surfacesHa"][x] for x in enaf) / 1000,
+                               "ENAF consommés depuis 2021 (milliers d'ha), scénario central", 0, "",
+                               reference=(env / 1000, "Enveloppe ZAN 2021-2031"))))
+    ent = [f"Cumul {a0 + 1}-{a1}, ha"] + [DEST_COURT.get(x, x) for x in enaf] + ["ENAF", "Énergie", "Régime"]
+    rows = []
+    for pid, nom in D.lignes():
+        tr = D.traj("central", pid)
+        e, e0 = tr[-1], tr[0]
+        v = [e["surfacesHa"][x] - e0["surfacesHa"][x] for x in enaf]
+        en = e["surfacesHa"]["energie"] - e0["surfacesHa"]["energie"]
+        rows.append([nom] + [nombre(x) for x in v] + [nombre(sum(v)), nombre(en), regime_zan(e.get("ecartZanPm", 0))])
+    larg = [0.24] + [0.10] + [0.09] * (len(enaf) - 1) + [0.10, 0.10, 0.09]
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, larg, surligner_premiere=True))
+    out.append(P("Destinations du Cerema : habitat, activité (dont industrie), infrastructures routières "
+                 "et ferroviaires, autres (mixte, équipements, non renseigné). Régime : ZAN en vigueur, "
+                 "assoupli (part de l'écart au rythme d'avant la loi) ou abrogé (RN-22, LR-18). Sources : "
+                 "Cerema, déterminants de la consommation d'ENAF 2011-2025 ; ADEME et Congrès des notaires "
+                 "(emprises) ; voir Hypotheses/Sols.lean et Hypotheses/Electricite.lean.", "note"))
+    return out
+
+
 def section_air(D: Donnees) -> list:
     a0, a1 = D.annees[0], D.annees[-1]
     out = [P("Voitures électriques, bornes et qualité de l'air", "h1"),
@@ -1751,6 +1914,10 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_natalite(D)
     story.append(PageBreak())
     story += section_climat(D)
+    story.append(PageBreak())
+    story += section_electricite(D)
+    story.append(PageBreak())
+    story += section_sols(D)
     story.append(PageBreak())
     story += section_air(D)
     story.append(PageBreak())

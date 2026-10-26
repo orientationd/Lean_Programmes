@@ -1,4 +1,5 @@
 import Modele
+import Hypotheses.Electricite
 
 /-!
 # Axe énergie et transports : prix du pétrole, électrification, air
@@ -208,6 +209,7 @@ def bas : Energie where
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
+  electricite := Hypotheses.Electricite.electriciteFrance
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 238
   factureEnergetiqueMeur := 60000
@@ -234,6 +236,7 @@ def central : Energie where
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
+  electricite := Hypotheses.Electricite.electriciteFrance
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 319
   factureEnergetiqueMeur := 60000
@@ -260,6 +263,7 @@ def haut : Energie where
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
+  electricite := Hypotheses.Electricite.electriciteFrance
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 488
   factureEnergetiqueMeur := 60000

@@ -292,6 +292,24 @@ inductive Levier where
   `hausseTauxPm` (places, bourses) : coût (dépense par étudiant) et durée
   attendue de scolarisation de l'IDH. -/
   | scolarisationJeunes (hausseTauxPm : Int)
+  /-- Capacités de production d'électricité de la filière `f` installées
+  chaque année en plus de la tendance (en moins si négatif), MW/an, à partir
+  de l'année suivante. Effet physique seulement (production, surfaces) : le
+  coût et le soutien public éventuels passent par les autres leviers de la
+  mesure. -/
+  | capaciteElectrique (f : Filiere) (mwParAn : Int)
+  /-- Consommation d'électricité ajoutée par l'électrification d'usages,
+  GWh/an (niveau, dès l'année). -/
+  | consommationElectrique (gwhParAn : Int)
+  /-- Régime de zéro artificialisation nette : écart de la consommation
+  d'espaces à la trajectoire ZAN, vers celle de la décennie d'avant la loi,
+  pm (0 : ZAN maintenu ; 1000 : abrogé). -/
+  | regimeZan (ecartPm : Int)
+  /-- Surfaces consommées par la mesure, destination `d`, ha, année par
+  année à partir de l'année suivante (échéancier : par exemple une ligne
+  nouvelle, longueur × emprise par km, répartie sur les années de
+  travaux). Sous le ZAN, elles s'imputent sur l'enveloppe. -/
+  | artificialisation (d : Destination) (haParAnnee : List Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -540,6 +558,13 @@ def calendrierVers : Int → List Int → List Int
 example : calendrierVers 9 [3, 0, 3, 3, 3, 3] = [3, 0, 3, 3, 0, 0] := by decide
 example : calendrierVers 27 [3, 0, 3, 3, 3, 3] = [3, 0, 3, 3, 3, 3, 3, 3, 3, 3] := by decide
 
+/-- Somme terme à terme de deux échéanciers de surfaces (le plus long
+fixe la durée). -/
+def fusionnerSurfaces : List ParDestination → List ParDestination → List ParDestination
+  | [], l => l
+  | l, [] => l
+  | a :: l, b :: m => a.plus b :: fusionnerSurfaces l m
+
 /-- Interprétation d'un levier sous un moteur et un scénario. -/
 def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depense m, s => appliquerDepense H none .nonVentile m s
@@ -785,5 +810,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .accompagnementDemandeurs n cout, s =>
       appliquerDepense H Fonction.famille.secteur .famille (n * cout / 1000000)
         { s with chomeursExcedentaires := s.chomeursExcedentaires + n * H.eco.chomeursEvitesParConseiller }
+  | .capaciteElectrique f m, s => { s with ajoutsCapaciteMw := s.ajoutsCapaciteMw.ajouter f m }
+  | .consommationElectrique g, s =>
+      { s with consommationMesuresGwh := s.consommationMesuresGwh + g
+               consommationGwh := s.consommationGwh + g }
+  | .regimeZan e, s => { s with ecartZanPm := max s.ecartZanPm e }
+  | .artificialisation d hs, s =>
+      { s with surfacesMesuresHa := fusionnerSurfaces s.surfacesMesuresHa (hs.map fun h => ({} : ParDestination).ajouter d h) }
 
 end Modele

@@ -3,6 +3,7 @@ import Proprietes.Emploi
 import Proprietes.Climat
 import Proprietes.Europe
 import Proprietes.Developpement
+import Proprietes.Sols
 
 /-!
 # Registre des propriétés partagées
@@ -16,6 +17,6 @@ namespace Proprietes
 
 def toutes : List Modele.Propriete :=
   [deficit, dette, chomage, emissions, deficit2035, equilibre2035, deficitEnBaisse, dette2035, air, bornes2035, emploisAnnonces,
-   balanceCourante, accidentsTravail, snbcSecteurs2030, budgetCarbone4, parcElectrique2030, idh] ++ europeennes
+   balanceCourante, accidentsTravail, snbcSecteurs2030, budgetCarbone4, parcElectrique2030, zanEnveloppe, idh] ++ europeennes
 
 end Proprietes
