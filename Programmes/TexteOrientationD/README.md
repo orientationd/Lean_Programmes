@@ -9,19 +9,19 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 3,77 % |
-| Dette publique | 156,7 % du PIB | 131,7 % |
-| Chômage | 7,90 % | 9,43 % |
-| Indice de développement humain | 0,9392 | 0,9411 |
+| Déficit public | 9,27 % du PIB | 3,85 % |
+| Dette publique | 156,7 % du PIB | 132,3 % |
+| Chômage | 7,90 % | 9,42 % |
+| Indice de développement humain | 0,9392 | 0,9412 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 284 Mt CO₂e |
 
 Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,21 | 4,97 | 4,76 | 4,52 | 4,31 | 4,21 | 4,03 | 3,95 | 3,77 |
-| Offre | 5,57 | 5,12 | 4,84 | 4,62 | 4,38 | 4,20 | 4,12 | 3,99 | 3,95 | 3,83 |
-| Équilibre | 5,58 | 5,16 | 4,90 | 4,69 | 4,45 | 4,26 | 4,16 | 4,01 | 3,94 | 3,79 |
+| Demande | 5,58 | 5,25 | 5,01 | 4,82 | 4,59 | 4,39 | 4,28 | 4,11 | 4,03 | 3,85 |
+| Offre | 5,57 | 5,16 | 4,88 | 4,67 | 4,43 | 4,25 | 4,18 | 4,04 | 4,01 | 3,88 |
+| Équilibre | 5,58 | 5,21 | 4,94 | 4,73 | 4,49 | 4,30 | 4,21 | 4,05 | 3,99 | 3,84 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-84 mesures, en treize catégories. Effet de chaque mesure prise isolément en
+89 mesures, en quatorze catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -622,6 +622,7 @@ Variante à 50 % : le double du coût.
 | **O-25** Rémunération des enseignants : +2 % par an | +0,27 pt | +14 000 | +0,5 |
 | **O-68** Dettes cachées : RIFSEEP pour les enseignants, primes alignées sur les autres agents de catégorie A | +0,27 pt | +11 100 | +0,4 |
 | **O-81** Scolarisation des 18-24 ans : +1 point par an pendant trois ans (places, bourses) | +0,08 pt | +10 800 | +21,4 |
+| **O-88** Médecins scolaires : effectif doublé, 800 de plus en quatre ans | ≈ 0 | +400 | ≈ 0 |
 
 **O-16 à O-19 — Universités.**
 
@@ -667,6 +668,19 @@ durée attendue de scolarisation +0,21 an. C'est le levier le plus fort sur
 l'IDH (voir Santé pour le modèle de l'IDH). Variante : +5 points (250 000
 places).
 
+**O-88 — Médecins scolaires.** 818 médecins en 2022 contre 1 143 en 2013,
+un pour 13 300 élèves (de 2 000 à 46 000 selon les territoires), 44 % des
+postes vacants, aucun médecin scolaire à Mayotte ni dans l'Indre en 2022 ;
+18 % des visites obligatoires des enfants de six ans faites en 2018
+(Sénat, Cour des comptes). La mesure double l'effectif : 800 médecins de
+plus en quatre ans (un pour 6 700 élèves environ), à 100 000 € par médecin
+et par an, revalorisation comprise (hypothèse : sans elle, les postes
+ouverts restent vacants, ce que la Cour des comptes relevait déjà en
+2020), soit 80 M€ par an une fois tous recrutés. Variante : retour au
+niveau de 2013 (325 médecins de plus, 33 M€ par an). PC-12 (PCF, voir
+« Pistes pour compléter ») recoupe cette mesure pour les médecins
+scolaires.
+
 ### Santé
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -677,6 +691,7 @@ places).
 | **O-78** Prix minimum de l'alcool : 0,50 € par verre standard | ≈ 0 | ≈ 0 | +2,4 |
 | **O-79** Prix du tabac +20 % par les accises (paquet ≈ 15 €) | −0,04 pt | −2 100 | +1,9 |
 | **O-80** Dépistage organisé du cancer colorectal : 65 % de participation | +0,02 pt | +1 300 | +2,9 |
+| **O-85** Santé mentale : 100 M€ de moyens supplémentaires par an | ≈ 0 | +500 | ≈ 0 |
 
 **O-22 — Médicaments et dispositifs.** −2 Md€ par an (génériques,
 biosimilaires, prix, pertinence ; Assurance maladie 2025) ; création d'une
@@ -730,6 +745,13 @@ IDH +0,00005) ; ZFE (décès évités non chiffrés) ; taxe soda (effet faible
 et transitoire) ; VigilanS contre la récidive suicidaire (−38 %, décès non
 isolés). La durée moyenne de scolarisation des adultes ne bouge qu'avec le
 renouvellement des générations.
+
+**O-85 — Santé mentale.** 100 M€ de plus par an ; la répartition
+(psychiatrie publique, centres médico-psychologiques, psychologues) reste
+à préciser. Ordre de grandeur : 23 Md€ remboursés chaque année par
+l'Assurance maladie pour les troubles psychiques et les maladies
+psychiatriques, son premier poste de dépenses ; la santé mentale est grande
+cause nationale 2025. L'effet sur la santé n'est pas chiffré.
 
 ### Justice, sécurité et égalité
 
@@ -814,6 +836,34 @@ mais revient à du travail non rémunéré : point politique à trancher.
 L'effet sur le solde vient surtout du surcroît d'heures travaillées
 (activité, assiettes), la contribution étant dépensée.
 
+### Institutions et collectivités locales
+
+| Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
+|---|---|---|---|
+| **O-86** Liberté fiscale des collectivités : taux de taxe foncière sans plafond ni lien, taxe d'habitation rétablissable | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-87** Référendum d'initiative citoyenne | ≈ 0 | +700 | ≈ 0 |
+
+**O-86 — Liberté fiscale des collectivités.** Taxe foncière : les communes
+votent déjà leur taux, mais au plus 2,5 fois le taux moyen de l'année
+précédente dans le département ou en France (CGI, art. 1636 B septies :
+plafond de 99,35 % en 2025 pour un taux moyen national de 39,74 %), et les
+règles de lien encadrent les écarts entre taxes (art. 1636 B sexies) ; la
+mesure lève plafond et liens. Taxe d'habitation des résidences principales,
+supprimée de 2020 à 2023 : les communes y ont perdu 15,3 Md€ et les
+intercommunalités 7,5 Md€, compensés par la part départementale de taxe
+foncière et par une fraction de TVA ; la mesure permet de la rétablir sans
+perdre ces compensations (la taxe sur les résidences secondaires existe
+déjà). Sans effet sur le solde à taux inchangés : l'effet dépend des choix
+locaux. Variante : rétablissement par des collectivités pesant 10 % de
+l'ancien produit (2,3 Md€) : déficit 2035 de 3,77 % au lieu de 3,85 %.
+
+**O-87 — Référendum d'initiative citoyenne.** Révision de la Constitution
+(article 89) ; seuil de signatures et champ (lois, abrogation, révocation,
+Constitution) à préciser. Coût d'organisation : ≈ 200 M€ par référendum,
+≈ 100 M€ dématérialisé (ministre de l'Intérieur, 11 mai 2025). Hypothèse :
+un scrutin par an, non couplé à une élection. Variantes : scrutins
+dématérialisés ; scrutins couplés aux élections, sans coût propre.
+
 ### Outre-mer
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -821,12 +871,14 @@ L'effet sur le solde vient surtout du surcroît d'heures travaillées
 | **O-64** Accès à l'eau potable dans les outre-mer : réseaux, production, assainissement | +0,02 pt | ≈ 0 | ≈ 0 |
 | **O-65** Électrification totale des outre-mer : raccordement de tous les foyers | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-66** Électrification des outre-mer : électricité des foyers raccordés (péréquation tarifaire) | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-89** Fin de l'octroi de mer, compensée aux collectivités par l'État | +0,08 pt | +2 800 | +0,1 |
 
 | Mesure | Chiffrage |
 |---|---|
 | **O-64** Eau potable et assainissement | Besoins de 2,36 Md€ dans les DROM et à Saint-Martin (Cour des comptes, mars 2025), moins les 730 M€ déjà programmés pour Mayotte (loi n° 2025-797) : 1,63 Md€, 326 M€ par an de 2027 à 2031 |
 | **O-65** Électrification de tous les foyers | ≈ 15 400 ménages sans électricité à Mayotte (19 %) et ≈ 6 700 en Guyane (7 %), INSEE 2026 ; 5 000 € par raccordement et 20 000 € par site isolé (hypothèses) : 211 M€ de 2027 à 2029 |
 | **O-66** Électricité des foyers raccordés | 2 500 kWh par foyer et par an produits au coût des zones non interconnectées, 360 €/MWh de surcoût de péréquation (CRE) : 7 M€ de plus chaque année, 20 M€ par an à partir de 2029 |
+| **O-89** Fin de l'octroi de mer | 1,644 Md€ en 2022 (Cour des comptes, 5 mars 2024), dont 75,8 % pour les communes ; +4,64 % par an depuis 2014, soit 1,88 Md€ en 2025 (calcul) ; recette compensée aux collectivités par l'État |
 
 Situation : 25 % des ménages de Mayotte sans eau courante et des coupures
 quotidiennes pour 63 % des raccordés (INSEE, juin 2026) ; 15 % de la
@@ -846,34 +898,48 @@ distingue pas. Les collectivités du
 Pacifique (Polynésie : 62 % de la population desservie en eau conforme ;
 Nouvelle-Calédonie, Wallis-et-Futuna) ne sont pas chiffrées.
 
+**O-89 — Fin de l'octroi de mer.** Taxe propre aux cinq départements et
+régions d'outre-mer, sur les importations et sur la production locale,
+dont le régime dépend de décisions périodiques du Conseil de l'Union
+européenne (prochaine en 2027) ; elle pèse sur les prix et fournit 32 %
+des produits de gestion des communes. La Cour des comptes (mars 2024)
+envisage sa suppression en 2027 dans un « scénario de rupture ». La mesure
+la supprime et compense les collectivités par une dotation de l'État :
++0,08 point de déficit en 2035, +2 800 emplois. Variante : remplacement
+par une TVA régionale de même rendement (déficit 2035 de 3,79 %) ; son
+effet sur les prix, qui dépend des produits taxés, n'est pas modélisé. Le
+modèle applique l'effet sur la demande d'un impôt national : la part
+importée de la consommation ultramarine, plus forte qu'en métropole,
+n'est pas isolée.
+
 ## Points à arbitrer
 
 Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 3,77 % | 9,43 % | 0,9411 | oui / oui / oui |
-| Sans O-84 (deuxième journée de solidarité) | 4,02 % | 9,46 % | 0,9410 | oui / oui / oui |
-| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,70 % | 9,26 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 3,82 % | 9,41 % | 0,9424 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,63 % | 9,45 % | 0,9411 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 3,04 % | 9,49 % | 0,9411 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,55 % | 9,99 % | 0,9405 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,39 % | 10,52 % | 0,9398 | oui / oui / oui |
+| Programme actuel | 3,85 % | 9,42 % | 0,9412 | oui / oui / oui |
+| Sans O-84 (deuxième journée de solidarité) | 4,08 % | 9,44 % | 0,9410 | oui / oui / oui |
+| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,78 % | 9,24 % | 0,9412 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 3,89 % | 9,40 % | 0,9424 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,69 % | 9,43 % | 0,9411 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 3,10 % | 9,48 % | 0,9411 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,64 % | 9,98 % | 0,9405 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,45 % | 10,51 % | 0,9398 | oui / oui / oui |
 
 1. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,08 point en 2034 (demande), 0,04 point en 2034 (offre), 0,07 point en 2034 (équilibre). Elle tient grâce à O-62
+   des marges minimales de 0,08 point en 2034 (demande), 0,03 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
    (niches réduites de 1,5 Md€ de plus par an de 2029 à 2035) et à O-84
    (deuxième journée de solidarité, −0,23 point en 2035) ; sans O-84,
-   le déficit 2035 serait de 4,02 %. Toute dépense nouvelle non financée
+   le déficit 2035 serait de 4,08 %. Toute dépense nouvelle non financée
    réduit ces marges : chaque piste de dépense est à apparier à une recette
    ou à une économie.
-2. **Chômage.** 9,43 % en 2035 contre 7,90 % sans programme. Premières
+2. **Chômage.** 9,42 % en 2035 contre 7,90 % sans programme. Premières
    causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000 emplois)
    et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
    +20 000), O-76 et O-77 (+44 000 et +44 000) et O-84 (+7 000)
    compensent en partie. Au-delà de 9 %, le complément de fin de droits de
-   l'assurance chômage se déclenche. L'option B le réduit (9,26 %) ;
+   l'assurance chômage se déclenche. L'option B le réduit (9,24 %) ;
    passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit
    plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
@@ -922,19 +988,20 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,16 pt | −0,06 pt | +0,6 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,14 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,18 pt | −0,09 pt | +0,8 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,10 pt | −0,04 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,10 pt | −0,03 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,20 pt | −0,07 pt | +0,8 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,26 pt | −0,11 pt | +1,1 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,04 pt | ≈ 0 | +0,1 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,15 pt | −0,06 pt | +0,6 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,13 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,24 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,09 pt | +0,8 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,11 pt | −0,03 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,18 pt | −0,08 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,23 pt | −0,11 pt | +1,1 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
 
-E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
-chiffrage s'ajouterait à O-83 sans le corriger de ce recouvrement. La
+E-14 recoupe en partie O-83 (allocations dès le premier enfant), et PC-12
+recoupe O-88 (médecins scolaires) : leur chiffrage s'y ajouterait sans le
+corriger de ce recouvrement. La
 rénovation (PC-03) et le vélo (PC-02) ne changent pas les émissions du
 modèle tant que leurs tonnes évitées ne sont pas sourcées (levier
 `transition`, ou sous-modèle rénovation comme O-63).
@@ -946,7 +1013,7 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 
 ### Chiffrages à documenter
 
-* 30 mesures sur 84 reposent au moins en partie sur une hypothèse ; les plus
+* 32 mesures sur 89 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
