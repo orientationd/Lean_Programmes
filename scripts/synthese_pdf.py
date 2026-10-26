@@ -1611,7 +1611,7 @@ def section_sols(D: Donnees) -> list:
         out.append(png(courbes(D, g, lambda e: sum(e["surfacesHa"][x] for x in enaf) / 1000,
                                "ENAF consommés depuis 2021 (milliers d'ha), scénario central", 0, "",
                                reference=(env / 1000, "Enveloppe ZAN 2021-2031"))))
-    ent = [f"Cumul {a0 + 1}-{a1}, ha"] + [DEST_COURT.get(x, x) for x in enaf] + ["ENAF", "dont hors ZAN", "Énergie",
+    ent = [f"Cumul {a0 + 1}-{a1}, ha"] + [DEST_COURT.get(x, x) for x in enaf] + ["ENAF", "Hors ZAN", "Énergie",
                                                                                 "Régime"]
     rows = []
     for pid, nom in D.lignes():
@@ -1622,13 +1622,13 @@ def section_sols(D: Donnees) -> list:
         hz = e.get("surfacesHorsZanHa", 0) - e0.get("surfacesHorsZanHa", 0)
         rows.append([nom] + [nombre(x) for x in v] + [nombre(sum(v)), nombre(hz) if hz else "—", nombre(en),
                                                     regime_zan(e.get("ecartZanPm", 0))])
-    larg = [0.22] + [0.09] + [0.08] * (len(enaf) - 1) + [0.09, 0.09, 0.09, 0.08]
+    larg = [0.24] + [0.105, 0.105] + [0.08] * (len(enaf) - 2) + [0.095, 0.085, 0.09, 0.08]
     out.append(Spacer(1, 3))
     out.append(tableau(ent, rows, larg, surligner_premiere=True))
     out.append(P("Destinations du Cerema : habitat, activité (dont industrie), infrastructures routières "
                  "et ferroviaires, autres (mixte, équipements, non renseigné). Régime : ZAN en vigueur, "
-                 "assoupli (part de l'écart au rythme d'avant la loi) ou abrogé (RN-22, LR-18) ; « dont hors ZAN » : "
-                 "surfaces qu'une exemption légale créée par le programme sort du décompte de l'enveloppe. Sources : "
+                 "assoupli (part de l'écart au rythme d'avant la loi) ou abrogé (RN-22, LR-18) ; « hors ZAN » : part des ENAF "
+                 "qu'une exemption légale créée par le programme sort du décompte de l'enveloppe. Sources : "
                  "Cerema, déterminants de la consommation d'ENAF 2011-2025 ; ADEME et Congrès des notaires "
                  "(emprises) ; voir Hypotheses/Sols.lean et Hypotheses/Electricite.lean.", "note"))
     return out
