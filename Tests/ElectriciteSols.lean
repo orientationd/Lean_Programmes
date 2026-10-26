@@ -121,4 +121,65 @@ theorem emprise_energie :
       + (s1.capacitesMw.eolienTerrestre - s0.capacitesMw.eolienTerrestre) * E.haParMwEolienCentiemes / 100 := by
   decide +kernel
 
+/-- Hors ZAN, 1 000 ha d'activités s'ajoutent à l'enveloppe sans évincer
+d'autres usages et sortent du décompte du ZAN. -/
+theorem hors_zan :
+    let base := an1 []
+    let avec := an1 [.artificialisationHorsZan .activites [1000]]
+    avec.surfacesAnneeHa.totalEnaf = base.surfacesAnneeHa.totalEnaf + 1000 ∧
+    avec.surfacesAnneeHa.logement = base.surfacesAnneeHa.logement ∧
+    avec.surfacesHorsZanHa = 1000 ∧
+    avec.surfacesHa.totalEnaf - avec.surfacesHorsZanHa = base.surfacesHa.totalEnaf := by
+  decide +kernel
+
+/-! ## Pompes à chaleur, emplois -/
+
+def P : PompesAChaleur := H.energie.pac
+
+/-- 10 000 pompes à chaleur par an : l'électricité consommée croît chaque
+année de celle des PAC nettes de l'aubaine (chaleur / coefficient de
+performance), le fioul et le gaz économisés de la chaleur / rendement. -/
+theorem pac_energie :
+    let p := mesure [.pompesAChaleur .rural 10000 12000]
+    let s1 := anneeSuivante D H (p.etatInitial D H)
+    let s2 := anneeSuivante D H s1
+    let nets := 10000 * (1000 - P.aubainePm) / 1000
+    let elec := nets * P.besoinChaleurKWh * 100 / (P.scopCentiemes * 1000000)
+    s1.consommationMesuresGwh = elec ∧ s2.consommationMesuresGwh = 2 * elec ∧
+    s1.economiesFioulMWhAnnuelles + s1.economiesGazMWhAnnuelles + 1 ≥ nets * P.besoinChaleurKWh / P.rendementChaudierePm ∧
+    0 < elec := by
+  decide +kernel
+
+/-- Les PAC coûtent leur prix chaque année, moins ce que rapportent les taxes
+sur l'électricité et les coûts de réseau de gaz évités, plus les taxes
+perdues sur le fioul et le gaz : le déficit de la deuxième année augmente
+de moins que leur coût. -/
+theorem pac_cout :
+    let p := mesure [.pompesAChaleur .rural 10000 12000]
+    let s2 := anneeSuivante D H (anneeSuivante D H (p.etatInitial D H))
+    let b2 := en 2
+    0 < s2.deficit - b2.deficit ∧ s2.deficit - b2.deficit < 120 * 105 / 100 := by
+  decide +kernel
+
+/-- 10 000 emplois aidés dans l'industrie sans effet d'aubaine : la dépense
+de l'aide, presque autant d'emplois de plus dans l'industrie, un peu moins
+au total (l'indemnisation des chômeurs qui retrouvent un emploi baisse,
+avec l'effet de demande d'un transfert). -/
+theorem emplois_aides :
+    let s0 := etatDepart H
+    let s := (mesure [.emploisAides .industrie 10000 8000 0]).etatInitial D H
+    9500 ≤ s.emploiTotal - s0.emploiTotal ∧ s.emploiTotal - s0.emploiTotal ≤ 10000 ∧
+    9900 ≤ s.emploi.industrie - s0.emploi.industrie ∧ s.emploi.industrie - s0.emploi.industrie ≤ 10000 ∧
+    s.depensesF.affairesEconomiques - s0.depensesF.affairesEconomiques = 80 := by
+  decide +kernel
+
+/-- Implantations : 10 000 emplois industriels qui produisent ; la
+production nouvelle est exportée (ou remplace des importations). -/
+theorem implantations_exportees :
+    let s0 := etatDepart H
+    let s := (mesure [.implantations .industrie 10000]).etatInitial D H
+    9500 ≤ s.emploi.industrie - s0.emploi.industrie ∧
+    0 < s.pib - s0.pib ∧ 0 < s.exportations - s0.exportations := by
+  decide +kernel
+
 end Tests.ElectriciteSols

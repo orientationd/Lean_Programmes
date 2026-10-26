@@ -306,10 +306,19 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       volume := volume, cycle := cycle, inflationPrecedente := s.inflationConsoPb
       revalorisationFonciere := H.eco.revalorisationFoncierA k s.inflationConsoPb
       immobilier := H.eco.croissanceImmobilierA k croissance }
+  -- pompes à chaleur des mesures : taxes sur l'électricité consommée en plus
+  -- (flux de l'année, comme les pertes sur le fioul et le gaz) ; coûts de
+  -- réseau de gaz évités par les logements qui le quittent, reversés au
+  -- financement de la mesure (avec les autres impôts)
+  let Pac := H.energie.pac
+  let gainsAcciseElec := s.consommationPacHausseGwh * Pac.accisesElecEurosMWh / 1000
+  let gainsTvaElec := s.consommationPacHausseGwh * Pac.tvaElecEurosMWh / 1000
+  let gainsReseauGaz := s.deraccordementsGazParAn * Pac.reseauGazEvitesEuros / 1000000
   let impots := ((((s.impots.croitreTaux tauxAssiettes).ajouter .ir (-dIr)
     |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
     |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
-    |>.ajouter .autres (-pertesAcciseGaz)
+    |>.ajouter .autres (gainsAcciseElec + gainsReseauGaz - pertesAcciseGaz)
+    |>.ajouter .tva gainsTvaElec
     |>.ajouter .ir (cdhr - cdhrReconduite)
     |>.ajouter .droitsMutation (appliquerPb s.impots.droitsMutation (tauxDroits - croissance))
   -- transports : bornes ouvertes au rythme des ventes tendancielles
@@ -327,8 +336,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let El := H.energie.electricite
   let capacites := s.capacitesMw.plusPositif ((El.ajoutsA k).plus s.ajoutsCapaciteMw).plancherNul
   let consoBase := s.consommationBaseGwh + appliquerPb s.consommationBaseGwh El.croissanceConsommationBasePb
+  let consoMesures := s.consommationMesuresGwh + s.consommationPacHausseGwh
   let consoElec := consoBase + (s.parcElectriqueMilliers + dParc) * El.consommationVoitureKwh / 1000
-    + s.consommationMesuresGwh
+    + consoMesures
   let potentiel := (s.capacitesMw.moyenne capacites).production El.facteurChargePm
   let modulation := min potentiel.nucleaire (max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh))
   -- sols : consommation d'espaces (enveloppe du ZAN où s'imputent les
@@ -339,7 +349,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let dEolien := max 0 (capacites.eolienTerrestre - s.capacitesMw.eolienTerrestre)
   let haEnergie := dSolaire * El.partSolaireSolPm * El.haParMwSolaireCentiemes / 100000
     + dEolien * El.haParMwEolienCentiemes / 100
-  let surfacesAnnee := (H.sols.surfacesAnnee s.ecartZanPm (s.surfacesMesuresHa.headD {})).ajouter .energie haEnergie
+  let horsZan := s.surfacesHorsZanMesuresHa.headD {}
+  let surfacesAnnee := ((H.sols.surfacesAnnee s.ecartZanPm (s.surfacesMesuresHa.headD {})).plus horsZan).ajouter
+    .energie haEnergie
   let s' : Etat := { s with
     capacitesMw := capacites
     productionGwh := potentiel.ajouter .nucleaire (-modulation)
@@ -349,6 +361,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     surfacesAnneeHa := surfacesAnnee
     surfacesHa := s.surfacesHa.plus surfacesAnnee
     surfacesMesuresHa := s.surfacesMesuresHa.tail
+    surfacesHorsZanMesuresHa := s.surfacesHorsZanMesuresHa.tail
+    surfacesHorsZanHa := s.surfacesHorsZanHa + horsZan.totalEnaf
+    consommationMesuresGwh := consoMesures
     pib := pib
     impots := impots
     remunerationParEmploiEuros := remuneration

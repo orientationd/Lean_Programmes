@@ -274,6 +274,38 @@ def surfacesAnnee (S : Sols) (ecartPm : Int) (mesures : ParDestination) : ParDes
 
 end Sols
 
+/-- Pompes à chaleur installées par les mesures à la place de chaudières au
+fioul ou au gaz (`pompesAChaleur`) : chaque PAC fournit la chaleur que
+produisait la chaudière, avec l'électricité de son coefficient de
+performance saisonnier. -/
+structure PompesAChaleur where
+  /-- Chaleur fournie par logement, chauffage et eau chaude, kWh/an. -/
+  besoinChaleurKWh : Int
+  /-- Rendement saisonnier de la chaudière remplacée, pm. -/
+  rendementChaudierePm : Int
+  /-- Coefficient de performance saisonnier de la PAC, centièmes. -/
+  scopCentiemes : Int
+  /-- Part des chaudières au fioul parmi celles remplacées (le reste au gaz),
+  pm, en zone rurale et en moyenne nationale. -/
+  partFioulRuralPm : Int
+  partFioulNationalPm : Int
+  /-- PAC qui auraient été installées sans la mesure, pm. -/
+  aubainePm : Int
+  /-- Accise et TVA par MWh d'électricité résidentielle, €. -/
+  accisesElecEurosMWh : Int
+  tvaElecEurosMWh : Int
+  /-- Coûts de réseau de gaz évités par logement qui quitte le gaz, €/an. -/
+  reseauGazEvitesEuros : Int
+  deriving Repr
+
+namespace PompesAChaleur
+
+def partFioul (P : PompesAChaleur) : Territoire → Int
+  | .national => P.partFioulNationalPm
+  | .rural => P.partFioulRuralPm
+
+end PompesAChaleur
+
 /-- Hypothèse sur le prix du pétrole, appliquée comme un choc de niveau sur
 le PIB de départ, identique pour le tendanciel et pour chaque programme. -/
 structure Energie where
@@ -330,6 +362,8 @@ structure Energie where
   decesEvitesParMillionVehicules : Int
   /-- Système électrique. -/
   electricite : Electricite
+  /-- Pompes à chaleur des mesures. -/
+  pac : PompesAChaleur
   /-- Véhicules électriques par point de recharge public, cible
   d'infrastructure suffisante. -/
   vehiculesParBorne : Int
@@ -824,6 +858,16 @@ abbrev ValideElectriciteSols (H : Scenario) : Prop :=
   0 < S.reference20112021Ha ∧ 0 ≤ S.partEnveloppePm ∧ S.partEnveloppePm ≤ 1000 ∧
   0 ≤ S.consommeDepuis2021Ha ∧ 0 < S.anneesRestantes
 
+/-- Pompes à chaleur : rendement et coefficient de performance positifs,
+parts entre 0 et 1. -/
+abbrev ValidePac (H : Scenario) : Prop :=
+  let P := H.energie.pac
+  0 < P.rendementChaudierePm ∧ 0 < P.scopCentiemes ∧
+  0 ≤ P.partFioulRuralPm ∧ P.partFioulRuralPm ≤ 1000 ∧
+  0 ≤ P.partFioulNationalPm ∧ P.partFioulNationalPm ≤ 1000 ∧
+  0 ≤ P.aubainePm ∧ P.aubainePm ≤ 1000 ∧
+  0 ≤ P.besoinChaleurKWh ∧ 0 ≤ P.reseauGazEvitesEuros
+
 /-- Bornes sur les axes démographie, natalité, énergie et droit. -/
 abbrev ValideAxes (H : Scenario) : Prop :=
   0 ≤ H.demo.partPlus65Pb ∧ H.demo.partPlus65Pb ≤ 10000 ∧
@@ -880,7 +924,7 @@ abbrev ValideTravail (H : Scenario) : Prop :=
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
   H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail ∧
-  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols
+  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols ∧ H.ValidePac
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
@@ -890,6 +934,9 @@ instance (H : Scenario) : Decidable H.ValideAxes := inferInstance
 instance (H : Scenario) : Decidable H.ValideClimat := inferInstance
 instance (H : Scenario) : Decidable H.ValideTravail := inferInstance
 instance (H : Scenario) : Decidable H.ValideTrajectoires := inferInstance
+instance (H : Scenario) : Decidable H.ValideAssiettes := inferInstance
+instance (H : Scenario) : Decidable H.ValideElectriciteSols := inferInstance
+instance (H : Scenario) : Decidable H.ValidePac := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario

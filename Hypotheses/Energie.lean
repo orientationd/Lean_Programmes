@@ -183,6 +183,52 @@ def renovation : Renovation where
   accisesGazEurosMWh := 17
   tvaGazEurosMWh := 18
 
+/-- Pompes à chaleur air/eau des mesures, à la place de chaudières au fioul
+ou au gaz.
+
+* Chaleur fournie : une maison au fioul consomme ≈ 1 500 L par an, soit
+  ≈ 15 MWh (5 millions de m³ pour 3,3 millions de logements, FF3C via
+  Connaissance des énergies, 25 novembre 2025) ; au rendement saisonnier
+  de 0,8 d'une chaudière (ADEME, via Hello Watt, 2025), 12 000 kWh de
+  chaleur (calcul).
+* Coefficient de performance saisonnier mesuré : 2,9 en moyenne sur 90 PAC
+  air/eau (ADEME, campagne « 100 PAC », 7 octobre 2025).
+* Énergie remplacée en zone rurale : maisons rurales chauffées au fioul
+  20 %, au GPL 4 %, au gaz de réseau 8 % (SDES, enquête Logement 2020,
+  publiée le 28 octobre 2024) ; fioul et GPL, combustibles livrés, comptés
+  ensemble : 750 pm (calcul). Moyenne nationale : fioul 8,5 % et gaz (GPL
+  compris) 35 % des résidences principales (Insee Première n° 2088,
+  13 janvier 2026) : 195 pm (calcul).
+* Effet d'aubaine : celui des aides à la rénovation du modèle commun.
+* Électricité résidentielle : accise de 30,62 €/MWh depuis le 1er août
+  2026 (DGFiP, formulaire 2040-TIC-SD) ; TVA à 20 % sur un prix hors TVA
+  de 166,75 €/MWh accise comprise (tarif réglementé Base 6 kVA, 0,2001 €
+  TTC le kWh au 1er août 2026) : 33 €/MWh (calcul).
+* Réseau de gaz : charges d'exploitation de GRDF de 1 714 M€ par an pour
+  ≈ 11,5 millions de clients (CRE, ATRD7, 25 janvier 2024 et 16 avril
+  2026), ≈ 149 € par client (calcul) ; les coûts baissent moins vite que le
+  nombre de clients : dans le scénario de la CRE où les usagers de la
+  distribution baissent de 60 %, 27 % du réseau devient abandonnable (CRE,
+  « Avenir des infrastructures gazières », 1er juillet 2026), soit 45 % des
+  charges d'un client qui part : 67 € par an (calcul). Le coût de
+  l'abandon des conduites (≈ 200 € par mètre, ≈ 100 € par branchement,
+  même rapport) reste dans le tarif de réseau. -/
+def pompesAChaleur : PompesAChaleur where
+  besoinChaleurKWh := 15000 * 800 / 1000
+  rendementChaudierePm := 800
+  scopCentiemes := 290
+  partFioulRuralPm := (20 + 4) * 1000 / (20 + 4 + 8)
+  partFioulNationalPm := 85 * 1000 / (85 + 350)
+  aubainePm := renovation.aubainePm
+  accisesElecEurosMWh := 3062 / 100
+  tvaElecEurosMWh := 16675 * 20 / 100 / 100
+  reseauGazEvitesEuros := 1714000000 / 11500000 * 27 / 60
+
+theorem pompesAChaleur_valeurs :
+    pompesAChaleur.besoinChaleurKWh = 12000 ∧ pompesAChaleur.partFioulRuralPm = 750 ∧
+    pompesAChaleur.partFioulNationalPm = 195 ∧ pompesAChaleur.accisesElecEurosMWh = 30 ∧
+    pompesAChaleur.tvaElecEurosMWh = 33 ∧ pompesAChaleur.reseauGazEvitesEuros = 67 := by decide
+
 /-- Élasticités-prix de long terme (valeur absolue, pm) : voir le docstring
 du module. -/
 def elasticitesPrix : ElasticitesPrix :=
@@ -210,6 +256,7 @@ def bas : Energie where
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
   electricite := Hypotheses.Electricite.electriciteFrance
+  pac := pompesAChaleur
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 238
   factureEnergetiqueMeur := 60000
@@ -237,6 +284,7 @@ def central : Energie where
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
   electricite := Hypotheses.Electricite.electriciteFrance
+  pac := pompesAChaleur
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 319
   factureEnergetiqueMeur := 60000
@@ -264,6 +312,7 @@ def haut : Energie where
   surcoutPerequationZniEurosMWh := 360
   decesEvitesParMillionVehicules := 90
   electricite := Hypotheses.Electricite.electriciteFrance
+  pac := pompesAChaleur
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 488
   factureEnergetiqueMeur := 60000
