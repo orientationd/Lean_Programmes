@@ -61,7 +61,7 @@ TENDANCIEL = "#4d4c48"
 COULEURS_PARTIS = {
     "TexteOrientationD": "#C0158A", "PS": "#E86D9A", "LFI": "#D9502D", "PCF": "#A51C1F",
     "Ecologistes": "#2E9E50", "Renaissance": "#D99100", "Horizons": "#1AABC4",
-    "LR": "#2F62C2", "RN": "#283C8C",
+    "LR": "#2F62C2", "RN": "#283C8C", "PlacePublique": "#7B3FA0",
     "ExempleRelance": "#a3a29b", "ExempleConsolidation": "#77766f"}
 MARQUEURS = ["o", "s", "^", "D", "v", "P", "X", "h", "<", ">", "p", "*"]
 FICTIFS = {"ExempleRelance", "ExempleConsolidation"}
@@ -429,10 +429,11 @@ def courbes_natalite(D: Donnees):
 COURTS_FIG = {"tva": "TVA", "ir": "IR", "csgCrds": "CSG-CRDS", "cotisations": "Cotisations",
               "impotSocietes": "IS", "accisesEnergie": "Accise énergie",
               "taxeFonciere": "Taxe foncière", "droitsMutation": "Successions",
-              "autres": "Autres impôts"}
+              "mutationsOnereuses": "DMTO", "patrimoine": "Patrimoine", "autres": "Autres impôts"}
 COURTS_TAB = {"tva": "TVA", "ir": "IR", "csgCrds": "CSG", "cotisations": "Cotis.",
               "impotSocietes": "IS", "accisesEnergie": "Accise", "taxeFonciere": "T. fonc.",
-              "droitsMutation": "Succ.", "autres": "Autres"}
+              "droitsMutation": "Succ.", "mutationsOnereuses": "DMTO", "patrimoine": "Patr.",
+              "autres": "Autres"}
 SECTEURS_TAB = {"agriculture": "Agric.", "industrie": "Industrie", "construction": "Constr.",
                 "tertiaireMarchand": "Tert. march.", "tertiaireNonMarchand": "Tert. non m."}
 
@@ -742,17 +743,21 @@ def section_impots(D: Donnees) -> list:
     a0, a1 = D.annees[0], D.annees[-1]
     imp = D.impots
     out = [P("Impôts et taxes majeurs", "h1"),
-           P("Les recettes publiques sont suivies par grand prélèvement. Leur assiette évolue "
-             "comme le PIB, à deux exceptions : les accises et la TVA sur les carburants reculent avec "
-             "l'électrification du parc, et les droits de succession et de donation suivent le flux "
-             "successoral (hausse des décès, patrimoine transmis, abattements non indexés), soit "
-             "≈ 5 % par an au scénario central. Une mesure fiscale s'impute sur le prélèvement qu'elle "
+           P("Les recettes publiques sont suivies par grand prélèvement, chacun sur son assiette : "
+             "masse salariale pour les cotisations, la CSG et l'impôt sur le revenu (barème revalorisé "
+             "de l'inflation passée, progressivité sur la hausse réelle des revenus) ; consommation "
+             "des ménages pour la TVA ; bénéfice fiscal et règles d'acomptes pour l'IS ; volume de "
+             "carburants pour les accises, fixées en euros par litre et érodées par l'électrification "
+             "du parc ; valeurs locatives revalorisées par la loi pour la taxe foncière ; transactions "
+             "immobilières pour les DMTO ; flux successoral (hausse des décès, patrimoine transmis, "
+             "abattements non indexés) pour les droits de succession, ≈ 5 % par an au scénario "
+             "central. Une mesure fiscale s'impute sur le prélèvement qu'elle "
              "vise (levier « prélèvement sur ») ou, faute de précision dans le programme, sur « autres "
              "impôts » (patrimoine, taxes diverses) ; les effets d'activité se répartissent au prorata.")]
     out.append(png(structure_impots(D)))
     for g in D.groupes:
         out.append(png(petits_multiples_impots(D, g)))
-    larg = [0.22] + [0.077] * len(imp) + [0.164]
+    larg = [0.15] + [0.068] * len(imp) + [0.10]
     ent = [f"Recettes {a1} (Md€)"] + [COURTS_TAB.get(i["id"], i["nom"]) for i in imp] + ["Prélèv. oblig."]
     rows = [[nom] + [md(D.fin("central", pid)["impots"][i["id"]], 1) for i in imp]
             + [md(impots_total(D.fin("central", pid)), 1)] for pid, nom in D.lignes()]
@@ -767,7 +772,8 @@ def section_impots(D: Donnees) -> list:
                      + [signe((impots_total(e) - impots_total(base)) / 1000, 1)])
     out.append(KeepTogether([Spacer(1, 6), tableau(ent2, rows2, larg)]))
     out.append(P(f"CSG : CSG et CRDS ; Cotis. : cotisations sociales ; IS : impôt sur les sociétés ; "
-                 f"Accise : accise sur les énergies (TICPE) ; T. fonc. : taxe foncière ; Succ. : droits de succession et de donation ; Prélèv. oblig. : "
+                 f"Accise : accise sur les énergies (TICPE) ; T. fonc. : taxe foncière ; Succ. : droits de succession et de donation ; "
+                 f"DMTO : droits de mutation à titre onéreux ; Patr. : impôts sur le patrimoine (IFI, fortune) ; Prélèv. oblig. : "
                  f"somme des colonnes (hors recettes non fiscales). Situation de "
                  f"départ {a0} : INSEE, comptes des administrations publiques 2025 ; DGCL (taxe "
                  "foncière) ; ministère de la Transition écologique (accise, dernier chiffre publié : "
@@ -1349,10 +1355,12 @@ def section_retro(D: Donnees) -> list:
     out = [P("Le modèle face aux comptes passés", "h1"),
            P("Pour chaque année de 2019 à 2025, le modèle part des comptes publics observés de l'année "
              "précédente et simule l'année avec la même fonction que les projections. Il reçoit ce qui "
-             "n'est pas de son ressort : croissance, inflation et taux observés ; mesures nouvelles de "
-             "prélèvements, dépenses primaires et recettes hors prélèvements constatées. Il calcule ce "
-             "qui relève de ses mécanismes : évolution spontanée des prélèvements obligatoires, charge "
-             "d'intérêts, chômage et dette. L'écart au déficit observé mesure donc l'erreur des "
+             "n'est pas de son ressort : croissance, inflation et taux observés, marché immobilier, "
+             "revalorisation légale des valeurs locatives ; mesures nouvelles de prélèvements, dépenses "
+             "primaires et recettes hors prélèvements constatées. Il calcule ce qui relève de ses "
+             "mécanismes : les assiettes (masse salariale, consommation, excédent des entreprises), "
+             "l'évolution spontanée de chaque prélèvement sur la sienne, la charge d'intérêts, le "
+             "chômage et la dette. L'écart au déficit observé mesure donc l'erreur des "
              "mécanismes, pas celle des choix budgétaires. Sources : INSEE (comptes nationaux en base "
              "2020), Cour des comptes, Agence France Trésor ; source de chaque donnée dans "
              "Hypotheses/Historique.lean.")]
@@ -1385,12 +1393,27 @@ def section_retro(D: Donnees) -> list:
     out.append(tableau(ent, rows, [0.08, 0.13, 0.13, 0.09, 0.17, 0.22, 0.18]))
     err = [e["deficitModelePb"] - e["deficitObservePb"] for e in un]
     ierr = [e["interetsModele"] - e["interetsObserves"] for e in un]
+    def ecart_pct(m, o):
+        return ("+" if m >= o else "−") + nombre(abs(m - o) / o * 100, 1) + " %"
+    if "masseSalarialeModele" in un[0]:
+        ent_b = ["Année", "Masse salariale : modèle / observée (Md€)", "Écart",
+                 "Consommation des ménages : modèle / observée (Md€)", "Écart"]
+        rows_b = [[str(e["annee"]),
+                   nombre(e["masseSalarialeModele"] / 1000, 1) + " / " + nombre(e["masseSalarialeObservee"] / 1000, 1),
+                   ecart_pct(e["masseSalarialeModele"], e["masseSalarialeObservee"]),
+                   nombre(e["consommationModele"] / 1000, 1) + " / " + nombre(e["consommationObservee"] / 1000, 1),
+                   ecart_pct(e["consommationModele"], e["consommationObservee"])] for e in un]
+        out.append(Spacer(1, 4))
+        out.append(tableau(ent_b, rows_b, [0.10, 0.30, 0.12, 0.34, 0.12]))
     texte = (f"Erreur moyenne sur le déficit : {nombre(sum(abs(x) for x in err) / len(err) / 100, 2)} point "
              f"(biais {nombre(sum(err) / len(err) / 100, 2)}) ; sur la charge d'intérêts : "
-             f"{nombre(sum(abs(x) for x in ierr) / len(ierr) / 1000, 1)} Md€. L'erreur vient surtout de "
-             "l'évolution spontanée des prélèvements, dont l'élasticité au PIB a été de 1,6 en 2022 et de "
-             "0,4 en 2023 (Cour des comptes) : aucune règle fondée sur le seul PIB ne retrouve ces deux "
-             "années. En 2020-2021, l'activité partielle a découplé l'emploi du PIB.")
+             f"{nombre(sum(abs(x) for x in ierr) / len(ierr) / 1000, 1)} Md€. L'élasticité des "
+             "prélèvements au PIB a été de 1,4 en 2022 et de 0,4 en 2023 (Cour des comptes, base 2020) ; "
+             "chaque prélèvement étant calculé sur son assiette (bénéfice fiscal et acomptes de l'IS, "
+             "transactions immobilières, valeurs locatives, masse salariale, consommation), l'essentiel "
+             "de ces écarts est retrouvé. Restent la déformation de la consommation vers les taux réduits "
+             "de TVA (2023-2024, IGF), le calendrier du prélèvement à la source de l'impôt sur le revenu "
+             "et, en 2020-2021, l'activité partielle, qui a découplé l'emploi du PIB.")
     if multi:
         dep = min(multi)
         f = multi[dep][-1]

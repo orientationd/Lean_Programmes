@@ -189,6 +189,8 @@ def etatJson (s : Etat) : Json :=
     ("tauxEmissionPb", toJson s.tauxEmissionPb),
     ("chargeIndexationMeur", toJson s.chargeIndexationMeur),
     ("detteDebut", toJson s.detteDebut),
+    ("masseSalariale", toJson s.masseSalariale),
+    ("consommationMenages", toJson s.consommationMenages),
     ("soldePrimaire", toJson s.soldePrimaire),
     ("decesPollutionAir", toJson s.decesPollutionAir),
     ("parcElectriqueMilliers", toJson s.parcElectriqueMilliers),
@@ -315,7 +317,11 @@ def ecartRetroJson (e : EcartRetro) : Json :=
     ("depensesPrimairesRegle", toJson e.depensesPrimairesRegle),
     ("depensesPrimairesObservees", toJson e.depensesPrimairesObservees),
     ("deficitModelePb", toJson e.deficitModelePb), ("deficitObservePb", toJson e.deficitObservePb),
-    ("detteModelePb", toJson e.detteModelePb), ("detteObserveePb", toJson e.detteObserveePb)]
+    ("detteModelePb", toJson e.detteModelePb), ("detteObserveePb", toJson e.detteObserveePb),
+    ("masseSalarialeModele", toJson e.masseSalarialeModele),
+    ("masseSalarialeObservee", toJson e.masseSalarialeObservee),
+    ("consommationModele", toJson e.consommationModele),
+    ("consommationObservee", toJson e.consommationObservee)]
 
 /-- Rétro-test (scénario central, moteur standard) : à un an, et sur
 plusieurs années depuis chaque point de départ de `Hypotheses.departsRetro`. -/

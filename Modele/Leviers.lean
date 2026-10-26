@@ -324,6 +324,10 @@ fiscales n'en dépendent pas. -/
 def chocPibSeul (H : Scenario) (dPib : Int) (s : Etat) : Etat :=
   { s with
     impots := s.impots.plus (s.impots.variationCycle dPib s.pib H.eco.elasticiteCycliquePm)
+    -- la consommation des ménages (assiette de la TVA) suit l'activité ;
+    -- l'emploi, donc la masse salariale, suit par `chocPib`
+    consommationMenages := s.consommationMenages
+      + (if s.pib = 0 then 0 else s.consommationMenages * dPib / s.pib)
     pib := s.pib + dPib
     importations := s.importations + appliquerPm dPib H.eco.contenuImportDemandePm }
 

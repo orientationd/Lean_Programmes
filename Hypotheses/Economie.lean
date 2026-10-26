@@ -65,6 +65,68 @@ l'élasticité des dépenses de chômage (−3,23), la semi-élasticité du sold
 vaut ≈ 0,57 (LPFP ; 0,63 pour la Commission) : test
 `Tests.Mecanismes.semi_elasticite_solde`.
 
+**Prélèvements sur leur assiette naturelle** (`assiettesFrance`,
+`Modele/Projection.lean`, `Assiettes.taux`). Les élasticités au cycle
+ci-dessus ne servent plus qu'aux chocs de demande des mesures et aux autres
+impôts ; chaque grand prélèvement suit chaque année son assiette :
+
+* *Masse salariale* (salaires et traitements bruts, 1 157,2 Md€ en 2025,
+  INSEE) : emploi × rémunération par emploi. Celle-ci croît de la
+  productivité tendancielle (croissance potentielle moins croissance
+  tendancielle de l'emploi) et des prix : 64 % de l'inflation de l'année,
+  36 % de celle de l'année précédente (`retardSalairesPm` = 360 : maquette
+  Opale de la DG Trésor, +10 % de prix donnent +6,4 % de salaire moyen par
+  tête la première année, +10 % à long terme ; billet du 23 décembre 2022).
+  Élasticité de la masse salariale au cycle : 0,66 (Commission européenne,
+  Economic Paper 536, 2014, tableau 3.4) ; l'emploi y répond par la loi
+  d'Okun, la rémunération par emploi (heures, primes) pour le reste.
+* *Cotisations* : masse salariale ; élasticité 0,95 sur sa part cyclique
+  (même source ; plafond de la sécurité sociale, allègements). *CSG-CRDS* : revenus d'activité 70 %,
+  de remplacement 18,2 %, du capital et jeux le reste (Fipeco d'après la
+  Commission des comptes de la sécurité sociale, 2024), à taux
+  proportionnels.
+* *Impôt sur le revenu* : revenus déclarés de 2022 (DGFiP) : salaires
+  61,7 %, pensions 25,7 %, indépendants (BIC, BNC, BA) 4,8 %, capital et
+  plus-values 7,8 % ; élasticité à l'assiette 1,68 (Commission ; OCDE,
+  Price, Dang et Botev, 2015) appliquée à la seule hausse au-delà de la
+  revalorisation du barème (inflation de l'année précédente : l'INSEE,
+  Lafféter et Pak 2015, trouve ≈ 1,7 au volume et ≈ 1,0 aux prix). Revenus
+  des indépendants et du capital : PIB nominal et cycle, élasticités 1,33 et
+  3,52 (OCDE, tableau 5).
+* *TVA* : consommation des ménages (1 545,9 Md€ en 2025), volume de
+  l'activité et prix à la consommation.
+* *IS* : excédent des entreprises = valeur ajoutée des sociétés non
+  financières (51,6 % du PIB en 2025 : 1 543,8 Md€) moins leurs
+  rémunérations (87,1 % des salaires bruts : 1 007,9 Md€, INSEE IP n° 1997,
+  2053, 2105) ; le bénéfice fiscal amplifie 2,03 fois (Commission) les
+  écarts de l'excédent à sa tendance (PIB en valeur à la croissance
+  potentielle) et suit cette tendance à long terme. L'IS
+  encaissé suit les règles de paiement (art. 1668 du CGI) : les entreprises
+  au dernier acompte (chiffre d'affaires > 250 M€, 95 à 98 % de l'IS de
+  l'exercice dans l'année depuis 2019) en paient l'IS de l'année ; les
+  autres versent des acomptes sur l'exercice précédent, réduits si leur
+  bénéfice baisse, et le solde l'année suivante. `partIsAnneeCourantePm` =
+  450 : les entreprises de plus de 250 M€ de chiffre d'affaires (≈ 1 000
+  sociétés) sont toutes les grandes entreprises, qui paient 30 à 38 % de
+  l'IS brut, et le haut des ETI (grandes entreprises et ETI : 53 à 60 %,
+  INSEE, « Les entreprises en France », 2018-2023) : milieu de la fourchette.
+* *Accises sur l'énergie* : tarifs en euros par unité, non indexés ;
+  volume de carburants hors électrification stable (`elasticiteCarburants`
+  = 0 : 50,3 Mm³ en 2019, 47,8 en 2024, CCFA, dont l'électrification déjà
+  retirée par le modèle).
+* *Taxe foncière* : revalorisation forfaitaire légale des valeurs locatives
+  (glissement de l'IPCH de novembre à novembre, art. 1518 bis du CGI ;
+  +0,8 % en 2026, puis l'inflation de l'année précédente) et croissance
+  physique des bases de 0,8 % par an (produit moins revalorisation et effet
+  taux : ≈ 1,0 point en 2020, 0,7 en 2022, 0,6 en 2024, DGCL, Fipeco).
+* *Droits de mutation à titre onéreux* : valeur des transactions
+  immobilières (au-delà des années observées : PIB nominal).
+
+Les élasticités au cycle qui en résultent (tests `Tests.Assiettes`) :
+cotisations 0,59, TVA 0,97, IS 1,45 la première année et 3,2 en régime
+établi ; semi-élasticité du solde 0,45 la première année, 0,56 ensuite
+(LPFP : 0,57).
+
 **Structure de la dette.** `partDetteCourtTerme` = 57 ‰ : BTF (196 Md€ fin
 2025, Agence France Trésor) rapportés à la dette de Maastricht ; renouvelés
 chaque année au taux court (2,25 %, hypothèse du PLF 2026). La dette à
@@ -375,8 +437,19 @@ def baisseEmissionsAME : ParSecteurGes :=
 docstring du module). -/
 def elasticitesCycliques : ParImpot :=
   { tva := 1000, ir := 1860, csgCrds := 1860, cotisations := 630, impotSocietes := 2760,
-    accisesEnergie := 1000, taxeFonciere := 1000, droitsMutation := 1000, patrimoine := 1000,
+    accisesEnergie := 1000, taxeFonciere := 1000, droitsMutation := 1000, mutationsOnereuses := 1000,
+    patrimoine := 1000,
     autres := 1000 }
+
+/-- Assiettes naturelles des prélèvements (voir le docstring du module). -/
+def assiettesFrance : Assiettes :=
+  { retardSalairesPm := 360, elasticiteMasseSalarialeCyclePm := 660,
+    elasticiteIndependantsCyclePm := 1330, elasticiteCapitalCyclePm := 3520,
+    csgActivitePm := 700, csgRemplacementPm := 182,
+    irSalairesPm := 617, irPensionsPm := 257, irIndependantsPm := 48, progressiviteIrPm := 1680,
+    elasticiteCotisationsPm := 950, elasticiteIsPm := 2030, partIsAnneeCourantePm := 450,
+    partValeurAjouteePm := 516, partSalairesPm := 871,
+    croissancePhysiqueFoncierPb := 80, elasticiteCarburantsPm := 0 }
 
 /-- Évolution tendancielle des dépenses à législation constante, en volume,
 par fonction, pb par an (voir le docstring du module). -/
@@ -421,6 +494,11 @@ mi-2026 selon la mission d'experts, 4,84 % le 7 octobre 2026), 4,3 %
 (centrale : 4,4 %, taux à terme fin 2029 cité par la mission d'experts). -/
 def trajectoireTaux : List Int := [380, 430]
 
+/-- Revalorisation forfaitaire des valeurs locatives en 2026 : +0,8 %
+(glissement de l'IPCH de novembre 2024 à novembre 2025, Banque des
+Territoires, 28 novembre 2025). Au-delà : inflation de l'année précédente. -/
+def revalorisationFonciere : List Int := [80]
+
 /-- Taux des BTF : 2,25 % (hypothèse du PLF 2026), maintenu. -/
 def trajectoireTauxCourt : List Int := [225]
 
@@ -439,14 +517,15 @@ def partDetteIndexee : Int := 89
 d'un prélèvement fixé par le moteur, pm (voir le docstring du module). -/
 def incidencePrelevements : ParImpot :=
   { tva := 1100, ir := 1100, csgCrds := 1100, cotisations := 1050, impotSocietes := 550,
-    accisesEnergie := 1000, taxeFonciere := 550, droitsMutation := 200, patrimoine := 200,
-    autres := 800 }
+    accisesEnergie := 1000, taxeFonciere := 550, droitsMutation := 200, mutationsOnereuses := 800,
+    patrimoine := 200, autres := 800 }
 
 -- moyenne pondérée par les prélèvements de 2025 : 970 ‰ (le moteur garde à
--- peu près son niveau moyen)
+-- peu près son niveau moyen) ; les droits de mutation à titre onéreux,
+-- comptés jusqu'ici dans les autres impôts, en gardent l'incidence
 example : (221100 * 1100 + 103800 * 1100 + 167200 * 1100 + 446300 * 1050 + 58900 * 550
-    + 30500 * 1000 + 44100 * 550 + 20700 * 200 + 2300 * 200 + 233400 * 800)
-    / (221100 + 103800 + 167200 + 446300 + 58900 + 30500 + 44100 + 20700 + 2300 + 233400) = 969 := by decide
+    + 30500 * 1000 + 44100 * 550 + 20700 * 200 + 17600 * 800 + 2300 * 200 + 215800 * 800)
+    / (221100 + 103800 + 167200 + 446300 + 58900 + 30500 + 44100 + 20700 + 17600 + 2300 + 215800) = 969 := by decide
 
 /-- Effet sur la demande d'une dépense selon sa fonction, relativement à la
 consommation publique, pm (voir le docstring du module). -/
@@ -482,7 +561,9 @@ def centrale : Economie where
   inflationConsoAnneesPb := trajectoireConso
   tauxMarginalAnneesPb := trajectoireTaux
   tauxCourtAnneesPb := trajectoireTauxCourt
+  revalorisationFoncierAnneesPb := revalorisationFonciere
   elasticiteCycliquePm := elasticitesCycliques
+  assiettes := assiettesFrance
   croissanceDepensesVolumePb := volumeDepenses
   indexationDecaleePm := indexationDecalee
   okunPm := 400
@@ -566,7 +647,9 @@ def croissanceBasse : Economie where
   inflationConsoAnneesPb := trajectoireConso
   tauxMarginalAnneesPb := trajectoireTaux
   tauxCourtAnneesPb := trajectoireTauxCourt
+  revalorisationFoncierAnneesPb := revalorisationFonciere
   elasticiteCycliquePm := elasticitesCycliques
+  assiettes := assiettesFrance
   croissanceDepensesVolumePb := volumeDepenses
   indexationDecaleePm := indexationDecalee
   okunPm := 400
@@ -650,7 +733,9 @@ def croissanceHaute : Economie where
   inflationConsoAnneesPb := trajectoireConso
   tauxMarginalAnneesPb := trajectoireTaux
   tauxCourtAnneesPb := trajectoireTauxCourt
+  revalorisationFoncierAnneesPb := revalorisationFonciere
   elasticiteCycliquePm := elasticitesCycliques
+  assiettes := assiettesFrance
   croissanceDepensesVolumePb := volumeDepenses
   indexationDecaleePm := indexationDecalee
   okunPm := 400

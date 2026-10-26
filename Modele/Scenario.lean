@@ -251,6 +251,63 @@ structure Energie where
   sources : List String
   deriving Repr
 
+/-- Chaque prélèvement sur son assiette naturelle (`anneeSuivante`) :
+masse salariale (emploi × rémunération par emploi) pour les cotisations, la
+CSG et l'impôt sur le revenu ; consommation des ménages pour la TVA ;
+excédent des entreprises pour l'IS ; volume de carburants pour les accises
+sur l'énergie (montants par litre, non indexés) ; valeurs locatives
+revalorisées sur l'inflation passée pour la taxe foncière. Parts en pm. -/
+structure Assiettes where
+  /-- Part de l'inflation de l'année précédente dans la hausse des
+  rémunérations (le reste : inflation de l'année). -/
+  retardSalairesPm : Int
+  /-- Élasticités au cycle (variation de l'écart de production) : masse
+  salariale (l'emploi y répond par la loi d'Okun, la rémunération par
+  emploi — heures, primes — pour le reste), revenus des indépendants,
+  revenus du capital. -/
+  elasticiteMasseSalarialeCyclePm : Int
+  elasticiteIndependantsCyclePm : Int
+  elasticiteCapitalCyclePm : Int
+  /-- Assiette de la CSG et de la CRDS : parts des revenus d'activité
+  (salaires) et des revenus de remplacement (le reste : revenus du
+  capital). -/
+  csgActivitePm : Int
+  csgRemplacementPm : Int
+  /-- Assiette de l'impôt sur le revenu : parts des salaires, des pensions
+  et des revenus des indépendants (le reste : revenus du capital). -/
+  irSalairesPm : Int
+  irPensionsPm : Int
+  irIndependantsPm : Int
+  /-- Élasticité de l'impôt sur le revenu à son assiette, à barème constant
+  (progressivité) ; le barème est revalorisé de l'inflation de l'année
+  précédente. -/
+  progressiviteIrPm : Int
+  /-- Élasticité des cotisations sociales à la masse salariale (plafond de
+  la sécurité sociale, allègements). -/
+  elasticiteCotisationsPm : Int
+  /-- Élasticité de l'IS dû à l'excédent des entreprises (le bénéfice
+  fiscal varie plus que l'excédent : amortissements, intérêts, reports de
+  déficits). -/
+  elasticiteIsPm : Int
+  /-- Part de l'IS acquittée par les entreprises soumises au cinquième
+  acompte (IS de l'exercice presque entièrement payé dans l'année) ; les
+  autres paient des acomptes sur l'exercice précédent et le solde l'année
+  suivante (`Assiettes.croissanceIs`). -/
+  partIsAnneeCourantePm : Int
+  /-- Excédent des entreprises = part `partValeurAjouteePm` du PIB (valeur
+  ajoutée des sociétés non financières) moins part `partSalairesPm` de la
+  masse salariale (leurs rémunérations). -/
+  partValeurAjouteePm : Int
+  partSalairesPm : Int
+  /-- Croissance physique annuelle des bases de la taxe foncière
+  (constructions nouvelles), pb ; s'y ajoute la revalorisation légale des
+  valeurs locatives (inflation de l'année précédente). -/
+  croissancePhysiqueFoncierPb : Int
+  /-- Élasticité du volume de carburants taxés à l'activité en volume ;
+  les tarifs des accises sont fixés en euros par unité (non indexés). -/
+  elasticiteCarburantsPm : Int
+  deriving Repr
+
 /-- Hypothèses macroéconomiques et de comportement. -/
 structure Economie where
   id : String
@@ -282,12 +339,25 @@ structure Economie where
   /-- Taux court (émission des titres à moins d'un an) des premières années,
   pb ; au-delà : `tauxCourtPb`. -/
   tauxCourtAnneesPb : List Int := []
+  /-- Coefficient de revalorisation forfaitaire des valeurs locatives des
+  premières années, connu à l'avance (art. 1518 bis du CGI : glissement de
+  l'indice des prix harmonisé de novembre à novembre), pb ; au-delà :
+  inflation de l'année précédente. -/
+  revalorisationFoncierAnneesPb : List Int := []
+  /-- Croissance de la valeur des transactions immobilières (assiette des
+  droits de mutation à titre onéreux) des premières années, pb ; au-delà :
+  croissance du PIB en valeur. -/
+  croissanceImmobilierAnneesPb : List Int := []
   /-- Élasticité de chaque prélèvement à l'écart de production, pm (`1000` :
   le prélèvement suit le PIB) : un prélèvement d'élasticité `ε` croît comme
   le PIB nominal potentiel plus `ε` fois la variation de l'écart de
   production (méthode de la Commission européenne et de l'OCDE). Les
-  recettes non fiscales sont supposées acycliques. -/
+  recettes non fiscales sont supposées acycliques. Sert aux chocs de demande
+  des mesures (`chocPibSeul`) et aux prélèvements sans assiette propre ;
+  l'évolution annuelle des autres suit leur assiette (`assiettes`). -/
   elasticiteCycliquePm : ParImpot
+  /-- Assiettes naturelles des prélèvements. -/
+  assiettes : Assiettes
   /-- Évolution tendancielle des dépenses primaires à législation constante,
   en volume (au-delà des prix), par fonction, pb par an. -/
   croissanceDepensesVolumePb : ParFonction
@@ -486,6 +556,16 @@ def inflationIndexationA (e : Economie) (k : Nat) : Int :=
 /-- Taux marginal de la dette de l'année `k + 1` (avant prime de risque), pb. -/
 def tauxMarginalA (e : Economie) (k : Nat) : Int := annee e.tauxMarginalAnneesPb e.tauxMarginalPb k
 
+/-- Revalorisation des valeurs locatives de l'année `k + 1`, pb (au-delà de
+la liste : `inflationPrecedente`). -/
+def revalorisationFoncierA (e : Economie) (k : Nat) (inflationPrecedente : Int) : Int :=
+  annee e.revalorisationFoncierAnneesPb inflationPrecedente k
+
+/-- Croissance de la valeur des transactions immobilières de l'année
+`k + 1`, pb (au-delà de la liste : `croissanceNominale`). -/
+def croissanceImmobilierA (e : Economie) (k : Nat) (croissanceNominale : Int) : Int :=
+  annee e.croissanceImmobilierAnneesPb croissanceNominale k
+
 /-- Taux court de l'année `k + 1`, pb. -/
 def tauxCourtA (e : Economie) (k : Nat) : Int := annee e.tauxCourtAnneesPb e.tauxCourtPb k
 
@@ -604,10 +684,33 @@ abbrev ValideTrajectoires (H : Scenario) : Prop :=
   0 ≤ H.eco.partDetteCourtTermePm ∧ H.eco.partDetteCourtTermePm < 1000 ∧
   -200 ≤ H.eco.tauxCourtPb ∧ H.eco.tauxCourtPb ≤ 1500 ∧
   Economie.trajectoireEntre H.eco.tauxCourtAnneesPb (-200) 1500 = true ∧
+  Economie.trajectoireEntre H.eco.revalorisationFoncierAnneesPb (-500) 2000 = true ∧
+  Economie.trajectoireEntre H.eco.croissanceImmobilierAnneesPb (-5000) 5000 = true ∧
   0 ≤ H.eco.partDetteIndexeePm ∧ H.eco.partDetteIndexeePm ≤ 1000 ∧
   0 ≤ H.reference.etat.detteDebut ∧
   H.eco.croissanceDepensesVolumePb.toutEntre (-500) 1000 = true ∧
   H.eco.indexationDecaleePm.toutEntre 0 1000 = true
+
+/-- Assiettes : parts dans [0, 1000], sommes au plus 1000, progressivité
+entre 1 et 3, excédent des entreprises positif à la référence. -/
+abbrev ValideAssiettes (H : Scenario) : Prop :=
+  0 ≤ H.eco.assiettes.retardSalairesPm ∧ H.eco.assiettes.retardSalairesPm ≤ 1000 ∧
+  0 ≤ H.eco.assiettes.csgActivitePm ∧ 0 ≤ H.eco.assiettes.csgRemplacementPm ∧ H.eco.assiettes.csgActivitePm + H.eco.assiettes.csgRemplacementPm ≤ 1000 ∧
+  0 ≤ H.eco.assiettes.irSalairesPm ∧ 0 ≤ H.eco.assiettes.irPensionsPm ∧ 0 ≤ H.eco.assiettes.irIndependantsPm ∧
+  H.eco.assiettes.irSalairesPm + H.eco.assiettes.irPensionsPm + H.eco.assiettes.irIndependantsPm ≤ 1000 ∧
+  0 ≤ H.eco.assiettes.elasticiteMasseSalarialeCyclePm ∧ H.eco.assiettes.elasticiteMasseSalarialeCyclePm ≤ 2000 ∧
+  0 ≤ H.eco.assiettes.elasticiteIndependantsCyclePm ∧ H.eco.assiettes.elasticiteIndependantsCyclePm ≤ 5000 ∧
+  0 ≤ H.eco.assiettes.elasticiteCapitalCyclePm ∧ H.eco.assiettes.elasticiteCapitalCyclePm ≤ 6000 ∧
+  1000 ≤ H.eco.assiettes.progressiviteIrPm ∧ H.eco.assiettes.progressiviteIrPm ≤ 3000 ∧
+  0 ≤ H.eco.assiettes.partIsAnneeCourantePm ∧ H.eco.assiettes.partIsAnneeCourantePm ≤ 1000 ∧
+  500 ≤ H.eco.assiettes.elasticiteCotisationsPm ∧ H.eco.assiettes.elasticiteCotisationsPm ≤ 1500 ∧
+  500 ≤ H.eco.assiettes.elasticiteIsPm ∧ H.eco.assiettes.elasticiteIsPm ≤ 4000 ∧
+  0 < H.eco.assiettes.partValeurAjouteePm ∧ H.eco.assiettes.partValeurAjouteePm ≤ 1000 ∧
+  0 ≤ H.eco.assiettes.partSalairesPm ∧ H.eco.assiettes.partSalairesPm ≤ 1000 ∧
+  -200 ≤ H.eco.assiettes.croissancePhysiqueFoncierPb ∧ H.eco.assiettes.croissancePhysiqueFoncierPb ≤ 500 ∧
+  0 ≤ H.eco.assiettes.elasticiteCarburantsPm ∧ H.eco.assiettes.elasticiteCarburantsPm ≤ 2000 ∧
+  0 < H.reference.etat.remunerationParEmploiEuros ∧ 0 < H.reference.etat.consommationMenages ∧
+  H.reference.etat.masseSalariale * H.eco.assiettes.partSalairesPm < H.reference.etat.pib * H.eco.assiettes.partValeurAjouteePm
 
 /-- Bornes sur les axes démographie, natalité, énergie et droit. -/
 abbrev ValideAxes (H : Scenario) : Prop :=
@@ -665,7 +768,7 @@ abbrev ValideTravail (H : Scenario) : Prop :=
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
   H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail ∧
-  H.ValideTrajectoires
+  H.ValideTrajectoires ∧ H.ValideAssiettes
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
