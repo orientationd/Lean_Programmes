@@ -427,10 +427,11 @@ def courbes_natalite(D: Donnees):
 
 COURTS_FIG = {"tva": "TVA", "ir": "IR", "csgCrds": "CSG-CRDS", "cotisations": "Cotisations",
               "impotSocietes": "IS", "accisesEnergie": "Accise énergie",
-              "taxeFonciere": "Taxe foncière", "autres": "Autres impôts"}
+              "taxeFonciere": "Taxe foncière", "droitsMutation": "Successions",
+              "autres": "Autres impôts"}
 COURTS_TAB = {"tva": "TVA", "ir": "IR", "csgCrds": "CSG", "cotisations": "Cotis.",
               "impotSocietes": "IS", "accisesEnergie": "Accise", "taxeFonciere": "T. fonc.",
-              "autres": "Autres"}
+              "droitsMutation": "Succ.", "autres": "Autres"}
 SECTEURS_TAB = {"agriculture": "Agric.", "industrie": "Industrie", "construction": "Constr.",
                 "tertiaireMarchand": "Tert. march.", "tertiaireNonMarchand": "Tert. non m."}
 
@@ -680,10 +681,12 @@ def section_impots(D: Donnees) -> list:
     imp = D.impots
     out = [P("Impôts et taxes majeurs", "h1"),
            P("Les recettes publiques sont suivies par grand prélèvement. Leur assiette évolue "
-             "comme le PIB. Une mesure fiscale s'impute sur le prélèvement qu'elle vise (levier "
-             "« prélèvement sur ») ou, faute de précision dans le programme, sur « autres impôts » "
-             "(patrimoine, successions, taxes diverses) ; les effets d'activité se répartissent au "
-             "prorata.")]
+             "comme le PIB, à deux exceptions : les accises et la TVA sur les carburants reculent avec "
+             "l'électrification du parc, et les droits de succession et de donation suivent le flux "
+             "successoral (hausse des décès, patrimoine transmis, abattements non indexés), soit "
+             "≈ 5 % par an au scénario central. Une mesure fiscale s'impute sur le prélèvement qu'elle "
+             "vise (levier « prélèvement sur ») ou, faute de précision dans le programme, sur « autres "
+             "impôts » (patrimoine, taxes diverses) ; les effets d'activité se répartissent au prorata.")]
     out.append(png(structure_impots(D)))
     for g in D.groupes:
         out.append(png(petits_multiples_impots(D, g)))
@@ -702,7 +705,7 @@ def section_impots(D: Donnees) -> list:
                      + [signe((impots_total(e) - impots_total(base)) / 1000, 1)])
     out.append(KeepTogether([Spacer(1, 6), tableau(ent2, rows2, larg)]))
     out.append(P(f"CSG : CSG et CRDS ; Cotis. : cotisations sociales ; IS : impôt sur les sociétés ; "
-                 f"Accise : accise sur les énergies (TICPE) ; T. fonc. : taxe foncière ; Prélèv. oblig. : "
+                 f"Accise : accise sur les énergies (TICPE) ; T. fonc. : taxe foncière ; Succ. : droits de succession et de donation ; Prélèv. oblig. : "
                  f"somme des colonnes (hors recettes non fiscales). Situation de "
                  f"départ {a0} : INSEE, comptes des administrations publiques 2025 ; DGCL (taxe "
                  "foncière) ; ministère de la Transition écologique (accise, dernier chiffre publié : "

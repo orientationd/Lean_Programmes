@@ -106,13 +106,15 @@ end ParSecteur
 
 /-- Grands prélèvements obligatoires. -/
 inductive Impot where
-  | tva | ir | csgCrds | cotisations | impotSocietes | accisesEnergie | taxeFonciere | autres
+  | tva | ir | csgCrds | cotisations | impotSocietes | accisesEnergie | taxeFonciere
+  | droitsMutation | autres
   deriving Repr, DecidableEq, Inhabited
 
 namespace Impot
 
 def tous : List Impot :=
-  [.tva, .ir, .csgCrds, .cotisations, .impotSocietes, .accisesEnergie, .taxeFonciere, .autres]
+  [.tva, .ir, .csgCrds, .cotisations, .impotSocietes, .accisesEnergie, .taxeFonciere,
+   .droitsMutation, .autres]
 
 def nom : Impot → String
   | .tva => "TVA"
@@ -122,6 +124,7 @@ def nom : Impot → String
   | .impotSocietes => "Impôt sur les sociétés"
   | .accisesEnergie => "Accise sur les énergies (TICPE)"
   | .taxeFonciere => "Taxe foncière"
+  | .droitsMutation => "Droits de succession et de donation"
   | .autres => "Autres impôts"
 
 def id : Impot → String
@@ -132,6 +135,7 @@ def id : Impot → String
   | .impotSocietes => "impotSocietes"
   | .accisesEnergie => "accisesEnergie"
   | .taxeFonciere => "taxeFonciere"
+  | .droitsMutation => "droitsMutation"
   | .autres => "autres"
 
 end Impot
@@ -145,6 +149,9 @@ structure ParImpot where
   impotSocietes : Int
   accisesEnergie : Int
   taxeFonciere : Int
+  /-- Droits de mutation à titre gratuit (successions et donations). Leur
+  assiette suit le flux successoral, pas le PIB (voir la projection). -/
+  droitsMutation : Int
   autres : Int
   deriving Repr, DecidableEq, Inhabited
 
@@ -158,6 +165,7 @@ def get (v : ParImpot) : Impot → Int
   | .impotSocietes => v.impotSocietes
   | .accisesEnergie => v.accisesEnergie
   | .taxeFonciere => v.taxeFonciere
+  | .droitsMutation => v.droitsMutation
   | .autres => v.autres
 
 def ajouter (v : ParImpot) (i : Impot) (d : Int) : ParImpot :=
@@ -169,11 +177,12 @@ def ajouter (v : ParImpot) (i : Impot) (d : Int) : ParImpot :=
   | .impotSocietes => { v with impotSocietes := v.impotSocietes + d }
   | .accisesEnergie => { v with accisesEnergie := v.accisesEnergie + d }
   | .taxeFonciere => { v with taxeFonciere := v.taxeFonciere + d }
+  | .droitsMutation => { v with droitsMutation := v.droitsMutation + d }
   | .autres => { v with autres := v.autres + d }
 
 def total (v : ParImpot) : Int :=
   v.tva + v.ir + v.csgCrds + v.cotisations + v.impotSocietes + v.accisesEnergie
-    + v.taxeFonciere + v.autres
+    + v.taxeFonciere + v.droitsMutation + v.autres
 
 /-- Chaque prélèvement croît du même taux (pb), assiettes supposées
 proportionnelles au PIB nominal. -/
@@ -184,6 +193,7 @@ def croitre (v : ParImpot) (tauxPb : Int) : ParImpot :=
     impotSocietes := v.impotSocietes + appliquerPb v.impotSocietes tauxPb
     accisesEnergie := v.accisesEnergie + appliquerPb v.accisesEnergie tauxPb
     taxeFonciere := v.taxeFonciere + appliquerPb v.taxeFonciere tauxPb
+    droitsMutation := v.droitsMutation + appliquerPb v.droitsMutation tauxPb
     autres := v.autres + appliquerPb v.autres tauxPb }
 
 /-- Répartit `d` au prorata des prélèvements, parts arrondies vers zéro (reste
@@ -199,10 +209,12 @@ def repartir (v : ParImpot) (d : Int) : ParImpot :=
   let f := part v.impotSocietes
   let g := part v.accisesEnergie
   let h := part v.taxeFonciere
+  let m := part v.droitsMutation
   { tva := v.tva + a, ir := v.ir + b, csgCrds := v.csgCrds + c
     cotisations := v.cotisations + e, impotSocietes := v.impotSocietes + f
     accisesEnergie := v.accisesEnergie + g, taxeFonciere := v.taxeFonciere + h
-    autres := v.autres + (d - a - b - c - e - f - g - h) }
+    droitsMutation := v.droitsMutation + m
+    autres := v.autres + (d - a - b - c - e - f - g - h - m) }
 
 end ParImpot
 
@@ -514,6 +526,8 @@ structure Etat where
   `impots.ir`) : due jusqu'à ce que le déficit public passe sous 3 % du PIB
   (loi n° 2025-127) ; la projection la supprime l'année qui suit. -/
   cdhrMeur : Int := 0
+  /-- Décès de l'année, milliers (montent de `hausseDecesMilliers` par an). -/
+  decesMilliers : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat

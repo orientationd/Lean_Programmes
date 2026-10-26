@@ -96,8 +96,8 @@ def mesures : List Mesure := [
     source := s!"{budget} : 15 Md€/an"
     leviers := [.prelevementSur .autres 15000] },
   { id := "L-15", titre := "Réforme des droits de succession (exonération sous 150 000 €, barème sur l'ensemble des transmissions reçues)"
-    source := s!"{budget} : 20 Md€/an"
-    leviers := [.prelevementSur .autres 20000] },
+    source := s!"{budget} : 20 Md€/an (droits de succession et de donation)"
+    leviers := [.prelevementSur .droitsMutation 20000] },
   { id := "L-16", titre := "Rabot des niches fiscales (pacte Dutreil, crédit d'impôt recherche…)"
     source := s!"{budget} : 22 Md€/an, imputés pour moitié à l'IS et pour moitié aux autres impôts (répartition : hypothèse)"
     leviers := [.prelevementSur .impotSocietes 11000, .prelevementSur .autres 11000] },
