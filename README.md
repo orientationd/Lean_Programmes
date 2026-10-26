@@ -98,9 +98,14 @@ sur 2021-2031, données du Cerema) : ce qu'il en reste fin 2025 permet
 abroge le ZAN revient au rythme de 2011-2021 (22 672 ha par an). Sous le
 ZAN, les surfaces des mesures (lignes nouvelles, prisons) s'imputent sur
 l'enveloppe et évincent les autres usages ; sans ZAN, elles s'ajoutent.
-L'emprise des installations nouvelles de solaire au sol et d'éolien
-terrestre est comptée à part (`Hypotheses/Electricite.lean`,
-`Hypotheses/Sols.lean`).
+Une mesure peut aussi exempter des surfaces de l'enveloppe (zones
+industrielles) : elles s'ajoutent alors sans éviction et sortent du
+décompte. L'emprise des installations nouvelles de solaire au sol et
+d'éolien terrestre est comptée à part (`Hypotheses/Electricite.lean`,
+`Hypotheses/Sols.lean`). Les pompes à chaleur des mesures remplacent des
+chaudières au fioul ou au gaz (chaleur, rendement et coefficient de
+performance mesuré par l'ADEME) : fioul et gaz économisés, électricité
+consommée, coûts de réseau de gaz évités (`Hypotheses/Energie.lean`).
 
 ## Engagements, contrats et évaluation
 
@@ -234,7 +239,10 @@ CI) :
   « décarbonation rapide » de RTE ; solde exportateur borné ; un levier de
   capacité ne démantèle rien ; enveloppe 2021-2031 du ZAN tenue par le
   tendanciel ; abrogation ramenant au rythme 2011-2021 ; imputation des
-  surfaces des mesures sur l'enveloppe ; emprise énergétique ;
+  surfaces des mesures sur l'enveloppe ; surfaces exemptées hors du
+  décompte ; emprise énergétique ; pompes à chaleur (électricité
+  consommée, fioul et gaz économisés, coût net) ; emplois aidés et
+  implantations ;
 * **tendanciel** (`Tests/Tendanciel.lean`) : la dérive du déficit
   tendanciel 2026-2030 reste à moins d'un demi-point de celle de la
   projection « à politique inchangée » de la mission d'experts sur la
