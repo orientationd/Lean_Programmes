@@ -11,7 +11,8 @@ par les adhérents en 2026 (projet-socialiste.fr, consulté le 21 octobre
 contre-budget 2027 des députés socialistes (16 septembre 2026, chiffres du
 parti rapportés par la presse ; document non consulté directement).
 Candidat issu de la primaire « Choisir 2027 » (9-11 octobre 2026) :
-R. Glucksmann, dont les propositions ne sont pas transcrites ici.
+R. Glucksmann, dont les propositions sont transcrites dans
+`Programmes/PlacePublique/`.
 
 Règle de transcription : une proposition devient un levier seulement si la
 source donne un montant annuel, ou un paramètre que le modèle commun
