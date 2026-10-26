@@ -218,11 +218,24 @@ publié, supposé stable depuis (3,9 millions d'heures payées en 2023,
 totalité). Valeur au taux d'indemnisation de 13,22 € brut de l'heure
 (12,47 € relevés de 6 % en novembre 2020) : 189 M€ (calcul ; 366 M€ au
 coût complet retenu par la Cour des comptes en 2020, 25,6 €/h). Flux de
-nouvelles heures non payées : non publié, supposé nul. Non comptés : le
-stock de l'hôpital (18,5 millions d'heures, 463 M€ fin 2018) et de la
-fonction publique territoriale (6,2 millions d'heures), les congés non
-pris des gendarmes mobiles, les comptes épargne-temps. -/
+nouvelles heures non payées : non publié, supposé nul. L'hôpital a son
+propre stock (`passifsHopital2025`). Non comptés : le stock de la fonction
+publique territoriale (6,2 millions d'heures), les congés non pris des
+gendarmes mobiles, les comptes épargne-temps. -/
 def passifsPolice2025 : Int := 189
+
+/-- Heures supplémentaires non payées ni récupérées à l'hôpital public
+(établissements publics de santé, administrations de sécurité sociale) :
+18,5 millions d'heures, 463 M€, fin 2018, non provisionnées (Cour des
+comptes, 2020) ; aucun stock national plus récent publié. Bilan social
+des hôpitaux 2022 (ATIH, 421 établissements, moyennes par agent) :
+20,8 heures stockées par agent non médical, coût moyen de 32 € l'heure, et
+6,1 demi-journées par médecin à 241 € ; rapportés aux 855 675 postes non
+médicaux et 103 623 postes médicaux (DREES, fin 2024) : 17,8 millions
+d'heures, 570 M€, plus 150 M€ pour les médecins, soit 720 M€ (calcul ;
+stock stable entre 2021 et 2022). Les comptes épargne-temps (≈ 2,6 Md€,
+provisionnés au moins en partie) ne sont pas comptés. -/
+def passifsHopital2025 : Int := 720
 
 /-- Émissions territoriales 2025 par secteur, kt CO₂e hors puits (Citepa,
 inventaire Secten publié le 16 juin 2026, estimation 2025 ; déchets : niveau
@@ -266,7 +279,7 @@ def reference2026 : Reference where
     electrificationAnnuelleMilliers := 0
     bornesAnnuellesMilliers := 0
     participationsEtat := 209100   -- portefeuille de l'APE, valeur estimée au 30 juin 2025 (86 entités)
-    passifsImplicites := passifsPolice2025  -- heures supplémentaires non payées des policiers
+    passifs := { police := passifsPolice2025, hopital := passifsHopital2025 }  -- heures supplémentaires non payées
     cdhrMeur := 400                -- contribution différentielle sur les hauts revenus, encaissements 2025
     dividendesEtat := 4000         -- dividendes 2025 ≈ 6,5 Md€ (2024 et 2025) − 2,47 Md€ (2024) (APE, rapport d'activité) ; inclus dans les recettes non fiscales
     echeances := echeancesDepart

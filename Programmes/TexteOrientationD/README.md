@@ -392,7 +392,7 @@ Distance à l'équilibre (2035, scénario central, moteur de demande) :
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
 | Rien | 3,8 % | 9,0 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 2,9 % | 9,2 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 3,0 % | 9,1 % |
 | … et norme renforcée de 100 pb supplémentaires | 1,6 % | 9,7 % |
 | … et de 200 pb supplémentaires | 0,4 % | 10,2 % |
 
@@ -466,15 +466,15 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,86 | 4,71 | 4,68 | 4,64 | 4,59 | 4,57 | 4,35 | 4,07 | 3,79 |
-| Offre | 5,38 | 4,77 | 4,58 | 4,54 | 4,50 | 4,46 | 4,43 | 4,23 | 4,00 | 3,78 |
+| Demande | 5,38 | 4,88 | 4,71 | 4,69 | 4,66 | 4,62 | 4,61 | 4,40 | 4,11 | 3,83 |
+| Offre | 5,38 | 4,79 | 4,58 | 4,55 | 4,52 | 4,49 | 4,47 | 4,28 | 4,04 | 3,82 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
 sous chaque moteur : toujours avec la croissance haute, jamais avec la
 croissance basse ; en croissance centrale, le pétrole cher ou le
 vieillissement accéléré l'interrompent. La baisse est la plus faible en
-2029 et en 2032 (−0,03 et −0,02 point) : la LPM et les intérêts montent, et
+2029 et en 2032 (−0,02 et −0,01 point) : la LPM et les intérêts montent, et
 l'indemnisation du chômage, désormais liée au nombre de chômeurs, croît
 avec lui.
 
@@ -569,10 +569,10 @@ O-31). Combler l'écart demanderait une baisse de 5,1 % par an des
 **Nouveaux mécanismes du modèle commun.**
 
 * **Passifs implicites** : l'état suit les obligations nées mais non payées
-  ni comptées dans la dette de Maastricht. Seul stock publié et suivi :
-  les heures supplémentaires non payées des policiers, 14,3 millions
-  d'heures (Sénat, fin 2022), 189 M€ à 13,22 € l'heure. Le rapport
-  calcule une « dette étendue » (dette + passifs implicites).
+  ni comptées dans la dette de Maastricht : les heures supplémentaires non
+  payées des policiers, 14,3 millions d'heures (Sénat, fin 2022), 189 M€ à
+  13,22 € l'heure, et celles des hôpitaux publics (720 M€, voir O-74). Le
+  rapport calcule une « dette étendue » (dette + passifs implicites).
 * **Rémunérations publiques** : une hausse de rémunération d'agents déjà en
   poste coûte le brut, dont une part revient aussitôt (CSG-CRDS 9,5 %,
   retenue pour pension 11,1 % sur le traitement, impôt sur le revenu ≈ 15 % ;
@@ -602,9 +602,61 @@ année est préservée, de justesse en 2032 (−0,02 point). Variantes :
 suppression totale de la défiscalisation (−0,06 point en 2035) et seuil
 actuel de 152 500 € pour l'assurance-vie (−0,02 point). Le RIFSEEP n'a pas de chiffrage
 officiel ; une montée en charge sur cinq ans (variante) ne change presque
-rien en 2035. Les heures supplémentaires de l'hôpital (18,5 millions
-d'heures fin 2018) et de la fonction publique territoriale ne sont pas
-comptées, faute de chiffre récent.
+rien en 2035. Les heures supplémentaires de l'hôpital sont comptées depuis
+O-74 ; celles de la fonction publique territoriale (6,2 millions d'heures
+fin 2018) ne le sont pas, faute de chiffre récent.
+
+### O-74 et O-75 — Heures supplémentaires des hôpitaux, 100 000 places de prison
+
+**Modèle commun.** Les passifs implicites sont suivis par type : heures
+supplémentaires des policiers (189 M€) et, nouveau, des hôpitaux publics,
+**720 M€** : la Cour des comptes relevait 18,5 millions d'heures non payées
+ni récupérées fin 2018 (463 M€, non provisionnées) ; le bilan social des
+hôpitaux 2022 (ATIH) donne 20,8 heures stockées par agent non médical
+(32 € l'heure) et 6,1 demi-journées par médecin (241 €), stables depuis
+2021, que le modèle rapporte aux effectifs de la DREES (855 675 postes non
+médicaux, 103 623 médicaux, fin 2024). Les comptes épargne-temps
+(≈ 2,6 Md€, provisionnés au moins en partie) ne sont pas comptés. Nouveau
+levier `investissementEcheancier` : un investissement public échelonné
+(bâtiments), avec ses emplois dans la construction.
+
+| Mesure | Chiffrage | Déficit 2035 (mesure seule) | Emplois |
+|---|---|---|---|
+| **O-74** Heures supplémentaires non payées des hôpitaux publics, payées en 2027 | 720 M€ une fois (passif implicite apuré), dont ≈ 200 M€ reviennent en prélèvements | +0,02 pt en 2027, ≈ 0 en 2035 | +1 200 en 2027 |
+| **O-75** 100 000 places de prison en cellule individuelle | 27 108 places au-delà du plan 15 000, à 270 k€ : 7,3 Md€ de 2027 à 2035 ; puis 45 k€ par place ouverte et par an (0,48 surveillant à 80 800 €, entretien, énergie) : 1,22 Md€ par an et ≈ 13 000 surveillants une fois tout ouvert | +0,03 pt | +7 500 en 2035 (+8 100 en 2032) |
+
+Pour O-75, au 1er août 2026 : 63 303 places pour 89 668 détenus (densité
+141,6 %, 7 956 matelas au sol), 32,3 % des détenus seuls en cellule
+(ministère de la Justice). L'encellulement individuel, principe posé en
+1875 et repris par la loi pénitentiaire de 2009, est suspendu par moratoire
+jusqu'au 31 décembre 2027 ; la mesure le rend effectif à mesure que les
+places ouvrent. Hypothèses à arbitrer :
+
+* le plan 15 000 en cours (5 411 places nettes livrées en septembre 2025,
+  9 589 restantes, achèvement en 2031-2032 ; Cour des comptes, décembre
+  2025) est supposé financé par les crédits que la tendance reconduit : la
+  mesure ne paie que les places au-delà ;
+* 270 k€ par place nette est le coût moyen du plan 15 000 ; pour des
+  centres pénitentiaires (450 k€), la construction coûte 12,2 Md€
+  (variante) ; le modulaire (≈ 200 k€) serait moins cher ;
+* les premières places ouvrent en 2030 (modulaire, ≈ 18 mois), les
+  établissements classiques ensuite (≈ 7 ans de la recherche foncière à la
+  livraison). Livrer ≈ 36 700 places de 2030 à 2035, plan 15 000 compris,
+  suppose un rythme près de sept fois celui du plan 15 000, que le rapport
+  Hetzel (Assemblée nationale, 2023) juge irréalisable en moins de dix
+  ans. Le calendrier est donc à risque ; le coût, compté en entier dans
+  l'horizon, est prudent ;
+* les détenus logés dans les places nouvelles sont déjà incarcérés : seule
+  la moitié des frais hors personnel de la journée de détention (129,33 €,
+  dont 95,48 € de personnel) est ajoutée, pour l'entretien et l'énergie ;
+* ≈ 13 000 surveillants à recruter, en plus d'un déficit actuel de 4 000 à
+  6 000 postes (Assemblée nationale et Sénat, PLF 2026).
+
+Avec O-74 et O-75, le déficit 2035 du Texte Orientation D passe de 3,79 % à
+3,83 % (moteur de demande) ; la baisse chaque année est préservée sous les
+trois moteurs (toujours 16 scénarios sur 36), mais de 0,01 point seulement
+en 2032, quand les places ouvertes font monter le fonctionnement alors que
+la construction est à son maximum.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 

@@ -212,6 +212,11 @@ inductive Levier where
   plus forte qu'en métropole (axe économique), ne soutient pas l'activité
   intérieure et accroît les importations. -/
   | investissementOutreMer (fonction : Fonction) (niveaux : List Int)
+  /-- Investissement public échelonné (bâtiments, équipements) : niveaux
+  annuels en M€ de l'année d'entrée en vigueur (le dernier niveau est
+  reconduit, 0 pour arrêter), imputés à une fonction, emplois dans la
+  construction ; l'arrêt des travaux retire ces emplois. -/
+  | investissementEcheancier (fonction : Fonction) (niveaux : List Int)
   /-- Raccordement de `foyers` foyers d'outre-mer au réseau électrique : leur
   consommation est produite au coût des zones non interconnectées et le
   tarif péréqué n'en couvre qu'une partie ; le surcoût, financé par les
@@ -226,14 +231,14 @@ inductive Levier where
   (effet de demande d'un transfert), sans production ni emplois publics en
   plus. -/
   | remunerationPublique (nature : NatureRemuneration) (fonction : Fonction) (niveaux : List Int)
-  /-- Apurement de `partPm` du stock de passifs implicites (« dettes
-  cachées » : heures supplémentaires non payées…), payé l'année même comme
-  des heures supplémentaires (dépense et déficit de l'année). -/
-  | apurementPassifs (fonction : Fonction) (partPm : Int)
+  /-- Apurement de `partPm` du stock de passifs implicites du type `type`
+  (« dettes cachées » : heures supplémentaires non payées…), payé l'année
+  même comme des heures supplémentaires (dépense et déficit de l'année). -/
+  | apurementPassifs (type : TypePassif) (fonction : Fonction) (partPm : Int)
   /-- Paiement au fil de l'eau de `partPm` des nouveaux passifs implicites
-  (heures supplémentaires payées l'année où elles sont faites) : dépense
-  permanente, et le stock cesse de croître d'autant. -/
-  | paiementFluxPassifs (fonction : Fonction) (partPm : Int)
+  du type `type` (heures supplémentaires payées l'année où elles sont
+  faites) : dépense permanente, et le stock cesse de croître d'autant. -/
+  | paiementFluxPassifs (type : TypePassif) (fonction : Fonction) (partPm : Int)
   /-- Taxe environnementale sur une activité (kérosène des vols intérieurs,
   poids lourds…) : rendement statique `rendementStatique` M€/an sur
   l'impôt `impot`, hausse du coût de l'activité `hausseCoutPm`, émissions
@@ -574,6 +579,11 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
         economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + mwh * R.partGaz cible / 1000 }
       effetDemande H (some .construction) travaux
         (effetDemande H none (appliquerPm transfert M.multiplicateurPrelevementsPm) s₁)
+  | .investissementEcheancier _ [], s => s
+  | .investissementEcheancier f (n :: reste), s =>
+      let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
+                            secteur := some .construction }
+      appliquerDepense H (some .construction) f n { s with echeances := s.echeances ++ [e] }
   | .investissementOutreMer _ [], s => s
   | .investissementOutreMer f (n :: reste), s =>
       let part := partInterieureOutreMer H
@@ -589,17 +599,17 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                             remuneration := some nat }
       effetRemuneration M H nat n
         { s with echeances := s.echeances ++ [e], depensesF := s.depensesF.ajouter f n }
-  | .apurementPassifs f part, s =>
-      let montant := s.passifsImplicites * part / 1000
+  | .apurementPassifs t f part, s =>
+      let montant := s.passifs.get t * part / 1000
       remunerationUneAnnee M H .heuresSup f montant
-        { s with passifsImplicites := s.passifsImplicites - montant }
-  | .paiementFluxPassifs f part, s =>
-      let montant := s.fluxPassifsImplicites * part / 1000
+        { s with passifs := s.passifs.ajouter t (-montant) }
+  | .paiementFluxPassifs t f part, s =>
+      let montant := s.fluxPassifs.get t * part / 1000
       let e : Echeance := { fonction := f, restants := [], niveau := montant, indice := 10000,
                             remuneration := some .heuresSup }
       effetRemuneration M H .heuresSup montant
         { s with echeances := s.echeances ++ [e], depensesF := s.depensesF.ajouter f montant
-                 fluxPassifsImplicites := s.fluxPassifsImplicites - montant }
+                 fluxPassifs := s.fluxPassifs.ajouter t (-montant) }
   | .taxeEnvironnementale act imp emissions hausse statique, s =>
       let recul := H.energie.elasticitesPrix.get act * hausse / 1000
       appliquerPrelevement M H imp (statique * (1000 - recul) / 1000)

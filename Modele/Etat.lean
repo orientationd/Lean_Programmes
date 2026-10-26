@@ -442,6 +442,39 @@ theorem tauxCroissance_norme (f : Fonction) (t r m : Int) (h : f ≠ .interets) 
 
 end ParFonction
 
+/-- Types de passifs implicites (« dettes cachées ») suivis par le modèle. -/
+inductive TypePassif where
+  /-- Heures supplémentaires non payées ni récupérées des policiers. -/
+  | heuresSupPolice
+  /-- Heures supplémentaires non payées ni récupérées à l'hôpital public. -/
+  | heuresSupHopital
+  deriving Repr, DecidableEq, Inhabited
+
+/-- Un montant par type de passif implicite, M€. -/
+structure ParPassif where
+  police : Int := 0
+  hopital : Int := 0
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParPassif
+
+def get (v : ParPassif) : TypePassif → Int
+  | .heuresSupPolice => v.police
+  | .heuresSupHopital => v.hopital
+
+def ajouter (v : ParPassif) (t : TypePassif) (d : Int) : ParPassif :=
+  match t with
+  | .heuresSupPolice => { v with police := v.police + d }
+  | .heuresSupHopital => { v with hopital := v.hopital + d }
+
+def total (v : ParPassif) : Int := v.police + v.hopital
+
+theorem total_ajouter (v : ParPassif) (t : TypePassif) (d : Int) :
+    (v.ajouter t d).total = v.total + d := by
+  cases t <;> simp [ajouter, total] <;> omega
+
+end ParPassif
+
 /-- Nature d'une rémunération publique supplémentaire : elle fixe les
 prélèvements qui en reviennent aussitôt aux administrations publiques. -/
 inductive NatureRemuneration where
@@ -633,13 +666,13 @@ structure Etat where
   (stabilisateur automatique : la projection ajuste ces dépenses à l'écart
   avec le nombre courant de chômeurs). -/
   chomeursComptes : Int := 0
-  /-- Passifs implicites de l'État (« dettes cachées ») : obligations nées
-  mais non payées ni inscrites dans la dette de Maastricht (heures
-  supplémentaires non payées…), M€. -/
-  passifsImplicites : Int := 0
-  /-- Nouveaux passifs implicites accumulés chaque année, M€/an (flux porté,
-  indexé sur le PIB nominal). -/
-  fluxPassifsImplicites : Int := 0
+  /-- Passifs implicites des administrations publiques (« dettes cachées ») :
+  obligations nées mais non payées ni inscrites dans la dette de
+  Maastricht, par type, M€. -/
+  passifs : ParPassif := {}
+  /-- Nouveaux passifs implicites accumulés chaque année, par type, M€/an
+  (flux porté, indexé sur le PIB nominal). -/
+  fluxPassifs : ParPassif := {}
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
@@ -729,6 +762,9 @@ theorem reduireEmissions_total (sec : SecteurGes) (kt : Int) (s : Etat) :
     (s.reduireEmissions sec kt).emissionsKt.total = s.emissionsKt.total - kt := by
   simp [reduireEmissions, ParSecteurGes.total_ajouter]
   omega
+
+/-- Passifs implicites, tous types, M€. -/
+def passifsImplicites (s : Etat) : Int := s.passifs.total
 
 /-- Dette y compris passifs implicites, en pb du PIB. -/
 def detteEtenduePb (s : Etat) : Int := ratioPb (s.dette + s.passifsImplicites) s.pib
