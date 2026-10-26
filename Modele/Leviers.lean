@@ -46,9 +46,9 @@ inductive Levier where
   /-- Modification de l'âge légal, mois (positif = recul), par rapport au
   calendrier en vigueur (qui continue de s'appliquer). -/
   | ageLegal (deltaMois : Int)
-  /-- Investissement de transition : réduction d'émissions (MtCO₂e) pour un
-  coût annuel (M€). -/
-  | transition (reductionMt : Int) (coutAnnuel : Int)
+  /-- Investissement de transition : réduction d'émissions (MtCO₂e) d'un
+  secteur pour un coût annuel (M€). -/
+  | transition (secteur : SecteurGes) (reductionMt : Int) (coutAnnuel : Int)
   /-- Amende SRU automatique selon la part de logements sociaux manquants
   (barème et propriétés : `Modele/Logement.lean`). C'est un transfert des
   communes vers le FNAP et les établissements fonciers : **neutre sur le
@@ -254,8 +254,13 @@ def chocPibSeul (H : Scenario) (dPib : Int) (s : Etat) : Etat :=
 de `okun × dPib / PIB` (loi d'Okun), converti en emplois avec l'effet de
 flexion, au bénéfice de `cible`. -/
 def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Etat :=
+  -- une demande adressée à un secteur y crée des emplois selon son intensité
+  -- en main-d'œuvre relative (construction, non marchand > industrie)
+  let intensite := match cible with
+    | some sec => H.eco.intensiteEmploiSecteurPm.get sec
+    | none => 1000
   let dEmploi := if s.pib = 0 then 0
-    else s.actifs * dPib * H.eco.okunPm * (1000 + H.eco.flexionPm) / (s.pib * 1000000)
+    else s.actifs * dPib * H.eco.okunPm * (1000 + H.eco.flexionPm) * intensite / (s.pib * 1000000000)
   chocDemandeTravail H cible dEmploi (chocPibSeul H dPib s)
 
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
@@ -406,8 +411,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
         * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tEff)) / (t0 * 100000)
       effetDemande H none (-(appliquerPm statique M.multiplicateurPrelevementsPm))
         { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes) }
-  | .transition r c, s =>
-      appliquerDepense H none .logementEnvironnement c { s with emissionsMt := s.emissionsMt - r }
+  | .transition sec r c, s =>
+      appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec (r * 1000))
   -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
   -- logement (rattrapage induit) demanderait un indicateur et une hypothèse
   -- de comportement des communes : évolution du modèle commun, à discuter
@@ -422,7 +427,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let pm := (H.energie.pmRelatifCritAirPm.getD r.vignetteCritAir 1000)
       let s : Etat := depenseUneAnnee H .logementEnvironnement (some .industrie)
         (partInterieure H r.partImporteePm) (r.cout / 1000000)
-        (s.reduireEmissionsKt (r.nombre * H.energie.co2EviteParVehiculeKg / 1000000))
+        (s.reduireEmissions .transports (r.nombre * H.energie.co2EviteParVehiculeKg / 1000000))
       { s with importations := s.importations
                  - r.nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
                impots := (s.impots.ajouter .accisesEnergie
@@ -498,15 +503,24 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- rénovation : rénovations déjà aidées dans la cible, rénovations suscitées
   -- par le bonus (demande linéaire en l'aide), coût annuel, économies
   -- d'énergie portées par la projection
+  -- le bonus versé aux rénovations qui auraient eu lieu est un transfert aux
+  -- ménages (effet de demande d'une baisse de prélèvement) ; les rénovations
+  -- suscitées sont des travaux, aide et part des ménages comprises, adressés
+  -- à la construction
   | .bonusRenovation cible bonus, s =>
       let R := H.energie.renovation
       let base := R.renovationsAideesParAn * R.part cible / 1000
       let suscitees := base * (1000 - R.aubainePm) * bonus / (1000 * R.aideMoyenneEuros)
-      let cout := (base * bonus + suscitees * (R.aideMoyenneEuros + bonus)) / 1000000
+      let transfert := base * bonus / 1000000
+      let aideSuscitees := suscitees * (R.aideMoyenneEuros + bonus) / 1000000
+      let travaux := suscitees * max R.coutTravauxMoyenEuros (R.aideMoyenneEuros + bonus) / 1000000
       let mwh := suscitees * R.economieKWhParRenovation / 1000
-      appliquerDepense H (some .construction) .logementEnvironnement cout
-        { s with economiesFioulMWhAnnuelles := s.economiesFioulMWhAnnuelles + mwh * R.partFioul cible / 1000
-                 economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + mwh * R.partGaz cible / 1000 }
+      let s₁ : Etat := { s with
+        depensesF := s.depensesF.ajouter .logementEnvironnement (transfert + aideSuscitees)
+        economiesFioulMWhAnnuelles := s.economiesFioulMWhAnnuelles + mwh * R.partFioul cible / 1000
+        economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + mwh * R.partGaz cible / 1000 }
+      effetDemande H (some .construction) travaux
+        (effetDemande H none (appliquerPm transfert M.multiplicateurPrelevementsPm) s₁)
   | .investissementOutreMer _ [], s => s
   | .investissementOutreMer f (n :: reste), s =>
       let part := partInterieureOutreMer H

@@ -69,6 +69,11 @@ voitures roulent moins que la moyenne, ce qui réduit l'effet (non modélisé).
 * Part rurale : 47,7 % des logements aidés par l'Anah en 2021 étaient en
   zone rurale (bassins de vie ; réponse à la question écrite Sénat
   n° 00291, 2022) : `partRuralePm` = 480. Aucune donnée plus récente.
+* Travaux : 59 474 € en moyenne par rénovation d'ampleur (Anah, bilan
+  2025) et 12 100 € par geste (ONRE) : 33 000 € pour le mélange 2026. Les
+  rénovations suscitées sont des travaux adressés à la construction (aide
+  et part des ménages) ; le bonus versé aux rénovations qui auraient eu
+  lieu est un transfert aux ménages.
 * Effet d'aubaine : aucune estimation propre à MaPrimeRénov' ; ≈ 80 % de
   bénéficiaires non additionnels pour le crédit d'impôt CITE (CAE, Focus
   n° 107, juin 2024), aubaine supposée nulle par France Stratégie (2024),
@@ -147,6 +152,7 @@ def renovation : Renovation where
   aideMoyenneEuros := 13000
   aubainePm := 500
   economieKWhParRenovation := 5400
+  coutTravauxMoyenEuros := 33000
   partFioulNationalPm := 85
   partGazNationalPm := 350
   partFioulRuralPm := 167

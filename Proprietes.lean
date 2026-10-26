@@ -15,6 +15,6 @@ namespace Proprietes
 
 def toutes : List Modele.Propriete :=
   [deficit, dette, chomage, emissions, deficit2035, equilibre2035, deficitEnBaisse, dette2035, air, bornes2035, emploisAnnonces,
-   balanceCourante, accidentsTravail] ++ europeennes
+   balanceCourante, accidentsTravail, snbcSecteurs2030, budgetCarbone4, parcElectrique2030] ++ europeennes
 
 end Proprietes

@@ -36,12 +36,31 @@ def ueDette : Propriete :=
     "Règlement 2024/1263 art. 8 : dix ans après le départ, ratio dette/PIB réduit d'au moins 10 points."
     UeDette (annee := some 10)
 
-abbrev UeClimat2030 (_H : Scenario) (_a s : Etat) : Prop := s.emissionsMt ≤ 270
+abbrev UeClimat2030 (_H : Scenario) (_a s : Etat) : Prop := s.emissionsKt.total ≤ 276000
 
 def ueClimat : Propriete :=
   .mk' "ue-climat-2030" "UE : climat 2030"
-    "Loi européenne sur le climat et répartition de l'effort (SNBC-3) : émissions territoriales ≤ 270 Mt CO₂e en 2030."
+    "Loi européenne sur le climat, traduite par la SNBC-3 (décret n° 2026-636) : émissions territoriales brutes ≤ 276 Mt CO₂e en 2030."
     UeClimat2030 (annee := some 5)
+
+/-- Émissions couvertes par le règlement sur la répartition de l'effort
+(transport intérieur, bâtiments, agriculture, déchets, petite industrie),
+kt : les quatre premiers secteurs, plus 23 % de l'industrie et de l'énergie
+(part hors marché carbone, calée pour retrouver la part ESR de la SNBC-3 :
+278 Mt sur 342 dans le budget 2024-2028, ≈ 81 %). -/
+def emissionsEsrKt (s : Etat) : Int :=
+  s.emissionsKt.transports + s.emissionsKt.batiments + s.emissionsKt.agriculture
+    + s.emissionsKt.dechets + (s.emissionsKt.industrie + s.emissionsKt.energie) * 230 / 1000
+
+/-- Objectif ESR de la France : −47,5 % par rapport à 2005 (≈ 401 Mt,
+d'après les allocations annuelles de la décision d'exécution 2023/1319),
+soit ≈ 210,5 Mt en 2030. -/
+abbrev UeEsr2030 (_H : Scenario) (_a s : Etat) : Prop := emissionsEsrKt s ≤ 210500
+
+def ueEsr : Propriete :=
+  .mk' "ue-esr-2030" "UE : répartition de l'effort 2030"
+    "Règlement (UE) 2023/857 : émissions hors marché carbone européen réduites de 47,5 % par rapport à 2005 en 2030 (≈ 210 Mt)."
+    UeEsr2030 (annee := some 5)
 
 /-- AFIR, art. 3 : puissance publique d'au moins 1,3 kW par voiture électrique
 à batterie immatriculée (exigence annuelle, vérifiée en 2030). La puissance
@@ -62,6 +81,6 @@ def ueBalance : Propriete :=
     "Règlement 1176/2011 (déséquilibres macroéconomiques) : solde des transactions courantes ≥ −4 % du PIB à l'horizon."
     UeBalanceCourante
 
-def europeennes : List Propriete := [ueDeficit, ueAjustement, ueDette, ueClimat, ueAfir, ueBalance]
+def europeennes : List Propriete := [ueDeficit, ueAjustement, ueDette, ueClimat, ueEsr, ueAfir, ueBalance]
 
 end Proprietes

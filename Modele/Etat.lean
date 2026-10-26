@@ -102,6 +102,82 @@ def repartir (v : ParSecteur) (d : Int) : Option Secteur → ParSecteur
 
 end ParSecteur
 
+/-! ## Émissions de gaz à effet de serre par secteur -/
+
+/-- Secteurs d'émission (inventaire national, format SECTEN du Citepa). -/
+inductive SecteurGes where
+  | transports | batiments | agriculture | industrie | energie | dechets
+  deriving Repr, DecidableEq, Inhabited
+
+namespace SecteurGes
+
+def tous : List SecteurGes := [.transports, .batiments, .agriculture, .industrie, .energie, .dechets]
+
+def nom : SecteurGes → String
+  | .transports => "Transports"
+  | .batiments => "Bâtiments"
+  | .agriculture => "Agriculture"
+  | .industrie => "Industrie"
+  | .energie => "Production d'énergie"
+  | .dechets => "Déchets"
+
+def id : SecteurGes → String
+  | .transports => "transports"
+  | .batiments => "batiments"
+  | .agriculture => "agriculture"
+  | .industrie => "industrie"
+  | .energie => "energie"
+  | .dechets => "dechets"
+
+end SecteurGes
+
+/-- Une valeur par secteur d'émission (kt CO₂e, ou pm pour des taux). -/
+structure ParSecteurGes where
+  transports : Int
+  batiments : Int
+  agriculture : Int
+  industrie : Int
+  energie : Int
+  dechets : Int
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParSecteurGes
+
+def get (v : ParSecteurGes) : SecteurGes → Int
+  | .transports => v.transports
+  | .batiments => v.batiments
+  | .agriculture => v.agriculture
+  | .industrie => v.industrie
+  | .energie => v.energie
+  | .dechets => v.dechets
+
+def ajouter (v : ParSecteurGes) (s : SecteurGes) (d : Int) : ParSecteurGes :=
+  match s with
+  | .transports => { v with transports := v.transports + d }
+  | .batiments => { v with batiments := v.batiments + d }
+  | .agriculture => { v with agriculture := v.agriculture + d }
+  | .industrie => { v with industrie := v.industrie + d }
+  | .energie => { v with energie := v.energie + d }
+  | .dechets => { v with dechets := v.dechets + d }
+
+def total (v : ParSecteurGes) : Int :=
+  v.transports + v.batiments + v.agriculture + v.industrie + v.energie + v.dechets
+
+/-- Baisse de chaque secteur à son taux (pm du niveau). -/
+def baisser (v : ParSecteurGes) (taux : ParSecteurGes) : ParSecteurGes :=
+  { transports := v.transports - appliquerPm v.transports taux.transports
+    batiments := v.batiments - appliquerPm v.batiments taux.batiments
+    agriculture := v.agriculture - appliquerPm v.agriculture taux.agriculture
+    industrie := v.industrie - appliquerPm v.industrie taux.industrie
+    energie := v.energie - appliquerPm v.energie taux.energie
+    dechets := v.dechets - appliquerPm v.dechets taux.dechets }
+
+theorem total_ajouter (v : ParSecteurGes) (s : SecteurGes) (d : Int) :
+    (v.ajouter s d).total = v.total + d := by
+  cases s <;> simp [ajouter, total] <;> omega
+
+end ParSecteurGes
+
 /-! ## Impôts et cotisations -/
 
 /-- Grands prélèvements obligatoires. -/
@@ -422,8 +498,9 @@ structure Etat where
   operationsFinancieres : Int
   /-- SMIC mensuel brut, €. -/
   smicMensuel : Int
-  /-- Émissions territoriales de gaz à effet de serre, MtCO₂e. -/
-  emissionsMt : Int
+  /-- Émissions territoriales de gaz à effet de serre par secteur, kt CO₂e
+  (hors puits). Le total en Mt : `Etat.emissionsMt`. -/
+  emissionsKt : ParSecteurGes
   /-- Âge légal de départ à la retraite, mois. -/
   ageLegalMois : Int
   /-- Population, milliers. -/
@@ -531,14 +608,15 @@ structure Etat where
   cdhrMeur : Int := 0
   /-- Décès de l'année, milliers (montent de `hausseDecesMilliers` par an). -/
   decesMilliers : Int := 0
-  /-- Réductions d'émissions inférieures au million de tonnes, kt, en attente
-  d'être reportées sur `emissionsMt` (unité entière). -/
-  emissionsResiduKt : Int := 0
   /-- Économies annuelles de fioul et de gaz dues aux rénovations
   supplémentaires des mesures, MWh par an (flux porté par la projection :
   chaque année ajoute ce volume aux économies déjà acquises). -/
   economiesFioulMWhAnnuelles : Int := 0
   economiesGazMWhAnnuelles : Int := 0
+  /-- Chômeurs déjà couverts par les dépenses d'indemnisation inscrites
+  (stabilisateur automatique : la projection ajuste ces dépenses à l'écart
+  avec le nombre courant de chômeurs). -/
+  chomeursComptes : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
@@ -614,18 +692,19 @@ def soldePrimaire (s : Etat) : Int := s.recettes - s.depensesPrimaires
 /-- Déficit en pb du PIB. -/
 def deficitPb (s : Etat) : Int := ratioPb s.deficit s.pib
 
-/-- Réduit les émissions de `kt` kilotonnes de CO₂ (négatif : hausse) : la
-partie entière en Mt est reportée sur `emissionsMt`, le reste attend dans
-`emissionsResiduKt`. -/
-def reduireEmissionsKt (kt : Int) (s : Etat) : Etat :=
-  let total := s.emissionsResiduKt + kt
-  let mt := total / 1000
-  { s with emissionsMt := s.emissionsMt - mt, emissionsResiduKt := total - mt * 1000 }
+/-- Émissions totales, Mt CO₂e (arrondi au Mt le plus proche). -/
+def emissionsMt (s : Etat) : Int := (s.emissionsKt.total + 500) / 1000
 
-theorem reduireEmissionsKt_conserve (kt : Int) (s : Etat) :
-    (s.reduireEmissionsKt kt).emissionsMt * 1000 - (s.reduireEmissionsKt kt).emissionsResiduKt
-      = s.emissionsMt * 1000 - s.emissionsResiduKt - kt := by
-  simp only [reduireEmissionsKt]
+/-- Émissions d'un secteur, Mt CO₂e (arrondi). -/
+def emissionsSecteurMt (s : Etat) (sec : SecteurGes) : Int := (s.emissionsKt.get sec + 500) / 1000
+
+/-- Réduit les émissions du secteur `sec` de `kt` kilotonnes (négatif : hausse). -/
+def reduireEmissions (sec : SecteurGes) (kt : Int) (s : Etat) : Etat :=
+  { s with emissionsKt := s.emissionsKt.ajouter sec (-kt) }
+
+theorem reduireEmissions_total (sec : SecteurGes) (kt : Int) (s : Etat) :
+    (s.reduireEmissions sec kt).emissionsKt.total = s.emissionsKt.total - kt := by
+  simp [reduireEmissions, ParSecteurGes.total_ajouter]
   omega
 
 /-- Dette en pb du PIB. -/
