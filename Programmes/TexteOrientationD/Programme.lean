@@ -196,6 +196,17 @@ collectivités et SNCF Réseau (administrations publiques), le reste par
 l'Union européenne : 2,4 Md€/an. Hypothèses d'ordre de grandeur. -/
 def lignesNouvelles : Int := 2400
 
+/-- Emprise des lignes nouvelles (O-11) : 4 800 ha pour Bordeaux-Toulouse
+et Bordeaux-Dax (Politis, 30 avril 2026, d'après le projet GPSO),
+150 km × 10 ha/km pour Montpellier-Perpignan (longueur : préfecture de la
+région Occitanie ; emprise moyenne d'une ligne à grande vitesse, étude des
+impacts des LGV, débat public LGV PACA, 2004, p. 5), soit 630 ha par an
+sur les dix ans de travaux. Accès au Lyon-Turin : pas de chiffre officiel,
+non compté. Bordeaux-Toulouse et le Lyon-Turin figurent parmi les projets
+d'envergure nationale de l'arrêté du 31 mai 2024 : sous le ZAN, leur
+emprise s'impute sur l'enveloppe. -/
+def surfaceLignesNouvellesHa : Int := (4800 + 150 * 10) / 10
+
 /-- Qualité d'accueil touristique : six zones de rénovation (Le Grau-du-Roi
 et cinq autres stations), 150 M€/an par zone pendant dix ans (hypothèse :
 rénovation du bâti, espaces publics, mobilités). Effet attendu, hypothèse à
@@ -924,6 +935,11 @@ def coutAnnuelPlaceEuros : Int :=
   surveillantsParPlacePm * coutSurveillantEuros / 1000 + fonctionnementPlaceEuros
 def constructionPrisons (coutPlaceKEuros : Int) : List Int :=
   calendrierConstructionPm.map fun p => placesPrisonNouvelles * coutPlaceKEuros / 1000 * p / 1000
+/-- Emprise des prisons nouvelles (O-75) : 17 ha pour 700 places (centre de
+Saint-Saulve, ministère de la Justice, 23 juin 2023), au rythme du
+calendrier de construction, ha. -/
+def surfacesPrisons : List Int :=
+  calendrierConstructionPm.map fun p => placesPrisonNouvelles * 17 / 700 * p / 1000
 def fonctionnementPrisons : List Int :=
   ouverturePlacesPm.map fun p => placesPrisonNouvelles * p / 1000 * coutAnnuelPlaceEuros / 1000000
 
@@ -1181,8 +1197,9 @@ def mesures : List Mesure := [
 
   { id := "O-11"
     titre := "Financement des lignes nouvelles Lyon-Turin, Bordeaux-Toulouse et Montpellier-Perpignan"
-    source := s!"Texte Orientation D, mesure 11 ; ≈ 30 Md€ sur dix ans dont 80 % d'argent public français : {lignesNouvelles} M€/an (hypothèses, voir `lignesNouvelles`)"
-    leviers := [.depenseSur .affairesEconomiques lignesNouvelles] },
+    source := s!"Texte Orientation D, mesure 11 ; ≈ 30 Md€ sur dix ans dont 80 % d'argent public français : {lignesNouvelles} M€/an (hypothèses, voir `lignesNouvelles`) ; emprise {surfaceLignesNouvellesHa} ha/an pendant dix ans (voir `surfaceLignesNouvellesHa`)"
+    leviers := [.depenseSur .affairesEconomiques lignesNouvelles,
+                .artificialisation .infrastructures (List.replicate 10 surfaceLignesNouvellesHa)] },
 
   { id := "O-12"
     titre := "Qualité d'accueil des touristes : six zones de rénovation de qualité, dont Le Grau-du-Roi"
@@ -1595,13 +1612,15 @@ def mesures : List Mesure := [
 
   { id := "O-75"
     titre := "100 000 places de prison en cellule individuelle : construction, surveillants et fonctionnement"
-    source := s!"Texte Orientation D, mesure 75 ; 63 303 places pour 89 668 détenus au 1er août 2026 (ministère de la Justice) ; plan 15 000 en cours ({placesPlan15000Restantes} places restantes, dans la tendance) ; {placesPrisonNouvelles} places de plus à {coutPlacePrisonKEuros} k€ la place nette (Cour des comptes, décembre 2025), ouvertes de 2030 à 2035 ; {coutAnnuelPlaceEuros} € par place ouverte et par an (0,48 surveillant par place, voir `placesPrisonNouvelles`)"
+    source := s!"Texte Orientation D, mesure 75 ; 63 303 places pour 89 668 détenus au 1er août 2026 (ministère de la Justice) ; plan 15 000 en cours ({placesPlan15000Restantes} places restantes, dans la tendance) ; {placesPrisonNouvelles} places de plus à {coutPlacePrisonKEuros} k€ la place nette (Cour des comptes, décembre 2025), ouvertes de 2030 à 2035 ; {coutAnnuelPlaceEuros} € par place ouverte et par an (0,48 surveillant par place, voir `placesPrisonNouvelles`) ; emprise : 17 ha pour 700 places (voir `surfacesPrisons`)"
     leviers := [.investissementEcheancier .securiteJustice (constructionPrisons coutPlacePrisonKEuros),
-                .depenseEcheancier .securiteJustice fonctionnementPrisons]
+                .depenseEcheancier .securiteJustice fonctionnementPrisons,
+                .artificialisation .autres surfacesPrisons]
     variantes := [
       { nom := "coût des centres pénitentiaires (450 k€ la place)", leviers :=
           [.investissementEcheancier .securiteJustice (constructionPrisons coutPlacePrisonCpKEuros),
-           .depenseEcheancier .securiteJustice fonctionnementPrisons] }] },
+           .depenseEcheancier .securiteJustice fonctionnementPrisons,
+           .artificialisation .autres surfacesPrisons] }] },
 
   { id := "O-76"
     titre := "Allègements recentrés : sortie à 2 SMIC au lieu de 3, économie reversée aux salaires de 1 à 1,6 SMIC, à coût constant"

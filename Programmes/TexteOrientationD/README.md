@@ -504,6 +504,18 @@ d'aubaine) ; la dépense, elle, continue.
 Lyon-Turin (accès français), Bordeaux-Toulouse et Montpellier-Perpignan
 (≈ 30 Md€ sur dix ans, 80 % d'argent public français). Emplois dans la
 construction ; les gains de temps de parcours ne sont pas modélisés.
+Emprise : 4 800 ha pour Bordeaux-Toulouse et Bordeaux-Dax (projet GPSO),
+150 km × 10 ha/km pour Montpellier-Perpignan, soit 630 ha par an pendant
+dix ans (l'accès au Lyon-Turin, sans chiffre officiel, n'est pas compté).
+Le ZAN étant maintenu, ces surfaces s'imputent sur l'enveloppe : elles
+évincent d'autant les autres usages (avec les prisons d'O-75 : logement
+−3 617 ha, activités −1 455 ha de 2026 à 2035), le total ne bougeant pas
+(51 167 ha contre 51 150, arrondis).
+
+**Électricité et sols.** Le programme garde la trajectoire de la PPE3 et
+le ZAN. En 2035, 69,7 GW moyens produits pour 57,3 GW consommés (69,3 et
+56,8 sans programme) : les voitures électriques des primes (O-05) relèvent
+la consommation ; les EPR2 (O-04) n'entrent en service qu'après 2035.
 
 | Mesure | Chiffrage |
 |---|---|
@@ -745,6 +757,8 @@ chiffre récent.
 1875 et repris par la loi pénitentiaire de 2009, est suspendu par moratoire
 jusqu'au 31 décembre 2027 ; la mesure le rend effectif à mesure que les
 places ouvrent. Hypothèses à arbitrer :
+Emprise : 17 ha pour 700 places (centre de Saint-Saulve), soit 658 ha au
+rythme des chantiers, imputés sur l'enveloppe du ZAN.
 
 * le plan 15 000 en cours (5 411 places nettes livrées en septembre 2025,
   9 589 restantes, achèvement en 2031-2032 ; Cour des comptes, décembre
@@ -941,7 +955,8 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 ### Données à compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).
-* Valeurs électriques (consommation, prix à l'export) à sourcer (RTE).
+* Prix à l'export de l'électricité (RTE) ; consommation des
+  exploitations converties (O-31), non trouvée.
 * Chiffrage de O-03 et éventuelle hypothèse d'effet sur l'immobilier.
 * Distribution des âges de départ sans borne d'âge (O-07, COR) ; coût réel
   de la démission indemnisée (O-09, Unédic) ; calendrier des lignes

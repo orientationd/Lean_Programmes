@@ -46,6 +46,20 @@ différence n'est pas détaillée dans les sources.
 | LR-16 Réduction d'impôt sur les intérêts d'emprunt des familles | −0,27 Md€ par génération de prêts, cumulés (hypothèse) |
 | LR-17 Fin des 35 heures (1 623 heures au lieu de 1 607) | +1,0 % de durée du travail |
 
+## Électricité et sols (octobre 2026)
+
+| Mesure | Levier |
+|---|---|
+| LR-04 (complétée) Fin des soutiens aux nouvelles installations solaires et éoliennes | −2,9 GW/an de solaire et −1,6 GW/an d'éolien terrestre : les volumes des appels d'offres de la PPE3 (Maire-info, TaiyangNews, février 2026) ; parcs en mer déjà attribués maintenus |
+| LR-18 Suppression du ZAN | consommation d'espaces ramenée au rythme 2011-2021 (22 672 ha/an) ; hors du plan du 12 octobre : PPL n° 3332 (13 octobre 2026), amendements Boucard et Wauquiez ; variante : assouplissement TRACE (Sénat), non chiffré |
+
+Effets en 2035 (scénario central) : 44,3 GW de solaire et 26,7 GW
+d'éolien terrestre au lieu de 67,5 et 37,5 GW ; la production reste de
+69,3 GW moyens, le nucléaire modulant moins (1,1 GW au lieu de 6,4) ;
+191 606 ha d'espaces naturels, agricoles et forestiers consommés de 2026
+à 2035 au lieu de 51 150 sous le ZAN, et 12 210 ha d'emprise énergétique
+au lieu de 33 370.
+
 ## Non modélisé
 
 * Mécanisme des 42 Md€ de retraites (âge, durée, décote) : non détaillé.
