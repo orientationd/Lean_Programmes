@@ -7,3 +7,4 @@ import Hypotheses.Moteurs
 import Hypotheses.Europe
 import Hypotheses.Communes
 import Hypotheses.Automobile
+import Hypotheses.Historique

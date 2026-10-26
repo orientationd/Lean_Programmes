@@ -32,6 +32,7 @@ rejouer() {
 }
 
 etape compilation "Compilation" lake build Programmes Moteurs || exit 1
+etape tests "Tests du modèle commun" lake build Tests
 etape rapport "Matrice d'évaluation" lake env lean --run Rapport.lean --json out/rapport.json --md out/rapport.md
 if etape engagements "Engagements (noyau Lean)" lake build Engagements; then
   etape noyau "Rejeu des preuves (leanchecker)" rejouer

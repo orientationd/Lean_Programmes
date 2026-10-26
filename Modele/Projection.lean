@@ -17,31 +17,53 @@ namespace Modele
 
 /-- Une année de projection sous un moteur. -/
 def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
-  -- effet d'offre (moteur) : prélèvements obligatoires au-dessus du niveau
-  -- de départ → croissance amputée ; en dessous → croissance accrue
-  let croissance := H.eco.croissancePb
-    - appliquerPm (s.prelevementsPb - H.reference.etat.prelevementsPb) M.elasticiteCroissancePoPm
+  let k := s.rang
+  let ref := H.reference.etat
+  -- croissance de l'année : trajectoire du scénario (prévisions, puis
+  -- croissance potentielle), amputée de l'effet d'offre du moteur
+  -- (prélèvements obligatoires au-dessus de leur niveau de départ →
+  -- croissance amputée ; en dessous → croissance accrue)
+  let volume := H.eco.croissanceVolumeA k
+    - appliquerPm (s.prelevementsPb - ref.prelevementsPb) M.elasticiteCroissancePoPm
+  let prix := H.eco.inflationA k
+  let croissance := volume + prix + volume * prix / 10000
+  -- variation de l'écart de production : croissance en volume au-delà de la
+  -- croissance potentielle (loi d'Okun, élasticités des prélèvements)
+  let cycle := volume - H.eco.croissancePotentielleA k
   let pib := s.pib + appliquerPb s.pib croissance
-  -- charge d'intérêts : taux apparent qui converge vers le taux marginal,
-  -- appliqué à la dette de fin d'année précédente (effet boule de neige)
-  -- prime de risque : le taux marginal monte (baisse) de `primeDeficitPb` par
-  -- point de déficit au-dessus (au-dessous) du déficit de départ ; le taux
-  -- apparent s'en rapproche d'au plus `deriveTauxPb` par an, dans les deux sens
-  let tauxCible := max 0 (H.eco.tauxMarginalPb
-    + H.eco.primeDeficitPb * (s.deficitPb - H.reference.etat.deficitPb) / 100)
-  let taux := if s.tauxApparentPb ≤ tauxCible
-    then min tauxCible (s.tauxApparentPb + H.eco.deriveTauxPb)
-    else max tauxCible (s.tauxApparentPb - H.eco.deriveTauxPb)
+  -- charge d'intérêts sur la dette de fin d'année précédente (effet boule de
+  -- neige). Taux du stock : l'ancien stock à son taux, la dette nouvelle de
+  -- l'année écoulée au taux d'émission de cette année-là ; puis la part
+  -- `renouvellementDettePm` du stock arrive à échéance et est réémise au taux
+  -- d'émission de l'année (nominale au taux marginal, indexée au taux réel).
+  -- Prime de risque : le taux marginal monte (baisse) de `primeDeficitPb` par
+  -- point de déficit au-dessus (au-dessous) du déficit de départ.
+  let tauxCible := max 0 (H.eco.tauxMarginalA k
+    + H.eco.primeDeficitPb * (s.deficitPb - ref.deficitPb) / 100)
+  let emission := tauxCible - appliquerPm H.eco.inflationPb H.eco.partDetteIndexeePm
+  let dette := s.dette
+  -- dette à court terme : renouvelée dans l'année au taux court ; dette à
+  -- moyen et long terme : taux du stock, puis refinancement d'une part
+  let court := dette * H.eco.partDetteCourtTermePm / 1000
+  let long := dette - court
+  let longDebut := s.detteDebut - s.detteDebut * H.eco.partDetteCourtTermePm / 1000
+  let tauxStock := if long = 0 then s.tauxApparentPb
+    else (longDebut * s.tauxApparentPb + (long - longDebut) * s.tauxEmissionPb) / long
+  let taux := tauxStock + (emission - tauxStock) * H.eco.renouvellementDettePm / 1000
+  -- indexation du capital des titres indexés sur l'inflation de l'année,
+  -- enregistrée en intérêts (comptabilité nationale)
+  let indexation := dette * H.eco.partDetteIndexeePm * H.eco.inflationIndexationA k / 10000000
   -- OAT numériques : la tranche `part` de la dette est servie au taux
   -- apparent diminué de la décote ; ses intérêts, pour la part défiscalisée,
   -- échappent au PFU (perte de recettes de l'année)
-  let tranche := s.dette * s.partDetteNumeriquePm / 1000
+  let tranche := dette * s.partDetteNumeriquePm / 1000
   let economieNum := tranche * taux * s.decoteDetteNumeriquePm / 10000000
   let interetsTranche := tranche * taux / 10000 - economieNum
   let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
   let pertePfu := interetsTranche * s.partDefiscaliseePm * tPfu / 1000000
-  let interets := s.dette * taux / 10000 - economieNum
-  -- assiettes supposées proportionnelles au PIB nominal (élasticité unitaire)
+  let interets := long * taux / 10000 + court * H.eco.tauxCourtA k / 10000 + indexation - economieNum
+  -- assiettes : PIB nominal, plus l'effet du cycle selon l'élasticité de
+  -- chaque prélèvement (`ParImpot.croitreCycle`)
   -- la perte de PFU de l'an dernier est déjà dans l'assiette et croît avec
   -- elle : on n'ajoute que l'écart, réparti selon l'affectation du PFU
   let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
@@ -80,7 +102,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     else H.demo.hausseDecesMilliers * 10000 / s.decesMilliers
   let tauxDroits := dDecesPb
     + (croissance + H.eco.excesPatrimoineParDecesPb) * H.eco.elasticiteDroitsSuccessionPm / 1000
-  let impots := ((((s.impots.croitre croissance).ajouter .ir (-dIr)
+  let impots := ((((s.impots.croitreCycle croissance cycle H.eco.elasticiteCycliquePm).ajouter .ir (-dIr)
     |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
     |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
     |>.ajouter .autres (-pertesAcciseGaz)
@@ -90,30 +112,30 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- prises de participation ; dividendes au rendement du portefeuille de départ
   let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
     + s.investissementsParticipations
-  let ref := H.reference.etat
   let dividendes := if ref.participationsEtat = 0 then s.dividendesEtat
     else participations * ref.dividendesEtat / ref.participationsEtat
+  -- recettes non fiscales hors dividendes : acycliques, elles suivent le PIB
+  -- nominal potentiel
   let horsDividendes := s.autresRecettes - s.dividendesEtat
-  let autresRecettes := horsDividendes + appliquerPb horsDividendes croissance + dividendes
-  let recettes := impots.total + autresRecettes
-  -- vieillissement : le surcoût total à l'horizon est réparti sur les années
+  let autresRecettes := horsDividendes + appliquerPb horsDividendes (croissance - cycle) + dividendes
+  -- vieillissement : les tendances de dépenses (retraites, santé) intègrent
+  -- la démographie de leur projection ; un vieillissement différent ajoute
+  -- (ou retire) un surcoût, réparti sur les années de l'horizon
   let surcoutVieillissement :=
-    (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutParPbPlus65
+    (H.demo.partPlus65Pb - H.reference.partPlus65TendancePb) * H.eco.coutParPbPlus65
       / (H.horizon : Int)
   let surcoutSante :=
-    (H.demo.partPlus65Pb - H.reference.partPlus65Pb) * H.eco.coutSanteParPbPlus65
+    (H.demo.partPlus65Pb - H.reference.partPlus65TendancePb) * H.eco.coutSanteParPbPlus65
       / (H.horizon : Int)
-  -- norme de dépense : économie de l'année sur les fonctions pilotables
-  let sansNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
-  let avecNorme := s.depensesF.croitrePrimaires H.eco.croissanceDepensesPb s.robotisationPb
+  -- dépenses primaires à législation constante : volume propre à chaque
+  -- fonction, prix (pensions et prestations revalorisées sur l'inflation de
+  -- l'année écoulée) ; norme de dépense : économie de l'année sur les
+  -- fonctions pilotables
+  let tauxDep := H.eco.tauxDepenses k s.inflationConsoPb
+  let sansNorme := s.depensesF.croitrePrimaires tauxDep s.robotisationPb
+  let avecNorme := s.depensesF.croitrePrimaires tauxDep s.robotisationPb
     s.moderationDepensesPb
   let economieNorme := sansNorme.total - avecNorme.total
-  -- stabilisateur automatique : l'indemnisation suit le nombre de chômeurs
-  -- (écart à ceux que les dépenses inscrites couvrent déjà)
-  let chomeurs := s.actifs - s.emploiTotal
-  let indemnisation := if H.reference.etat.pib = 0 then 0
-    else (chomeurs - s.chomeursComptes) * H.eco.coutParChomeurEuros * s.pib
-      / (H.reference.etat.pib * 1000000)
   -- règles contracycliques de l'assurance chômage : au-dessus du seuil de
   -- chômage, la durée réduite est complétée (complément de fin de droits) ;
   -- seul l'écart au complément reconduit de l'année passée est une dépense
@@ -121,14 +143,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let complement := if s.chomagePb < H.reference.seuilChomageContracyclePb ∨ H.reference.etat.pib = 0 then 0
     else H.reference.surcoutComplementChomageMeur * s.pib / H.reference.etat.pib
   let dComplement := complement
-    - (s.complementChomageMeur + appliquerPb s.complementChomageMeur H.eco.croissanceDepensesPb)
-  let indemnisation := indemnisation + dComplement
+    - (s.complementChomageMeur + appliquerPb s.complementChomageMeur (tauxDep.get .famille))
   let depensesF := (((avecNorme
     |>.ajouter .retraites surcoutVieillissement)
     |>.ajouter .sante surcoutSante)
     |>.ajouter .interets (interets - s.depensesF.interets))
-    |>.ajouter .famille indemnisation
-  let depenses := depensesF.total
+    |>.ajouter .famille dComplement
   -- population active : tendance démographique et migrations du scénario
   -- d'une part, migrations dues aux mesures d'autre part
   let solde := H.demo.soldeMigratoireMilliers + s.migrationAnnuelleMilliers
@@ -142,10 +162,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let emploiEntrants := appliquerPm actifsMesures H.eco.tauxEmploiMigrantsPm
   let equilibreEntrants := if s.actifs = 0 then 0 else actifsMesures * s.emploiTotal / s.actifs
   let absorption := appliquerPm s.chomeursExcedentaires H.eco.absorptionChomagePm
-  -- loi d'Okun : le chômage baisse de `okun × (croissance − seuil)` ; emplois
-  -- et actifs supplémentaires s'en déduisent par l'effet de flexion
+  -- loi d'Okun : le chômage baisse de `okun × (croissance en volume −
+  -- croissance potentielle)` ; emplois et actifs supplémentaires s'en
+  -- déduisent par l'effet de flexion
   let actifs := s.actifs + actifsTendance + actifsMesures
-  let dChomeursOkun := actifs * (croissance - H.eco.seuilOkunPb) * H.eco.okunPm / 10000000
+  let dChomeursOkun := actifs * cycle * H.eco.okunPm / 10000000
   let emploisOkun := emploisPourChomeurs H dChomeursOkun
   -- transports : bornes ouvertes au rythme des ventes tendancielles
   -- d'électriques (plus celles des mesures), décès évités par la baisse des
@@ -161,11 +182,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     depensesF := depensesF
     tauxApparentPb := taux
     tauxMarginalCourantPb := tauxCible
+    tauxEmissionPb := emission
+    chargeIndexationMeur := indexation
+    inflationConsoPb := H.eco.inflationConsoA k
+    rang := k + 1
     partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
     economieInteretsNumeriqueMeur := economieNum
     pertePfuMeur := pertePfu
     cdhrMeur := cdhr
-    chomeursComptes := chomeurs
     complementChomageMeur := complement
     allegementsTranche := s.allegementsTranche.croitre croissance
     -- passifs implicites : le stock s'accroît du flux, qui suit les salaires
@@ -173,7 +197,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
                  hopital := s.passifs.hopital + s.fluxPassifs.hopital }
     fluxPassifs := { police := s.fluxPassifs.police + appliquerPb s.fluxPassifs.police croissance
                      hopital := s.fluxPassifs.hopital + appliquerPb s.fluxPassifs.hopital croissance }
-    dette := s.dette + (depenses - recettes) + s.operationsFinancieres + s.investissementsParticipations
+    -- dette de fin d'année : `Etat.dette` (déficit final de l'année, mesures
+    -- comprises)
+    detteDebut := dette
+    ajustementDetteAnnee := 0
     participationsEtat := participations
     dividendesEtat := dividendes
     emissionsKt := s.emissionsKt.baisser H.eco.baisseEmissionsSecteurPm
@@ -218,7 +245,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
   -- du scénario (la tendance est déjà dans la croissance)
   let dEmploiMesures := emploiEntrants + absorption
-  let s₂ := effetDemande H none (appliquerPm indemnisation M.multiplicateurPrelevementsPm
+  let s₂ := effetDemande H none (appliquerPm dComplement M.multiplicateurPrelevementsPm
       - appliquerPm economieNorme M.multiplicateurEconomiesPm)
     (chocEmploi H dEmploiMesures (ajouterEmploi H none dEmploiMesures s₁))
   -- dépenses à échéancier : niveau prévu (indexé) moins niveau reconduit. Effet
@@ -230,8 +257,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let pas (e : Echeance) : Echeance × Int × Int :=
     -- le niveau inscrit dans la fonction a crû comme elle (norme comprise) ; le
     -- niveau prévu est indexé hors norme (l'échéancier est une décision explicite)
-    let t := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
-    let tNorme := ParFonction.tauxCroissance e.fonction H.eco.croissanceDepensesPb s.robotisationPb
+    let t := ParFonction.tauxCroissance e.fonction tauxDep s.robotisationPb
+    let tNorme := ParFonction.tauxCroissance e.fonction tauxDep s.robotisationPb
       s.moderationDepensesPb
     let indice := e.indice + appliquerPb e.indice t
     let reconduit := e.niveau + appliquerPb e.niveau tNorme
@@ -305,7 +332,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     indicePrix := s.indicePrix + appliquerPb s.indicePrix H.eco.inflationPb
     esperanceVieTendanceCentiemes := s.esperanceVieTendanceCentiemes + H.demo.gainEsperanceVieCentiemes
     dureeMoyenneCentiemes := s.dureeMoyenneCentiemes + H.reference.hausseDureeMoyenneCentiemes }
-  { s₇ with idhMillioniemes := calculerIdh H s₇ }
+  -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
+  -- d'année (cycle, tendance et mesures de l'année)
+  let s₈ := stabilisateurChomage M H s₇
+  { s₈ with idhMillioniemes := calculerIdh H s₈ }
 
 /-- Situation de départ du scénario : la référence observée, après le choc
 de niveau dû au prix du pétrole (nul au prix de référence). -/
@@ -321,9 +351,11 @@ def etatDepart (H : Scenario) : Etat :=
                     tauxMarginalCourantPb := H.eco.tauxMarginalPb
                     electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers
                     decesMilliers := H.demo.decesMilliers
-                    chomeursComptes := s.actifs - s.emploiTotal }
+  }
   let s := chocPib H none dPib s
-  { s with idhMillioniemes := calculerIdh H s }
+  -- les chômeurs de départ (choc pétrolier compris) sont ceux que couvrent les
+  -- dépenses d'indemnisation de départ
+  { s with idhMillioniemes := calculerIdh H s, chomeursComptes := s.actifs - s.emploiTotal }
 
 /-- `f` appliquée `n` fois. -/
 def iterer (f : Etat → Etat) : Nat → Etat → Etat

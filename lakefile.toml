@@ -41,3 +41,10 @@ name = "Engagements"
 [[lean_exe]]
 name = "rapport"
 root = "Rapport"
+
+# Batterie de tests du modèle commun : invariants comptables, propriétés des
+# mécanismes, rétro-test sur les comptes observés. Chaque fichier de Tests/
+# est un module autonome (aucun n'en importe un autre).
+[[lean_lib]]
+name = "Tests"
+globs = ["Tests.+"]

@@ -317,10 +317,13 @@ emploi par chômeur. -/
 def emploisPourChomeurs (H : Scenario) (dChomeurs : Int) : Int :=
   dChomeurs * (1000 + H.eco.flexionPm) / 1000
 
-/-- Variation de PIB et de recettes sans effet sur l'emploi. -/
+/-- Variation de PIB due à la demande, et des recettes qui en découlent, sans
+effet sur l'emploi : un choc de demande est cyclique, chaque prélèvement
+réagit selon son élasticité à l'écart de production ; les recettes non
+fiscales n'en dépendent pas. -/
 def chocPibSeul (H : Scenario) (dPib : Int) (s : Etat) : Etat :=
-  let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
-  { s.ajouterRecettesProrata dRecettes with
+  { s with
+    impots := s.impots.plus (s.impots.variationCycle dPib s.pib H.eco.elasticiteCycliquePm)
     pib := s.pib + dPib
     importations := s.importations + appliquerPm dPib H.eco.contenuImportDemandePm }
 
@@ -342,6 +345,18 @@ multiplicateur, puis `chocPib`. -/
 def effetDemande (H : Scenario) (cible : Option Secteur) (impulsion : Int) (s : Etat) : Etat :=
   chocPib H cible (appliquerPm impulsion H.eco.multiplicateurPm) s
 
+/-- Stabilisateur automatique : la dépense d'indemnisation du chômage suit le
+nombre de chômeurs (écart à ceux que les dépenses inscrites couvrent déjà),
+à `coutParChomeurEuros` par chômeur (euros de départ, indexés sur le PIB
+nominal), avec l'effet de demande d'un transfert. -/
+def stabilisateurChomage (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
+  let chomeurs := s.actifs - s.emploiTotal
+  let d := if H.reference.etat.pib = 0 then 0
+    else (chomeurs - s.chomeursComptes) * H.eco.coutParChomeurEuros * s.pib
+      / (H.reference.etat.pib * 1000000)
+  effetDemande H none (appliquerPm d M.multiplicateurPrelevementsPm)
+    { s with depensesF := s.depensesF.ajouter .famille d, chomeursComptes := chomeurs }
+
 /-- Dépense nouvelle sur une fonction (partagée par plusieurs leviers). -/
 def appliquerDepense (H : Scenario) (cible : Option Secteur) (f : Fonction) (montant : Int)
     (s : Etat) : Etat :=
@@ -361,9 +376,12 @@ def poidsEcheance (H : Scenario) (e : Echeance) : Int :=
   else H.eco.incidenceDepensePm.get e.fonction
 
 /-- Économie de dépense : l'impulsion négative est pondérée par le moteur et
-la nature de la dépense. -/
+la nature de la dépense ; les emplois perdus le sont dans le secteur de la
+fonction. -/
 def appliquerEconomie (M : Moteur) (H : Scenario) (f : Fonction) (montant : Int) (s : Etat) : Etat :=
-  effetDemande H none (-(appliquerPm (appliquerPm montant M.multiplicateurEconomiesPm)
+  -- les emplois perdus le sont dans le secteur de la fonction, comme ceux
+  -- qu'une dépense de même nature crée (intensité en emplois symétrique)
+  effetDemande H f.secteur (-(appliquerPm (appliquerPm montant M.multiplicateurEconomiesPm)
       (H.eco.incidenceDepensePm.get f)))
     { s with depensesF := s.depensesF.ajouter f (-montant) }
 

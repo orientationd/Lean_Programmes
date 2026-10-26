@@ -1337,6 +1337,71 @@ def section_moteurs(D: Donnees) -> list:
     return out
 
 
+def section_retro(D: Donnees) -> list:
+    """Rétro-test : le modèle part des comptes observés de l'année précédente
+    et simule l'année ; puis la même chose sans repartir des comptes."""
+    r = D.d.get("retro")
+    if not r or not r.get("unAn"):
+        return []
+    un = r["unAn"]
+    multi = {x["depart"]: x["annees"] for x in r.get("plusieursAnnees", [])}
+    annees = [e["annee"] for e in un]
+    out = [P("Le modèle face aux comptes passés", "h1"),
+           P("Pour chaque année de 2019 à 2025, le modèle part des comptes publics observés de l'année "
+             "précédente et simule l'année avec la même fonction que les projections. Il reçoit ce qui "
+             "n'est pas de son ressort : croissance, inflation et taux observés ; mesures nouvelles de "
+             "prélèvements, dépenses primaires et recettes hors prélèvements constatées. Il calcule ce "
+             "qui relève de ses mécanismes : évolution spontanée des prélèvements obligatoires, charge "
+             "d'intérêts, chômage et dette. L'écart au déficit observé mesure donc l'erreur des "
+             "mécanismes, pas celle des choix budgétaires. Sources : INSEE (comptes nationaux en base "
+             "2020), Cour des comptes, Agence France Trésor ; source de chaque donnée dans "
+             "Hypotheses/Historique.lean.")]
+    fig, ax = figure(2.6)
+    ax.plot(annees, [e["deficitObservePb"] / 100 for e in un], color=TENDANCIEL, lw=1.8, marker="o",
+            ms=3.5, label="Observé")
+    ax.plot(annees, [e["deficitModelePb"] / 100 for e in un], color=SERIES[0], lw=1.6, marker="s",
+            ms=3.5, label="Modèle, à un an")
+    if multi:
+        dep = min(multi)
+        m = multi[dep]
+        ax.plot([e["annee"] for e in m], [e["deficitModelePb"] / 100 for e in m], color=SERIES[1],
+                lw=1.4, ls="--", marker="^", ms=3.5, label=f"Modèle, depuis {dep}")
+    ax.set_ylabel("Déficit public (% du PIB)")
+    ax.set_xticks(annees)
+    ax.legend(fontsize=7, loc="upper right")
+    out.append(png(fig))
+    ent = ["Année", "Déficit observé", "Modèle à un an", "Écart", "Prélèvements : écart (Md€)",
+           "Intérêts : modèle / observé (Md€)", "Chômage : modèle / observé"]
+    rows = []
+    for e in un:
+        rows.append([str(e["annee"]), pct_pb(e["deficitObservePb"], 2), pct_pb(e["deficitModelePb"], 2),
+                     ("+" if e["deficitModelePb"] >= e["deficitObservePb"] else "−")
+                     + nombre(abs(e["deficitModelePb"] - e["deficitObservePb"]) / 100, 2),
+                     ("+" if e["prelevementsModele"] >= e["prelevementsObserves"] else "−")
+                     + nombre(abs(e["prelevementsModele"] - e["prelevementsObserves"]) / 1000, 1),
+                     nombre(e["interetsModele"] / 1000, 1) + " / " + nombre(e["interetsObserves"] / 1000, 1),
+                     pct_pb(e["chomageModelePb"]) + " / " + pct_pb(e["chomageObservePb"])])
+    out.append(Spacer(1, 3))
+    out.append(tableau(ent, rows, [0.08, 0.13, 0.13, 0.09, 0.17, 0.22, 0.18]))
+    err = [e["deficitModelePb"] - e["deficitObservePb"] for e in un]
+    ierr = [e["interetsModele"] - e["interetsObserves"] for e in un]
+    texte = (f"Erreur moyenne sur le déficit : {nombre(sum(abs(x) for x in err) / len(err) / 100, 2)} point "
+             f"(biais {nombre(sum(err) / len(err) / 100, 2)}) ; sur la charge d'intérêts : "
+             f"{nombre(sum(abs(x) for x in ierr) / len(ierr) / 1000, 1)} Md€. L'erreur vient surtout de "
+             "l'évolution spontanée des prélèvements, dont l'élasticité au PIB a été de 1,6 en 2022 et de "
+             "0,4 en 2023 (Cour des comptes) : aucune règle fondée sur le seul PIB ne retrouve ces deux "
+             "années. En 2020-2021, l'activité partielle a découplé l'emploi du PIB.")
+    if multi:
+        dep = min(multi)
+        f = multi[dep][-1]
+        texte += (f" Simulé depuis {dep} sans repartir des comptes observés, le déficit {f['annee']} est de "
+                  f"{pct_pb(f['deficitModelePb'], 2)} ({pct_pb(f['deficitObservePb'], 2)} observé) et la dette "
+                  f"de {pct_pb(f['detteModelePb'], 1)} du PIB ({pct_pb(f['detteObserveePb'], 1)}) : l'écart "
+                  "de dette vient des ajustements dette-déficit, que le modèle ne projette pas.")
+    out.append(P(texte, "note"))
+    return out
+
+
 OBJECTIFS_SNBC_2030 = {"transports": 92, "batiments": 37, "agriculture": 68, "industrie": 42,
                        "energie": 25, "dechets": 12}
 GES_COURT = {"transports": "Transp.", "batiments": "Bâtim.", "agriculture": "Agric.",
@@ -1495,13 +1560,19 @@ def section_annexes(D: Donnees) -> list:
         "même fonction projette le tendanciel et chaque programme. Engagements et contrats sont "
         "vérifiés par le noyau Lean ; les trajectoires de ce document sont calculées par le même "
         "code.",
-        "Le modèle est volontairement jouet : multiplicateur budgétaire, fuite fiscale, loi "
-        "d'Okun et élasticité du chômage au SMIC sont des paramètres de comportement encore à "
-        "sourcer (annexe B, « À COMPLÉTER »). Trois jeux d'hypothèses économiques encadrent ces "
-        "incertitudes dans la matrice des propriétés ; ce document ne montre que le jeu central.",
-        "Assiettes fiscales proportionnelles au PIB nominal ; pas d'inflation séparée, pas de "
-        "charge d'intérêts distincte, pas de balance commerciale macroéconomique (le sous-modèle "
-        "automobile la calcule pour la mesure O-01 seulement).",
+        "Paramètres de comportement : multiplicateur budgétaire, fuite fiscale et élasticité du "
+        "chômage au SMIC restent des ordres de grandeur (annexe B). Trois jeux d'hypothèses "
+        "économiques encadrent ces incertitudes dans la matrice des propriétés ; ce document ne "
+        "montre que le jeu central.",
+        "Déficit : croissance, inflation et taux suivent les prévisions publiées jusqu'en 2030 "
+        "(Banque de France, PLF 2027, mission d'experts de juillet 2026), puis les valeurs de long "
+        "terme ; les prélèvements suivent le PIB nominal et réagissent au cycle selon leur "
+        "élasticité (LPFP 2023-2027) ; les dépenses primaires suivent les prix et une tendance en "
+        "volume par fonction (COR, mission d'experts) ; la charge d'intérêts suit la structure de "
+        "la dette (BTF, refinancement, titres indexés). Rétro-test 2019-2025 : voir la section "
+        "dédiée. Les assiettes fiscales restent rattachées au PIB, pas à la masse salariale ou à la "
+        "consommation ; pas de balance commerciale macroéconomique (le sous-modèle automobile la "
+        "calcule pour la mesure O-01 seulement).",
         "Déficit « de l'État » : le modèle suit les administrations publiques consolidées ; les "
         "transferts internes (par exemple les amendes SRU versées par les communes) sont neutres "
         "sur le solde.",
@@ -1520,8 +1591,10 @@ def section_annexes(D: Donnees) -> list:
         "2028), la prime d'activité revalorisée, la fin de l'aide exceptionnelle à l'apprentissage, "
         "les nouvelles règles des ruptures conventionnelles et le complément de fin de droits de "
         "l'assurance chômage, déclenché quand le chômage atteint 9 %. La "
-        "tendance des dépenses de retraite est supposée intégrer la réforme de 2023 sans suspension ; "
-        "seul l'écart au calendrier de cette réforme a des effets.",
+        "tendance des dépenses de retraite (COR, juin 2026) est prise nette de la suspension de la "
+        "réforme de 2023, comptée par l'écart au calendrier de cette réforme. Les économies de la "
+        "loi de finances et de la loi de financement de la sécurité sociale pour 2026 ne sont pas "
+        "dans la référence (déficit tendanciel 2026 de 5,8 %, contre 5,4 % prévus dans le PLF 2027).",
         "Incidence et coût du travail : l'effet d'un prélèvement sur la demande dépend de l'impôt "
         "(TVA, IR et CSG 1,1 fois l'effet moyen ; IS 0,55 ; successions et patrimoine 0,2). Les "
         "allègements de cotisations patronales sont suivis par tranche de salaire (75 Md€, dont "
@@ -1532,19 +1605,17 @@ def section_annexes(D: Donnees) -> list:
         "IDH : formule du PNUD (espérance de vie, scolarisation, RNB par habitant en volume). "
         "L'espérance de vie suit la tendance de l'INSEE (+0,12 an par an) plus les années de vie "
         "gagnées par les décès évités (pollution, accidents du travail, tabac, alcool, dépistage ; "
-        "années de vie par décès et délais d'effet : hypothèses) ; l'inflation (1,75 % au scénario "
-        "central) est une hypothèse.",
-        f"Les hypothèses démographiques sont fixées à l'horizon des propriétés "
-        f"({D.d['horizonProprietes']} ans). Au-delà, la synthèse prolonge au même rythme la hausse "
-        "de la part des 65 ans et plus, donc le surcoût de vieillissement. Ce prolongement pèse "
-        "de la même façon sur tous les programmes et sur le tendanciel ; il ne change pas les "
-        "écarts entre eux.",
+        "années de vie par décès et délais d'effet : hypothèses) ; l'inflation suit la trajectoire "
+        "du déflateur (1,75 % à long terme au scénario central).",
+        "Vieillissement : les tendances de dépenses de retraite et de santé intègrent la démographie "
+        "de leurs projections ; seul l'écart d'une hypothèse démographique à celle-ci ajoute un "
+        "surcoût (nul au scénario central).",
         "Offre de travail : le PIB suit le volume d'heures travaillées (emploi × durée) à "
         "l'élasticité de 65 %, pour les mesures d'âge de départ, de SMIC et de durée du travail ; "
         "le capital et la productivité tendancielle ne sont pas modélisés séparément.",
-        "Vieillissement et robotisation : le surcoût des plus de 65 ans est réparti entre retraites "
-        "et santé ; la robotisation réduit la croissance de trois fonctions de dépense (tendance 0,2 %/an, "
-        "plus les mesures), sans effet modélisé sur l'emploi public.",
+        "Robotisation : levier des programmes seulement (les tendances de dépenses intègrent déjà "
+        "les gains de productivité) ; elle réduit la croissance de trois fonctions de dépense, sans "
+        "effet modélisé sur l'emploi public.",
         "Commerce extérieur : élasticité unitaire des échanges au PIB nominal, pas de compétitivité-prix "
         "ni de taux de change ; les revenus nets du reste du monde sont constants.",
         "Moteurs : les paramètres du moteur « offre » (demi-multiplicateur sur les économies, "
@@ -1673,6 +1744,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_budget(D)
     story.append(PageBreak())
     story += section_effets(D)
+    story.append(PageBreak())
+    story += section_retro(D)
     story.append(PageBreak())
     story += section_moteurs(D)
     story.append(CondPageBreak(120 * mm))

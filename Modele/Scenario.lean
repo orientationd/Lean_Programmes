@@ -29,6 +29,11 @@ structure Reference where
   populationMilliers : Int
   /-- Part des 65 ans et plus dans la population, pb. -/
   partPlus65Pb : Int
+  /-- Part des 65 ans et plus à l'horizon dans la projection démographique
+  qui sous-tend les tendances de dépenses de l'axe économique (projections
+  du COR, scénario central de l'INSEE), pb : seul l'écart de l'hypothèse
+  démographique à cette projection ajoute un surcoût de vieillissement. -/
+  partPlus65TendancePb : Int := 0
   /-- Assurance chômage, règles contracycliques en vigueur : seuil de taux de
   chômage, pb, à partir duquel la durée d'indemnisation réduite est
   complétée (complément de fin de droits), et surcoût annuel de ce
@@ -250,13 +255,48 @@ structure Energie where
 structure Economie where
   id : String
   description : String
-  /-- Croissance annuelle du PIB en valeur, pb. -/
-  croissancePb : Int
-  /-- Croissance annuelle tendancielle des dépenses à législation constante, pb. -/
-  croissanceDepensesPb : Int
-  /-- Croissance au-delà de laquelle le chômage baisse (loi d'Okun), pb. -/
-  seuilOkunPb : Int
-  /-- Baisse du chômage (pb) par pb de croissance au-delà du seuil, en pm. -/
+  /-- Croissance potentielle du PIB en volume, pb par an : croissance de
+  long terme de la projection, et seuil de la loi d'Okun (le chômage baisse
+  quand la croissance en volume la dépasse). -/
+  croissancePotentiellePb : Int
+  /-- Trajectoire des premières années, élément `k` = année `k + 1` après le
+  départ (prévisions publiées pour une projection, valeurs observées pour un
+  rétro-test) ; au-delà de la liste, valeurs de long terme : croissance du
+  PIB en volume (long terme : `croissancePotentiellePb`), évolution du
+  déflateur du PIB (long terme : `inflationPb`), inflation des prix à la
+  consommation (indexation des pensions, des prestations et des titres
+  indexés ; long terme : `inflationPb`), taux marginal de la dette (long
+  terme : `tauxMarginalPb`), pb. -/
+  croissanceVolumeAnneesPb : List Int := []
+  /-- Croissance potentielle des premières années (élément `k` = année
+  `k + 1`), pb ; au-delà : `croissancePotentiellePb`. -/
+  croissancePotentielleAnneesPb : List Int := []
+  inflationAnneesPb : List Int := []
+  inflationConsoAnneesPb : List Int := []
+  /-- Inflation qui revalorise le capital des titres indexés (moyenne des
+  indices de la zone euro et de la France pondérée par l'encours des OAT€i
+  et des OATi), pb ; au-delà de la liste : l'inflation des prix à la
+  consommation de l'année (`inflationConsoA`). -/
+  inflationIndexationAnneesPb : List Int := []
+  tauxMarginalAnneesPb : List Int := []
+  /-- Taux court (émission des titres à moins d'un an) des premières années,
+  pb ; au-delà : `tauxCourtPb`. -/
+  tauxCourtAnneesPb : List Int := []
+  /-- Élasticité de chaque prélèvement à l'écart de production, pm (`1000` :
+  le prélèvement suit le PIB) : un prélèvement d'élasticité `ε` croît comme
+  le PIB nominal potentiel plus `ε` fois la variation de l'écart de
+  production (méthode de la Commission européenne et de l'OCDE). Les
+  recettes non fiscales sont supposées acycliques. -/
+  elasticiteCycliquePm : ParImpot
+  /-- Évolution tendancielle des dépenses primaires à législation constante,
+  en volume (au-delà des prix), par fonction, pb par an. -/
+  croissanceDepensesVolumePb : ParFonction
+  /-- Part de la dépense de chaque fonction revalorisée sur l'inflation des
+  prix à la consommation de l'année précédente (pensions, prestations
+  indexées), pm ; le reste suit le déflateur du PIB de l'année. -/
+  indexationDecaleePm : ParFonction
+  /-- Baisse du chômage (pb) par pb de croissance en volume au-delà de la
+  croissance potentielle, en pm. -/
   okunPm : Int
   /-- Plancher de chômage frictionnel, pb. -/
   chomageFrictionnelPb : Int
@@ -301,11 +341,23 @@ structure Economie where
   elasticiteChomageSmicPm : Int
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
   economieParMoisRetraite : Int
-  /-- Taux d'intérêt marginal sur la dette nouvelle et refinancée, pb. -/
+  /-- Taux d'intérêt marginal sur la dette nouvelle et refinancée, valeur de
+  long terme, pb. -/
   tauxMarginalPb : Int
-  /-- Variation annuelle maximale du taux apparent vers le taux marginal, pb
-  (rythme de refinancement du stock), à la hausse comme à la baisse. -/
-  deriveTauxPb : Int
+  /-- Part de la dette à court terme (titres à moins d'un an), pm : elle est
+  renouvelée chaque année au taux court de l'année. -/
+  partDetteCourtTermePm : Int
+  /-- Taux court de long terme, pb. -/
+  tauxCourtPb : Int
+  /-- Part de la dette à moyen et long terme refinancée chaque année, pm
+  (inverse de sa durée de vie moyenne) : elle est réémise au taux marginal,
+  comme la dette nouvelle. -/
+  renouvellementDettePm : Int
+  /-- Part de la dette indexée sur l'inflation, pm : son capital est
+  revalorisé chaque année de l'inflation des prix à la consommation, ce que
+  la comptabilité nationale enregistre en charge d'intérêts ; elle est émise
+  au taux réel (taux marginal moins inflation de long terme). -/
+  partDetteIndexeePm : Int
   /-- Prime de risque : hausse du taux marginal (pb) par point de PIB de
   déficit au-dessus du déficit de départ (baisse en dessous). -/
   primeDeficitPb : Int
@@ -407,6 +459,62 @@ structure Economie where
   sources : List String
   deriving Repr
 
+namespace Economie
+
+/-- Élément `k` d'une trajectoire, ou la valeur de long terme au-delà. -/
+def annee (l : List Int) (longTerme : Int) (k : Nat) : Int := l.getD k longTerme
+
+/-- Croissance du PIB en volume de l'année `k + 1`, pb. -/
+def croissanceVolumeA (e : Economie) (k : Nat) : Int :=
+  annee e.croissanceVolumeAnneesPb e.croissancePotentiellePb k
+
+/-- Croissance potentielle de l'année `k + 1`, pb. -/
+def croissancePotentielleA (e : Economie) (k : Nat) : Int :=
+  annee e.croissancePotentielleAnneesPb e.croissancePotentiellePb k
+
+/-- Évolution du déflateur du PIB de l'année `k + 1`, pb. -/
+def inflationA (e : Economie) (k : Nat) : Int := annee e.inflationAnneesPb e.inflationPb k
+
+/-- Inflation des prix à la consommation de l'année `k + 1`, pb. -/
+def inflationConsoA (e : Economie) (k : Nat) : Int :=
+  annee e.inflationConsoAnneesPb e.inflationPb k
+
+/-- Inflation des titres indexés de l'année `k + 1`, pb. -/
+def inflationIndexationA (e : Economie) (k : Nat) : Int :=
+  annee e.inflationIndexationAnneesPb (e.inflationConsoA k) k
+
+/-- Taux marginal de la dette de l'année `k + 1` (avant prime de risque), pb. -/
+def tauxMarginalA (e : Economie) (k : Nat) : Int := annee e.tauxMarginalAnneesPb e.tauxMarginalPb k
+
+/-- Taux court de l'année `k + 1`, pb. -/
+def tauxCourtA (e : Economie) (k : Nat) : Int := annee e.tauxCourtAnneesPb e.tauxCourtPb k
+
+/-- Croissance du PIB en valeur de l'année `k + 1`, pb : (1 + volume) ×
+(1 + prix) − 1. -/
+def croissanceNominaleA (e : Economie) (k : Nat) : Int :=
+  let v := e.croissanceVolumeA k
+  let p := e.inflationA k
+  v + p + v * p / 10000
+
+/-- Taux de croissance tendanciel des dépenses de chaque fonction l'année
+`k + 1`, pb : volume propre à la fonction, plus les prix (inflation de
+l'année précédente pour la part indexée avec décalage, déflateur de l'année
+pour le reste). -/
+def tauxDepenses (e : Economie) (k : Nat) (inflationConsoPrecedente : Int) : ParFonction :=
+  ParFonction.depuis fun f =>
+    e.croissanceDepensesVolumePb.get f
+      + (e.indexationDecaleePm.get f * inflationConsoPrecedente
+          + (1000 - e.indexationDecaleePm.get f) * e.inflationA k) / 1000
+
+/-- Croissance nominale de long terme, pb. -/
+def croissanceNominaleLongTerme (e : Economie) : Int :=
+  e.croissancePotentiellePb + e.inflationPb + e.croissancePotentiellePb * e.inflationPb / 10000
+
+/-- Toutes les valeurs d'une trajectoire sont dans `[lo, hi]`. -/
+def trajectoireEntre (l : List Int) (lo hi : Int) : Bool := l.all fun x => decide (lo ≤ x ∧ x ≤ hi)
+
+end Economie
+
 /-- Contraintes juridiques prises comme hypothèses. -/
 structure CadreJuridique where
   id : String
@@ -451,13 +559,11 @@ abbrev ValideReference (H : Scenario) : Prop :=
 /-- Bornes sur l'axe économique. -/
 abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.chomageFrictionnelPb ∧ H.eco.chomageFrictionnelPb < 10000 ∧
-  -1000 ≤ H.eco.croissancePb ∧ H.eco.croissancePb ≤ 2000 ∧
-  -1000 ≤ H.eco.croissanceDepensesPb ∧ H.eco.croissanceDepensesPb ≤ 2000 ∧
   0 ≤ H.eco.okunPm ∧ H.eco.okunPm ≤ 2000 ∧
   0 ≤ H.eco.multiplicateurPm ∧ H.eco.multiplicateurPm ≤ 3000 ∧
   0 ≤ H.eco.fuiteFiscalePm ∧ H.eco.fuiteFiscalePm ≤ 1000 ∧
   0 ≤ H.eco.elasticiteChomageSmicPm ∧ 0 ≤ H.eco.economieParMoisRetraite ∧
-  0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧ 0 ≤ H.eco.deriveTauxPb ∧
+  0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧
   0 ≤ H.eco.primeDeficitPb ∧ H.eco.primeDeficitPb ≤ 100 ∧
   -200 ≤ H.eco.excesPatrimoineParDecesPb ∧ H.eco.excesPatrimoineParDecesPb ≤ 300 ∧
   500 ≤ H.eco.elasticiteDroitsSuccessionPm ∧ H.eco.elasticiteDroitsSuccessionPm ≤ 2000 ∧
@@ -484,6 +590,24 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.tauxEmploiSeniorsMaintenusPm ∧ H.eco.tauxEmploiSeniorsMaintenusPm ≤ 1000 ∧
   0 ≤ H.eco.tauxEmploiMigrantsPm ∧ H.eco.tauxEmploiMigrantsPm ≤ 1000 ∧
   0 ≤ H.eco.absorptionChomagePm ∧ H.eco.absorptionChomagePm ≤ 1000
+
+/-- Bornes sur les trajectoires macroéconomiques et la dette. -/
+abbrev ValideTrajectoires (H : Scenario) : Prop :=
+  -500 ≤ H.eco.croissancePotentiellePb ∧ H.eco.croissancePotentiellePb ≤ 500 ∧
+  Economie.trajectoireEntre H.eco.croissanceVolumeAnneesPb (-1500) 1500 = true ∧
+  Economie.trajectoireEntre H.eco.croissancePotentielleAnneesPb (-500) 500 = true ∧
+  Economie.trajectoireEntre H.eco.inflationAnneesPb (-500) 2000 = true ∧
+  Economie.trajectoireEntre H.eco.inflationConsoAnneesPb (-500) 2000 = true ∧
+  Economie.trajectoireEntre H.eco.inflationIndexationAnneesPb (-500) 2000 = true ∧
+  Economie.trajectoireEntre H.eco.tauxMarginalAnneesPb (-200) 1500 = true ∧
+  0 < H.eco.renouvellementDettePm ∧ H.eco.renouvellementDettePm ≤ 1000 ∧
+  0 ≤ H.eco.partDetteCourtTermePm ∧ H.eco.partDetteCourtTermePm < 1000 ∧
+  -200 ≤ H.eco.tauxCourtPb ∧ H.eco.tauxCourtPb ≤ 1500 ∧
+  Economie.trajectoireEntre H.eco.tauxCourtAnneesPb (-200) 1500 = true ∧
+  0 ≤ H.eco.partDetteIndexeePm ∧ H.eco.partDetteIndexeePm ≤ 1000 ∧
+  0 ≤ H.reference.etat.detteDebut ∧
+  H.eco.croissanceDepensesVolumePb.toutEntre (-500) 1000 = true ∧
+  H.eco.indexationDecaleePm.toutEntre 0 1000 = true
 
 /-- Bornes sur les axes démographie, natalité, énergie et droit. -/
 abbrev ValideAxes (H : Scenario) : Prop :=
@@ -520,6 +644,7 @@ abbrev ValideClimat (H : Scenario) : Prop :=
 l'assurance chômage. -/
 abbrev ValideTravail (H : Scenario) : Prop :=
   H.eco.incidencePrelevementPm.toutEntre 0 3000 = true ∧
+  H.eco.elasticiteCycliquePm.toutEntre 0 3000 = true ∧
   H.eco.incidenceDepensePm.toutEntre 0 3000 = true ∧
   0 ≤ H.eco.incidenceInvestissementPm ∧ H.eco.incidenceInvestissementPm ≤ 3000 ∧
   H.eco.elasticiteEmploiCoutTravailPm.toutEntre 0 3000 = true ∧
@@ -539,7 +664,8 @@ abbrev ValideTravail (H : Scenario) : Prop :=
 *juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
-  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail
+  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail ∧
+  H.ValideTrajectoires
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
@@ -548,6 +674,7 @@ instance (H : Scenario) : Decidable H.ValideEco := inferInstance
 instance (H : Scenario) : Decidable H.ValideAxes := inferInstance
 instance (H : Scenario) : Decidable H.ValideClimat := inferInstance
 instance (H : Scenario) : Decidable H.ValideTravail := inferInstance
+instance (H : Scenario) : Decidable H.ValideTrajectoires := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario
