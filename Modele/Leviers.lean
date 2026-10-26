@@ -55,16 +55,17 @@ inductive Levier where
   solde consolidé** des administrations publiques. Ses effets se lisent
   dans le panel communal du rapport et dans les contrats de la mesure. -/
   | amendeSRU (bareme : BaremeSRU)
-  /-- Dépense versée **une fois**, M€ (achat, développement…). Elle augmente
-  la dette dès l'année 0 mais pas les dépenses des années suivantes. Effet
-  de demande non modélisé (choix prudent). -/
+  /-- Dépense versée **une fois**, M€ (achat, développement…) : inscrite
+  dans les dépenses (et le déficit) de l'année, retirée l'année suivante,
+  avec un effet de demande qui s'annule à son tour. -/
   | depensePonctuelle (montant : Int)
   /-- Remplacement de véhicules par l'État (sous-modèle :
-  `Modele/Automobile.lean`). Effet macro : coût d'achat versé une fois,
-  importations du véhicule l'année de l'achat, puis, en niveau, carburant
-  importé évité et accises et TVA perdues. Effet sur la balance
-  commerciale cumulée : calculé par le sous-modèle et affiché dans le
-  rapport à 5 et 10 ans. -/
+  `Modele/Automobile.lean`). Effet macro : achat inscrit dans les dépenses
+  de l'année (part importée aux importations, effet de demande sur la part
+  intérieure), puis, en niveau : carburant importé évité, accises et TVA
+  perdues, CO₂ évité, et décès évités selon la vignette Crit'Air des
+  voitures retirées. Effet sur la balance commerciale cumulée : calculé
+  par le sous-modèle et affiché dans le rapport à 5 et 10 ans. -/
   | remplacementVehicules (operation : Remplacement)
   /-- Prélèvement nouveau affecté à un impôt identifié, rendement statique
   M€/an (négatif pour une baisse). `prelevement` seul va dans « autres
@@ -102,11 +103,12 @@ inductive Levier where
   (`-86` : 35 h → 32 h). Le PIB suit le volume d'heures à l'élasticité du
   scénario, sans effet d'Okun sur l'emploi. -/
   | dureeTravail (variationPm : Int)
-  /-- Taux normal de l'impôt sur les sociétés porté à `tauxPb`, avec un
-  retour d'assiette : `retourAssiettePm` de la perte statique est
-  récupérée par les bénéfices rapatriés ou relocalisés (entreprises
-  revenues ou nouvellement implantées). -/
-  | impotSocietes (tauxPb : Int) (retourAssiettePm : Int)
+  /-- Taux normal de l'impôt sur les sociétés porté à `tauxPb`. Le modèle
+  applique le plancher du pilier 2 aux grands groupes (taux effectif moyen)
+  et la réponse de l'assiette au taux effectif (bénéfices transférés ou
+  relocalisés) ; les deux paramètres sont dans l'axe économique, communs à
+  tous les programmes. -/
+  | impotSocietes (tauxPb : Int)
   /-- Politique migratoire : écart de solde migratoire net, milliers par an
   (négatif = moins d'entrées). Population et population active suivent
   (part active des migrants du scénario). -/
@@ -197,6 +199,25 @@ inductive Levier where
   (`partImposeeAvantPm`) sont autant de recettes perdues. Calcul annuel
   dans `anneeSuivante`. -/
   | detteNumerique (ciblePm rythmePm capitalisationPm partResidentsPm partImposeeAvantPm : Int)
+  /-- Aide à la rénovation énergétique relevée de `bonusEuros` par rénovation
+  dans le territoire `cible`. Le modèle en déduit, avec le sous-modèle
+  rénovation de l'axe énergie : le coût (bonus sur les rénovations déjà
+  aidées, aide entière sur les rénovations suscitées), les rénovations
+  suscitées (effet d'aubaine), et chaque année les économies de fioul et de
+  gaz (importations, accises, TVA, CO₂). -/
+  | bonusRenovation (cible : Territoire) (bonusEuros : Int)
+  /-- Investissement public outre-mer, échéancier de niveaux annuels (M€ de
+  l'année d'entrée en vigueur ; le dernier niveau est reconduit, 0 pour
+  arrêter). Emplois dans la construction ; la part importée de la dépense,
+  plus forte qu'en métropole (axe économique), ne soutient pas l'activité
+  intérieure et accroît les importations. -/
+  | investissementOutreMer (fonction : Fonction) (niveaux : List Int)
+  /-- Raccordement de `foyers` foyers d'outre-mer au réseau électrique : leur
+  consommation est produite au coût des zones non interconnectées et le
+  tarif péréqué n'en couvre qu'une partie ; le surcoût, financé par les
+  charges de service public de l'énergie, est une dépense annuelle
+  (affaires économiques). -/
+  | raccordementZni (foyers : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -295,6 +316,37 @@ def reculDepart (H : Scenario) (moisPm : Int) (s : Etat) : Etat :=
       emploi := s.emploi.repartir dEmploi none
       chomeursExcedentaires := s.chomeursExcedentaires + (dEquilibre - dEmploi) }
 
+/-- Taux effectif moyen de l'IS pour un taux normal `taux` : les groupes du
+pilier 2 (part `partISPilier2Pm` de l'IS) restent imposés au taux minimal
+(directive (UE) 2022/2523, impôt complémentaire national depuis la loi de
+finances pour 2024). -/
+def tauxISEffectif (H : Scenario) (taux : Int) : Int :=
+  ((1000 - H.eco.partISPilier2Pm) * taux
+    + H.eco.partISPilier2Pm * max taux H.eco.tauxMinimumPilier2Pb) / 1000
+
+/-- Part d'une dépense dont le contenu en importations est `contenuPm`
+adressée à la production intérieure, pm, relativement au multiplicateur
+national (dont la fuite d'importations est déjà `contenuImportDemandePm`). -/
+def partInterieure (H : Scenario) (contenuPm : Int) : Int :=
+  if H.eco.contenuImportDemandePm ≥ 1000 then 0
+  else max 0 (min 1000 ((1000 - contenuPm) * 1000 / (1000 - H.eco.contenuImportDemandePm)))
+
+/-- Investissement outre-mer : contenu importé de l'axe économique. -/
+def partInterieureOutreMer (H : Scenario) : Int :=
+  partInterieure H H.eco.contenuImportOutreMerPm
+
+/-- Dépense d'une seule année (achat) : inscrite dans les dépenses de l'année
+et retirée l'année suivante (échéancier `[0]`), avec un effet de demande
+symétrique ; la part importée va aux importations. -/
+def depenseUneAnnee (H : Scenario) (f : Fonction) (secteur : Option Secteur) (part montant : Int)
+    (s : Etat) : Etat :=
+  let e : Echeance := { fonction := f, restants := [0], niveau := montant, indice := 10000,
+                        secteur := secteur, partInterieurePm := part }
+  effetDemande H secteur (montant * part / 1000)
+    { s with echeances := s.echeances ++ [e]
+             depensesF := s.depensesF.ajouter f montant
+             importations := s.importations + montant * (1000 - part) / 1000 }
+
 /-- Hausses régulières de `pas` mois par an jusqu'à `reste` mois (dernière
 hausse partielle). Vide si `reste` ou `pas` n'est pas positif. -/
 def pasReguliers (reste pas : Int) : List Int :=
@@ -342,12 +394,18 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
             else pasReguliers (c - s.ageLegalMois) r }
   | .dureeTravail v, s =>
       chocHeures H v { s with heuresParEmploi := s.heuresParEmploi + appliquerPm s.heuresParEmploi v }
-  -- IS : perte statique au prorata des taux, retour d'assiette, impulsion de demande
-  | .impotSocietes taux retour, s =>
-      let statique := s.impots.impotSocietes * (taux - H.eco.tauxISPb) / H.eco.tauxISPb
-      let rendement := statique - appliquerPm statique retour
+  -- IS : taux effectif moyen (plancher du pilier 2 pour les grands groupes),
+  -- assiette qui répond au taux effectif, impulsion de demande sur la
+  -- variation statique
+  | .impotSocietes taux, s =>
+      let t0 := H.eco.tauxISPb
+      let tEff := tauxISEffectif H taux
+      let statique := s.impots.impotSocietes * (tEff - t0) / t0
+      -- recettes après réponse de l'assiette : IS × tEff/t0 × (1 + ε × (t0 − tEff)/100)
+      let apres := s.impots.impotSocietes * tEff
+        * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tEff)) / (t0 * 100000)
       effetDemande H none (-(appliquerPm statique M.multiplicateurPrelevementsPm))
-        { s with impots := s.impots.ajouter .impotSocietes rendement }
+        { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes) }
   | .transition r c, s =>
       appliquerDepense H none .logementEnvironnement c { s with emissionsMt := s.emissionsMt - r }
   -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
@@ -355,22 +413,24 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- de comportement des communes : évolution du modèle commun, à discuter
   -- en issue.
   | .amendeSRU _, s => s
-  | .depensePonctuelle m, s => { s with dette := s.dette + m }
-  -- achat versé une fois (importations du véhicule : l'année de l'achat
-  -- seulement) ; dès l'année 0, parc électrique, décès évités, carburant
-  -- importé en moins et accises et TVA perdues, en niveau (une seule fois)
+  | .depensePonctuelle m, s => depenseUneAnnee H .nonVentile none 1000 m s
+  -- achat : dépense de l'année (déficit), dont la part importée suit les
+  -- importations, retirée l'année suivante ; dès l'année 0 et en niveau :
+  -- parc électrique, particules selon la vignette Crit'Air des voitures
+  -- retirées, CO₂, carburant importé en moins, accises et TVA perdues
   | .remplacementVehicules r, s =>
-      let achat := r.importsInitialesCts / 100000000
-      { s with dette := s.dette + r.cout / 1000000
-               importations := s.importations + achat
+      let pm := (H.energie.pmRelatifCritAirPm.getD r.vignetteCritAir 1000)
+      let s : Etat := depenseUneAnnee H .logementEnvironnement (some .industrie)
+        (partInterieure H r.partImporteePm) (r.cout / 1000000)
+        (s.reduireEmissionsKt (r.nombre * H.energie.co2EviteParVehiculeKg / 1000000))
+      { s with importations := s.importations
                  - r.nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
-               importsPonctuelles := s.importsPonctuelles + achat
                impots := (s.impots.ajouter .accisesEnergie
                    (-(r.nombre * H.energie.accisesParVehiculeEuros / 1000000)))
                  |>.ajouter .tva (-(r.nombre * H.energie.tvaParVehiculeEuros / 1000000))
                parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
                decesPollutionAir := s.decesPollutionAir
-                 - r.nombre * H.energie.decesEvitesParMillionVehicules / 1000000 }
+                 - r.nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000 }
   | .prelevementSur i r, s => appliquerPrelevement M H i r s
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
@@ -435,6 +495,30 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .aideAchatElectrique n prime, s =>
       appliquerDepense H none .logementEnvironnement (n * prime / 1000000)
         { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }
+  -- rénovation : rénovations déjà aidées dans la cible, rénovations suscitées
+  -- par le bonus (demande linéaire en l'aide), coût annuel, économies
+  -- d'énergie portées par la projection
+  | .bonusRenovation cible bonus, s =>
+      let R := H.energie.renovation
+      let base := R.renovationsAideesParAn * R.part cible / 1000
+      let suscitees := base * (1000 - R.aubainePm) * bonus / (1000 * R.aideMoyenneEuros)
+      let cout := (base * bonus + suscitees * (R.aideMoyenneEuros + bonus)) / 1000000
+      let mwh := suscitees * R.economieKWhParRenovation / 1000
+      appliquerDepense H (some .construction) .logementEnvironnement cout
+        { s with economiesFioulMWhAnnuelles := s.economiesFioulMWhAnnuelles + mwh * R.partFioul cible / 1000
+                 economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + mwh * R.partGaz cible / 1000 }
+  | .investissementOutreMer _ [], s => s
+  | .investissementOutreMer f (n :: reste), s =>
+      let part := partInterieureOutreMer H
+      let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
+                            secteur := some .construction, partInterieurePm := part }
+      let s' : Etat := { s with echeances := s.echeances ++ [e]
+                                depensesF := s.depensesF.ajouter f n
+                                importations := s.importations + n * (1000 - part) / 1000 }
+      effetDemande H (some .construction) (n * part / 1000) s'
+  | .raccordementZni foyers, s =>
+      appliquerDepense H none .affairesEconomiques
+        (foyers * H.energie.consommationFoyerZniKWh * H.energie.surcoutPerequationZniEurosMWh / 1000000000) s
   | .detteNumerique cible rythme cap res imp, s =>
       let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
       { s with cibleDetteNumeriquePm := cible

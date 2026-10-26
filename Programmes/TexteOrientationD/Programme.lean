@@ -11,8 +11,8 @@ aux programmes).
 
 Mesures (extrait) :
 
-* **O-01** — remplacement gratuit par l'État des 10 000 voitures les plus
-  polluantes. Balance commerciale à 5 et 10 ans : sous-modèle automobile.
+* **O-01** — remplacement gratuit par l'État de 10 000 voitures Crit'Air 5
+  chaque année. Balance commerciale à 5 et 10 ans : sous-modèle automobile.
 * **O-02** — amendes SRU proportionnelles à la part de logements sociaux
   manquants, avec comparaison de plusieurs taux. Effet par commune et
   destination des fonds : sous-modèle SRU.
@@ -80,7 +80,9 @@ Mesures (extrait) :
   niches, durée de cotisation ; **O-59** à **O-62** face aux lois en
   vigueur ajoutées à la référence : CVAE maintenue, contribution
   exceptionnelle des grandes entreprises pérennisée, deuxième étape sur les
-  aides aux entreprises et les niches.
+  aides aux entreprises et les niches ; **O-63** aide à la rénovation
+  majorée de 25 % dans les territoires ruraux ; **O-64** à **O-66** eau
+  potable et électrification de tous les foyers des outre-mer.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -90,13 +92,22 @@ open Modele
 
 /-! ## O-01 — Remplacement des 10 000 voitures les plus polluantes -/
 
-/-- 10 000 citadines électriques à 25 000 € (hypothèse de prix), achetées
-sans critère d'origine : 73 % de la valeur importée, puisque 27 % des
-voitures électriques vendues en France y sont fabriquées (IMT, 2025). -/
+/-- 10 000 citadines électriques à 25 000 € (hypothèse de prix) chaque
+année, achetées sans critère d'origine : 73 % de la valeur importée,
+puisque 27 % des voitures électriques vendues en France y sont fabriquées
+(IMT, 2025). Voitures retirées : les plus polluantes, Crit'Air 5 et non
+classées (diesel Euro 2 et antérieures ; 1,2 million de voitures au
+1er janvier 2026, SDES), dont le modèle déduit les particules évitées
+(7,5 fois la moyenne du parc thermique). Neuf vagues de 2027 à 2035 :
+90 000 voitures, 7,5 % de ce parc. -/
 def remplacement : Remplacement where
   nombre := 10000
   prixUnitaire := 25000
   partImporteePm := 730
+  vignetteCritAir := 5
+
+/-- Vagues annuelles de remplacement (2027 à 2035). -/
+def vaguesRemplacement : Nat := 9
 
 /-- Variante : véhicules assemblés en France, dont 35 % de la valeur reste
 importée (batteries, composants ; hypothèse). -/
@@ -136,33 +147,26 @@ def pretEPR2Total : Int := 6067
 
 /-! ## O-07 à O-11 — Hypothèses de chiffrage -/
 
-/-- Impôt sur les sociétés à deux points au-dessus du taux le plus bas de
-l'UE : 9 % (Hongrie) + 2 = `tauxISCible` = 11 %, contre 25 % en France.
+/-- Impôt sur les sociétés à trois points au-dessus du taux le plus bas de
+l'UE : 9 % (Hongrie) + 3 = `tauxISCible` = 12 %, contre 25 % en France
+(11 % dans la version précédente, relevé d'un point).
 
-**Minimum mondial (pilier 2)** : les groupes dont le chiffre d'affaires
-dépasse 750 M€ restent imposés à au moins 15 % effectifs (directive (UE)
-2022/2523, transposée par la loi de finances pour 2024 avec un impôt
-complémentaire national) : si le taux français tombe sous 15 %, la France
-perçoit elle-même le complément. Leur part de l'IS : `partPilier2` = 45 %
-(hypothèse : les grandes entreprises acquittent une part importante de
-l'IS ; exclusion fondée sur la substance négligée). Taux effectif moyen :
-55 % × 11 % + 45 % × 15 % = `tauxISEffectif` = 12,8 %.
+Le modèle commun applique désormais lui-même (levier `impotSocietes`, axe
+économique) :
 
-Le levier `impotSocietes` calcule la perte statique au prorata des taux
-(58,9 Md€ × (1 − 12,8/25) ≈ −28,7 Md€) puis applique un **coefficient de
-retour d'assiette** : part de la perte récupérée grâce aux bénéfices
-rapatriés et aux sociétés qui reviennent ou s'implantent. Valeur centrale
-30 % (hypothèse : élasticité de l'assiette de l'IS au taux de l'ordre de 1,
-littérature Devereux-Griffith / OCDE, pour un pays de la taille de la
-France). Variantes : 17 % (deux points au-dessus du minimum de 15 % du
-pilier 2, si c'est ce minimum qui est visé), sans retour d'assiette, sans
-plancher du pilier 2. -/
-def tauxISCible : Int := 1100
-def partPilier2 : Int := 450
+* le **minimum mondial (pilier 2)** : les groupes dont le chiffre
+  d'affaires dépasse 750 M€ restent imposés à au moins 15 % effectifs
+  (directive (UE) 2022/2523, impôt complémentaire national de la loi de
+  finances pour 2024) ; la France perçoit elle-même le complément ;
+* la **réponse de l'assiette** au taux effectif (bénéfices transférés ou
+  relocalisés), par une semi-élasticité tirée de la littérature, au lieu
+  du coefficient de retour d'assiette de 30 % que le programme fixait
+  lui-même.
+
+`tauxMinimumPilier2` ne sert plus qu'au calcul de O-60 (taux des grands
+groupes). -/
+def tauxISCible : Int := 1200
 def tauxMinimumPilier2 : Int := 1500
-def tauxISEffectif : Int :=
-  ((1000 - partPilier2) * tauxISCible + partPilier2 * max tauxISCible tauxMinimumPilier2) / 1000
-def retourAssiette : Int := 300
 
 /-- Démission indemnisée six mois, une fois tous les cinq ans. Hypothèse :
 1,9 million de démissions de CDI par an (DARES, ordre de grandeur), 20 %
@@ -707,6 +711,49 @@ d'activité au moteur de demande) :
   Pacte Dutreil, traité par O-41, et dispositifs des ménages modestes). -/
 def aidesSecondeEtape : Int := 1500
 def nichesSecondeEtape : Int := 1000
+
+/-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
+rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
+dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
+rénovation. Les ménages ruraux se chauffent deux fois plus souvent au
+fioul (16,7 % contre 8,5 %, INSEE 2026) : chaque rénovation y évite plus
+de CO₂ et d'importations. Le modèle commun (sous-modèle rénovation de l'axe
+énergie) en déduit le coût, dont la majoration versée aux rénovations qui
+auraient eu lieu sans elle, et les rénovations suscitées. -/
+def bonusRenovationRurale : Int := 3250
+
+/-- Eau potable outre-mer (O-64). La Cour des comptes (mars 2025) chiffre à
+2,36 Md€ les investissements nécessaires dans les DROM et à Saint-Martin,
+dont 1,52 Md€ pour l'eau potable et 841 M€ pour l'assainissement (Mayotte
+743 M€, La Réunion 688 M€, Guadeloupe 375 M€) ; le plan Eau-DOM n'en a
+couvert qu'environ 10 %. Situation : 25 % des ménages de Mayotte sans eau
+courante en 2024 et des coupures quotidiennes pour 63 % des raccordés
+(INSEE Analyses Mayotte n° 42, juin 2026) ; 15 % de la population de Guyane
+sans eau potable du réseau public (réponse ministérielle, JO du
+23 décembre 2025) ; 25 % des Guadeloupéens soumis aux tours d'eau,
+rendement des réseaux de 32 % (Sénat, rapport n° 440, mars 2025). La loi
+de programmation pour la refondation de Mayotte (n° 2025-797) prévoit déjà
+730 M€ : le programme finance le reste, 1,63 Md€ (euros 2027) sur cinq
+ans, `eauOutreMer` = 326 M€ par an de 2027 à 2031. Les collectivités du
+Pacifique (Polynésie : 62 % de la population desservie en eau conforme en
+2024 ; Nouvelle-Calédonie, Wallis-et-Futuna) relèvent de leurs propres
+compétences : non chiffrées. -/
+def eauOutreMer : Int := 326
+
+/-- Électrification totale des outre-mer (O-65). Logements sans électricité
+(INSEE, 2026) : 19 % à Mayotte en 2024, soit ≈ 15 400 ménages (calcul :
+323 153 habitants, 4 personnes par ménage) ; 7 % en Guyane, ≈ 6 700
+ménages (hypothèse : ≈ 95 000 résidences principales), surtout dans les
+communes de l'intérieur (60 % des logements électrifiés, IEDOM 2021). Coût
+par foyer non publié : hypothèses de 5 000 € pour un raccordement au réseau
+(Mayotte) et de 20 000 € pour un site isolé (micro-réseau solaire avec
+stockage, Guyane), soit 77 + 134 = 211 M€ sur trois ans,
+`electrificationOutreMer` = [70, 70, 71] M€ ; puis le surcoût de
+production de l'électricité consommée par les 22 100 foyers raccordés
+(péréquation des zones non interconnectées, modèle commun),
+`foyersRaccordesParAn` = 7 367 par an pendant trois ans. -/
+def electrificationOutreMer : List Int := [70, 70, 71, 0]
+def foyersRaccordesParAn : Int := 7367
 def contributionGrandesEntreprises : Int :=
   7500 * max tauxISCible tauxMinimumPilier2 / 2500 * 103 / 100
 
@@ -759,9 +806,10 @@ def partImposeeAvant : Int := 600
 
 def mesures : List Mesure := [
   { id := "O-01"
-    titre := "Remplacement gratuit par l'État des 10 000 voitures les plus polluantes"
-    source := "Texte Orientation D, mesure 1 ; prix unitaire et part importée : hypothèses (voir Programme.lean)"
+    titre := "Remplacement gratuit par l'État de 10 000 voitures parmi les plus polluantes chaque année"
+    source := s!"Texte Orientation D, mesure 1 ; 10 000 voitures Crit'Air 5 ou non classées par an pendant {vaguesRemplacement} ans ; prix unitaire et part importée : hypothèses (voir Programme.lean)"
     leviers := [.remplacementVehicules remplacement]
+    repetitions := vaguesRemplacement
     variantes := [
       { nom := "véhicules fabriqués en France"
         leviers := [.remplacementVehicules remplacementFabriqueEnFrance] }]
@@ -855,13 +903,12 @@ def mesures : List Mesure := [
       { nom := "écart de 6 mois au calendrier légal dès 2027", leviers := [.ageLegal (-6)] }] },
 
   { id := "O-08"
-    titre := "Impôt sur les sociétés à deux points au-dessus du taux le plus bas de l'Union européenne (11 %)"
-    source := s!"Texte Orientation D, mesure 8 ; taux le plus bas de l'UE : Hongrie 9 % (Commission européenne, Taxation trends 2025), +2 points = {tauxISCible / 100} % ; groupes du pilier 2 ({partPilier2 / 10} % de l'IS, hypothèse) imposés à 15 % au moins : taux effectif moyen {tauxISEffectif} pb ; retour d'assiette {retourAssiette / 10} % (voir `tauxISCible`)"
-    leviers := [.impotSocietes tauxISEffectif retourAssiette]
+    titre := "Impôt sur les sociétés à trois points au-dessus du taux le plus bas de l'Union européenne (12 %)"
+    source := s!"Texte Orientation D, mesure 8 ; taux le plus bas de l'UE : Hongrie 9 % (Commission européenne, Taxation trends 2025), +3 points = {tauxISCible / 100} % ; plancher du pilier 2 et réponse de l'assiette appliqués par le modèle commun (axe économique)"
+    leviers := [.impotSocietes tauxISCible]
     variantes := [
-      { nom := "17 % (minimum de 15 % du pilier 2 + 2 points)", leviers := [.impotSocietes 1700 retourAssiette] },
-      { nom := "aucun retour d'assiette", leviers := [.impotSocietes tauxISEffectif 0] },
-      { nom := "sans plancher du pilier 2 (11 % pour tous)", leviers := [.impotSocietes tauxISCible retourAssiette] },
+      { nom := "11 % (deux points au-dessus du taux le plus bas, version précédente)", leviers := [.impotSocietes 1100] },
+      { nom := "17 % (minimum de 15 % du pilier 2 + 2 points)", leviers := [.impotSocietes 1700] },
       { nom := "IS maintenu à 25 % (abandon de la baisse, piste vers l'équilibre)", leviers := [] }] },
 
   { id := "O-09"
@@ -1224,13 +1271,36 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .ir (nichesSecondeEtape / 2), .prelevementSur .impotSocietes (nichesSecondeEtape / 4),
                 .prelevementSur .tva (nichesSecondeEtape / 4)]
     debut := 2
-    repetitions := 7 }
+    repetitions := 7 },
+
+  { id := "O-63"
+    titre := "Aide à la rénovation énergétique majorée de 25 % dans les territoires ruraux"
+    source := s!"Texte Orientation D, mesure 63 ; +{bonusRenovationRurale} € par rénovation aidée dans les communes rurales (48 % des rénovations aidées, Anah 2021) ; effets : sous-modèle rénovation du modèle commun (voir `bonusRenovationRurale`)"
+    leviers := [.bonusRenovation .rural bonusRenovationRurale]
+    variantes := [
+      { nom := "majoration de 50 % (6 500 €)", leviers := [.bonusRenovation .rural (2 * bonusRenovationRurale)] }] },
+
+  { id := "O-64"
+    titre := "Accès à l'eau potable dans les outre-mer : réseaux, production, assainissement"
+    source := s!"Texte Orientation D, mesure 64 ; besoins de 2,36 Md€ (Cour des comptes, mars 2025), moins les 730 M€ de la loi n° 2025-797 pour Mayotte : {eauOutreMer} M€ par an de 2027 à 2031 (voir `eauOutreMer`)"
+    leviers := [.investissementOutreMer .logementEnvironnement [eauOutreMer, eauOutreMer, eauOutreMer, eauOutreMer, eauOutreMer, 0]] },
+
+  { id := "O-65"
+    titre := "Électrification totale des outre-mer : raccordement de tous les foyers"
+    source := s!"Texte Orientation D, mesure 65 ; ≈ 22 100 foyers sans électricité à Mayotte et en Guyane (INSEE 2026) ; raccordement et sites isolés : 211 M€ sur trois ans (coûts unitaires : hypothèses) ; surcoût de péréquation des zones non interconnectées pour {foyersRaccordesParAn} foyers de plus par an (voir `electrificationOutreMer`)"
+    leviers := [.investissementOutreMer .affairesEconomiques electrificationOutreMer] },
+
+  { id := "O-66"
+    titre := "Électrification des outre-mer : électricité des foyers raccordés (péréquation tarifaire)"
+    source := s!"Texte Orientation D, mesure 65 (suite) ; {foyersRaccordesParAn} foyers raccordés par an de 2027 à 2029, consommation et surcoût de production des zones non interconnectées : axe énergie du modèle commun"
+    leviers := [.raccordementZni foyersRaccordesParAn]
+    repetitions := 3 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation)."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

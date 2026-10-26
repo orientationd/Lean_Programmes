@@ -56,6 +56,9 @@ structure Remplacement where
   prixUnitaire : Int
   /-- Part importée de la valeur du véhicule, pm. -/
   partImporteePm : Int
+  /-- Vignette Crit'Air des voitures retirées (0 : moyenne du parc). Le
+  modèle en déduit leurs particules à l'échappement (axe énergie). -/
+  vignetteCritAir : Nat := 0
   deriving Repr, DecidableEq
 
 namespace Remplacement

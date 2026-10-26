@@ -270,6 +270,22 @@ def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
     ("importations", toJson (s.importations - a.importations)),
     ("balanceCourante", toJson (s.balanceCourante - a.balanceCourante))]
 
+/-- Variantes des mesures : programme complet dont la mesure prend les
+leviers de la variante, comparé au programme retenu, moteur standard,
+scénario central, à l'horizon de la synthèse. -/
+def effetsVariantes (p : Programme) (n : Nat) : List Json :=
+  let H := Hypotheses.central
+  let retenu := p.resultatA standard H n
+  p.mesures.flatMap fun m => m.variantes.map fun v =>
+    let pv : Programme := { p with mesures := p.mesures.map fun m' =>
+      if m'.id = m.id then { m' with leviers := v.leviers } else m' }
+    let s := pv.resultatA standard H n
+    Json.mkObj [("mesure", toJson m.id), ("variante", toJson v.nom),
+      ("deficitPb", toJson s.deficitPb), ("ecartDeficitPb", toJson (s.deficitPb - retenu.deficitPb)),
+      ("ecartPibPb", toJson (ratioPb (s.pib - retenu.pib) retenu.pib)),
+      ("ecartEmplois", toJson (s.emploiTotal - retenu.emploiTotal)),
+      ("chomagePb", toJson s.chomagePb)]
+
 def rapportSyntheseJson : Json :=
   let annee0 := Hypotheses.reference2026.annee
   let scens := Hypotheses.tous
@@ -300,6 +316,7 @@ def rapportSyntheseJson : Json :=
         -- effet de chaque mesure seule, à l'horizon de la synthèse, par moteur
         ("effetsMesures", Json.arr <| (moteurs.toArray.flatMap fun M =>
           p.mesures.toArray.map fun m => effetMesure M p m horizonSynthese)),
+        ("effetsVariantes", Json.arr (effetsVariantes p horizonSynthese).toArray),
         ("effetTotal", Json.arr <| moteurs.toArray.map fun M =>
           let H := Hypotheses.central
           let a := tendancielA M H horizonSynthese

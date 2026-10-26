@@ -846,6 +846,27 @@ def section_effets(D: Donnees) -> list:
     out.append(P("Déficit : écart en points de PIB (positif = déficit creusé). Les mesures d'âge de "
                  "départ, de SMIC et de durée du travail agissent sur le PIB par le volume d'heures ; "
                  "les économies et dépenses par l'effet de demande du moteur.", "note"))
+    out += section_variantes(D)
+    return out
+
+
+def section_variantes(D: Donnees) -> list:
+    progs = [p for p in D.progs if p.get("effetsVariantes")]
+    if not progs:
+        return []
+    a1 = D.annees[-1]
+    out = [CondPageBreak(90 * mm), P("Variantes des mesures", "h2"),
+           P(f"Programme complet dont une mesure prend les leviers de sa variante, comparé au programme "
+             f"retenu : déficit {a1} du programme avec la variante, écarts de déficit (points de PIB), "
+             f"de PIB et d'emploi. Moteur « {D.nom_moteur(D.standard)} », scénario central.")]
+    ent = ["Mesure et variante", f"Déficit {a1}", "Écart déficit", "Écart PIB", "Écart emplois",
+           f"Chômage {a1}"]
+    larg = [0.46, 0.10, 0.11, 0.11, 0.12, 0.10]
+    for p in progs:
+        rows = [[f"{v['mesure']} — {court_nom(v['variante'], 70)}", pct_pb(v["deficitPb"]),
+                 signe(v["ecartDeficitPb"] / 100, 2), signe(v["ecartPibPb"] / 100, 2) + NBSP + "%",
+                 signe(v["ecartEmplois"], 0), pct_pb(v["chomagePb"])] for v in p["effetsVariantes"]]
+        out.append(KeepTogether([P(echap(nom_court(p["nom"])), "h2"), tableau(ent, rows, larg)]))
     return out
 
 

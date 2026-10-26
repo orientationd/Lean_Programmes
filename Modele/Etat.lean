@@ -372,6 +372,12 @@ l'année d'entrée en vigueur et indexés sur la croissance tendancielle de leur
 fonction. Une fois la liste épuisée, le dernier niveau est conservé. -/
 structure Echeance where
   fonction : Fonction
+  /-- Secteur qui reçoit l'effet de demande (par défaut : celui de la
+  fonction ; la construction pour un investissement). -/
+  secteur : Option Secteur := none
+  /-- Part de la dépense adressée à la production intérieure, pm ; le reste
+  est importé (investissement outre-mer). -/
+  partInterieurePm : Int := 1000
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/
@@ -519,15 +525,20 @@ structure Etat where
   /-- Ventes tendancielles de voitures électriques neuves de l'année,
   milliers (flux porté par la projection). -/
   electrificationTendanceMilliers : Int := 0
-  /-- Importations ponctuelles de l'année (achat unique), M€ : comprises dans
-  `importations`, retirées avant la projection de l'année suivante. -/
-  importsPonctuelles : Int := 0
   /-- Contribution différentielle sur les hauts revenus, M€ (comprise dans
   `impots.ir`) : due jusqu'à ce que le déficit public passe sous 3 % du PIB
   (loi n° 2025-127) ; la projection la supprime l'année qui suit. -/
   cdhrMeur : Int := 0
   /-- Décès de l'année, milliers (montent de `hausseDecesMilliers` par an). -/
   decesMilliers : Int := 0
+  /-- Réductions d'émissions inférieures au million de tonnes, kt, en attente
+  d'être reportées sur `emissionsMt` (unité entière). -/
+  emissionsResiduKt : Int := 0
+  /-- Économies annuelles de fioul et de gaz dues aux rénovations
+  supplémentaires des mesures, MWh par an (flux porté par la projection :
+  chaque année ajoute ce volume aux économies déjà acquises). -/
+  economiesFioulMWhAnnuelles : Int := 0
+  economiesGazMWhAnnuelles : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
@@ -602,6 +613,20 @@ def soldePrimaire (s : Etat) : Int := s.recettes - s.depensesPrimaires
 
 /-- Déficit en pb du PIB. -/
 def deficitPb (s : Etat) : Int := ratioPb s.deficit s.pib
+
+/-- Réduit les émissions de `kt` kilotonnes de CO₂ (négatif : hausse) : la
+partie entière en Mt est reportée sur `emissionsMt`, le reste attend dans
+`emissionsResiduKt`. -/
+def reduireEmissionsKt (kt : Int) (s : Etat) : Etat :=
+  let total := s.emissionsResiduKt + kt
+  let mt := total / 1000
+  { s with emissionsMt := s.emissionsMt - mt, emissionsResiduKt := total - mt * 1000 }
+
+theorem reduireEmissionsKt_conserve (kt : Int) (s : Etat) :
+    (s.reduireEmissionsKt kt).emissionsMt * 1000 - (s.reduireEmissionsKt kt).emissionsResiduKt
+      = s.emissionsMt * 1000 - s.emissionsResiduKt - kt := by
+  simp only [reduireEmissionsKt]
+  omega
 
 /-- Dette en pb du PIB. -/
 def dettePb (s : Etat) : Int := ratioPb s.dette s.pib

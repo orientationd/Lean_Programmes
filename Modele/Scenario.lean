@@ -66,6 +66,62 @@ structure Natalite where
   sources : List String
   deriving Repr
 
+/-- Territoire visé par une aide (rénovation…). -/
+inductive Territoire where
+  | national | rural
+  deriving Repr, DecidableEq, Inhabited
+
+/-- Sous-modèle de la rénovation énergétique des logements aidée par l'État
+(MaPrimeRénov'). Les montants en € sont ceux de l'année de départ. -/
+structure Renovation where
+  /-- Rénovations aidées par an (gestes et rénovations d'ampleur). -/
+  renovationsAideesParAn : Int
+  /-- Part de ces rénovations située dans les communes rurales, pm. -/
+  partRuralePm : Int
+  /-- Aide moyenne par rénovation, €. -/
+  aideMoyenneEuros : Int
+  /-- Effet d'aubaine : part des rénovations aidées qui auraient eu lieu sans
+  l'aide, pm. Demande supposée linéaire en l'aide : une hausse de l'aide de
+  `b` € suscite `(1 − aubaine) × b / aide moyenne` rénovations de plus par
+  rénovation aidée. -/
+  aubainePm : Int
+  /-- Économie d'énergie finale par rénovation, kWh/an. -/
+  economieKWhParRenovation : Int
+  /-- Parts du fioul et du gaz dans le chauffage des logements rénovés, pm. -/
+  partFioulNationalPm : Int
+  partGazNationalPm : Int
+  partFioulRuralPm : Int
+  partGazRuralPm : Int
+  /-- Émissions par MWh consommé, kg CO₂. -/
+  co2FioulKgMWh : Int
+  co2GazKgMWh : Int
+  /-- Valeur importée par MWh, € (fioul : au prix de référence du pétrole,
+  proportionnelle au Brent). -/
+  importFioulEurosMWh : Int
+  importGazEurosMWh : Int
+  /-- Accises et TVA par MWh, €. -/
+  accisesFioulEurosMWh : Int
+  tvaFioulEurosMWh : Int
+  accisesGazEurosMWh : Int
+  tvaGazEurosMWh : Int
+  deriving Repr
+
+namespace Renovation
+
+def part (r : Renovation) : Territoire → Int
+  | .national => 1000
+  | .rural => r.partRuralePm
+
+def partFioul (r : Renovation) : Territoire → Int
+  | .national => r.partFioulNationalPm
+  | .rural => r.partFioulRuralPm
+
+def partGaz (r : Renovation) : Territoire → Int
+  | .national => r.partGazNationalPm
+  | .rural => r.partGazRuralPm
+
+end Renovation
+
 /-- Hypothèse sur le prix du pétrole, appliquée comme un choc de niveau sur
 le PIB de départ, identique pour le tendanciel et pour chaque programme. -/
 structure Energie where
@@ -101,6 +157,20 @@ structure Energie where
   /-- Puissance publique exigée par voiture électrique à batterie, W
   (règlement (UE) 2023/1804, AFIR, art. 3). -/
   puissanceAfirParVehiculeW : Int
+  /-- Émissions évitées par voiture thermique remplacée par une électrique,
+  kg CO₂ par an, nettes de l'électricité consommée. -/
+  co2EviteParVehiculeKg : Int
+  /-- Particules à l'échappement selon la vignette Crit'Air, pm de la moyenne
+  du parc thermique : indice 0 = moyenne, 1 à 5 = Crit'Air 1 à 5. -/
+  pmRelatifCritAirPm : List Int
+  /-- Rénovation énergétique des logements. -/
+  renovation : Renovation
+  /-- Consommation d'électricité d'un foyer d'outre-mer, kWh/an. -/
+  consommationFoyerZniKWh : Int
+  /-- Surcoût de production de l'électricité dans les zones non
+  interconnectées, financé par les charges de service public de l'énergie
+  (péréquation tarifaire), €/MWh. -/
+  surcoutPerequationZniEurosMWh : Int
   /-- Décès annuels évités par million de voitures thermiques remplacées par
   des électriques (particules fines à l'échappement). -/
   decesEvitesParMillionVehicules : Int
@@ -156,6 +226,17 @@ structure Economie where
   sont pas indexés (la part taxable et le taux moyen montent avec les
   montants nominaux). -/
   elasticiteDroitsSuccessionPm : Int
+  /-- Part de l'IS acquittée par les groupes du champ du pilier 2 (chiffre
+  d'affaires consolidé d'au moins 750 M€), pm. -/
+  partISPilier2Pm : Int
+  /-- Taux effectif minimal des groupes du pilier 2 (directive (UE)
+  2022/2523), pb. -/
+  tauxMinimumPilier2Pb : Int
+  /-- Semi-élasticité de l'assiette de l'IS au taux effectif : hausse de
+  l'assiette, pm, pour un point de taux en moins. -/
+  semiElasticiteAssietteISPm : Int
+  /-- Contenu en importations de l'investissement public outre-mer, pm. -/
+  contenuImportOutreMerPm : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
   /-- Élasticité du PIB au volume d'heures travaillées, pm (`650` : part du
@@ -259,6 +340,10 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.primeDeficitPb ∧ H.eco.primeDeficitPb ≤ 100 ∧
   -200 ≤ H.eco.excesPatrimoineParDecesPb ∧ H.eco.excesPatrimoineParDecesPb ≤ 300 ∧
   500 ≤ H.eco.elasticiteDroitsSuccessionPm ∧ H.eco.elasticiteDroitsSuccessionPm ≤ 2000 ∧
+  0 ≤ H.eco.partISPilier2Pm ∧ H.eco.partISPilier2Pm ≤ 1000 ∧
+  0 ≤ H.eco.tauxMinimumPilier2Pb ∧ H.eco.tauxMinimumPilier2Pb ≤ H.eco.tauxISPb ∧
+  0 ≤ H.eco.semiElasticiteAssietteISPm ∧ H.eco.semiElasticiteAssietteISPm ≤ 50 ∧
+  0 ≤ H.eco.contenuImportOutreMerPm ∧ H.eco.contenuImportOutreMerPm ≤ 1000 ∧
   0 ≤ H.eco.baisseEmissionsPm ∧ H.eco.baisseEmissionsPm ≤ 1000 ∧
   0 ≤ H.eco.coutSanteParPbPlus65 ∧
   0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧
@@ -289,6 +374,9 @@ abbrev ValideAxes (H : Scenario) : Prop :=
   H.energie.electrificationTendancielleMilliers ≤ H.energie.ventesNeuvesMilliers ∧
   0 ≤ H.energie.accisesParVehiculeEuros ∧ 0 ≤ H.energie.tvaParVehiculeEuros ∧
   0 < H.energie.puissanceParBorneW ∧ 0 ≤ H.energie.puissanceAfirParVehiculeW ∧
+  0 ≤ H.energie.co2EviteParVehiculeKg ∧ 0 < H.energie.renovation.aideMoyenneEuros ∧
+  0 ≤ H.energie.renovation.aubainePm ∧ H.energie.renovation.aubainePm ≤ 1000 ∧
+  0 ≤ H.energie.surcoutPerequationZniEurosMWh ∧
   0 ≤ H.energie.decesEvitesParMillionVehicules ∧ 0 < H.energie.vehiculesParBorne ∧
   0 ≤ H.energie.factureEnergetiqueMeur ∧
   0 < H.droit.plafondDeficitPb ∧ 0 < H.droit.plafondEmissionsMt ∧

@@ -5,11 +5,26 @@ peuvent modifier ce dossier.
 
 ## Mesures
 
-### O-01 — Remplacement gratuit des 10 000 voitures les plus polluantes
+### O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année
 
-10 000 citadines électriques à 25 000 € (hypothèse), soit 250 M€ versés
-une fois. Effet sur la balance commerciale (sous-modèle
-`Modele/Automobile.lean`, détail dans le rapport) :
+10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
+2035, soit 250 M€ par an et 90 000 voitures, prises parmi les 1,2 million
+de voitures Crit'Air 5 ou non classées (SDES, 1er janvier 2026).
+
+Le modèle commun traite désormais :
+
+* l'**achat** comme une dépense de l'année, inscrite dans le déficit (elle
+  ne passait auparavant que par la dette), dont la part importée (73 %)
+  va aux importations ;
+* les **particules** selon la vignette des voitures retirées : une
+  Crit'Air 5 (diesel Euro 2, 80 mg/km) émet ≈ 7,5 fois la moyenne du parc
+  thermique (limites des normes Euro pondérées par le parc) : 54 décès
+  évités par an en 2035, contre ≈ 8 pour des voitures moyennes ;
+* le **CO₂** : 1,7 t évitée par voiture et par an, soit 0,15 Mt en 2035.
+
+Coût : +0,01 point de déficit en 2035. Effet sur la balance commerciale
+d'une vague (sous-modèle `Modele/Automobile.lean`, détail dans le
+rapport) :
 
 | Version | Hypothèse pétrole | Solde à 5 ans | Solde à 10 ans | Équilibre |
 |---|---|---|---|---|
@@ -119,29 +134,30 @@ l'hypothèse économique du scénario.
 Hypothèse à étayer avec les données du COR (distribution des âges de
 début de carrière, part des métiers exposés).
 
-### O-08 — Impôt sur les sociétés à deux points au-dessus du taux le plus bas de l'UE
+### O-08 — Impôt sur les sociétés à trois points au-dessus du taux le plus bas de l'UE
 
-11 % : taux hongrois de 9 %, le plus bas de l'Union, plus deux points.
+12 % : taux hongrois de 9 %, le plus bas de l'Union, plus trois points
+(11 % auparavant ; variante).
 
-**Minimum mondial de 15 % (pilier 2).** Les groupes de plus de 750 M€ de
-chiffre d'affaires restent imposés à 15 % effectifs au moins : sous ce
-taux, la France perçoit elle-même le complément (impôt complémentaire
-national, loi de finances pour 2024). Avec 45 % de l'IS acquitté par ces
-groupes (hypothèse), le taux effectif moyen est de 12,8 % et la perte
-statique de ≈ 28,7 Md€ par an sur 58,9 Md€ d'IS (contre 37,7 Md€ à 9 %
-sans tenir compte du pilier 2).
+Le modèle commun calcule désormais lui-même :
 
-Le levier `impotSocietes` applique ensuite un **coefficient de retour
-d'assiette** : la part de cette perte récupérée grâce aux bénéfices
-rapatriés et aux sociétés qui reviennent ou s'implantent. Valeur centrale
-30 % (hypothèse fondée sur une élasticité de l'assiette au taux de l'ordre
-de 1). Variantes : 17 % (deux points au-dessus du minimum de 15 % du
-pilier 2, si c'est ce minimum qui est visé), sans retour d'assiette, sans
-plancher du pilier 2. Sous le moteur « offre », la baisse des prélèvements
-relève en outre la croissance.
+* le **plancher du pilier 2** : 40 % de l'IS est acquitté par des groupes
+  de plus de 750 M€ de chiffre d'affaires (hypothèse : les grandes
+  entreprises paient 33 % de l'IS brut, INSEE), imposés à 15 % au moins ;
+  taux effectif moyen 60 % × 12 % + 40 % × 15 % = 13,2 % ;
+* la **réponse de l'assiette** : un point de taux effectif en moins
+  accroît les bénéfices déclarés de 1 % (valeur de consensus de la
+  littérature sur le transfert de bénéfices, Beer, de Mooij et Liu, 2020) ;
+  l'assiette gagne 11,8 % et la perte d'IS passe de 47 % (statique) à
+  41 %. Le programme fixait auparavant lui-même un retour d'assiette de
+  30 %, ce qui contredisait la règle du dépôt (un programme n'apporte pas
+  ses propres élasticités).
 
-Effet en 2035 (mesure seule, central) : déficit +0,58 point (+0,76 à 9 %),
-PIB +0,38 % ; moteur d'offre : +0,12 point, PIB +1,06 %.
+Coût en 2035 : +0,65 point de déficit (mesure seule, moteur de demande),
+PIB +0,32 %, 47 000 emplois. Variantes : 11 % (+0,06 point par rapport à
+12 %), 17 % (−0,34 point), IS maintenu à 25 % (−0,91 point). Les effets
+réels sur l'investissement, qui porteraient la semi-élasticité vers 3,
+relèvent du moteur d'offre.
 
 ### O-09 — Démission indemnisée
 
@@ -365,22 +381,23 @@ variante.
 (Scénario central, moteur de demande, mesures prises isolément.)
 
 **Résultat (avec O-54 à O-62 ci-dessous) : le déficit du Texte Orientation
-D baisse chaque année de 2027 à 2035, de 4,6 % à 3,3 %** (dette 127 % du
+D baisse chaque année de 2027 à 2035, de 4,8 % à 3,6 %** (dette 128 % du
 PIB, chômage 9,1 %), contre 9,0 % sans programme (référence complétée
-des lois en vigueur : voir O-59 à O-62). Le programme entre en vigueur en
+des lois en vigueur : voir O-59 à O-62 ; IS à 12 % et réponse de
+l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
 2027 (aucune mesure avant).
 
 Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
 | En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,3 % | 9,1 % |
+| Rien | 3,6 % | 9,1 % |
 | Abandon de O-08 (IS maintenu à 25 %) | 2,7 % | 9,2 % |
 | … et norme renforcée de 100 pb supplémentaires | 1,3 % | 9,7 % |
 | … et de 200 pb supplémentaires | 0,0 % (équilibre) | 10,2 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
-la synthèse les évalue une à une. (Avec l'IS maintenu à 25 %, O-60
+la synthèse les évalue une à une (section « Variantes des mesures »). (Avec l'IS maintenu à 25 %, O-60
 rapporterait 7,7 Md€ au lieu de 4,6 ; la variante ne le recalcule pas.)
 
 ### O-49 à O-53 — Hauts fonctionnaires, élus, capital, conseil
@@ -449,8 +466,8 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,64 | 4,50 | 4,46 | 4,41 | 4,33 | 4,23 | 3,96 | 3,64 | 3,33 |
-| Offre | 5,38 | 4,55 | 4,37 | 4,32 | 4,26 | 4,19 | 4,05 | 3,81 | 3,53 | 3,26 |
+| Demande | 5,38 | 4,81 | 4,65 | 4,61 | 4,56 | 4,49 | 4,43 | 4,18 | 3,89 | 3,59 |
+| Offre | 5,38 | 4,72 | 4,51 | 4,45 | 4,39 | 4,31 | 4,20 | 3,96 | 3,68 | 3,41 |
 
 La propriété « Déficit en baisse chaque année » est tenue au scénario
 central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
@@ -463,6 +480,56 @@ plus vite.
 Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,45 %,
 ≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
 Orientation D atteint 9,1 % en 2035.
+
+### O-63 — Aide à la rénovation majorée de 25 % dans les territoires ruraux
+
++3 250 € par rénovation aidée (13 000 € en moyenne en 2026) dans les
+communes rurales, où se trouvent 48 % des rénovations aidées (Anah, 2021)
+et où le fioul chauffe 16,7 % des logements, contre 8,5 % en moyenne
+(INSEE, 2026).
+
+Nouveau sous-modèle `Renovation` (axe énergie) : 270 000 rénovations aidées
+par an, effet d'aubaine de 50 % (hypothèse : 80 % pour l'ancien crédit
+d'impôt CITE selon le CAE), économies réelles de 5,4 MWh par an et par
+rénovation (moitié des économies conventionnelles), CO₂, valeur importée,
+accises et TVA du fioul et du gaz.
+
+| Effet par an | Valeur |
+|---|---|
+| Rénovations rurales déjà aidées (bonus versé sans effet) | 129 600 |
+| Rénovations suscitées | 16 200 |
+| Coût (euros 2027) | 684 M€, dont 421 M€ d'aubaine |
+| Économies de fioul et de gaz ajoutées chaque année | 32 000 MWh |
+| CO₂ évité en 2035 | 64 kt |
+
+Effets en 2035 (mesure seule, moteur de demande) : +0,02 point de déficit,
+2 500 emplois, surtout dans le bâtiment. La majoration profite d'abord aux
+ménages qui rénovaient déjà : la moitié du coût est un effet d'aubaine.
+Variante à 50 % : le double du coût, +0,02 point de plus.
+
+### O-64 à O-66 — Eau potable et électricité dans les outre-mer
+
+| Mesure | Chiffrage |
+|---|---|
+| **O-64** Eau potable et assainissement | Besoins de 2,36 Md€ dans les DROM et à Saint-Martin (Cour des comptes, mars 2025), moins les 730 M€ déjà programmés pour Mayotte (loi n° 2025-797) : 1,63 Md€, 326 M€ par an de 2027 à 2031 |
+| **O-65** Électrification de tous les foyers | ≈ 15 400 ménages sans électricité à Mayotte (19 %) et ≈ 6 700 en Guyane (7 %), INSEE 2026 ; 5 000 € par raccordement et 20 000 € par site isolé (hypothèses) : 211 M€ de 2027 à 2029 |
+| **O-66** Électricité des foyers raccordés | 2 500 kWh par foyer et par an produits au coût des zones non interconnectées, 360 €/MWh de surcoût de péréquation (CRE) : 7 M€ de plus chaque année, 20 M€ par an à partir de 2029 |
+
+Situation : 25 % des ménages de Mayotte sans eau courante et des coupures
+quotidiennes pour 63 % des raccordés (INSEE, juin 2026) ; 15 % de la
+population de Guyane sans eau potable du réseau public ; 25 % des
+Guadeloupéens soumis aux tours d'eau, 58 % de pertes sur le réseau. Le
+choléra (221 cas, 7 décès en 2024) et la typhoïde touchent Mayotte ;
+l'effet sanitaire n'est pas chiffré.
+
+Le modèle commun traite ces investissements avec un contenu en
+importations de 50 % (contre 30 % en métropole ; hypothèse : canalisations,
+membranes, panneaux et batteries importés) : chaque euro soutient moins
+l'activité. En 2029, O-64 dépense 351 M€, crée ≈ 850 emplois et accroît les
+importations de 157 M€ ; l'effet s'éteint à la fin des travaux. Coût en
+déficit : +0,01 point pendant le programme. Les collectivités du
+Pacifique (Polynésie : 62 % de la population desservie en eau conforme ;
+Nouvelle-Calédonie, Wallis-et-Futuna) ne sont pas chiffrées.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
