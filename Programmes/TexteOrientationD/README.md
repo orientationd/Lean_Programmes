@@ -763,14 +763,8 @@ O-78 à O-81, il serait de 0,9399, sous le tendanciel (le PIB par habitant
 du programme est plus faible, la norme de dépense pesant sur l'activité).
 La propriété « IDH non dégradé » est tenue au scénario central.
 
-**Décision à prendre : baisse du déficit en 2032.** Avec la taxe Zucman
-retirée et l'IS à 15 %, le déficit stagne en 2032 au moteur de demande
-(4,67 % en 2031 comme en 2032) ; il baisse encore sous les moteurs d'offre et
-d'équilibre. Il manque ≈ 0,4 Md€ cette année-là, l'année où l'âge moyen de
-départ cesse de suivre le calendrier légal (O-07). Option chiffrée, non
-appliquée : niches fiscales réduites de 1,5 Md€ de plus par an au lieu de
-1 Md€ de 2029 à 2035 (O-62) : baisse rétablie sous les trois moteurs,
-déficit 2035 de 3,97 %.
+**Décision à prendre : baisse du déficit chaque année.** Voir « Points à
+arbitrer » (point 1) pour l'état à jour, calculé avec le modèle affiné.
 
 Autres pistes examinées : 80 km/h sur le réseau secondaire (≈ 210 vies par
 an, Cerema : IDH +0,00005) ; ZFE (décès évités non chiffrés) ;
@@ -828,56 +822,77 @@ fonds d'épargne de la Caisse des dépôts, qui finance le logement social
 de jetons sur le taux des titres courts (de l'ordre du point de base par
 milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 
+### O-82 et O-83 — Violences sexistes et sexuelles, allocations familiales dès le premier enfant
+
+| Mesure | Chiffrage | Déficit 2035 | Chômage 2035 | Emplois | IDH (dix-millièmes) |
+|---|---|---|---|---|---|
+| **O-82** Loi intégrale contre les violences sexistes et sexuelles | besoin de 2,6 à 5,4 Md€ par an (Fondation des femmes, « Où est l'argent contre les violences faites aux femmes ? ») ; crédits dédiés de moins de 200 M€, dont 95,6 M€ au programme 137 en 2026 (amendement CF1398 au PLF 2026). Retenu : bas de la fourchette moins les crédits existants, 2,4 Md€ de dépense nouvelle (justice, police, hébergement et accompagnement des victimes) | +0,07 pt | −0,03 pt | +11 900 | +0,3 |
+| **O-83** Allocations familiales dès le premier enfant, 70 € par mois | proposition de loi adoptée en première lecture le 5 juin 2025 ; 2,8 Md€ bruts par an, 1,8 Md€ nets des moindres versements de RSA et de prime d'activité (direction de la Sécurité sociale, rapport AN n° 1473, p. 19-20) | +0,05 pt | −0,01 pt | +6 000 | +0,2 |
+
+(Scénario central, moteur de demande, mesures prises isolément, 2035, modèle
+affiné.) Variantes chiffrées : haut de la fourchette pour O-82 (5,4 Md€) ;
+75 € par mois modulés selon le revenu pour O-83 (LexImpact : 3,58 Md€
+bruts). Ensemble, les deux mesures portent le déficit 2035 de 4,69 % à
+4,80 % ; elles ne sont pas financées (voir « Points à arbitrer »).
+
 ## Points à arbitrer
 
+Chiffres calculés avec le modèle affiné (trajectoires macroéconomiques de
+2026 à 2030, élasticités cycliques, intérêts par refinancement et
+indexation, rétro-test sur 2017-2025 : voir le README du dépôt). Ils ne
+sont pas comparables aux chiffres des sections précédentes, calculés avec
+l'ancien modèle : le tendanciel y est plus dégradé (déficit 2035 de 9,98 %
+au lieu de 9,08 %), surtout par la charge d'intérêts.
+
 État du programme (scénario central, 2035, moteur de demande) : déficit de
-4,05 % du PIB (9,08 % sans programme), dette de 129,7 % (149,8 %), chômage
-de 9,19 % (7,66 %), IDH de 0,9428 (0,9410), émissions de 284 Mt CO₂e (296).
+4,80 % du PIB (9,98 % sans programme), dette de 138,5 % (161,0 %), chômage
+de 9,44 % (7,90 %), IDH de 0,9410 (0,9392), émissions de 284 Mt CO₂e (296).
 Non tenues au scénario central : déficit sous 3 % et sous le plafond
 juridique, équilibre, dette stabilisée, règles budgétaires européennes,
-chômage non dégradé, objectifs climatiques 2030 ; baisse du déficit chaque
-année sous le seul moteur de demande.
+chômage non dégradé, objectifs climatiques (secteurs 2030, budget carbone
+2029-2033) ; baisse du déficit chaque année sous le seul moteur d'offre.
 
 Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 4,05 % | 9,19 % | 0,9428 | non / oui / oui |
-| **A.** O-62 : niches −1,5 Md€ de plus par an de 2029 à 2035, au lieu de −1 Md€ | 3,97 % | 9,20 % | 0,9428 | oui / oui / oui |
-| **B.** A, plus O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,79 % | 9,05 % | 0,9428 | oui / oui / oui |
-| **C.** A, plus O-81 à +5 points (250 000 places) | 4,02 % | 9,18 % | 0,9440 | oui / oui / oui |
-| **D.** Deuxième journée de solidarité (7 heures), CSA de 0,3 % à 0,6 %, affectée à l'autonomie | 3,77 % | 9,17 % | 0,9430 | oui / oui / oui |
-| **E.** A et D | 3,69 % | 9,18 % | 0,9430 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,86 % | 9,20 % | 0,9428 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 3,18 % | 9,25 % | 0,9428 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,76 % | 9,73 % | 0,9422 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,51 % | 10,23 % | 0,9416 | oui / oui / oui |
+| Programme actuel | 4,80 % | 9,44 % | 0,9410 | oui / non / oui |
+| **A.** O-62 : niches −1,5 Md€ de plus par an de 2029 à 2035, au lieu de −1 Md€ | 4,73 % | 9,45 % | 0,9410 | oui / oui / oui |
+| **B.** A, plus O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 4,63 % | 9,27 % | 0,9410 | oui / non / oui |
+| **C.** A, plus O-81 à +5 points (250 000 places) | 4,77 % | 9,43 % | 0,9422 | oui / non / oui |
+| **D.** Deuxième journée de solidarité (7 heures), CSA de 0,3 % à 0,6 %, affectée à l'autonomie | 4,55 % | 9,42 % | 0,9412 | oui / oui / oui |
+| **E.** A et D | 4,47 % | 9,43 % | 0,9412 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 4,62 % | 9,45 % | 0,9410 | oui / non / oui |
+| IS maintenu à 25 % (variante d'O-08) | 4,00 % | 9,50 % | 0,9410 | oui / non / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 3,56 % | 9,99 % | 0,9403 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 2,36 % | 10,52 % | 0,9397 | oui / oui / oui |
 
-1. **Baisse du déficit en 2032.** Au moteur de demande, le déficit stagne
-   en 2032 (4,67 % en 2031 comme en 2032) : l'âge moyen de départ cesse
-   alors de suivre le calendrier légal (O-07) et les places de prison
-   ouvertes (O-75) font monter le fonctionnement. Il manque ≈ 0,4 Md€ cette
-   année-là. L'option A rétablit la baisse sous les trois moteurs. Toute
-   dépense nouvelle (pistes ci-dessous) la rompt à nouveau si elle n'est pas
-   financée : chaque piste de dépense est à apparier à une recette ou à une
-   économie.
-2. **Chômage.** 9,19 % en 2035 contre 7,66 % sans programme. Premières
-   causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 230 000
-   emplois) et la norme de dépense O-55 (≈ 210 000) ; l'IS à 15 % (O-08,
-   +22 000), O-76 et O-77 (+44 000 chacune) compensent en partie. Au-delà
+1. **Baisse du déficit chaque année.** Sous le moteur d'offre, le déficit
+   stagne en 2034 (4,80 % en 2033 comme en 2034), avec ou sans O-82 et
+   O-83 ; il baisse chaque année sous les moteurs de demande et
+   d'équilibre. Il manque quelques centaines de millions d'euros cette
+   année-là. Les options A, D et E rétablissent la baisse sous les trois
+   moteurs (A de justesse : 4,76 % puis 4,75 % sous le moteur d'offre) ;
+   les dépenses ajoutées par B et C la rompent à nouveau, et les variantes
+   d'IS, appliquées sans A, ne la rétablissent pas. Toute dépense nouvelle
+   (pistes ci-dessous) la rompt aussi si elle n'est pas financée : chaque
+   piste de dépense est à apparier à une recette ou à une économie.
+2. **Chômage.** 9,44 % en 2035 contre 7,90 % sans programme. Premières
+   causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000
+   emplois) et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
+   +21 000), O-76 et O-77 (+44 000 chacune) compensent en partie. Au-delà
    de 9 %, le complément de fin de droits de l'assurance chômage se
-   déclenche (≈ +0,14 point de déficit). L'option B s'en approche (9,05 %) ;
-   passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit plus
-   élevé.
+   déclenche. L'option B le réduit (9,27 %) ; passer sous 9 % suppose
+   d'alléger O-56 ou O-61, au prix d'un déficit plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
-   (≈ 0,15 point par an de 2026 à 2035) reste loin de l'ajustement de
+   (≈ 0,1 point par an de 2026 à 2035) reste loin de l'ajustement de
    0,5 point par an du cadre européen. Les leviers évalués qui mènent sous
-   3 % coûtent en emploi : la norme renforcée de 100 pb atteint 2,76 % avec
-   9,73 % de chômage. Le maintien de l'IS à 25 % (3,18 %) défait le choix
-   d'O-08.
-4. **IDH.** L'éducation est le levier le plus fort (O-81 : +0,0021 à lui
-   seul) ; l'option C porte l'IDH à 0,9440 pour 0,05 point de déficit, d'où
-   l'appariement avec A.
+   3 % coûtent en emploi : seule la norme renforcée de 200 pb y parvient
+   (2,36 %), avec 10,52 % de chômage. Le maintien de l'IS à 25 % (4,00 %)
+   défait le choix d'O-08 sans atteindre 3 %.
+4. **IDH.** L'éducation est le levier le plus fort (O-81) ; l'option C
+   porte l'IDH à 0,9422 pour 0,04 point de déficit, d'où l'appariement
+   avec A.
 5. **Climat.** Aucun programme du dépôt n'atteint les objectifs sectoriels
    2030 de la SNBC-3. Écarts du programme en 2030 (Mt CO₂e) :
 
@@ -911,25 +926,29 @@ rémunéré : point politique à trancher.
 ### Domaines absents du programme
 
 Mesures déjà chiffrées dans les autres programmes du dépôt, ajoutées une à
-une au Texte Orientation D (scénario central, moteur de demande, 2035 ;
-IDH en dix-millièmes). Toutes rompent la baisse du déficit en 2032 si elles
-ne sont pas financées (voir l'option A ou D) ; la norme de dépense (O-55)
-absorbe une partie de leur coût à terme.
+une au Texte Orientation D (scénario central, moteur de demande, 2035,
+modèle affiné ; IDH en dix-millièmes). Non financées, elles creusent le
+déficit et laissent la stagnation de 2034 sous le moteur d'offre (voir les
+options A et D) ; la norme de dépense (O-55) absorbe une partie de leur
+coût à terme. La loi intégrale contre les violences sexistes et sexuelles
+(P-07) et les allocations familiales dès le premier enfant (PC-11) sont
+désormais dans le programme (O-82 et O-83).
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,01 pt | −0,04 pt | +0,3 |
-| Égalité, violences | Loi intégrale contre les violences sexistes et sexuelles, 2,6 Md€ (PS, P-07) | +0,07 pt | −0,03 pt | +0,3 |
-| Familles, pauvreté | Allocations familiales dès le premier enfant, 2,8 Md€ bruts (PCF, PC-11 ; proposition de loi adoptée en première lecture le 5 juin 2025) | +0,10 pt | −0,03 pt | +0,3 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,14 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,20 pt | −0,07 pt | +0,8 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,08 pt | −0,07 pt | +0,6 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,10 pt | −0,05 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,10 pt | −0,04 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,08 pt | −0,06 pt | +0,5 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,16 pt | −0,09 pt | +0,8 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,15 pt | −0,07 pt | +0,6 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,13 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,10 pt | +0,9 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,04 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,18 pt | −0,08 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,25 pt | −0,11 pt | +1,1 |
 | Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
+
+E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
+chiffrage s'ajouterait à O-83 sans le corriger de ce recouvrement.
 
 La rénovation (PC-03) et le vélo (PC-02) ne changent pas les émissions du
 modèle tant que leurs tonnes évitées ne sont pas sourcées (levier
@@ -942,7 +961,7 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 
 ### Chiffrages à documenter
 
-* 30 mesures sur 81 reposent au moins en partie sur une hypothèse ; les plus
+* 30 mesures sur 83 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : durée de cotisation (O-44, O-58 : −0,33 et
   −0,35 point), accidents du travail (O-14 : −0,34 point), fin de l'âge
   légal (O-07 : +0,30 point).
@@ -964,5 +983,6 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
   fictives.
 
 Les chiffres cités dans les sections des mesures décrivent l'effet de chaque
-étape au moment de son ajout ; les chiffres à jour sont ceux de « Points à
-arbitrer » et de la synthèse.
+étape au moment de son ajout, avec le modèle de l'époque (avant le modèle
+affiné, sauf O-82 et O-83) ; les chiffres à jour sont ceux de « Points à
+arbitrer », de « Pistes pour compléter » et de la synthèse.
