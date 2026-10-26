@@ -805,6 +805,80 @@ def octroiDeMer2025 : Int := 1644 * 10464 * 10464 * 10464 / 1000000000000
 
 theorem octroiDeMer2025_eq : octroiDeMer2025 = 1883 := by decide
 
+/-- Pompes à chaleur gratuites en zone rurale (O-90) : 100 000 par an
+(hypothèse : un million de maisons en dix ans, sur plus de 1,56 million de
+résidences principales rurales chauffées au fioul, Insee Première
+n° 2088), à 14 700 €, coût moyen d'une PAC air/eau (gouvernement, « Pompes
+à chaleur, l'industrie au service de la planification écologique »). Elles
+consomment une part du surplus d'électricité que le nucléaire module faute
+de débouchés. Les logements qui quittent le gaz de réseau évitent ≈ 67 €
+par an de charges d'exploitation au gestionnaire du réseau, reversés au
+financement de la mesure (hypothèse de transcription) ; chaleur,
+coefficient de performance, énergies remplacées, taxes : voir
+`Hypotheses.Energie.pompesAChaleur`. -/
+def pacRuralesParAn : Int := 100000
+def coutPacEuros : Int := 14700
+
+/-- Zones d'électrification industrielle (O-91), à tarif d'électricité
+négocié et hors ZAN.
+* Électricité : les zones portent la consommation de l'industrie de la
+  trajectoire « décarbonation lente » (+4 TWh de 2024 à 2030) à la
+  trajectoire « rapide » (+13 TWh) du bilan prévisionnel 2025 de RTE, soit
+  9 TWh de plus, atteints en cinq ans ; à 40 % de facteur de charge
+  (hypothèse de RTE pour les projets industriels), 2 568 MW de projets
+  (calcul).
+* Emplois : 4 700 emplois annoncés à Dunkerque (ProLogium 3 000, XTC-Orano
+  1 700 ; AFP) pour 1 615 MW de raccordements signés (CRE, délibération
+  2026-21 du 27 janvier 2026), soit 7 473 emplois industriels (calcul).
+* Foncier : 35 000 emplois sur 3 026 ha de sites industriels clés en main
+  commercialisés depuis 2019 (DGE, 16 octobre 2026), soit 646 ha (calcul),
+  exemptés de l'enveloppe du ZAN.
+* Tarif : contrats de long terme d'EDF (cible de 70 €/MWh en moyenne de
+  l'accord État-EDF de 2023) pour une électricité que le parc nucléaire
+  module faute de débouchés : sans coût budgétaire ; le gain d'EDF n'est
+  pas compté. -/
+def zonesGwh : Int := 13000 - 4000
+def zonesMw : Int := zonesGwh * 1000 / 3504
+def zonesEmplois : Int := zonesMw * 4700 / 1615
+def zonesHa : Int := zonesEmplois * 3026 / 35000
+
+theorem zones_valeurs : zonesMw = 2568 ∧ zonesEmplois = 7473 ∧ zonesHa = 646 := by decide
+
+/-- Déserts médicaux (O-92) : aide à la première installation d'un médecin
+généraliste en zone d'intervention prioritaire (ZIP) portée à 50 000 €,
+montant de l'ancien contrat d'aide à l'installation (CAIM), au lieu de
+10 000 € depuis le 1er janvier 2026 (convention médicale de 2024) ; puis
+5 000 € par an pendant cinq ans à chaque médecin installé, montant de
+l'ancien contrat de stabilisation (COSCOM). 891 premières installations
+de généralistes en ZIP en 2025 (Cnam, 11 juin 2026). La Cour des comptes
+(12 novembre 2025) juge ces aides peu efficaces hors exercice coordonné :
+l'effet sur l'accès aux soins n'est pas chiffré. -/
+def installationsZip : Int := 891
+def aideInstallationZip : Int := 50000 - 10000
+def primeExerciceZip : Int := 5000
+def primesZip : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => installationsZip * primeExerciceZip * k / 1000000
+
+/-- Minimum de pension des retraités agricoles (O-93) : garantie des chefs
+d'exploitation à carrière complète portée de 85 % à 100 % du SMIC net
+agricole (85 % : 1 214,40 € par mois en 2026, soit +214,30 € au plancher).
+224 681 bénéficiaires du complément différentiel fin 2025 (MSA, tableau de
+bord des retraites des non-salariés agricoles, septembre 2026) :
+224 681 × 214,30 € × 12 = 577 M€ par an (calcul ; trop haut pour les
+carrières incomplètes, dont la garantie est proratisée, trop bas faute des
+nouveaux bénéficiaires entre 85 % et 100 %). -/
+def minimumAgricole : Int := 224681 * 21430 * 12 / 100000000
+
+theorem minimumAgricole_eq : minimumAgricole = 577 := by decide
+
+/-- Emplois aidés dans l'industrie (O-94) : 20 000 contrats initiative
+emploi en cours dans l'industrie (hypothèse), aide de 47 % du SMIC brut,
+plafond du CIE (circulaire FIE 2025), sur un temps plein : 10 160 € par
+contrat et par an (calcul) ; 0,16 emploi net par CIE (Dares, via FIPECO,
+19 septembre 2017) : aubaine et substitution de 840 pm. -/
+def contratsIndustrie : Int := 20000
+def aideCieEuros : Int := 10160
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -1766,13 +1840,58 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 89 ; 1,644 Md€ en 2022 (Cour des comptes, 5 mars 2024), {octroiDeMer2025} M€ en 2025 (calcul, voir `octroiDeMer2025`) ; effet sur la demande d'un impôt national (la part importée de la consommation des outre-mer n'est pas isolée)"
     leviers := [.prelevementSur .autres (-octroiDeMer2025)]
     variantes := [
-      { nom := "remplacé par une TVA régionale de même rendement (scénario de rupture de la Cour des comptes)", leviers := [] }] }
+      { nom := "remplacé par une TVA régionale de même rendement (scénario de rupture de la Cour des comptes)", leviers := [] }] },
+
+  { id := "O-90"
+    titre := "Pompes à chaleur gratuites dans les zones rurales, 100 000 par an, financées en partie par les coûts de réseau de gaz évités"
+    source := s!"Texte Orientation D, mesure 90 ; {pacRuralesParAn} PAC par an (hypothèse) à {coutPacEuros} €, coût moyen d'une PAC air/eau ; chaleur de 12 MWh, coefficient de performance 2,9 (ADEME), 75 % de chaudières au fioul ou au GPL en zone rurale (SDES) ; coûts de réseau de gaz évités de 67 € par an et par logement (CRE) ; effet d'aubaine des aides à la rénovation (voir `pacRuralesParAn`)"
+    leviers := [.pompesAChaleur .rural pacRuralesParAn coutPacEuros]
+    variantes := [
+      { nom := "50 000 PAC par an", leviers := [.pompesAChaleur .rural (pacRuralesParAn / 2) coutPacEuros] },
+      { nom := "200 000 PAC par an", leviers := [.pompesAChaleur .rural (2 * pacRuralesParAn) coutPacEuros] }] },
+
+  { id := "O-91"
+    titre := "Zones d'électrification industrielle : tarif d'électricité négocié, hors ZAN"
+    source := s!"Texte Orientation D, mesure 91 ; consommation industrielle de la trajectoire « rapide » de RTE au lieu de la « lente » : +{zonesGwh} GWh par an en cinq ans ({zonesMw} MW) ; {zonesEmplois} emplois (ratio de Dunkerque) ; {zonesHa} ha hors ZAN (ratio des sites clés en main) ; tarif de long terme d'EDF sur une électricité sinon modulée, sans coût budgétaire (voir `zonesGwh`)"
+    leviers := [.consommationElectrique (zonesGwh / 5), .implantations .industrie (zonesEmplois / 5),
+                .annonceEmplois (zonesEmplois / 5), .artificialisationHorsZan .activites [zonesHa / 5]]
+    repetitions := 5
+    variantes := [
+      { nom := "foncier dans l'enveloppe du ZAN",
+        leviers := [.consommationElectrique (zonesGwh / 5), .implantations .industrie (zonesEmplois / 5),
+                    .annonceEmplois (zonesEmplois / 5), .artificialisation .activites [zonesHa / 5]] }] },
+
+  { id := "O-92"
+    titre := "Déserts médicaux : 50 000 € à l'installation en zone prioritaire, puis 5 000 € par an pendant cinq ans"
+    source := s!"Texte Orientation D, mesure 92 ; {installationsZip} premières installations de généralistes en zone prioritaire en 2025 (Cnam) ; aide portée de 10 000 à 50 000 € (ancienne CAIM) : {installationsZip * aideInstallationZip / 1000000} M€ par an ; 5 000 € par an pendant cinq ans (ancien COSCOM) : jusqu'à {primesZip.getLastD 0} M€ par an (voir `installationsZip`)"
+    leviers := [.depenseSur .sante (installationsZip * aideInstallationZip / 1000000),
+                .depenseEcheancier .sante primesZip]
+    variantes := [
+      { nom := "aide de 100 000 € à l'installation",
+        leviers := [.depenseSur .sante (installationsZip * (100000 - 10000) / 1000000),
+                    .depenseEcheancier .sante primesZip] }] },
+
+  { id := "O-93"
+    titre := "Minimum de pension des retraités agricoles porté à 100 % du SMIC net"
+    source := s!"Texte Orientation D, mesure 93 ; garantie des chefs d'exploitation à carrière complète de 85 % à 100 % du SMIC net agricole (+214,30 € par mois) ; 224 681 bénéficiaires du complément différentiel (MSA, fin 2025) : {minimumAgricole} M€ par an (calcul, voir `minimumAgricole`)"
+    leviers := [.depenseSur .retraites minimumAgricole]
+    variantes := [
+      { nom := "extrapolation de la loi Chassaigne de 2020 (283 M€ pour 10 points de SMIC) : 425 M€",
+        leviers := [.depenseSur .retraites 425] }] },
+
+  { id := "O-94"
+    titre := "Emplois aidés ciblés sur l'industrie : 20 000 contrats initiative emploi"
+    source := s!"Texte Orientation D, mesure 94 ; {contratsIndustrie} contrats en cours (hypothèse), aide de 47 % du SMIC brut (plafond du CIE) : {aideCieEuros} € par contrat et par an ; 0,16 emploi net par contrat (Dares) (voir `contratsIndustrie`)"
+    leviers := [.emploisAides .industrie contratsIndustrie aideCieEuros 840]
+    variantes := [
+      { nom := "0,25 emploi net par contrat (emplois d'avenir du secteur marchand)",
+        leviers := [.emploisAides .industrie contratsIndustrie aideCieEuros 750] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
