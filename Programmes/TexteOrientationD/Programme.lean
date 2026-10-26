@@ -93,7 +93,9 @@ Mesures (extrait) :
   à la fois (allègements recentrés sous 2 SMIC, accompagnement renforcé des
   demandeurs d'emploi) ; **O-78** à **O-81** indice de développement
   humain (prix minimum de l'alcool, prix du tabac, dépistage du cancer
-  colorectal, scolarisation des 18-24 ans).
+  colorectal, scolarisation des 18-24 ans) ; **O-82** financement d'une loi
+  intégrale contre les violences sexistes et sexuelles ; **O-83**
+  allocations familiales dès le premier enfant.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -971,6 +973,25 @@ def hausseprixTabacPm : Int := 200
 def participationDepistageCible : Int := 650
 def hausseScolarisationParAn : Int := 10
 
+/-- Violences sexistes et sexuelles (O-82). La Fondation des femmes estime
+le besoin entre 2,6 et 5,4 Md€ par an (« Où est l'argent contre les
+violences faites aux femmes ? ») ; les crédits dédiés sont de moins de
+200 M€ toutes politiques confondues, dont 95,6 M€ pour l'action 25 du
+programme 137 en 2026 (amendement CF1398 au PLF 2026). Retenu : le bas de
+la fourchette, moins les crédits existants, soit 2,4 Md€ de dépense
+nouvelle (justice, police, hébergement et accompagnement des victimes),
+classée en sécurité-justice. -/
+def besoinViolencesSexistes : Int := 2600
+def creditsViolencesExistants : Int := 200
+
+/-- Allocations familiales dès le premier enfant (O-83), proposition de loi
+adoptée en première lecture le 5 juin 2025 : 70 € par mois et par enfant,
+2,8 Md€ bruts par an, 1,8 Md€ nets des moindres versements de RSA et de
+prime d'activité, dont les allocations sont une ressource (direction de la
+Sécurité sociale, rapport AN n° 1473, p. 19-20). -/
+def allocationsPremierEnfantBrut : Int := 2800
+def allocationsPremierEnfantNet : Int := 1800
+
 theorem placesPrisonNouvelles_eq : placesPrisonNouvelles = 27108 := by decide
 theorem calendrierConstruction_total : calendrierConstructionPm.foldl (· + ·) 0 = 1000 := by decide
 theorem prisons_cible : placesOperationnelles2026 + placesPlan15000Restantes
@@ -1604,13 +1625,30 @@ def mesures : List Mesure := [
     leviers := [.scolarisationJeunes hausseScolarisationParAn]
     repetitions := 3
     variantes := [
-      { nom := "+5 points (250 000 places)", leviers := [.scolarisationJeunes 17] }] }
+      { nom := "+5 points (250 000 places)", leviers := [.scolarisationJeunes 17] }] },
+
+  { id := "O-82"
+    titre := "Loi intégrale contre les violences sexistes et sexuelles : 2,6 Md€ par an"
+    source := s!"Texte Orientation D, mesure 82 ; Fondation des femmes : besoin de 2,6 à 5,4 Md€ par an ; crédits existants < 200 M€ (dont 95,6 M€ au programme 137 en 2026, amendement CF1398 au PLF 2026) : {besoinViolencesSexistes - creditsViolencesExistants} M€ de dépense nouvelle"
+    leviers := [.depenseSur .securiteJustice (besoinViolencesSexistes - creditsViolencesExistants)]
+    variantes := [
+      { nom := "haut de la fourchette (5,4 Md€)", leviers := [.depenseSur .securiteJustice (5400 - creditsViolencesExistants)] }] },
+
+  { id := "O-83"
+    titre := "Allocations familiales dès le premier enfant : 70 € par mois"
+    source := s!"Texte Orientation D, mesure 83 ; proposition de loi adoptée en première lecture le 5 juin 2025 ; direction de la Sécurité sociale (rapport AN n° 1473, p. 19-20) : {allocationsPremierEnfantBrut} M€ bruts, {allocationsPremierEnfantNet} M€ nets des moindres versements de RSA et de prime d'activité"
+    leviers := [.depenseSur .famille allocationsPremierEnfantBrut,
+                .economieSur .famille (allocationsPremierEnfantBrut - allocationsPremierEnfantNet)]
+    variantes := [
+      { nom := "75 € par mois, modulés selon le revenu (LexImpact : 3,58 Md€ bruts)",
+        leviers := [.depenseSur .famille 3580,
+                    .economieSur .famille (3580 * (allocationsPremierEnfantBrut - allocationsPremierEnfantNet) / allocationsPremierEnfantBrut)] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
