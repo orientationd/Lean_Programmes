@@ -29,6 +29,13 @@ structure Reference where
   populationMilliers : Int
   /-- Part des 65 ans et plus dans la population, pb. -/
   partPlus65Pb : Int
+  /-- Assurance chômage, règles contracycliques en vigueur : seuil de taux de
+  chômage, pb, à partir duquel la durée d'indemnisation réduite est
+  complétée (complément de fin de droits), et surcoût annuel de ce
+  complément, M€ de l'année de départ (indexé sur le PIB nominal). Par
+  défaut : aucune règle. -/
+  seuilChomageContracyclePb : Int := 10000
+  surcoutComplementChomageMeur : Int := 0
   sources : List String
   deriving Repr
 
@@ -238,6 +245,11 @@ structure Economie where
   /-- Part du rendement statique d'un prélèvement perdue par les
   comportements (évasion, délocalisation, baisse d'assiette), pm. -/
   fuiteFiscalePm : Int
+  /-- Effet sur la demande d'un prélèvement selon sa nature, relativement à
+  l'effet moyen fixé par le moteur (`Moteur.multiplicateurPrelevementsPm`),
+  pm (`1000` = effet moyen) : qui le paie (propension à consommer), délai de
+  transmission aux prix et aux salaires. -/
+  incidencePrelevementPm : ParImpot
   /-- Hausse du chômage (pb) par pb de hausse du SMIC, pm. -/
   elasticiteChomageSmicPm : Int
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
@@ -333,6 +345,18 @@ structure Economie where
   /-- Part de l'écart à l'emploi d'équilibre (`chomeursExcedentaires`)
   résorbée chaque année, pm. -/
   absorptionChomagePm : Int
+  /-- Coût du travail : élasticité de l'emploi au coût du travail par tranche
+  de salaire, pm (valeur absolue : `800` = −0,8 % d'emplois pour +1 % de
+  coût) ; emploi salarié privé (milliers) et coût du travail (salaires et
+  cotisations, M€) de chaque tranche, année de départ ; part de l'écart à
+  l'emploi visé résorbée chaque année, pm. -/
+  elasticiteEmploiCoutTravailPm : ParTranche
+  emploiPriveTrancheMilliers : ParTranche
+  coutTravailTrancheMeur : ParTranche
+  ajustementCoutTravailPm : Int
+  /-- Accompagnement des demandeurs d'emploi : baisse du nombre de chômeurs
+  (personnes, en régime permanent) par conseiller supplémentaire. -/
+  chomeursEvitesParConseiller : Int
   sources : List String
   deriving Repr
 
@@ -445,11 +469,22 @@ abbrev ValideClimat (H : Scenario) : Prop :=
   -100 ≤ H.eco.baisseEmissionsSecteurPm.energie ∧ H.eco.baisseEmissionsSecteurPm.energie ≤ 200 ∧
   -100 ≤ H.eco.baisseEmissionsSecteurPm.dechets ∧ H.eco.baisseEmissionsSecteurPm.dechets ≤ 200
 
+/-- Bornes sur l'incidence des prélèvements, le coût du travail et
+l'assurance chômage. -/
+abbrev ValideTravail (H : Scenario) : Prop :=
+  H.eco.incidencePrelevementPm.toutEntre 0 3000 = true ∧
+  H.eco.elasticiteEmploiCoutTravailPm.toutEntre 0 3000 = true ∧
+  H.eco.emploiPriveTrancheMilliers.toutEntre 0 30000 = true ∧
+  H.eco.coutTravailTrancheMeur.toutEntre 1 2000000 = true ∧
+  0 ≤ H.eco.ajustementCoutTravailPm ∧ H.eco.ajustementCoutTravailPm ≤ 1000 ∧
+  0 ≤ H.eco.chomeursEvitesParConseiller ∧ H.eco.chomeursEvitesParConseiller ≤ 100 ∧
+  0 ≤ H.reference.seuilChomageContracyclePb ∧ 0 ≤ H.reference.surcoutComplementChomageMeur
+
 /-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
 *juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
-  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat
+  H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
@@ -457,6 +492,7 @@ instance (H : Scenario) : Decidable H.ValideReference := inferInstance
 instance (H : Scenario) : Decidable H.ValideEco := inferInstance
 instance (H : Scenario) : Decidable H.ValideAxes := inferInstance
 instance (H : Scenario) : Decidable H.ValideClimat := inferInstance
+instance (H : Scenario) : Decidable H.ValideTravail := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario

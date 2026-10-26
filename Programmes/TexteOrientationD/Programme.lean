@@ -89,7 +89,9 @@ Mesures (extrait) :
   poids lourds, kérosène des vols intérieurs, défiscalisation des heures
   supplémentaires réduite de moitié) ; **O-74** heures supplémentaires non
   payées des hôpitaux publics ; **O-75** 100 000 places de prison en
-  cellule individuelle.
+  cellule individuelle ; **O-76** et **O-77** déficit et chômage en baisse
+  à la fois (allègements recentrés sous 2 SMIC, accompagnement renforcé des
+  demandeurs d'emploi).
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -292,10 +294,16 @@ def deficitsUniversites : Int := 500
 def reconstructionCampus : Int := 500
 def placesSansFac : Int := 315
 
-/-- Économies et recettes. Apprentissage : 6 Md€ d'aides à l'embauche
-d'apprentis, dont la moitié pour des niveaux bac+3 et plus et dans de
-grandes entreprises (Cour des comptes, 2025) ; recentrage sur l'infra-bac et
-les PME : 2 Md€/an. Commande publique : centrales d'achat, standardisation,
+/-- Économies et recettes. Apprentissage : l'aide exceptionnelle à
+l'embauche d'apprentis (3,9 Md€ en 2024, dont plus de la moitié pour le
+supérieur) s'éteint pour les contrats conclus à partir de 2027 (décret
+n° 2026-168, voir la référence) ; le programme maintient une aide réservée
+aux niveaux infra-bac (CAP, bac) dans les entreprises de moins de 250
+salariés, sur le modèle de l'aide unique de 2019 : ≈ 1 Md€ par an, les
+3,9 Md€ de 2024 moins les 2,94 Md€ d'économies que la Cour des comptes
+attend de ce recentrage (revue de dépenses, janvier 2025). Le recentrage,
+naguère une économie de 2 Md€ par rapport à l'aide de 2025, est donc
+désormais un coût par rapport à la référence. Commande publique : centrales d'achat, standardisation,
 lutte contre les ententes ; 3 Md€/an (hypothèse médiane des estimations,
 Autorité de la concurrence, IGF). Médicaments et dispositifs : génériques,
 biosimilaires, prix des innovations, pertinence des prescriptions, 2 Md€/an
@@ -307,7 +315,7 @@ restauration, services à la personne) : manque à gagner de cotisations
 estimé entre 6 et 8 Md€ par an (Haut Conseil du financement de la
 protection sociale, 2024) ; récupération de 2 Md€/an de cotisations et 1 Md€
 de TVA, montée en charge sur deux ans. -/
-def economieApprentissage : Int := 2000
+def aideApprentissageCiblee : Int := 1000
 def economieCommandePublique : Int := 3000
 def economieMedicament : Int := 2000
 def coutAgenceMedicament : Int := 300
@@ -489,7 +497,10 @@ scénario central) et calcule l'effet d'activité.
   15 %, 0,89 → ≈ 4 Md€ (commission des finances, octobre 2026). Le PS
   annonce 10 Md€ (variante). Risque de représailles commerciales.
 * `exonerationsCotisations` = 4 Md€ : reconfiguration des allègements
-  généraux (chiffrage PS).
+  généraux (chiffrage PS). Comme O-56 et O-61, réduction des allègements
+  au prorata des tranches de salaire (levier `reductionAllegements` : coût
+  du travail et emploi par tranche, modèle commun) ; O-76 en recentre le
+  reste sous 2 SMIC.
 * `trainDeVieEtat` = 3,1 Md€ : part « train de vie » des 12,1 Md€ du PS,
   moins O-21 (commande publique, 3 Md€). La fraude fiscale fait l'objet
   d'une mesure propre (O-45).
@@ -900,6 +911,37 @@ def constructionPrisons (coutPlaceKEuros : Int) : List Int :=
 def fonctionnementPrisons : List Int :=
   ouverturePlacesPm.map fun p => placesPrisonNouvelles * p / 1000 * coutAnnuelPlaceEuros / 1000000
 
+/-- Baisser à la fois le déficit et le chômage (O-76, O-77).
+
+* O-76 : allègements recentrés. La réduction générale dégressive unique
+  s'éteint à 3 SMIC depuis 2026 ; elle sortirait à 2 SMIC, et l'économie
+  serait reversée aux salaires de 1 à 1,6 SMIC, à coût constant. Au-delà
+  de 1,6 SMIC, les allègements créent peu d'emplois (≈ 5 000 par Md€ pour
+  les anciens bandeaux maladie et famille, Bozio et Wasmer, 2024 ; effets
+  « très faibles » au-delà de 2,5 SMIC, CAE, note n° 49) ; au voisinage du
+  SMIC, beaucoup plus (23 000 à 57 000 par Md€ pour 4 points de baisse,
+  CAE). Le CAE (2019) recommandait de supprimer les allègements au-delà de
+  2,5 SMIC ; Bozio et Wasmer chiffrent la suppression des bandeaux avec
+  recyclage complet (sortie à 2,2 SMIC) à +50 000 emplois. Part des
+  allègements de 1,6 à 2,5 SMIC versée au-dessus de 2 SMIC :
+  `partAllegementsAuDela2Smic` = 343 ‰ (calcul avec le barème de 2026 et
+  la distribution des salaires) ; la tranche au-delà de 2,5 SMIC est
+  entièrement reversée. Le recentrage s'applique après O-38 ; les
+  réductions suivantes (O-56, O-61) portent alors sur les seuls allègements
+  restants, au voisinage du SMIC.
+* O-77 : accompagnement renforcé. 10 000 conseillers de plus à France
+  Travail (52 837 ETP en 2023, IGF-IGAS ; 515 ETPT de moins en 2026), pour
+  ramener les portefeuilles de l'accompagnement guidé (≈ 230 demandeurs par
+  conseiller, Dares-IPP 2026) vers la centaine des expériences étrangères ;
+  `coutConseillerEuros` = 80 000 € par an (hypothèse : rémunération chargée
+  d'un conseiller ≈ 55 000 € et frais de structure ; 127 000 € par ETP tous
+  coûts de l'opérateur compris, calcul d'après IGF-IGAS). Chômage
+  d'équilibre : −5 chômeurs par conseiller (axe économique : expériences
+  aléatoires française, autrichienne et allemande, éviction comprise). -/
+def partAllegementsAuDela2Smic : Int := 343
+def conseillersFranceTravail : Int := 10000
+def coutConseillerEuros : Int := 80000
+
 theorem placesPrisonNouvelles_eq : placesPrisonNouvelles = 27108 := by decide
 theorem calendrierConstruction_total : calendrierConstructionPm.foldl (· + ·) 0 = 1000 := by decide
 theorem prisons_cible : placesOperationnelles2026 + placesPlan15000Restantes
@@ -1136,8 +1178,8 @@ def mesures : List Mesure := [
 
   { id := "O-20"
     titre := "Aide à l'apprentissage réservée aux niveaux infra-bac et aux PME"
-    source := s!"Texte Orientation D, mesure 20 ; Cour des comptes, « L'aide exceptionnelle à l'apprentissage », 2025 : 6 Md€ dont la moitié pour des bac+3 et plus ; économie retenue {economieApprentissage} M€/an"
-    leviers := [.economieSur .famille economieApprentissage] },
+    source := s!"Texte Orientation D, mesure 20 ; l'aide exceptionnelle s'éteint en 2027 à législation constante (décret n° 2026-168) ; aide maintenue pour l'infra-bac dans les entreprises de moins de 250 salariés : 3,9 Md€ (2024) − 2,94 Md€ d'économies (Cour des comptes, revue de dépenses, 2025) ≈ {aideApprentissageCiblee} M€/an (voir `aideApprentissageCiblee`)"
+    leviers := [.depenseSur .famille aideApprentissageCiblee] },
 
   { id := "O-21"
     titre := "Commande publique : centrales d'achat, standardisation, lutte contre les ententes"
@@ -1241,9 +1283,9 @@ def mesures : List Mesure := [
   { id := "O-35"
     titre := "Impôt plancher sur les très hauts patrimoines (taxe Zucman)"
     source := s!"Texte Orientation D, mesure 35 ; proposition du groupe PS (15 Md€) ; retenu {taxeZucman} M€ statiques (≈ 5 Md€ selon sept économistes, 4,6 à 5,5 Md€ avec imputation de l'IS)"
-    leviers := [.prelevementSur .autres taxeZucman]
+    leviers := [.prelevementSur .patrimoine taxeZucman]
     debut := 0
-    variantes := [{ nom := "chiffrage du groupe PS (15 Md€)", leviers := [.prelevementSur .autres 15000] }] },
+    variantes := [{ nom := "chiffrage du groupe PS (15 Md€)", leviers := [.prelevementSur .patrimoine 15000] }] },
 
   { id := "O-36"
     titre := "CSG sur les gros héritages"
@@ -1261,7 +1303,7 @@ def mesures : List Mesure := [
   { id := "O-38"
     titre := "Reconfiguration des exonérations de cotisations patronales"
     source := s!"Texte Orientation D, mesure 38 ; chiffrage du groupe PS : {exonerationsCotisations} M€"
-    leviers := [.prelevementSur .cotisations exonerationsCotisations]
+    leviers := [.reductionAllegements exonerationsCotisations]
     debut := 0 },
 
   { id := "O-39"
@@ -1279,7 +1321,7 @@ def mesures : List Mesure := [
   { id := "O-41"
     titre := "Fiscalité du patrimoine : Pacte Dutreil divisé par deux (abattement 75 % → 37,5 %), taxe sur les holdings élargie"
     source := s!"Texte Orientation D, mesure 41 ; Cour des comptes, note du 21 septembre 2026 (1,3 Md€ pour 75 % → 50 %, proportionnel) : {pacteDutreil} M€ (Dutreil, 5,5 Md€ de coût en 2024) et {holdings} M€ (holdings)"
-    leviers := [.prelevementSur .droitsMutation pacteDutreil, .prelevementSur .autres holdings]
+    leviers := [.prelevementSur .droitsMutation pacteDutreil, .prelevementSur .patrimoine holdings]
     debut := 0 },
 
   { id := "O-42"
@@ -1381,7 +1423,7 @@ def mesures : List Mesure := [
   { id := "O-56"
     titre := "Aides aux entreprises : exonérations de cotisations réduites de 1,5 Md€ par an pendant six ans, sous conditions"
     source := s!"Texte Orientation D, mesure 56 ; 211 Md€ d'aides publiques aux entreprises (commission d'enquête du Sénat, juillet 2025) ; {baisseAidesEntreprises} M€ de plus chaque année de 2027 à 2032"
-    leviers := [.prelevementSur .cotisations baisseAidesEntreprises]
+    leviers := [.reductionAllegements baisseAidesEntreprises]
     repetitions := 6 },
 
   { id := "O-57"
@@ -1411,7 +1453,7 @@ def mesures : List Mesure := [
   { id := "O-61"
     titre := "Aides aux entreprises, deuxième étape : exonérations de cotisations réduites de 1,5 Md€ de plus par an de 2029 à 2034"
     source := s!"Texte Orientation D, mesure 61 ; même base que O-56 (211 Md€ d'aides, commission d'enquête du Sénat, juillet 2025) ; {aidesSecondeEtape} M€ de plus chaque année de 2029 à 2034, sous conditions (voir `aidesSecondeEtape`)"
-    leviers := [.prelevementSur .cotisations aidesSecondeEtape]
+    leviers := [.reductionAllegements aidesSecondeEtape]
     debut := 2
     repetitions := 6 },
 
@@ -1502,13 +1544,28 @@ def mesures : List Mesure := [
     variantes := [
       { nom := "coût des centres pénitentiaires (450 k€ la place)", leviers :=
           [.investissementEcheancier .securiteJustice (constructionPrisons coutPlacePrisonCpKEuros),
-           .depenseEcheancier .securiteJustice fonctionnementPrisons] }] }
+           .depenseEcheancier .securiteJustice fonctionnementPrisons] }] },
+
+  { id := "O-76"
+    titre := "Allègements recentrés : sortie à 2 SMIC au lieu de 3, économie reversée aux salaires de 1 à 1,6 SMIC, à coût constant"
+    source := s!"Texte Orientation D, mesure 76 ; CAE, note n° 49 (2019) ; Bozio et Wasmer (2024) : suppression des bandeaux avec recyclage, +50 000 emplois ; part des allègements de 1,6 à 2,5 SMIC au-delà de 2 SMIC : {partAllegementsAuDela2Smic} ‰ (calcul, barème de 2026) ; élasticités de l'emploi par tranche du modèle commun"
+    leviers := [.recentrageAllegements partAllegementsAuDela2Smic 1000]
+    variantes := [
+      { nom := "sortie à 1,6 SMIC (tout reversé sous 1,6 SMIC)", leviers := [.recentrageAllegements 1000 1000] }] },
+
+  { id := "O-77"
+    titre := "Accompagnement renforcé des demandeurs d'emploi : 10 000 conseillers de plus à France Travail"
+    source := s!"Texte Orientation D, mesure 77 ; expériences aléatoires : Behaghel, Crépon et Gurgand (2014), Böheim, Eppel et Mahringer (WIFO, 2022), Hainmueller et al. (2016) ; {conseillersFranceTravail} conseillers à {coutConseillerEuros} € par an (hypothèse) ; chômage d'équilibre du modèle commun (5 chômeurs de moins par conseiller, éviction comprise)"
+    leviers := [.accompagnementDemandeurs conseillersFranceTravail coutConseillerEuros]
+    variantes := [
+      { nom := "5 000 conseillers", leviers := [.accompagnementDemandeurs (conseillersFranceTravail / 2) coutConseillerEuros] },
+      { nom := "15 000 conseillers", leviers := [.accompagnementDemandeurs (conseillersFranceTravail * 3 / 2) coutConseillerEuros] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à deux points au-dessus du taux le plus bas de l'UE, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (taxe Zucman, CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

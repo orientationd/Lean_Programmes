@@ -116,6 +116,30 @@ paie le flux au fil de l'eau ; le rapport donne chaque stock et la dette
 `investissementEcheancier fonction niveaux` (emplois dans la construction,
 dernier niveau reconduit, 0 pour arrêter) ; le fonctionnement des
 équipements livrés est un `depenseEcheancier` à part.
+Incidence des prélèvements : l'effet d'un prélèvement sur la demande est
+le niveau moyen du moteur (`multiplicateurPrelevementsPm`) réparti selon
+l'impôt (`incidencePrelevementPm`, axe économique) : la TVA et les
+cotisations pèsent plus que la moyenne, l'IS, les droits de succession et
+les impôts sur le patrimoine (nouvelle ligne `.patrimoine` : IFI, taxes sur
+la fortune ou les holdings) beaucoup moins. Choisir l'impôt d'une mesure
+change donc son effet sur l'activité. Coût du travail :
+`allegementsCotisations tranche montant` (tranches `.bas` 1 à 1,6 SMIC,
+`.intermediaire` 1,6 à 2,5, `.haut` au-delà) fait varier les allègements
+généraux de cotisations patronales ; l'emploi de la tranche répond au coût
+du travail selon l'élasticité de l'axe économique, progressivement ; une
+baisse ne peut dépasser les allègements en vigueur sur la tranche
+(`allegementsTranche`, dans l'état). `reductionAllegements montant` réduit
+les allègements au prorata des tranches (réduction sans ciblage, donc
+surtout au voisinage du SMIC) ; `recentrageAllegements partIntermediairePm
+partHautPm` reverse au voisinage du SMIC, à coût constant, une part des
+allègements des tranches supérieures. Un `prelevementSur .cotisations`
+reste une hausse de cotisations sans tranche (incidence moyenne).
+Accompagnement des demandeurs d'emploi : `accompagnementDemandeurs
+conseillers coutParConseillerEuros` (dépense, et baisse du chômage
+d'équilibre par conseiller, axe économique). Assurance chômage : la
+référence porte le seuil des règles contracycliques et le surcoût du
+complément de fin de droits, que la projection déclenche quand le chômage
+de l'année passée atteint le seuil.
 Taxes environnementales : `taxeEnvironnementale activite impot
 emissionsViseesKt hausseCoutPm rendementStatique` (activités : vols
 intérieurs, poids lourds, carburants routiers, chauffage fossile) ; le

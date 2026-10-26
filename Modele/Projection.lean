@@ -114,6 +114,15 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let indemnisation := if H.reference.etat.pib = 0 then 0
     else (chomeurs - s.chomeursComptes) * H.eco.coutParChomeurEuros * s.pib
       / (H.reference.etat.pib * 1000000)
+  -- règles contracycliques de l'assurance chômage : au-dessus du seuil de
+  -- chômage, la durée réduite est complétée (complément de fin de droits) ;
+  -- seul l'écart au complément reconduit de l'année passée est une dépense
+  -- nouvelle
+  let complement := if s.chomagePb < H.reference.seuilChomageContracyclePb ∨ H.reference.etat.pib = 0 then 0
+    else H.reference.surcoutComplementChomageMeur * s.pib / H.reference.etat.pib
+  let dComplement := complement
+    - (s.complementChomageMeur + appliquerPb s.complementChomageMeur H.eco.croissanceDepensesPb)
+  let indemnisation := indemnisation + dComplement
   let depensesF := (((avecNorme
     |>.ajouter .retraites surcoutVieillissement)
     |>.ajouter .sante surcoutSante)
@@ -157,6 +166,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     pertePfuMeur := pertePfu
     cdhrMeur := cdhr
     chomeursComptes := chomeurs
+    complementChomageMeur := complement
+    allegementsTranche := s.allegementsTranche.croitre croissance
     -- passifs implicites : le stock s'accroît du flux, qui suit les salaires
     passifs := { police := s.passifs.police + s.fluxPassifs.police
                  hopital := s.passifs.hopital + s.fluxPassifs.hopital }
@@ -191,6 +202,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let ktRenovation := (fioul * R.co2FioulKgMWh + gaz * R.co2GazKgMWh) / 1000000
   let s' := (s'.reduireEmissions .transports ktVoitures).reduireEmissions .batiments ktRenovation
   let s₁ := ajouterEmploi H none (emploiTendance + emploisOkun) s'
+  -- coût du travail : la demande de travail rejoint progressivement l'emploi
+  -- visé par les variations d'allègements (emplois des entreprises, qui
+  -- produisent : volume d'heures)
+  let ajustCout := appliquerPm s.emploisCoutTravailRestants H.eco.ajustementCoutTravailPm
+  let ajustPonderes := appliquerPm s.emploisPonderesCoutTravailRestants H.eco.ajustementCoutTravailPm
+  let s₁ := chocEmploi H ajustPonderes (chocDemandeTravail H (some .tertiaireMarchand) ajustCout
+    { s₁ with emploisCoutTravailRestants := s.emploisCoutTravailRestants - ajustCout
+              emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants - ajustPonderes })
   -- l'emploi dû aux mesures (entrants, résorption) produit : PIB à l'élasticité
   -- du scénario (la tendance est déjà dans la croissance)
   let dEmploiMesures := emploiEntrants + absorption
@@ -250,7 +269,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let s₄ := pasRecettes.foldl
     (fun (st : Etat) ((e, d) : EcheanceRecette × Int) =>
       match e.impot with
-      | some i => effetDemande H none (-(appliquerPm d M.multiplicateurPrelevementsPm))
+      | some i => effetDemande H none (-(appliquerPm d (poidsPrelevement M H i)))
           { st with impots := st.impots.ajouter i d }
       | none => { st with autresRecettes := st.autresRecettes + d })
     ({ s₃ with echeancesRecettes := pasRecettes.map (·.1) } : Etat)
