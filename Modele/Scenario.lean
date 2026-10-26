@@ -66,6 +66,33 @@ structure Natalite where
   sources : List String
   deriving Repr
 
+/-- Activité visée par une taxe environnementale ; elle fixe le secteur
+d'émission touché et l'élasticité-prix (axe énergie). -/
+inductive ActiviteTaxee where
+  | aerienInterieur | poidsLourds | carburantsRoutiers | chauffageFossile
+  deriving Repr, DecidableEq, Inhabited
+
+def ActiviteTaxee.secteur : ActiviteTaxee → SecteurGes
+  | .aerienInterieur => .transports
+  | .poidsLourds => .transports
+  | .carburantsRoutiers => .transports
+  | .chauffageFossile => .batiments
+
+/-- Élasticités-prix de long terme des activités taxées (valeur absolue, pm :
+`500` = −0,5 % d'activité pour +1 % de coût). -/
+structure ElasticitesPrix where
+  aerienInterieur : Int
+  poidsLourds : Int
+  carburantsRoutiers : Int
+  chauffageFossile : Int
+  deriving Repr
+
+def ElasticitesPrix.get (e : ElasticitesPrix) : ActiviteTaxee → Int
+  | .aerienInterieur => e.aerienInterieur
+  | .poidsLourds => e.poidsLourds
+  | .carburantsRoutiers => e.carburantsRoutiers
+  | .chauffageFossile => e.chauffageFossile
+
 /-- Territoire visé par une aide (rénovation…). -/
 inductive Territoire where
   | national | rural
@@ -168,6 +195,8 @@ structure Energie where
   pmRelatifCritAirPm : List Int
   /-- Rénovation énergétique des logements. -/
   renovation : Renovation
+  /-- Élasticités-prix des activités visées par une taxe environnementale. -/
+  elasticitesPrix : ElasticitesPrix
   /-- Consommation d'électricité d'un foyer d'outre-mer, kWh/an. -/
   consommationFoyerZniKWh : Int
   /-- Surcoût de production de l'électricité dans les zones non
@@ -247,6 +276,16 @@ structure Economie where
   /-- Dépense d'indemnisation par chômeur supplémentaire (assurance chômage
   et solidarité), € de l'année de départ, indexée sur le PIB nominal. -/
   coutParChomeurEuros : Int
+  /-- Prélèvements qui reviennent aussitôt sur une rémunération publique
+  supplémentaire, pm du brut : CSG et CRDS (toutes natures), cotisations
+  salariales selon la nature (traitement : retenue pour pension ; primes :
+  RAFP ; heures supplémentaires), impôt sur le revenu (taux marginal moyen ;
+  nul pour les heures supplémentaires, exonérées). -/
+  tauxCsgCrdsRemunerationPm : Int
+  tauxCotisationsTraitementPm : Int
+  tauxCotisationsPrimesPm : Int
+  tauxCotisationsHeuresSupPm : Int
+  tauxIrRemunerationPm : Int
   /-- Actifs supplémentaires (personnes) par mois de recul de l'âge légal. -/
   actifsParMoisAgeLegal : Int
   /-- Élasticité du PIB au volume d'heures travaillées, pm (`650` : part du
@@ -356,6 +395,10 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.semiElasticiteAssietteISPm ∧ H.eco.semiElasticiteAssietteISPm ≤ 50 ∧
   0 ≤ H.eco.contenuImportOutreMerPm ∧ H.eco.contenuImportOutreMerPm ≤ 1000 ∧
   0 ≤ H.eco.coutParChomeurEuros ∧
+  0 ≤ H.eco.tauxCsgCrdsRemunerationPm ∧ 0 ≤ H.eco.tauxCotisationsTraitementPm ∧
+  0 ≤ H.eco.tauxCotisationsPrimesPm ∧ 0 ≤ H.eco.tauxCotisationsHeuresSupPm ∧
+  0 ≤ H.eco.tauxIrRemunerationPm ∧
+  H.eco.tauxCsgCrdsRemunerationPm + H.eco.tauxCotisationsTraitementPm + H.eco.tauxIrRemunerationPm ≤ 1000 ∧
   0 ≤ H.eco.coutSanteParPbPlus65 ∧
   0 ≤ H.eco.contenuImportDemandePm ∧ H.eco.contenuImportDemandePm ≤ 1000 ∧
   0 ≤ H.eco.robotisationTendanciellePb ∧ H.eco.robotisationTendanciellePb ≤ 500 ∧

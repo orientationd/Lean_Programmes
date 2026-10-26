@@ -157,6 +157,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     pertePfuMeur := pertePfu
     cdhrMeur := cdhr
     chomeursComptes := chomeurs
+    -- passifs implicites : le stock s'accroît du flux, qui suit les salaires
+    passifsImplicites := s.passifsImplicites + s.fluxPassifsImplicites
+    fluxPassifsImplicites := s.fluxPassifsImplicites + appliquerPb s.fluxPassifsImplicites croissance
     dette := s.dette + (depenses - recettes) + s.operationsFinancieres + s.investissementsParticipations
     participationsEtat := participations
     dividendesEtat := dividendes
@@ -217,6 +220,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- pas l'activité intérieure et suit les importations
   let s₃ : Etat := pasEcheances.foldl
     (fun (st : Etat) ((e, d, impulsion) : Echeance × Int × Int) =>
+      match e.remuneration with
+      | some nat =>
+          -- rémunération d'agents en poste : prélèvements en retour et effet
+          -- de demande d'un transfert, sans secteur ni importations
+          effetRemuneration M H nat d { st with depensesF := st.depensesF.ajouter e.fonction d }
+      | none =>
       -- une dépense qui baisse ou s'arrête détruit les emplois du secteur
       -- qu'elle avait créés (intensité en emplois symétrique) ; une économie
       -- (niveau négatif) n'a pas de secteur

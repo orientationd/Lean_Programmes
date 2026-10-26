@@ -135,6 +135,30 @@ du modèle donne une semi-élasticité de ≈ 0,52 ; avec le chômage, le solde
 réagit de ≈ 0,57 point par point de PIB, la valeur retenue par la LPFP (0,63
 pour la Commission européenne, Mourre et al., 2019).
 
+Rémunérations publiques (levier `remunerationPublique`). Pour des agents
+déjà en poste, une hausse de rémunération ne crée ni production ni emploi
+public : elle coûte le brut (les cotisations employeur versées à des
+administrations publiques, comme le CAS Pensions à 78,28 % du traitement,
+se compensent dans le compte consolidé) ; une part revient aussitôt en
+prélèvements, et le net soutient la consommation comme un transfert aux
+ménages. Taux (2026) :
+* CSG 9,2 % et CRDS 0,5 % sur 98,25 % du brut : `tauxCsgCrdsRemunerationPm`
+  = 95 ;
+* retenue pour pension de 11,10 % du traitement indiciaire :
+  `tauxCotisationsTraitementPm` = 111 ;
+* RAFP (5 % agent) plafonnée à 20 % du traitement : les enseignants
+  (primes ≈ 20,8 % du traitement) et les policiers (≈ 39 %) y sont déjà ;
+  `tauxCotisationsPrimesPm` = 0 ;
+* heures supplémentaires : RAFP compensée par la réduction de cotisations
+  (décret n° 2019-133), exonérées d'impôt sur le revenu jusqu'à 7 500 € par
+  an (CGI, art. 81 quater) : `tauxCotisationsHeuresSupPm` = 0, impôt nul ;
+* impôt sur le revenu : taux marginal de 11 % (couple d'enseignants avec
+  deux enfants) à 30 % (célibataire), sur ≈ 77 % du brut après abattement
+  de 10 % : `tauxIrRemunerationPm` = 150 (calcul, barème 2026).
+Sources : taux de cotisations 2026 (CDG 33) ; fiche RAFP (COR, 2024) ;
+contribution employeur au CAS Pensions (Service des retraites de l'État,
+2025) ; barème de l'IR 2026.
+
 Marché du travail. L'emploi ne suit plus mécaniquement la population
 active : la tendance démographique est absorbée au taux d'emploi courant
 (chômage tendanciel inchangé), mais les chocs d'offre de travail des
@@ -200,6 +224,11 @@ def centrale : Economie where
   contenuImportOutreMerPm := 500
   intensiteEmploiSecteurPm := intensiteEmploi2025
   coutParChomeurEuros := 10000
+  tauxCsgCrdsRemunerationPm := 95
+  tauxCotisationsTraitementPm := 111
+  tauxCotisationsPrimesPm := 0
+  tauxCotisationsHeuresSupPm := 0
+  tauxIrRemunerationPm := 150
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -244,6 +273,11 @@ def croissanceBasse : Economie where
   contenuImportOutreMerPm := 500
   intensiteEmploiSecteurPm := intensiteEmploi2025
   coutParChomeurEuros := 10000
+  tauxCsgCrdsRemunerationPm := 95
+  tauxCotisationsTraitementPm := 111
+  tauxCotisationsPrimesPm := 0
+  tauxCotisationsHeuresSupPm := 0
+  tauxIrRemunerationPm := 150
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
@@ -288,6 +322,11 @@ def croissanceHaute : Economie where
   contenuImportOutreMerPm := 500
   intensiteEmploiSecteurPm := intensiteEmploi2025
   coutParChomeurEuros := 10000
+  tauxCsgCrdsRemunerationPm := 95
+  tauxCotisationsTraitementPm := 111
+  tauxCotisationsPrimesPm := 0
+  tauxCotisationsHeuresSupPm := 0
+  tauxIrRemunerationPm := 150
   actifsParMoisAgeLegal := 30000
   elasticitePibHeuresPm := 650
   tauxISPb := 2500
