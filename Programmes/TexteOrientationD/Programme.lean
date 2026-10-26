@@ -879,6 +879,46 @@ contrat et par an (calcul) ; 0,16 emploi net par CIE (Dares, via FIPECO,
 def contratsIndustrie : Int := 20000
 def aideCieEuros : Int := 10160
 
+/-- Accompagnement des entreprises en cybersécurité (O-98).
+* Chèque cyber : 50 % des dépenses de sécurité, au plus 2 500 € pour une TPE
+  et 10 000 € pour une PME, sur le modèle du chèque investissement cyber de
+  l'Île-de-France (fermé le 21 février 2025) ; 40 000 TPE et 10 000 PME par
+  an (hypothèse ; 16 % des TPE-PME ont subi un incident en douze mois, 77 %
+  dépensent moins de 2 000 € par an en sécurité et 37 % demandent une aide
+  financière : baromètre Cybermalveillance-OpinionWay, 7 octobre 2025) :
+  200 M€ par an.
+* Cybermalveillance.gouv.fr porté à 3 M€ de financement public, le minimum
+  recommandé par le Sénat (subvention de l'ANSSI inchangée à 0,845 M€ par an
+  depuis 2017 : Sénat, avis n° 141, 19 novembre 2025).
+* CSIRT régionaux : 1 M€ par région métropolitaine sur trois ans, comme la
+  première vague financée par l'ANSSI en 2022, arrêtée depuis : 13 M€ / 3
+  par an.
+Les cyberattaques ont coûté ≈ 2 Md€ aux entreprises en 2022 (Asterès) :
+l'effet de la mesure sur ce coût n'est pas chiffré. -/
+def chequesCyber : Int := (40000 * 2500 + 10000 * 10000) / 1000000
+def cyberGipCsirt : Int := (3000 - 845 + 13000 / 3) / 1000
+
+theorem chequesCyber_eq : chequesCyber = 200 ∧ cyberGipCsirt = 6 := by decide
+
+/-- Amendes renforcées en cas de fuite de données (O-99). Le RGPD,
+règlement européen, plafonne l'amende d'un défaut de sécurité à 2 % du
+chiffre d'affaires mondial ou 10 M€ (art. 83.4) ; la France ne peut pas
+le relever seule, mais elle peut relever les plafonds de la directive
+NIS2, qui sont des minimums (au moins 2 % pour les entités essentielles,
+1,4 % pour les importantes), dans la loi de transposition encore en
+discussion (report du 6 octobre 2026), et les amendes pénales des
+personnes morales (art. 226-17 et 131-38 du code pénal). La mesure les
+porte à 4 % et 2,8 % du chiffre d'affaires mondial et demande le même
+relèvement du RGPD. Les amendes suivent un pourcentage du plafond légal
+selon la gravité (lignes directrices 04/2022 du CEPD) : à gravité égale,
+doubler le plafond double les amendes pour défaut de sécurité, ≈ 20 M€ par
+an de 2023 à 2026 (Amazon France Logistique 32 M€ en 2023, Mobius 1 M€ en
+2025, Free 42 M€ et France Travail 5 M€ en 2026 ; calcul), versées au
+budget de l'État. L'effet dissuasif n'est pas chiffré. -/
+def amendesFuitesSupplementaires : Int := (32 + 1 + 42 + 5) / 4
+
+theorem amendesFuites_eq : amendesFuitesSupplementaires = 20 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -1885,13 +1925,25 @@ def mesures : List Mesure := [
     leviers := [.emploisAides .industrie contratsIndustrie aideCieEuros 840]
     variantes := [
       { nom := "0,25 emploi net par contrat (emplois d'avenir du secteur marchand)",
-        leviers := [.emploisAides .industrie contratsIndustrie aideCieEuros 750] }] }
+        leviers := [.emploisAides .industrie contratsIndustrie aideCieEuros 750] }] },
+
+  { id := "O-98"
+    titre := "Accompagnement des entreprises en cybersécurité : chèque cyber pour 50 000 TPE et PME par an, Cybermalveillance.gouv.fr et CSIRT régionaux"
+    source := s!"Texte Orientation D, mesure 98 ; chèque de 50 % des dépenses, au plus 2 500 € (TPE) ou 10 000 € (PME), modèle de l'Île-de-France ; 40 000 TPE et 10 000 PME par an (hypothèse) : {chequesCyber} M€ ; Cybermalveillance.gouv.fr à 3 M€ et CSIRT régionaux : {cyberGipCsirt} M€ (voir `chequesCyber`)"
+    leviers := [.depenseSur .affairesEconomiques (chequesCyber + cyberGipCsirt)]
+    variantes := [
+      { nom := "chèque pour 25 000 entreprises par an", leviers := [.depenseSur .affairesEconomiques (chequesCyber / 2 + cyberGipCsirt)] }] },
+
+  { id := "O-99"
+    titre := "Amendes renforcées en cas de fuite de données : jusqu'à 4 % du chiffre d'affaires mondial"
+    source := s!"Texte Orientation D, mesure 99 ; plafonds NIS2 (au moins 2 % et 1,4 % du CA) et amendes pénales des personnes morales portés à 4 % et 2,8 % du CA mondial ; RGPD (2 % pour la sécurité) à relever au niveau européen ; amendes pour défaut de sécurité doublées : +{amendesFuitesSupplementaires} M€ par an (calcul, voir `amendesFuitesSupplementaires`)"
+    leviers := [.recetteEcheancier none [amendesFuitesSupplementaires]] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, accompagnement des entreprises en cybersécurité, amendes renforcées en cas de fuite de données."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
