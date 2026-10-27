@@ -900,24 +900,29 @@ def cyberGipCsirt : Int := (3000 - 845 + 13000 / 3) / 1000
 
 theorem chequesCyber_eq : chequesCyber = 200 ∧ cyberGipCsirt = 6 := by decide
 
-/-- Amendes renforcées en cas de fuite de données (O-99). Le RGPD,
-règlement européen, plafonne l'amende d'un défaut de sécurité à 2 % du
-chiffre d'affaires mondial ou 10 M€ (art. 83.4) ; la France ne peut pas
-le relever seule, mais elle peut relever les plafonds de la directive
-NIS2, qui sont des minimums (au moins 2 % pour les entités essentielles,
-1,4 % pour les importantes), dans la loi de transposition encore en
-discussion (report du 6 octobre 2026), et les amendes pénales des
-personnes morales (art. 226-17 et 131-38 du code pénal). La mesure les
-porte à 4 % et 2,8 % du chiffre d'affaires mondial et demande le même
-relèvement du RGPD. Les amendes suivent un pourcentage du plafond légal
-selon la gravité (lignes directrices 04/2022 du CEPD) : à gravité égale,
-doubler le plafond double les amendes pour défaut de sécurité, ≈ 20 M€ par
-an de 2023 à 2026 (Amazon France Logistique 32 M€ en 2023, Mobius 1 M€ en
-2025, Free 42 M€ et France Travail 5 M€ en 2026 ; calcul), versées au
-budget de l'État. L'effet dissuasif n'est pas chiffré. -/
-def amendesFuitesSupplementaires : Int := (32 + 1 + 42 + 5) / 4
+/-- Amendes automatiques en cas de fuite de données (O-99), dans les
+plafonds du RGPD : pour une entreprise qui n'est pas une PME (chiffre
+d'affaires de plus de 50 M€, recommandation européenne 2003/361/CE), une
+violation de données due à un défaut de sécurité (art. 32) et touchant plus
+d'un million de personnes entraîne d'office l'amende maximale de l'article
+83.4, 2 % du chiffre d'affaires mondial, au lieu d'une amende fixée au cas
+par cas (Free : 42 M€ en janvier 2026, pour 24 millions de contrats
+exposés). Environ 40 violations par an touchent plus d'un million de
+personnes (CNIL, rapports 2024 et 2025) ; hypothèses : 10 par an dans des
+entreprises de plus de 50 M€ de chiffre d'affaires (les autres touchent des
+organismes publics, plafonnés à 10 M€, ou des sous-traitants plus petits),
+1 Md€ de chiffre d'affaires médian, 95 % de recouvrement (taux de la CNIL
+de 2019 à 2024) : 190 M€ par an versés au budget de l'État (calcul). Ce
+produit baisserait à mesure que les entreprises se protègent, ce que le
+modèle ne retient pas. Point juridique : l'article 83.2 du RGPD impose
+d'apprécier chaque cas ; l'automaticité devra prendre la forme d'une
+sanction nationale (article 84) ou passer par la loi de transposition de
+NIS2, et reste à expertiser. -/
+def fuitesAutomatiques : Int := 10
+def caMedianFuitesMeur : Int := 1000
+def amendesFuitesSupplementaires : Int := fuitesAutomatiques * caMedianFuitesMeur * 2 / 100 * 95 / 100
 
-theorem amendesFuites_eq : amendesFuitesSupplementaires = 20 := by decide
+theorem amendesFuites_eq : amendesFuitesSupplementaires = 190 := by decide
 
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
@@ -1935,15 +1940,19 @@ def mesures : List Mesure := [
       { nom := "chèque pour 25 000 entreprises par an", leviers := [.depenseSur .affairesEconomiques (chequesCyber / 2 + cyberGipCsirt)] }] },
 
   { id := "O-99"
-    titre := "Amendes renforcées en cas de fuite de données : jusqu'à 4 % du chiffre d'affaires mondial"
-    source := s!"Texte Orientation D, mesure 99 ; plafonds NIS2 (au moins 2 % et 1,4 % du CA) et amendes pénales des personnes morales portés à 4 % et 2,8 % du CA mondial ; RGPD (2 % pour la sécurité) à relever au niveau européen ; amendes pour défaut de sécurité doublées : +{amendesFuitesSupplementaires} M€ par an (calcul, voir `amendesFuitesSupplementaires`)"
-    leviers := [.recetteEcheancier none [amendesFuitesSupplementaires]] }
+    titre := "Amende automatique de 2 % du chiffre d'affaires mondial en cas de fuite de données massive dans une entreprise de plus de 50 M€ de chiffre d'affaires"
+    source := s!"Texte Orientation D, mesure 99 ; plafond de l'article 83.4 du RGPD appliqué d'office au-delà d'un million de personnes touchées ; ≈ 40 violations par an de cette ampleur (CNIL) ; hypothèses : {fuitesAutomatiques} par an dans des entreprises de plus de 50 M€, {caMedianFuitesMeur} M€ de chiffre d'affaires médian, 95 % de recouvrement : {amendesFuitesSupplementaires} M€ par an (voir `amendesFuitesSupplementaires`)"
+    leviers := [.recetteEcheancier none [amendesFuitesSupplementaires]]
+    variantes := [
+      { nom := "seuil relevé à 1 Md€ de chiffre d'affaires (5 fuites par an, 3 Md€ de chiffre d'affaires médian)",
+        leviers := [.recetteEcheancier none [5 * 3000 * 2 / 100 * 95 / 100]] },
+      { nom := "dissuasion complète : plus aucune fuite de cette ampleur", leviers := [] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, accompagnement des entreprises en cybersécurité, amendes renforcées en cas de fuite de données."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
