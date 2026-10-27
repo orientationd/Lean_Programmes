@@ -274,6 +274,8 @@ def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
     ("pibPb", toJson (ratioPb (s.pib - a.pib) a.pib)),
     ("deficitPb", toJson (s.deficitPb - a.deficitPb)),
     ("dettePb", toJson (s.dettePb - a.dettePb)),
+    ("chomagePb", toJson (s.chomagePb - a.chomagePb)),
+    ("idhMillioniemes", toJson (s.idhMillioniemes - a.idhMillioniemes)),
     ("emplois", toJson (s.emploiTotal - a.emploiTotal)),
     ("recettes", toJson (s.recettes - a.recettes)),
     ("depenses", toJson (s.depenses - a.depenses)),
@@ -295,6 +297,7 @@ def effetsVariantes (p : Programme) (n : Nat) : List Json :=
       ("deficitPb", toJson s.deficitPb), ("ecartDeficitPb", toJson (s.deficitPb - retenu.deficitPb)),
       ("ecartPibPb", toJson (ratioPb (s.pib - retenu.pib) retenu.pib)),
       ("ecartEmplois", toJson (s.emploiTotal - retenu.emploiTotal)),
+      ("idhMillioniemes", toJson s.idhMillioniemes),
       ("chomagePb", toJson s.chomagePb)]
 
 def rapportSyntheseJson : Json :=
@@ -323,8 +326,11 @@ def rapportSyntheseJson : Json :=
     ("programmes", Json.arr <| Programmes.tous.toArray.map fun p =>
       Json.mkObj [("id", toJson p.id), ("nom", toJson p.nom),
         ("description", toJson p.description), ("nbMesures", toJson p.mesures.length),
+        ("entreeEnVigueur", toJson p.entreeEnVigueur),
         ("mesures", Json.arr <| p.mesures.toArray.map fun m =>
-          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("debut", toJson m.debut), ("repetitions", toJson m.repetitions)]),
+          Json.mkObj [("id", toJson m.id), ("titre", toJson m.titre), ("source", toJson m.source),
+            ("debut", toJson m.debut), ("repetitions", toJson m.repetitions),
+            ("variantes", toJson (m.variantes.map (·.nom)))]),
         ("contrats", toJson ((contrats p).map fun (m, t) => s!"{m} — {t}")),
         -- effet de chaque mesure seule, à l'horizon de la synthèse, par moteur
         ("effetsMesures", Json.arr <| (moteurs.toArray.flatMap fun M =>

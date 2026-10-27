@@ -1,6 +1,7 @@
 # Synthèse PDF des programmes : tableaux et courbes sur dix ans (PIB, déficit
 # et dette publics, chômage, actifs, emploi par secteur, impôts et taxes,
-# sensibilité au prix du pétrole et à la natalité).
+# sensibilité au prix du pétrole et à la natalité) ; programme complet de
+# chaque programme (scripts/programme_pdf.py).
 #
 # Tourne sur main (code déjà relu), à la demande (paramètres `moteur` et
 # `programmes` pour une synthèse personnalisée) et sur les PR qui touchent
@@ -85,6 +86,11 @@ jobs:
             m=$(basename "$d")
             python scripts/synthese_pdf.py out/synthese.json "out/synthese-$m.pdf" --commit "$GITHUB_SHA" --moteur "$m"
           done
+          # Programme complet de chaque programme (mesures, sources, effets).
+          for d in Programmes/*/; do
+            p=$(basename "$d")
+            python scripts/programme_pdf.py out/synthese.json "$p" "out/programme-$p.pdf" --commit "$GITHUB_SHA"
+          done
 
       - name: Publier la synthèse (artefact)
         uses: actions/upload-artifact@v4
@@ -92,5 +98,6 @@ jobs:
           name: synthese
           path: |
             out/synthese*.pdf
+            out/programme-*.pdf
             out/synthese.json
           retention-days: 90

@@ -828,7 +828,129 @@ fonds d'épargne de la Caisse des dépôts, qui finance le logement social
 de jetons sur le taux des titres courts (de l'ordre du point de base par
 milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 
-## À compléter
+## Points à arbitrer
+
+État du programme (scénario central, 2035, moteur de demande) : déficit de
+4,05 % du PIB (9,08 % sans programme), dette de 129,7 % (149,8 %), chômage
+de 9,19 % (7,66 %), IDH de 0,9428 (0,9410), émissions de 284 Mt CO₂e (296).
+Non tenues au scénario central : déficit sous 3 % et sous le plafond
+juridique, équilibre, dette stabilisée, règles budgétaires européennes,
+chômage non dégradé, objectifs climatiques 2030 ; baisse du déficit chaque
+année sous le seul moteur de demande.
+
+Options chiffrées (programme complet modifié, scénario central, 2035) :
+
+| Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
+|---|---|---|---|---|
+| Programme actuel | 4,05 % | 9,19 % | 0,9428 | non / oui / oui |
+| **A.** O-62 : niches −1,5 Md€ de plus par an de 2029 à 2035, au lieu de −1 Md€ | 3,97 % | 9,20 % | 0,9428 | oui / oui / oui |
+| **B.** A, plus O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,79 % | 9,05 % | 0,9428 | oui / oui / oui |
+| **C.** A, plus O-81 à +5 points (250 000 places) | 4,02 % | 9,18 % | 0,9440 | oui / oui / oui |
+| **D.** Deuxième journée de solidarité (7 heures), CSA de 0,3 % à 0,6 %, affectée à l'autonomie | 3,77 % | 9,17 % | 0,9430 | oui / oui / oui |
+| **E.** A et D | 3,69 % | 9,18 % | 0,9430 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,86 % | 9,20 % | 0,9428 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 3,18 % | 9,25 % | 0,9428 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,76 % | 9,73 % | 0,9422 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,51 % | 10,23 % | 0,9416 | oui / oui / oui |
+
+1. **Baisse du déficit en 2032.** Au moteur de demande, le déficit stagne
+   en 2032 (4,67 % en 2031 comme en 2032) : l'âge moyen de départ cesse
+   alors de suivre le calendrier légal (O-07) et les places de prison
+   ouvertes (O-75) font monter le fonctionnement. Il manque ≈ 0,4 Md€ cette
+   année-là. L'option A rétablit la baisse sous les trois moteurs. Toute
+   dépense nouvelle (pistes ci-dessous) la rompt à nouveau si elle n'est pas
+   financée : chaque piste de dépense est à apparier à une recette ou à une
+   économie.
+2. **Chômage.** 9,19 % en 2035 contre 7,66 % sans programme. Premières
+   causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 230 000
+   emplois) et la norme de dépense O-55 (≈ 210 000) ; l'IS à 15 % (O-08,
+   +22 000), O-76 et O-77 (+44 000 chacune) compensent en partie. Au-delà
+   de 9 %, le complément de fin de droits de l'assurance chômage se
+   déclenche (≈ +0,14 point de déficit). L'option B s'en approche (9,05 %) ;
+   passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit plus
+   élevé.
+3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
+   (≈ 0,15 point par an de 2026 à 2035) reste loin de l'ajustement de
+   0,5 point par an du cadre européen. Les leviers évalués qui mènent sous
+   3 % coûtent en emploi : la norme renforcée de 100 pb atteint 2,76 % avec
+   9,73 % de chômage. Le maintien de l'IS à 25 % (3,18 %) défait le choix
+   d'O-08.
+4. **IDH.** L'éducation est le levier le plus fort (O-81 : +0,0021 à lui
+   seul) ; l'option C porte l'IDH à 0,9440 pour 0,05 point de déficit, d'où
+   l'appariement avec A.
+5. **Climat.** Aucun programme du dépôt n'atteint les objectifs sectoriels
+   2030 de la SNBC-3. Écarts du programme en 2030 (Mt CO₂e) :
+
+| Secteur | Programme 2030 | Objectif SNBC-3 | Écart |
+|---|---|---|---|
+| Transports | 109,6 | 92 | +17,6 |
+| Bâtiments | 49,4 | 37 | +12,4 |
+| Industrie | 50,2 | 42 | +8,2 |
+| Production d'énergie | 28,4 | 25 | +3,4 |
+| Déchets | 13,7 | 12 | +1,7 |
+| Agriculture | 68,9 | 68 | +0,9 |
+| **Total** | **320** | **276** | **+44** |
+
+   Le modèle commun ne relie aux émissions que des leviers précis
+   (véhicules remplacés ou aidés, bornes, rénovation aidée, conversion
+   agricole, taxes environnementales, levier `transition` : tonnes évitées
+   par secteur pour un coût donné). Une dépense « climat » générique n'y
+   change rien : chaque mesure climatique doit sourcer ses tonnes évitées et
+   son coût.
+
+L'option D reprend la contribution de solidarité par le travail votée par
+le Sénat le 20 novembre 2024 (PLFSS 2025, 216 voix contre 119 ; ≈ 2,5 Md€
+par an, gouvernement défavorable « à ce stade ») : 7 heures non rémunérées
+de plus par an (+0,4 % de durée du travail, levier `dureeTravail`), et la
+contribution patronale correspondante dépensée pour l'autonomie. Elle
+finance un domaine absent du programme, mais revient à du travail non
+rémunéré : point politique à trancher.
+
+## Pistes pour compléter
+
+### Domaines absents du programme
+
+Mesures déjà chiffrées dans les autres programmes du dépôt, ajoutées une à
+une au Texte Orientation D (scénario central, moteur de demande, 2035 ;
+IDH en dix-millièmes). Toutes rompent la baisse du déficit en 2032 si elles
+ne sont pas financées (voir l'option A ou D) ; la norme de dépense (O-55)
+absorbe une partie de leur coût à terme.
+
+| Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
+|---|---|---|---|---|
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,01 pt | −0,04 pt | +0,3 |
+| Égalité, violences | Loi intégrale contre les violences sexistes et sexuelles, 2,6 Md€ (PS, P-07) | +0,07 pt | −0,03 pt | +0,3 |
+| Familles, pauvreté | Allocations familiales dès le premier enfant, 2,8 Md€ bruts (PCF, PC-11 ; proposition de loi adoptée en première lecture le 5 juin 2025) | +0,10 pt | −0,03 pt | +0,3 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,14 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,20 pt | −0,07 pt | +0,8 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,08 pt | −0,07 pt | +0,6 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,10 pt | −0,05 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,10 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,08 pt | −0,06 pt | +0,5 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,16 pt | −0,09 pt | +0,8 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
+
+La rénovation (PC-03) et le vélo (PC-02) ne changent pas les émissions du
+modèle tant que leurs tonnes évitées ne sont pas sourcées (levier
+`transition`, ou sous-modèle rénovation comme O-63).
+
+Autres domaines sans mesure, ni ici ni dans le modèle : grand âge et
+dépendance au-delà de l'option D ; petite enfance (places de crèche) ;
+biodiversité et eau ; énergies renouvelables (seul le nucléaire est chiffré,
+O-04) ; culture ; immigration et intégration ; sécurité intérieure.
+
+### Chiffrages à documenter
+
+* 30 mesures sur 81 reposent au moins en partie sur une hypothèse ; les plus
+  lourdes sur le solde : durée de cotisation (O-44, O-58 : −0,33 et
+  −0,35 point), accidents du travail (O-14 : −0,34 point), fin de l'âge
+  légal (O-07 : +0,30 point).
+* Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
+  gros héritages (O-36, 10 Md€ : −0,36 point), exonérations (O-38, 4 Md€),
+  train de vie de l'État (O-39, 3,1 Md€).
+
+### Données à compléter
 
 * Prix unitaire et part importée des véhicules de remplacement (O-01).
 * Valeurs électriques (consommation, prix à l'export) à sourcer (RTE).
@@ -840,3 +962,7 @@ milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
   la décision finale d'investissement.
 * Panel SRU réel (inventaire SRU par commune) à la place des communes
   fictives.
+
+Les chiffres cités dans les sections des mesures décrivent l'effet de chaque
+étape au moment de son ajout ; les chiffres à jour sont ceux de « Points à
+arbitrer » et de la synthèse.
