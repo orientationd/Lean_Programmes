@@ -19,6 +19,13 @@
 | H-05 Immigration légale divisée par deux | solde migratoire −90 000 par an (hypothèse de conversion) ; population et population active suivent |
 | H-06 15 % de capitalisation | pour mémoire, sans levier |
 
+## Ajouts (octobre 2026)
+
+| Mesure | Levier |
+|---|---|
+| H-07 Pacte fiscal : −50 Md€ d'impôts de production, −50 Md€ d'aides aux entreprises | −50 Md€ d'autres impôts, −50 Md€ d'affaires économiques (imputation : hypothèse) |
+| H-08 Part fiscale pleine dès le deuxième enfant | −3,5 Md€ d'IR (chiffrage du RN pour la même mesure, hypothèse) |
+
 ## Non modélisé, faute de montant dans les sources
 
 * Assurance chômage : durée maximale ramenée de 18 à 12 mois (moins de

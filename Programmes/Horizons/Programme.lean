@@ -40,13 +40,19 @@ def mesures : List Mesure := [
     leviers := [.migration (-90)] },
   { id := "H-06", titre := "Retraite : 15 % de capitalisation en complément de la répartition"
     source := "É. Philippe, AmCham, février 2026 (via ÉlyséeScope) ; sans montant ni calendrier : non modélisé (le modèle n'a pas de fonds de pension) ; mesure enregistrée pour mémoire"
-    leviers := [] }
+    leviers := [] },
+  { id := "H-07", titre := "Pacte fiscal avec les entreprises : −50 Md€ d'impôts de production contre −50 Md€ d'aides"
+    source := "É. Philippe, 6 novembre 2025 (Public Sénat), redit en octobre 2026 (LCP) : neutre pour l'État selon lui ; les aides supprimées sont imputées aux affaires économiques (hypothèse ; une partie des aides aux entreprises sont des exonérations de cotisations)"
+    leviers := [.prelevementSur .autres (-50000), .economieSur .affairesEconomiques 50000] },
+  { id := "H-08", titre := "Part fiscale pleine dès le deuxième enfant"
+    source := "edouardphilippe.fr (comparateur IFRAP 2027) ; non chiffré par Horizons : 3,5 Md€ selon le chiffrage par le RN de la même mesure (LCP, 6 octobre 2026), hypothèse"
+    leviers := [.prelevementSur .ir (-3500)] }
 ]
 
 def programme : Programme where
   id := "Horizons"
   nom := "Horizons — Édouard Philippe 2027"
-  description := "Transcription partielle et non officielle des propositions d'octobre 2026 : âge légal à 65 ans, non-remplacement d'un fonctionnaire sur trois, fonds d'adaptation climatique, deux heures supplémentaires exonérées. Allocation familiale unique et chômage à 12 mois n'ont pas de montant publié."
+  description := "Transcription partielle et non officielle des propositions d'octobre 2026 : âge légal à 65 ans, non-remplacement d'un fonctionnaire sur trois, fonds d'adaptation climatique, deux heures supplémentaires exonérées. Pacte fiscal (−50 Md€ d'impôts de production contre −50 Md€ d'aides), part fiscale dès le deuxième enfant. Allocation familiale unique et chômage à 12 mois n'ont pas de montant publié."
   mainteneurs := ["@orientationd"]
   source := "« L'Heure de vérité », France 2, 8 octobre 2026 (Euronews, franceinfo, Echos Plus, consultés le 21 octobre 2026)"
   mesures := mesures

@@ -48,13 +48,31 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .famille 3900] },
   { id := "E-09", titre := "32 heures sans perte de salaire dans les métiers pénibles ou de nuit"
     source := s!"{projet}, p. 57 ; conversion : −8,6 % d'heures pour 15 % des salariés (métiers exposés, hypothèse) → −1,3 % d'heures par emploi"
-    leviers := [.dureeTravail (-13)] }
+    leviers := [.dureeTravail (-13)] },
+  { id := "E-10", titre := "Contribution pour les générations futures : successions de plus de 4 M€, Dutreil réduit, plus-values latentes imposées au décès"
+    source := "Les Écologistes, contre-budget 2027 (30 septembre 2026 ; Zoominvest, 27 août 2026) : +10 Md€ en 2027, 15 Md€ à terme (chiffrage du parti)"
+    leviers := [.recetteEcheancier (some .droitsMutation) [10000, 11500, 13000, 15000]] },
+  { id := "E-11", titre := "Taxe sur le surcroît de chiffre d'affaires des groupes pétro-gaziers, chèque carburant de 450 €"
+    source := "E. Sas, 30 septembre 2026 (AFP) : +2,8 Md€ (33 % du chiffre d'affaires supplémentaire 2026-2027), chèque de 450 € pour ≈ 6 millions de ménages (≈ 2,7 Md€, calcul) ; temporaires, 2027 seulement"
+    leviers := [.recetteEcheancier (some .impotSocietes) [2800, 0], .depenseEcheancier .famille [2700, 0]] },
+  { id := "E-12", titre := "Classes à 19 élèves en 2032, 12 en éducation prioritaire"
+    source := s!"{projet} ; non chiffré : 6,8 Md€ par an au bout de cinq ans pour les classes à 19 (Institut Montaigne, 2022, même mesure de LFI ; fourchette 4,6 à 11 Md€), hypothèse ; montée en charge linéaire"
+    leviers := [.depenseEcheancier .enseignement [1360, 2720, 4080, 5440, 6800]] },
+  { id := "E-13", titre := "Garantie d'autonomie à 50 % du SMIC net dès 18 ans"
+    source := s!"{projet} ; non chiffré : RSA ouvert aux 18-25 ans ≈ 6,6 Md€ (DG Trésor, 2016), hypothèse basse (le montant visé, ≈ 739 €, dépasse le RSA)"
+    leviers := [.depenseSur .famille 6600] },
+  { id := "E-14", titre := "APL +10 %, allocations familiales dès le premier enfant"
+    source := s!"{projet} ; APL : 16,1 Md€ en 2026 (Sénat) → +1,6 Md€ (calcul) ; allocations dès le premier enfant : 2,8 Md€ bruts (direction de la Sécurité sociale, rapport AN n° 1473)"
+    leviers := [.depenseSur .famille 4400] },
+  { id := "E-15", titre := "Taxe sur les services numériques de 3 % à 5 %"
+    source := "Comparateur IFRAP 2027 ; ≈ 0,47 Md€ statiques sur une base de 0,7 Md€ (calcul)"
+    leviers := [.prelevementSur .autres 470] }
 ]
 
 def programme : Programme where
   id := "Ecologistes"
   nom := "Les Écologistes — Prospérité écologique 2027"
-  description := "Transcription partielle et non officielle du programme du 13 juillet 2026 : SMIC à 2 000 € brut, retraite à 62 ans, adaptation climatique 7 Md€/an, loi VSS, taxe Zucman, justice, salaires enseignants et chercheurs, AAH. Garantie d'autonomie, 500 000 rénovations par an, ISF climatique, TVA verte et sortie du nucléaire : sans montant publié."
+  description := "Transcription partielle et non officielle du programme du 13 juillet 2026 : SMIC à 2 000 € brut, retraite à 62 ans, adaptation climatique 7 Md€/an, loi VSS, taxe Zucman, justice, salaires enseignants et chercheurs, AAH. Ajouts : contribution sur les grosses successions (contre-budget 2027), taxe pétro-gazière et chèque carburant, classes à 19 élèves, garantie d'autonomie et APL (hypothèses chiffrées), taxe numérique à 5 %. 500 000 rénovations par an, ISF climatique, TVA verte et sortie du nucléaire : sans montant publié."
   mainteneurs := ["@orientationd"]
   source := "lesecologistes.fr, Projet 2027 « Pour une prospérité écologique » (via MonVote2027 et Votons 2027, consultés le 22 octobre 2026)"
   mesures := mesures

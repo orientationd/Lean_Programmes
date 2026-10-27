@@ -40,6 +40,23 @@ transferts et à l'embauche, droits de douane, tabac) ne sont pas repris :
 les économies transcrites totalisent environ 100 Md€ sur les 141,7
 annoncés.
 
+## Ajouts (contre-budget 2027 et comparateur IFRAP)
+
+| Mesure | Levier |
+|---|---|
+| RN-16 Fin des subventions aux renouvelables | −5 Md€ (chiffrage du parti ; recouvrement possible avec RN-13) |
+| RN-17 Taxe de 1 000 € par salarié extra-européen | +1,3 Md€ bruts (amendement rejeté en commission) |
+| RN-18 Permis de conduire gratuit, prime d'activité étudiante | +0,7 et +0,6 Md€ |
+| RN-19 Proches aidants, soins dentaires | +2 et +1,4 Md€ |
+| RN-20 30 000 places de prison | 7,1 Md€ sur cinq ans, puis ≈ 1,35 Md€ par an de fonctionnement (hypothèses) |
+| RN-21 7 000 policiers et gendarmes | ≈ 0,6 Md€ (hypothèse) |
+
+Selon l'Institut de l'Entreprise, ≈ 7,5 Md€ seulement du plan seraient
+crédibles en 2031. Non transcrit : taxe de 14 % sur les transferts d'argent
+(non chiffrée), taxe sur les transactions intrajournalières (contre-budget
+2026, reprise non confirmée), AME remplacée par l'AMU (recouvrement avec
+RN-08), privatisation de l'audiovisuel public (non confirmée en 2027).
+
 ## Non modélisé
 
 * Prix national de l'électricité (9,3 Md€), dividendes d'EDF, TURPE,

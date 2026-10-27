@@ -26,6 +26,26 @@ Le modèle applique ses propres hypothèses de comportement (fuite fiscale,
 multiplicateur, élasticité du chômage au SMIC) aux montants annoncés,
 comme pour tous les programmes.
 
+## Ajouts : contre-budget 2027 des députés socialistes (16 septembre 2026)
+
+Chiffres du parti rapportés par la presse (Selectra, JDN, LCP, Planet),
+sans contre-expertise ; document non consulté directement.
+
+| Mesure | Levier |
+|---|---|
+| P-09 CSG progressive jusqu'à 2 700 € net | −10 Md€ de CSG |
+| P-10 Taxe sur les géants du numérique | +10 Md€ (la taxe actuelle rapporte ≈ 0,7 Md€) |
+| P-11 Hôpitaux et EHPAD publics, mutuelle des 18-25 ans | +5 Md€ (santé) |
+| P-12 Fonds de sécurité climatique, fonds vert | +10 Md€ (climat) |
+| P-13 École, agriculteurs, sécurité civile | +2, +2 et +0,5 Md€ |
+| P-14 Révision des exonérations patronales | −4 Md€ d'allègements, au prorata des tranches (recouvrement possible avec P-03) |
+| P-15 Fraude, travail dissimulé, économies sur l'État et la santé | +2,4 et +1,1 Md€ de recettes, −3,6 et −4 Md€ de dépenses |
+
+R. Glucksmann, candidat issu de la primaire « Choisir 2027 » (66,1 %,
+octobre 2026), propose 15 Md€ sur les successions de plus de 2 M€ pour
+baisser la CSG sur le travail : non transcrit (programme du candidat
+distinct du projet du parti).
+
 ## Non modélisé, faute de montant ou de paramètre dans la source
 
 Principales propositions, par thème :

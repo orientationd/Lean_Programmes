@@ -69,13 +69,28 @@ def mesures : List Mesure := [
     leviers := [.aideAchatElectrique 500000 0] },
   { id := "PC-09", titre := "Nationalisation de BNP Paribas et de TotalEnergies"
     source := "Discours de présentation du plan (6 novembre 2023) et presse ; prise de participation sans montant dans la source : non imputée"
-    leviers := [] }
+    leviers := [] },
+  { id := "PC-11", titre := "Allocations familiales dès le premier enfant"
+    source := "Proposition de loi d'É. Bénard (groupe GDR), adoptée en première lecture le 5 juin 2025 ; coût 2,8 Md€ bruts pour 70 € par mois (direction de la Sécurité sociale ; 1,8 Md€ nets ; 3,58 Md€ pour 75 € selon LexImpact), rapport AN n° 1473"
+    leviers := [.depenseSur .famille 2800] },
+  { id := "PC-12", titre := "90 000 enseignants, AESH, infirmières et médecins scolaires"
+    source := "pcf.fr, 14 octobre 2026 ; non chiffré : 4 000 postes coûtent 150 M€ en année pleine (gouvernement, janvier 2025), soit ≈ 3,4 Md€ (calcul, hypothèse)"
+    leviers := [.depenseSur .enseignement 3400, .annonceEmplois 90000] },
+  { id := "PC-13", titre := "5 Md€ pour la jeunesse et la rénovation du bâti scolaire"
+    source := "pcf.fr, 14 octobre 2026 : 5 Md€ « immédiatement »"
+    leviers := [.depenseSur .enseignement 5000] },
+  { id := "PC-14", titre := "Refus de la hausse du budget militaire prévue au PLF 2027"
+    source := "pcf.fr, 14 octobre 2026 : −7 Md€ par rapport au PLF 2027, appliqués à la loi de programmation militaire que la référence suit"
+    leviers := [.economieSur .defense 7000] },
+  { id := "PC-15", titre := "ISF rétabli et triplé"
+    source := "Comparateur IFRAP 2027 ; discours de F. Roussel, 15 septembre 2026 ; non chiffré : l'ISF rapportait 4,1 Md€ en 2017, triplé ≈ 12,3 Md€ statiques, moins l'IFI supprimé (2,3 Md€), soit ≈ 10 Md€ (calcul, hypothèse)"
+    leviers := [.prelevementSur .patrimoine 10000] }
 ]
 
 def programme : Programme where
   id := "PCF"
   nom := "Parti communiste français — Empreinte 2050"
-  description := "Transcription partielle et non officielle du plan climat « Empreinte 2050 » : 28 Md€/an de dépenses publiques chiffrées (ferroviaire, vélo, rénovation), réductions d'émissions annoncées pour 2030, programme de 20 EPR2 financé par prêt de l'État. La source annonce 186 Md€/an d'investissement total, public et privé."
+  description := "Transcription partielle et non officielle du plan climat « Empreinte 2050 » : 28 Md€/an de dépenses publiques chiffrées (ferroviaire, vélo, rénovation), réductions d'émissions annoncées pour 2030, programme de 20 EPR2 financé par prêt de l'État. La source annonce 186 Md€/an d'investissement total, public et privé. Propositions de 2026 (F. Roussel candidat, pas de programme 2027 chiffré) : allocations familiales dès le premier enfant, 90 000 enseignants, 5 Md€ pour la jeunesse, refus de la hausse du budget militaire, ISF triplé."
   mainteneurs := ["@orientationd"]
   source := "https://ecologie.pcf.fr/plan-climat/ et document « Empreinte 2050 » (consultés le 21 octobre 2026)"
   mesures := mesures

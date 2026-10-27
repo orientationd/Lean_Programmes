@@ -35,13 +35,22 @@ def mesures : List Mesure := [
     leviers := [.economieSur .fonctionnement 6250] },
   { id := "RE-05", titre := "Taxe sur les rachats d'actions"
     source := "Programme de juin 2024 repris en 2026 (Europe 1, Ifrap) : ≈ 300 M€/an"
-    leviers := [.prelevementSur .impotSocietes 300] }
+    leviers := [.prelevementSur .impotSocietes 300] },
+  { id := "RE-06", titre := "« Frein d'urgence » sur les dépenses sociales"
+    source := "Comparateur IFRAP 2027 ; meeting de Lyon, 10 octobre 2026 : 20 Md€ (chiffrage du parti), dont l'année blanche de RE-03 (≈ 10 Md€) : reste ≈ 10 Md€, réparti comme elle (6 Md€ retraites, 4 Md€ autres prestations, hypothèse)"
+    leviers := [.economieSur .retraites 6000, .economieSur .famille 4000] },
+  { id := "RE-07", titre := "Impôt des classes moyennes, pensions alimentaires non imposables pour le parent qui les reçoit"
+    source := "Comparateur IFRAP 2027 : 2 Md€ ; université d'été de la monoparentalité, 28 août 2026 (LCP) : « autour d'un milliard » (chiffrages du parti)"
+    leviers := [.prelevementSur .ir (-3000)] },
+  { id := "RE-08", titre := "1 000 € sur un plan d'épargne retraite à chaque naissance"
+    source := "Amendement au PLF 2026 (Le Parisien, via Econostrum), repris au programme : 660 000 naissances × 1 000 € ≈ 0,66 Md€ par an"
+    leviers := [.depenseSur .famille 660] }
 ]
 
 def programme : Programme where
   id := "Renaissance"
   nom := "Renaissance — Gabriel Attal 2027"
-  description := "Transcription partielle et non officielle : « droit au brut » (−40 Md€ de cotisations), année blanche 2028 sur les prestations, 100 000 postes de fonctionnaires, taxe sur les rachats d'actions, objectif de 100 000 emplois par la réforme du chômage. Retraite universelle par points, quotas d'immigration : sans montant publié. Objectif annoncé : 120 à 150 Md€ d'économies et déficit sous 3 % avant 2032."
+  description := "Transcription partielle et non officielle : « droit au brut » (−40 Md€ de cotisations), année blanche 2028 sur les prestations, 100 000 postes de fonctionnaires, taxe sur les rachats d'actions, objectif de 100 000 emplois par la réforme du chômage, « frein d'urgence » sur les dépenses sociales, impôt des classes moyennes, 1 000 € d'épargne retraite par naissance. Retraite universelle par points, quotas d'immigration : sans montant publié. Objectif annoncé : 120 à 150 Md€ d'économies et déficit sous 3 % avant 2032."
   mainteneurs := ["@orientationd"]
   source := "attalpresident.fr/programme et presse (RMC 6 octobre 2026, Le Parisien 23 mai 2026, CNews 30 avril 2026), consultés le 22 octobre 2026"
   mesures := mesures

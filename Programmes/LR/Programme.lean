@@ -58,18 +58,31 @@ def mesures : List Mesure := [
   { id := "LR-11", titre := "Effort des collectivités de plus de 10 M€ de budget"
     source := s!"{plan} : 10 Md€ sur 335 Md€ de dépenses, fonctionnement hors personnel et prestations"
     leviers := [.economieSur .fonctionnement 10000] },
-  { id := "LR-12", titre := "Suppression des impôts de production"
-    source := s!"{plan} : 30 Md€ d'allègements pour les entreprises, imputés aux « autres impôts »"
-    leviers := [.prelevementSur .autres (-30000)] },
+  { id := "LR-12", titre := "Baisse des impôts de production"
+    source := s!"{plan} : 30 Md€ d'allègements pour les entreprises, dont 15 Md€ d'impôts de production (comparateur IFRAP 2027 ; les 15 Md€ de cotisations patronales sont en LR-14)"
+    leviers := [.prelevementSur .autres (-15000)] },
   { id := "LR-13", titre := "Exonération de cotisations sur les heures supplémentaires et autres allègements des ménages"
     source := s!"{plan} : 21 Md€, imputés aux cotisations sociales"
-    leviers := [.prelevementSur .cotisations (-21000)] }
+    leviers := [.prelevementSur .cotisations (-21000)] },
+  { id := "LR-14", titre := "Baisse de 15 Md€ des cotisations patronales"
+    source := s!"{plan} ; comparateur IFRAP 2027 : la moitié des 30 Md€ d'allègements pour les entreprises ; sans ciblage précisé, allègements relevés au prorata des tranches (modèle commun)"
+    leviers := [.reductionAllegements (-15000)] },
+  { id := "LR-15", titre := "Revenu familial dès le premier enfant (240 € par mois, près de 1 000 € au troisième) à la place de 12 dispositifs ; congé de naissance de six mois à 70 %"
+    source := "B. Retailleau, AFP 30 avril 2026 ; Public Sénat, 9 octobre 2026 : 40,3 Md€ bruts financés par 41 Md€ d'aides supprimées et 0,6 à 0,8 Md€ d'économies de gestion, soit ≈ 1,4 Md€ d'économie nette (calcul) ; congé de naissance +0,7 Md€ (chiffrage du parti)"
+    leviers := [.economieSur .famille 1400, .depenseSur .famille 700] },
+  { id := "LR-16", titre := "Réduction d'impôt sur les intérêts d'emprunt des familles"
+    source := "Le Figaro (via SeLoger, 29 septembre 2026) : 220 000 familles par an ; non chiffré : 220 000 × ≈ 1 200 € ≈ 0,27 Md€ par génération de prêts (calcul, hypothèse), cumulés sur la durée des prêts"
+    leviers := [.prelevementSur .ir (-270)]
+    repetitions := 9 },
+  { id := "LR-17", titre := "Fin des 35 heures : durée annuelle de référence portée de 1 607 à 1 623 heures"
+    source := "B. Retailleau, Public Sénat, 7 janvier 2026 : +16 heures par an, +1,0 % de durée du travail (calcul)"
+    leviers := [.dureeTravail 10] }
 ]
 
 def programme : Programme where
   id := "LR"
   nom := "Les Républicains — plan Retailleau 2027"
-  description := "Transcription partielle et non officielle du plan du 12 octobre 2026 : 197 Md€ d'économies (État, protection sociale, collectivités) et 51 Md€ d'allègements fiscaux, déficit sous 3 % en 2031."
+  description := "Transcription partielle et non officielle du plan du 12 octobre 2026 : 197 Md€ d'économies (État, protection sociale, collectivités) et 51 Md€ d'allègements fiscaux, déficit sous 3 % en 2031 ; revenu familial, intérêts d'emprunt des familles, fin des 35 heures ; les 30 Md€ pour les entreprises répartis entre impôts de production et cotisations patronales."
   mainteneurs := ["@orientationd"]
   source := "Présentation du 12 octobre 2026 (Public Sénat, Europe 1, AFP, consultés le 21 octobre 2026)"
   mesures := mesures
