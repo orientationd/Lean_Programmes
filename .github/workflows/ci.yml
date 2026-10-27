@@ -191,9 +191,18 @@ jobs:
             echo ""
             [ -f out/diff.md ] && cat out/diff.md && echo ""
             if [ -f out/rapport.md ]; then
+              # Score global et tableaux de synthèse (scénarios où chaque
+              # propriété tient, en dégradé de couleurs) visibles d'emblée ;
+              # le reste du rapport replié.
+              echo "### Respect des propriétés"
+              echo ""
+              awk '/^## /{garder = ($0 ~ /^## (Score global|Synthèse, moteur)/)} garder' out/rapport.md \
+                | sed 's/^## /#### /'
+              echo ""
               echo "<details><summary>Rapport complet</summary>"
               echo ""
-              sed 's/^# /#### /; s/^## /#### /' out/rapport.md
+              awk 'BEGIN {garder = 1} /^## /{garder = ($0 !~ /^## (Score global|Synthèse, moteur)/)} garder' out/rapport.md \
+                | sed 's/^# /#### /; s/^## /#### /'
               echo ""
               echo "</details>"
             fi
