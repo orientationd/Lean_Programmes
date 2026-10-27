@@ -173,7 +173,10 @@ sensibilité au prix du pétrole (50, 63, 100 $) et à la natalité (1,40,
 1,56, 1,80 enfant par femme), électricité produite et consommée (GW
 moyens, capacités par filière), surfaces consommées (ENAF depuis 2021 face
 à l'enveloppe du ZAN, par destination, emprise énergétique), propriétés et
-engagements, hypothèses et sources.
+engagements, hypothèses et sources. Dans les tableaux de propriétés, le
+fond de chaque case suit un dégradé continu selon la part des scénarios où
+la propriété tient : rouge pour aucun, orange pour la moitié, vert pour
+tous (le nombre reste écrit dans la case).
 
 ```sh
 lake env lean --run Rapport.lean --synthese out/synthese.json
@@ -289,7 +292,12 @@ seule) :
 5. preuve des engagements ;
 6. rejeu indépendant des preuves par `leanchecker` ;
 7. audit des axiomes ;
-8. résumé dans le job, artefact `rapport-pr`.
+8. résumé dans le job, artefact `rapport-pr`. Le résumé montre d'emblée,
+   pour chaque moteur, le nombre de scénarios où chaque propriété tient
+   par programme, avec une pastille de couleur : 🟥 moins d'un quart,
+   🟧 d'un quart à trois quarts, 🟨 trois quarts ou plus, 🟩 tous (les
+   tableaux Markdown de GitHub n'acceptent pas de couleur de fond) ; le
+   rapport complet est replié.
 
 `commentaire-pr.yml` (déclenché par `workflow_run`) publie ce résumé en
 commentaire de la PR. Il dispose des droits d'écriture, donc il n'exécute

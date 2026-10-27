@@ -33,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from synthese_pdf import (  # noqa: E402
     A4, BASE, FOND, GRID, INK, INK2, LARGEUR, MUTED, NBSP, STYLES, TENDANCIEL,
     CondPageBreak, Donnees, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table,
-    TableStyle, colors, echap, figure, mm, nombre, png, style)
+    TableStyle, colorer_parts, colors, echap, figure, legende_degrade, mm, nombre, png, style)
 from reportlab.pdfbase.pdfmetrics import stringWidth  # noqa: E402
 
 VERT, ROUGE = "#008300", "#c62f2e"
@@ -445,9 +445,13 @@ def section_proprietes(D: Donnees, p: dict) -> list:
                            f"</font>", "cell")] + cel)
         out.append(CondPageBreak(30 * mm))
         out.append(P(titre, "h2"))
-        out.append(tableau(["Propriété"] + [m["nom"] for m in D.moteurs], rows,
-                           [0.67] + [0.33 / len(D.moteurs)] * len(D.moteurs),
-                           ["cell"] + ["cellc"] * len(D.moteurs)))
+        t = tableau(["Propriété"] + [m["nom"] for m in D.moteurs], rows,
+                    [0.67] + [0.33 / len(D.moteurs)] * len(D.moteurs),
+                    ["cell"] + ["cellc"] * len(D.moteurs))
+        out.append(colorer_parts(t, {(j + 1, i + 1): p["matrice"][m["id"]][q["id"]] / n
+                                     for i, q in enumerate(qs) for j, m in enumerate(D.moteurs)}))
+    out.append(Spacer(1, 3))
+    out.append(legende_degrade(n))
     return out
 
 

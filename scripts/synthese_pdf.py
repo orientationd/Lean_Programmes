@@ -20,6 +20,7 @@ Dépendances : matplotlib, reportlab.
 from __future__ import annotations
 
 import argparse
+import colorsys
 import datetime as dt
 import io
 import json
@@ -500,6 +501,52 @@ def puces(items):
     return [Paragraph(t, STYLES["puce"], bulletText="•") for t in items]
 
 
+# Dégradé des tableaux de propriétés : part des scénarios où la propriété
+# tient, du rouge (aucun) au vert (tous) en passant par l'orange (la moitié).
+# Interpolation de la teinte (rouge → orange → jaune → vert), puis mélange
+# avec le blanc pour que le texte reste lisible ; le nombre de scénarios
+# reste écrit dans chaque case (la couleur n'est jamais seule).
+DEGRADE = ((0.0, "#d03b3b"), (0.5, "#f0912e"), (1.0, "#0ca30c"))
+PART_BLANC = 0.5
+
+
+def couleur_part(part: float):
+    part = min(max(part, 0.0), 1.0)
+    for (a, ca), (b, cb) in zip(DEGRADE, DEGRADE[1:]):
+        if part <= b:
+            t = (part - a) / (b - a)
+            h0, l0, s0 = colorsys.rgb_to_hls(*colors.HexColor(ca).rgb())
+            h1, l1, s1 = colorsys.rgb_to_hls(*colors.HexColor(cb).rgb())
+            r, g, bl = colorsys.hls_to_rgb(h0 + (h1 - h0) * t, l0 + (l1 - l0) * t, s0 + (s1 - s0) * t)
+            break
+    return colors.Color(*(c + (1 - c) * PART_BLANC for c in (r, g, bl)))
+
+
+def colorer_parts(t: Table, parts: dict) -> Table:
+    """Fond de chaque case (colonne, ligne) selon sa part, filets blancs
+    entre les cases colorées."""
+    st = [("BACKGROUND", (j, i), (j, i), couleur_part(v)) for (j, i), v in parts.items()]
+    if parts:
+        j0 = min(j for j, _ in parts)
+        i0 = min(i for _, i in parts)
+        st += [("INNERGRID", (j0, i0), (-1, -1), 1.2, colors.white),
+               ("LINEBEFORE", (j0, i0), (j0, -1), 1.2, colors.white)]
+    t.setStyle(TableStyle(st))
+    return t
+
+
+def legende_degrade(n: int, pas: int = 6) -> Table:
+    """Légende du dégradé : cases de 0 à n scénarios."""
+    valeurs = [round(n * k / pas) for k in range(pas + 1)]
+    data = [[P("Part des scénarios où la propriété tient :", "cell")]
+            + [P(f"{v}/{n}", "cellpc") for v in valeurs]]
+    t = Table(data, colWidths=[0.30 * LARGEUR] + [0.06 * LARGEUR] * len(valeurs), hAlign="LEFT")
+    t.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                           ("TOPPADDING", (0, 0), (-1, -1), 1.5), ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),
+                           ("LEFTPADDING", (0, 0), (-1, -1), 1), ("RIGHTPADDING", (0, 0), (-1, -1), 1)]))
+    return colorer_parts(t, {(k + 1, 0): v / n for k, v in enumerate(valeurs)})
+
+
 # ---------------------------------------------------------------------------
 # Sections
 # ---------------------------------------------------------------------------
@@ -539,7 +586,8 @@ def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool =
     rows = [[nom_court(p["nom"])] + [cellule(p, q) for q in props] for p in D.progs]
     t = tableau(ent, rows, [0.17] + [0.83 / len(props)] * len(props))
     t.setStyle(TableStyle([("LEFTPADDING", (1, 0), (-1, -1), 1), ("RIGHTPADDING", (1, 0), (-1, -1), 1)]))
-    return t
+    return colorer_parts(t, {(j + 1, i + 1): p["matrice"][mid][q["id"]] / n
+                             for i, p in enumerate(D.progs) for j, q in enumerate(props)})
 
 
 def puces_electricite_sols(D: Donnees) -> list:
@@ -634,6 +682,8 @@ def section_resume(D: Donnees, meta) -> list:
     ] + puces_electricite_sols(D))
     out.append(P(f"Propriétés partagées, moteur « {D.nom_moteur(D.standard)} »", "h2"))
     out.append(table_proprietes(D, avec_central=True))
+    out.append(Spacer(1, 3))
+    out.append(legende_degrade(D.d["nbScenarios"]))
     out.append(P(f"✓/✗ : statut au scénario central ; puis nombre de scénarios (démographie × "
                  f"économie × pétrole × cadre juridique) où la propriété tient, à l'horizon de "
                  f"{D.d['horizonProprietes']} ans ou à l'année propre à la propriété (2035). "
@@ -1301,7 +1351,11 @@ def section_europe(D: Donnees) -> list:
             ok = p["central"][D.standard][q["id"]]
             r.append(f"{'✓' if ok else '✗'}  {p['matrice'][D.standard][q['id']]}/{n}")
         rows.append(r)
-    out.append(tableau(ent, rows, [0.22] + [0.78 / len(props)] * len(props)))
+    out.append(colorer_parts(tableau(ent, rows, [0.22] + [0.78 / len(props)] * len(props)),
+                             {(j + 1, i + 1): p["matrice"][D.standard][q["id"]] / n
+                              for i, p in enumerate(D.progs) for j, q in enumerate(props)}))
+    out.append(Spacer(1, 3))
+    out.append(legende_degrade(n))
     out.append(P("Les critères datés (2030, 2035) sont évalués à leur année ; les autres à l'horizon du "
                  "scénario. Les propriétés européennes figurent aussi dans la matrice complète du rapport.", "note"))
     return out
@@ -1687,7 +1741,8 @@ def section_proprietes(D: Donnees) -> list:
     for m in D.moteurs:
         out += [P(f"Moteur « {m['nom']} » — {echap(m['description'])}", "h2"),
                 table_proprietes(D, m["id"], avec_central=True)]
-    out += [P("✓/✗ : statut au scénario central, puis nombre de scénarios où la propriété tient. "
+    out += [Spacer(1, 3), legende_degrade(n),
+            P("✓/✗ : statut au scénario central, puis nombre de scénarios où la propriété tient. "
               "Les propriétés datées (2035) sont évaluées dix ans après le départ, les autres à "
               "l'horizon du scénario.", "note"),
             Spacer(1, 4), P("Engagements revendiqués", "h2")]

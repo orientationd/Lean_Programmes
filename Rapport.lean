@@ -36,6 +36,21 @@ def fmtPb (x : Int) : String :=
 
 def coche (b : Bool) : String := if b then "✅" else "❌"
 
+/-- Pastille de la part des scénarios où une propriété tient, en dégradé du
+rouge (aucun scénario) au vert (tous) en passant par l'orange (la moitié).
+Les tableaux Markdown de GitHub n'acceptent pas de couleur de fond : quatre
+paliers d'émojis ; les PDF de synthèse ont le dégradé continu. -/
+def pastille (k n : Nat) : String :=
+  if n = 0 then "" else
+  if k = n then "🟩" else if 3 * n ≤ 4 * k then "🟨" else if n ≤ 4 * k then "🟧" else "🟥"
+
+def legendePastilles : String :=
+  "🟥 moins d'un quart des scénarios · 🟧 d'un quart à trois quarts · 🟨 trois quarts ou plus · 🟩 tous"
+
+theorem pastille_paliers :
+    pastille 0 36 = "🟥" ∧ pastille 8 36 = "🟥" ∧ pastille 9 36 = "🟧" ∧ pastille 18 36 = "🟧" ∧
+    pastille 27 36 = "🟨" ∧ pastille 35 36 = "🟨" ∧ pastille 36 36 = "🟩" := by decide
+
 def ligne (cellules : List String) : String :=
   "| " ++ " | ".intercalate cellules ++ " |"
 
@@ -494,11 +509,14 @@ def rapportMarkdown : String := Id.run do
     out := out.push ""
     out := out.push M.description
     out := out.push ""
+    out := out.push legendePastilles
+    out := out.push ""
     out := out.push (ligne ("Programme" :: props.map (·.id)))
     out := out.push (separateur (props.length + 1))
     for p in Programmes.tous do
       let cellules := props.map fun q =>
-        s!"{(scens.filter fun H => decide (p.Verifie M H q)).length}/{nS}"
+        let k := (scens.filter fun H => decide (p.Verifie M H q)).length
+        s!"{pastille k nS} {k}/{nS}"
       out := out.push (ligne (p.id :: cellules))
     out := out.push ""
 
