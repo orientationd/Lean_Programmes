@@ -134,30 +134,21 @@ l'hypothèse économique du scénario.
 Hypothèse à étayer avec les données du COR (distribution des âges de
 début de carrière, part des métiers exposés).
 
-### O-08 — Impôt sur les sociétés à trois points au-dessus du taux le plus bas de l'UE
+### O-08 — Impôt sur les sociétés à 15 %
 
-12 % : taux hongrois de 9 %, le plus bas de l'Union, plus trois points
-(11 % auparavant ; variante).
+15 % : le taux minimal du pilier 2 (directive (UE) 2022/2523), au lieu de
+25 % (12 % dans la version précédente : taux hongrois de 9 %, le plus bas
+de l'Union, plus trois points ; variante). À 15 %, le plancher du pilier 2
+ne joue plus : tous les groupes paient le même taux.
 
-Le modèle commun calcule désormais lui-même :
+Le modèle commun calcule la **réponse de l'assiette** : un point de taux
+effectif en moins accroît les bénéfices déclarés de 1 % (valeur de
+consensus de la littérature sur le transfert de bénéfices, Beer, de Mooij
+et Liu, 2020).
 
-* le **plancher du pilier 2** : 40 % de l'IS est acquitté par des groupes
-  de plus de 750 M€ de chiffre d'affaires (hypothèse : les grandes
-  entreprises paient 33 % de l'IS brut, INSEE), imposés à 15 % au moins ;
-  taux effectif moyen 60 % × 12 % + 40 % × 15 % = 13,2 % ;
-* la **réponse de l'assiette** : un point de taux effectif en moins
-  accroît les bénéfices déclarés de 1 % (valeur de consensus de la
-  littérature sur le transfert de bénéfices, Beer, de Mooij et Liu, 2020) ;
-  l'assiette gagne 11,8 % et la perte d'IS passe de 47 % (statique) à
-  41 %. Le programme fixait auparavant lui-même un retour d'assiette de
-  30 %, ce qui contredisait la règle du dépôt (un programme n'apporte pas
-  ses propres élasticités).
-
-Coût en 2035 : +0,65 point de déficit (mesure seule, moteur de demande),
-PIB +0,32 %, 47 000 emplois. Variantes : 11 % (+0,06 point par rapport à
-12 %), 17 % (−0,34 point), IS maintenu à 25 % (−0,91 point). Les effets
-réels sur l'investissement, qui porteraient la semi-élasticité vers 3,
-relèvent du moteur d'offre.
+Coût en 2035 : +0,61 point de déficit (mesure seule, moteur de demande),
+22 000 emplois. Variantes : 12 % (version précédente), 17 %, IS maintenu à
+25 %. Les effets réels sur l'investissement relèvent du moteur d'offre.
 
 ### O-09 — Démission indemnisée
 
@@ -359,7 +350,7 @@ Points d'attention :
 * **O-34** : la nuit est la plage des travaux d'entretien du réseau, ce qui
   limite le nombre de lignes exploitables 24 h sur 24.
 
-### O-35 à O-42 — Redressement compatible avec les positions du PS
+### O-36 à O-42 — Redressement compatible avec les positions du PS
 
 Base : propositions du groupe socialiste à l'Assemblée (16 septembre 2026),
 note de la Cour des comptes sur la fiscalité du patrimoine (septembre
@@ -369,7 +360,6 @@ variante.
 
 | Mesure | Rendement statique | Déficit 2035 | PIB 2035 |
 |---|---|---|---|
-| **O-35** Taxe Zucman (impôt plancher sur les très hauts patrimoines) | 6,5 Md€ (PS : 15 ; sept économistes : ≈ 5) | −0,20 pt | −0,02 % |
 | **O-36** CSG sur les gros héritages, imputée aux droits de succession dont elle suit l'assiette | 10 Md€ (chiffrage PS) | −0,36 pt | −0,03 % |
 | **O-37** Taxe sur les services numériques de 3 % à 15 % | 3,1 Md€ (PS : 10) | −0,08 pt | −0,04 % |
 | **O-38** Reconfiguration des exonérations de cotisations, au prorata des allègements en vigueur (voir O-76) | 4 Md€ (PS) ; −51 000 emplois | −0,09 pt | −0,08 % |
@@ -384,21 +374,25 @@ variante.
 
 (Scénario central, moteur de demande, mesures prises isolément.)
 
-**Résultat (avec O-54 à O-62 et O-76, O-77 ci-dessous) : le déficit du Texte
-Orientation D baisse chaque année de 2027 à 2035, de 4,9 % à 3,9 %** (dette
-129 % du PIB, chômage 9,2 %), contre 9,1 % sans programme (référence
-complétée des lois en vigueur : voir O-59 à O-62 et O-76 ; IS à 12 % et
-réponse de l'assiette calculée par le modèle commun : voir O-08). Le programme entre en vigueur en
+La taxe Zucman (ancienne O-35, 6,5 Md€ statiques) a été retirée du
+programme.
+
+**Résultat (avec O-54 à O-62 et O-76 à O-81 ci-dessous) : le déficit du
+Texte Orientation D passe de 5,0 % en 2027 à 4,05 % en 2035** (dette 130 %
+du PIB, chômage 9,2 %), contre 9,1 % sans programme (référence complétée des
+lois en vigueur : voir O-59 à O-62 et O-76 ; IS à 15 % : voir O-08). **Il
+ne baisse plus chaque année au moteur de demande : il stagne en 2032**
+(voir O-78 à O-81). Le programme entre en vigueur en
 2027 (aucune mesure avant).
 
 Distance à l'équilibre (2035, scénario central, moteur de demande) :
 
-| En plus des mesures O-35 à O-62 | Déficit 2035 | Chômage 2035 |
+| En plus des mesures du programme | Déficit 2035 | Chômage 2035 |
 |---|---|---|
-| Rien | 3,9 % | 9,2 % |
-| Abandon de O-08 (IS maintenu à 25 %) | 2,9 % | 9,3 % |
-| … et norme renforcée de 100 pb supplémentaires | 1,6 % | 9,8 % |
-| … et de 200 pb supplémentaires | 0,4 % | 10,3 % |
+| Rien | 4,05 % | 9,2 % |
+| Abandon de O-08 (IS maintenu à 25 %) | 3,2 % | 9,25 % |
+| … et norme renforcée de 100 pb supplémentaires | 1,9 % | 9,8 % |
+| … et de 200 pb supplémentaires | 0,7 % | 10,3 % |
 
 Ces trois pistes sont enregistrées comme variantes de O-08 et de O-55 :
 la synthèse les évalue une à une (section « Variantes des mesures »). (Avec l'IS maintenu à 25 %, O-60
@@ -470,18 +464,17 @@ Trajectoire du déficit (scénario central) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,38 | 4,92 | 4,74 | 4,69 | 4,64 | 4,58 | 4,56 | 4,34 | 4,07 | 3,91 |
-| Offre | 5,37 | 4,83 | 4,61 | 4,55 | 4,50 | 4,46 | 4,43 | 4,25 | 4,04 | 3,95 |
+| Demande | 5,39 | 4,98 | 4,82 | 4,78 | 4,73 | 4,67 | 4,67 | 4,46 | 4,20 | 4,05 |
+| Offre | 5,39 | 4,90 | 4,69 | 4,64 | 4,59 | 4,55 | 4,54 | 4,37 | 4,17 | 4,09 |
 
-La propriété « Déficit en baisse chaque année » est tenue au scénario
-central sous les trois moteurs, et dans 16 des 36 scénarios de la matrice
-sous chaque moteur : toujours avec la croissance haute, jamais avec la
-croissance basse ; en croissance centrale, le pétrole cher ou le
-vieillissement accéléré l'interrompent. La baisse est la plus faible en
-2032 (−0,02 point) : la LPM et les intérêts montent, et l'indemnisation du
-chômage, liée au nombre de chômeurs, croît avec lui ; en 2035, le
+Depuis le retrait de la taxe Zucman et l'IS à 15 %, la propriété « Déficit
+en baisse chaque année » n'est plus tenue au scénario central au moteur de
+demande (14 scénarios sur 36) : le déficit stagne en 2032 (4,67 %). Elle
+l'est encore sous les moteurs d'offre et d'équilibre (16 scénarios sur
+36), de 0,01 point en 2032. En 2032, l'âge moyen de départ cesse de suivre
+le calendrier légal (O-07), la LPM et les intérêts montent ; en 2035, le
 complément de fin de droits de l'assurance chômage (chômage de 9,05 % en
-2034) coûte 5,5 Md€.
+2034) coûte 5,5 Md€. Option pour rétablir la baisse : voir O-78 à O-81.
 
 Coût : la norme renforcée (O-55) pèse sur l'activité (PIB −1,44 %,
 ≈ 210 000 emplois en 2035 au moteur de demande) ; le chômage du Texte
@@ -671,10 +664,10 @@ la construction est à son maximum.
   qui le paie. Relativement à l'effet moyen d'un prélèvement : TVA, IR, CSG
   1,1 ; IS 0,55 ; droits de succession et impôts sur le patrimoine 0,2
   (Mésange, OFCE, Commission européenne, CBO ; propension à consommer le
-  patrimoine quasi nulle en haut de la distribution). La taxe Zucman (O-35)
-  et la taxe sur les holdings (O-41) passent sur la nouvelle ligne
-  « patrimoine » : elles pèsent presque dix fois moins sur l'activité ; la
-  CSG sur les gros héritages (O-36) aussi.
+  patrimoine quasi nulle en haut de la distribution). La taxe sur les
+  holdings (O-41) passe sur la nouvelle ligne « patrimoine » : elle pèse
+  presque dix fois moins sur l'activité ; la CSG sur les gros héritages
+  (O-36) aussi.
 * *Coût du travail* : les allègements généraux de cotisations patronales
   (≈ 75 Md€, dont 87 % entre 1 et 1,6 SMIC avec la réduction unique de 2026)
   sont suivis par tranche de salaire, et l'emploi y répond au coût du
@@ -739,6 +732,51 @@ redressement) ; dégressivité et plafonnement des allocations chômage
 0,5 à 1,5 Md€ ; peu compatible avec la démission indemnisée d'O-09) ; et
 les mesures déjà prises par le programme (heures supplémentaires,
 apprentissage, fraude).
+
+### O-78 à O-81 — Indice de développement humain
+
+**Modèle commun.** L'IDH est calculé chaque année selon la formule du PNUD :
+espérance de vie, durée attendue et durée moyenne de scolarisation, RNB par
+habitant en volume. Départ : 0,924 en 2025 (0,920 en 2023, 26e rang ;
+PNUD, RDH 2025). Une année de durée attendue de scolarisation vaut ≈ 0,010
+d'IDH, deux fois une année d'espérance de vie, autant que +21 % de revenu
+par habitant : l'écart de la France avec les pays de tête tient à
+l'éducation. Les décès évités par les mesures allongent l'espérance de vie
+(décès évités × années de vie que chacun aurait perdues / décès de l'année),
+au rythme du délai d'effet de chaque cause : les voitures électriques des
+mesures (pollution), la prévention des accidents du travail (O-14) et les
+mesures ci-dessous.
+
+| Mesure | Chiffrage | IDH 2035 | Déficit 2035 | Autres effets |
+|---|---|---|---|---|
+| **O-78** Prix minimum de l'alcool : 0,50 € par verre | −22 % de décès par cancers liés à l'alcool (Etilé et al., INCa-MILDECA, 2022) ; sans effet net sur les finances publiques | +0,0002 | 0 | espérance de vie +0,05 an |
+| **O-79** Prix du tabac +20 % (paquet ≈ 15 €) | élasticité −0,4 (Santé publique France) ; 68 000 décès attribuables, en baisse de 8 % à terme | +0,0002 | −0,04 pt | espérance de vie +0,04 an |
+| **O-80** Dépistage du cancer colorectal à 65 % de participation (30,7 % aujourd'hui) | −22 % de mortalité (Barré et al., 2020) ; ≈ 0,26 Md€ par an (hypothèse : 70 € par dépistage) | +0,0003 | ≈ 0 | espérance de vie +0,06 an |
+| **O-81** Scolarisation des 18-24 ans : +1 point par an pendant trois ans | ≈ 168 000 étudiants de plus, 13 300 € chacun (DEPP) : ≈ 2,2 Md€ par an | +0,0021 | +0,04 pt | durée attendue +0,21 an ; +10 600 emplois (dépense) |
+
+(Scénario central, moteur de demande, mesures prises isolément, 2035.) Les
+effets sur la mortalité montent lentement (délais d'effet de 8 à 20 ans) :
+une partie seulement est acquise en 2035.
+
+**Résultat** : IDH de 0,9428 en 2035, contre 0,9410 sans programme ; sans
+O-78 à O-81, il serait de 0,9399, sous le tendanciel (le PIB par habitant
+du programme est plus faible, la norme de dépense pesant sur l'activité).
+La propriété « IDH non dégradé » est tenue au scénario central.
+
+**Décision à prendre : baisse du déficit en 2032.** Avec la taxe Zucman
+retirée et l'IS à 15 %, le déficit stagne en 2032 au moteur de demande
+(4,67 % en 2031 comme en 2032) ; il baisse encore sous les moteurs d'offre et
+d'équilibre. Il manque ≈ 0,4 Md€ cette année-là, l'année où l'âge moyen de
+départ cesse de suivre le calendrier légal (O-07). Option chiffrée, non
+appliquée : niches fiscales réduites de 1,5 Md€ de plus par an au lieu de
+1 Md€ de 2029 à 2035 (O-62) : baisse rétablie sous les trois moteurs,
+déficit 2035 de 3,97 %.
+
+Autres pistes examinées : 80 km/h sur le réseau secondaire (≈ 210 vies par
+an, Cerema : IDH +0,00005) ; ZFE (décès évités non chiffrés) ;
+taxe soda (effet faible et transitoire) ; VigilanS contre la récidive
+suicidaire (−38 %, décès non isolés). La durée moyenne de scolarisation
+des adultes ne bouge qu'avec le renouvellement des générations.
 
 ### O-24 — Dette numérique en stablecoin, exonérée de PFU
 
