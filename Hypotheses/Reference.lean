@@ -152,6 +152,16 @@ effets ne sont pas proportionnels au PIB :
 * **Contribution exceptionnelle des organismes complémentaires** (LFSS pour
   2026) : ≈ 1,0 Md€, pour 2026 seulement.
 
+**Indice de développement humain** (PNUD, Rapport sur le développement
+humain 2025, données 2023) : IDH 0,920, 26e rang ; espérance de vie
+83,3 ans, durée attendue de scolarisation 16,1 ans, durée moyenne 11,8 ans,
+RNB par habitant 55 060 $ PPA 2021. Départ 2025 : espérance de vie 83,55 ans
+(+0,25 an, évolution INSEE de 2023 à 2025), durée moyenne 11,9 ans
+(+0,05 an par an, hypothèse : renouvellement des générations), RNB par
+habitant 55 800 $ (PIB réel par habitant +1,4 % de 2023 à 2025, calcul) ;
+IDH recalculé 0,924. Écart avec les pays de tête : l'éducation (Allemagne :
+durée moyenne 14,3 ans).
+
 Lois dont les effets sont jugés inclus dans la tendance : loi de
 programmation de la recherche (marches de 500 à 600 M€ par an jusqu'en
 2030, exécutées pour un quart à un cinquième en 2026), LOPMI et loi de
@@ -361,6 +371,9 @@ def reference2026 : Reference where
     passifs := { police := passifsPolice2025, hopital := passifsHopital2025 }  -- heures supplémentaires non payées
     cdhrMeur := 400                -- contribution différentielle sur les hauts revenus, encaissements 2025
     allegementsTranche := { bas := 64950, intermediaire := 8850, haut := 1200 }  -- allègements généraux ≈ 75 Md€, répartis selon la RGDU 2026 (calcul)
+    esperanceVieTendanceCentiemes := 8355  -- 83,3 ans en 2023 (PNUD, RDH 2025) + 0,25 (INSEE : 82,85 → 83,1 de 2023 à 2025)
+    dureeAttendueCentiemes := 1610       -- durée attendue de scolarisation, 2023 (PNUD, RDH 2025)
+    dureeMoyenneCentiemes := 1190        -- 11,8 ans en 2023 (PNUD) + 2 × 0,05 (hypothèse)
     dividendesEtat := 4000         -- dividendes 2025 ≈ 6,5 Md€ (2024 et 2025) − 2,47 Md€ (2024) (APE, rapport d'activité) ; inclus dans les recettes non fiscales
     echeances := echeancesDepart
     echeancesRecettes := echeancesRecettesDepart
@@ -370,6 +383,9 @@ def reference2026 : Reference where
   partPlus65Pb := 2220             -- 22,2 % au 1er janvier 2026 (INSEE)
   seuilChomageContracyclePb := 900 -- décret n° 2023-33, art. 9 bis
   surcoutComplementChomageMeur := 4300  -- complément de fin de droits (≈ économie de la règle, Unédic)
+  rnbParHabitantPpaDollars := 55800  -- 55 060 $ PPA 2021 en 2023 (PNUD) × PIB réel par habitant 2023-2025 (+1,4 %, calcul)
+  lnRnbSur100Millioniemes := 6324359 -- ln(558), calcul
+  hausseDureeMoyenneCentiemes := 5   -- renouvellement des générations, hypothèse
   sources := [
     "INSEE, Informations rapides n°78, comptes des APU 2025 (27 mars 2026)",
     "APE, rapport d'activité 2025 (portefeuille 209,1 Md€, dividendes)",

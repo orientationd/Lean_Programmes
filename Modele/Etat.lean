@@ -169,6 +169,39 @@ theorem total_ajouter (v : ParTranche) (t : TrancheSalaire) (d : Int) :
 
 end ParTranche
 
+/-! ## Causes de décès évitables (santé publique) -/
+
+/-- Causes de décès sur lesquelles agissent des leviers de santé publique. -/
+inductive CauseDeces where
+  | tabac | alcool | cancerColorectal
+  deriving Repr, DecidableEq, Inhabited
+
+namespace CauseDeces
+def tous : List CauseDeces := [.tabac, .alcool, .cancerColorectal]
+def id : CauseDeces → String
+  | .tabac => "tabac" | .alcool => "alcool" | .cancerColorectal => "cancerColorectal"
+end CauseDeces
+
+/-- Une valeur par cause de décès. -/
+structure ParCause where
+  tabac : Int := 0
+  alcool : Int := 0
+  cancerColorectal : Int := 0
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParCause
+def get (v : ParCause) : CauseDeces → Int
+  | .tabac => v.tabac | .alcool => v.alcool | .cancerColorectal => v.cancerColorectal
+def ajouter (v : ParCause) (c : CauseDeces) (d : Int) : ParCause :=
+  match c with
+  | .tabac => { v with tabac := v.tabac + d }
+  | .alcool => { v with alcool := v.alcool + d }
+  | .cancerColorectal => { v with cancerColorectal := v.cancerColorectal + d }
+/-- Toutes les composantes sont dans `[lo, hi]`. -/
+def toutEntre (v : ParCause) (lo hi : Int) : Bool :=
+  CauseDeces.tous.all fun c => decide (lo ≤ v.get c ∧ v.get c ≤ hi)
+end ParCause
+
 /-! ## Émissions de gaz à effet de serre par secteur -/
 
 /-- Secteurs d'émission (inventaire national, format SECTEN du Citepa). -/
@@ -512,6 +545,10 @@ def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) (moderationPb : 
   | .interets => 0
   | _ => tauxPb
 
+/-- Toutes les composantes sont dans `[lo, hi]`. -/
+def toutEntre (v : ParFonction) (lo hi : Int) : Bool :=
+  Fonction.tous.all fun f => decide (lo ≤ v.get f ∧ v.get f ≤ hi)
+
 /-- Cohérence : hors intérêts, `croitrePrimaires` fait croître chaque fonction
 exactement de son `tauxCroissance` (utilisé pour indexer les échéanciers). -/
 theorem croitrePrimaires_get (v : ParFonction) (t r m : Int) (f : Fonction) (h : f ≠ .interets) :
@@ -709,6 +746,26 @@ structure Etat where
   mesures (allègements de cotisations par tranche), personnes : la demande
   de travail s'ajuste progressivement (`ajustementCoutTravailPm`). -/
   emploisCoutTravailRestants : Int := 0
+  /-- Indice des prix (base 10 000 l'année de départ) : déflate le PIB pour le
+  RNB par habitant en volume de l'IDH. -/
+  indicePrix : Int := 10000
+  /-- Espérance de vie à la naissance tendancielle, centièmes d'année (hors
+  effets des mesures). -/
+  esperanceVieTendanceCentiemes : Int := 0
+  /-- Années de vie gagnées chaque année grâce aux mesures (décès évités ×
+  années de vie que chacun aurait perdues), années. -/
+  anneesVieGagneesParAn : Int := 0
+  /-- Durée attendue de scolarisation, et durée moyenne de scolarisation des
+  25 ans et plus, centièmes d'année (IDH). -/
+  dureeAttendueCentiemes : Int := 0
+  dureeMoyenneCentiemes : Int := 0
+  /-- Indice de développement humain de l'année, millionièmes (calculé). -/
+  idhMillioniemes : Int := 0
+  /-- Santé publique : baisse visée par les mesures des décès attribuables à
+  chaque cause, et baisse atteinte (elle rejoint la cible au rythme du délai
+  d'effet de la cause), pm. -/
+  baisseMortaliteCiblePm : ParCause := {}
+  baisseMortaliteAtteintePm : ParCause := {}
   /-- Les mêmes, pondérés par le coût du travail par emploi de leur tranche
   rapporté à la moyenne (un emploi au voisinage du SMIC produit moins qu'un
   emploi moyen) : base de l'effet sur le PIB, personnes. -/

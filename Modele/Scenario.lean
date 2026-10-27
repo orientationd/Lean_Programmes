@@ -36,6 +36,13 @@ structure Reference where
   défaut : aucune règle. -/
   seuilChomageContracyclePb : Int := 10000
   surcoutComplementChomageMeur : Int := 0
+  /-- IDH : RNB par habitant de départ, dollars PPA constants, et
+  ln(RNB / 100) en millionièmes (calculé une fois) ; hausse tendancielle
+  annuelle de la durée moyenne de scolarisation (renouvellement des
+  générations), centièmes d'année. -/
+  rnbParHabitantPpaDollars : Int := 0
+  lnRnbSur100Millioniemes : Int := 0
+  hausseDureeMoyenneCentiemes : Int := 0
   sources : List String
   deriving Repr
 
@@ -57,6 +64,19 @@ structure Demographie where
   croissanceActifsPb : Int
   /-- Part du solde migratoire qui entre dans la population active, pm. -/
   partActiveMigrantsPm : Int
+  /-- Gain tendanciel annuel d'espérance de vie à la naissance, centièmes
+  d'année. -/
+  gainEsperanceVieCentiemes : Int := 0
+  /-- Santé publique : décès attribuables à chaque cause (année de départ),
+  années de vie perdues par décès (dixièmes d'année), délai pour que l'effet
+  d'une mesure sur la mortalité soit complet (années) ; années de vie perdues
+  par décès dû à la pollution de l'air et par accident du travail mortel
+  (dixièmes d'année). -/
+  decesAttribuables : ParCause := {}
+  anneesVieParDecesDixiemes : ParCause := {}
+  delaiEffetMortaliteAns : ParCause := {}
+  anneesVieParDecesPollutionDixiemes : Int := 0
+  anneesVieParDecesAccidentDixiemes : Int := 0
   sources : List String
   deriving Repr
 
@@ -250,6 +270,33 @@ structure Economie where
   pm (`1000` = effet moyen) : qui le paie (propension à consommer), délai de
   transmission aux prix et aux salaires. -/
   incidencePrelevementPm : ParImpot
+  /-- Effet sur la demande d'une dépense selon sa fonction, relativement à
+  une dépense de consommation publique, pm (`1000`) : les transferts aux
+  ménages (pensions) et aux entreprises soutiennent moins l'activité que la
+  consommation publique ; `incidenceInvestissementPm` pour l'investissement
+  public (bâtiments, infrastructures), qui la soutient davantage. -/
+  incidenceDepensePm : ParFonction
+  incidenceInvestissementPm : Int
+  /-- Inflation annuelle (déflateur du PIB), pb : sépare le volume des prix
+  pour le RNB par habitant de l'IDH. -/
+  inflationPb : Int
+  /-- Santé publique et éducation (leviers de l'IDH) : élasticité-prix de la
+  consommation de tabac (valeur absolue, pm) et accises sur le tabac de
+  l'année de départ (M€, comprises dans les autres impôts) ; baisse des décès
+  attribuables à l'alcool pour 10 centimes de prix minimum par verre (pm) ;
+  dépistage du cancer colorectal : participation de départ (pm), baisse des
+  décès par point de participation (pm), population invitée par an
+  (milliers) et coût par dépistage supplémentaire (€) ; scolarisation des
+  18-24 ans : jeunes par génération (milliers) et dépense par étudiant (€). -/
+  elasticitePrixTabacPm : Int := 0
+  accisesTabacMeur : Int := 0
+  baisseDecesAlcoolPar10CentimesPm : Int := 0
+  participationDepistagePm : Int := 0
+  baisseDecesColorectalParPointPm : Int := 0
+  populationDepistageMilliers : Int := 0
+  coutParDepistageEuros : Int := 0
+  jeunesParGenerationMilliers : Int := 0
+  depenseParEtudiantEuros : Int := 0
   /-- Hausse du chômage (pb) par pb de hausse du SMIC, pm. -/
   elasticiteChomageSmicPm : Int
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
@@ -473,12 +520,20 @@ abbrev ValideClimat (H : Scenario) : Prop :=
 l'assurance chômage. -/
 abbrev ValideTravail (H : Scenario) : Prop :=
   H.eco.incidencePrelevementPm.toutEntre 0 3000 = true ∧
+  H.eco.incidenceDepensePm.toutEntre 0 3000 = true ∧
+  0 ≤ H.eco.incidenceInvestissementPm ∧ H.eco.incidenceInvestissementPm ≤ 3000 ∧
   H.eco.elasticiteEmploiCoutTravailPm.toutEntre 0 3000 = true ∧
   H.eco.emploiPriveTrancheMilliers.toutEntre 0 30000 = true ∧
   H.eco.coutTravailTrancheMeur.toutEntre 1 2000000 = true ∧
   0 ≤ H.eco.ajustementCoutTravailPm ∧ H.eco.ajustementCoutTravailPm ≤ 1000 ∧
   0 ≤ H.eco.chomeursEvitesParConseiller ∧ H.eco.chomeursEvitesParConseiller ≤ 100 ∧
-  0 ≤ H.reference.seuilChomageContracyclePb ∧ 0 ≤ H.reference.surcoutComplementChomageMeur
+  0 ≤ H.reference.seuilChomageContracyclePb ∧ 0 ≤ H.reference.surcoutComplementChomageMeur ∧
+  -500 ≤ H.eco.inflationPb ∧ H.eco.inflationPb ≤ 2000 ∧
+  H.demo.decesAttribuables.toutEntre 0 300000 = true ∧
+  H.demo.anneesVieParDecesDixiemes.toutEntre 0 800 = true ∧
+  H.demo.delaiEffetMortaliteAns.toutEntre 1 50 = true ∧
+  0 ≤ H.eco.elasticitePrixTabacPm ∧ H.eco.elasticitePrixTabacPm ≤ 2000 ∧
+  0 < H.reference.rnbParHabitantPpaDollars
 
 /-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
 *juste*, seulement qu'elle n'est pas absurde. Les resserrer est une

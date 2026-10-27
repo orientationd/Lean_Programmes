@@ -140,6 +140,19 @@ d'équilibre par conseiller, axe économique). Assurance chômage : la
 référence porte le seuil des règles contracycliques et le surcoût du
 complément de fin de droits, que la projection déclenche quand le chômage
 de l'année passée atteint le seuil.
+Incidence des dépenses : le multiplicateur du scénario est celui d'une
+dépense de consommation publique ; les transferts (retraites 0,85 ;
+famille-chômage 0,90), les subventions (affaires économiques 0,85) et la
+défense (0,85) soutiennent moins l'activité, l'investissement public
+(`investissement`, `investissementEcheancier`…) davantage (1,25).
+IDH : calculé chaque année (`Modele/Idh.lean`, formule du PNUD) ;
+l'espérance de vie gagne les années de vie des décès évités par les mesures
+(pollution de l'air, accidents du travail, et causes de `CauseDeces` :
+`prixTabac hausseprixPm`, `prixMinimumAlcool centimesParVerre`,
+`depistageColorectal participationCiblePm`, dont l'effet sur la mortalité
+monte au rythme du délai de chaque cause) ; la durée attendue de
+scolarisation suit `scolarisationJeunes hausseTauxPm` ; le RNB par habitant,
+le PIB en volume et la population. Propriété `idh-non-degrade`.
 Taxes environnementales : `taxeEnvironnementale activite impot
 emissionsViseesKt hausseCoutPm rendementStatique` (activités : vols
 intérieurs, poids lourds, carburants routiers, chauffage fossile) ; le
