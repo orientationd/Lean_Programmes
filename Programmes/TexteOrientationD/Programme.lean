@@ -879,6 +879,63 @@ contrat et par an (calcul) ; 0,16 emploi net par CIE (Dares, via FIPECO,
 def contratsIndustrie : Int := 20000
 def aideCieEuros : Int := 10160
 
+/-- Divisions régionales de cybersécurité de la police (O-95) : une division
+dans chacune des 18 régions (13 en métropole, 5 outre-mer), de 50
+enquêteurs et ingénieurs, pour les enquêtes et l'appui aux victimes
+(entreprises, collectivités, particuliers), en plus de l'Office
+anti-cybercriminalité (OFAC), qui doit passer de 380 à 720 enquêteurs et de
+18 à 45 antennes d'ici 2027 (Le Figaro, via Next, 22 janvier 2024). Coût
+d'un agent : coût moyen d'un emploi de la police nationale, 12,09 Md€ de
+crédits de personnel pour 153 285 ETPT (PLF 2026, programme 176 ; calcul :
+78 872 €) ; recrutement en trois ans ; laboratoire de criminalistique
+numérique : 1 M€ par division (hypothèse). -/
+def divisionsCyber : Int := 18
+def agentsCyber : Int := divisionsCyber * 50
+def coutAgentPoliceEuros : Int := 12090000000 / 153285
+def coutCyberPolice : Int := agentsCyber * coutAgentPoliceEuros / 1000000
+
+theorem cyberPolice_valeurs : coutAgentPoliceEuros = 78872 ∧ agentsCyber = 900 ∧ coutCyberPolice = 70 := by decide
+
+/-- Revenu minimum des nouveaux exploitants agricoles (O-96) : pendant les
+cinq premières années d'installation, l'État complète le revenu
+professionnel des chefs d'exploitation jusqu'au SMIC net. 43 % des
+agriculteurs gagnent moins que le SMIC ; l'écart au SMIC a été de 3,3 Md€
+par an en moyenne de 2015 à 2024 (5,22 Md€ en 2024 ; Observatoire de la
+rémunération agricole équitable de Max Havelaar France, d'après l'Insee et
+le ministère de l'Agriculture, 28 avril 2026). Installés depuis moins de
+cinq ans : 5 × 12 661 installations (2024) sur 374 062 chefs
+d'exploitation (MSA, 2024), 17 % ; leur part de l'écart, au prorata :
+558 M€ par an une fois cinq promotions installées, une promotion de plus
+chaque année (calcul ; les nouveaux installés ont souvent des revenus plus
+faibles, mais un revenu négatif n'est complété que jusqu'au SMIC). -/
+def installationsAgricoles : Int := 12661
+def chefsExploitation : Int := 374062
+def ecartSmicAgricole : Int := 3300
+def revenuMinimumInstalles : Int := ecartSmicAgricole * (5 * installationsAgricoles) / chefsExploitation
+def revenuMinimumRampe : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => revenuMinimumInstalles * k / 5
+
+theorem revenuMinimumInstalles_eq : revenuMinimumInstalles = 558 := by decide
+
+/-- Prime à l'installation des médecins outre-mer (O-97) : 100 000 € versés
+en cinq ans (20 000 € par an, contre un engagement d'exercice de cinq ans)
+à chaque médecin, généraliste ou spécialiste, qui s'installe à Mayotte ou
+en Guyane, où la densité est de 76 et 261 médecins pour 100 000 habitants
+contre 346 en France (Insee, 1er janvier 2025 : 251 et 762 médecins).
+Atteindre la densité nationale demande 891 médecins à Mayotte et 248 en
+Guyane (calcul) : 113 installations par an pour combler l'écart en dix
+ans. La prime s'ajoute à l'aide d'O-92 en zone prioritaire ; la
+Guadeloupe, la Martinique et La Réunion, à la densité nationale, n'y sont
+pas éligibles. -/
+def ecartMedecinsMayotte : Int := (346 - 76) * 251 / 76
+def ecartMedecinsGuyane : Int := (346 - 261) * 762 / 261
+def installationsOutreMer : Int := (ecartMedecinsMayotte + ecartMedecinsGuyane) / 10
+def primesOutreMer (montantAnnuelEuros : Int) : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => installationsOutreMer * montantAnnuelEuros * k / 1000000
+
+theorem medecinsOutreMer_valeurs :
+    ecartMedecinsMayotte = 891 ∧ ecartMedecinsGuyane = 248 ∧ installationsOutreMer = 113 := by decide
+
 /-- Accompagnement des entreprises en cybersécurité (O-98).
 * Chèque cyber : 50 % des dépenses de sécurité, au plus 2 500 € pour une TPE
   et 10 000 € pour une PME, sur le modèle du chèque investissement cyber de
@@ -1932,6 +1989,29 @@ def mesures : List Mesure := [
       { nom := "0,25 emploi net par contrat (emplois d'avenir du secteur marchand)",
         leviers := [.emploisAides .industrie contratsIndustrie aideCieEuros 750] }] },
 
+  { id := "O-95"
+    titre := "Divisions régionales de cybersécurité de la police : 18 divisions de 50 enquêteurs et ingénieurs"
+    source := s!"Texte Orientation D, mesure 95 ; {agentsCyber} agents à {coutAgentPoliceEuros} € (coût moyen d'un emploi de la police nationale, PLF 2026) : {coutCyberPolice} M€ par an, recrutés en trois ans ; laboratoires 1 M€ par division (hypothèse) ; en plus de l'OFAC (720 enquêteurs en 2027) (voir `divisionsCyber`)"
+    leviers := [.depenseEcheancier .securiteJustice [coutCyberPolice / 3, 2 * coutCyberPolice / 3, coutCyberPolice],
+                .investissementEcheancier .securiteJustice [divisionsCyber, 0],
+                .annonceEmplois agentsCyber] },
+
+  { id := "O-96"
+    titre := "Revenu minimum au niveau du SMIC net pendant les cinq premières années d'exploitation agricole"
+    source := s!"Texte Orientation D, mesure 96 ; écart au SMIC des agriculteurs : 3,3 Md€ par an en moyenne 2015-2024 (Observatoire Max Havelaar) ; part des installés depuis moins de cinq ans (5 × {installationsAgricoles} sur {chefsExploitation} chefs, MSA) : {revenuMinimumInstalles} M€ par an en régime, une promotion de plus par an (calcul, voir `revenuMinimumInstalles`)"
+    leviers := [.depenseEcheancier .affairesEconomiques revenuMinimumRampe]
+    variantes := [
+      { nom := "écart au SMIC de 2024 (5,22 Md€)",
+        leviers := [.depenseEcheancier .affairesEconomiques
+          (([1, 2, 3, 4, 5] : List Int).map fun k => 5220 * (5 * installationsAgricoles) / chefsExploitation * k / 5)] }] },
+
+  { id := "O-97"
+    titre := "Prime de 100 000 € à l'installation des médecins à Mayotte et en Guyane"
+    source := s!"Texte Orientation D, mesure 97 ; densité de 76 (Mayotte) et 261 (Guyane) médecins pour 100 000 habitants contre 346 (Insee, 2025) ; {installationsOutreMer} installations par an pour atteindre la densité nationale en dix ans ; 20 000 € par an pendant cinq ans (voir `installationsOutreMer`)"
+    leviers := [.depenseEcheancier .sante (primesOutreMer 20000)]
+    variantes := [
+      { nom := "prime de 50 000 €", leviers := [.depenseEcheancier .sante (primesOutreMer 10000)] }] },
+
   { id := "O-98"
     titre := "Accompagnement des entreprises en cybersécurité : chèque cyber pour 50 000 TPE et PME par an, Cybermalveillance.gouv.fr et CSIRT régionaux"
     source := s!"Texte Orientation D, mesure 98 ; chèque de 50 % des dépenses, au plus 2 500 € (TPE) ou 10 000 € (PME), modèle de l'Île-de-France ; 40 000 TPE et 10 000 PME par an (hypothèse) : {chequesCyber} M€ ; Cybermalveillance.gouv.fr à 3 M€ et CSIRT régionaux : {cyberGipCsirt} M€ (voir `chequesCyber`)"
@@ -1952,7 +2032,7 @@ def mesures : List Mesure := [
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
