@@ -516,7 +516,7 @@ def rapportMarkdown : String := Id.run do
       | none => 0
     | none => 0
   let cellScore (k n : Nat) : String :=
-    s!"{pastille k n} {k}/{n} ({if n = 0 then 0 else k * 100 / n} %)"
+    s!"{pastille k n} {k}/{n} ({if n = 0 then 0 else (k * 100 + n / 2) / n} %)"
 
   -- Score global
   out := out.push "## Score global : propriétés tenues sur l'ensemble des scénarios"
