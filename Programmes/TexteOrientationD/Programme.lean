@@ -1076,6 +1076,82 @@ def electriciteEngraisGwh : Int := ammoniacParUsineKt * 1212 / 100
 
 theorem engrais_valeurs : capitalEngrais = 288 ∧ ammoniacParUsineKt = 163 ∧ electriciteEngraisGwh = 1975 := by decide
 
+/-- Légalisation encadrée du cannabis (O-105, O-105b), soumise à
+référendum (article 11 de la Constitution, ou RIC d'O-87, dont le scrutin
+annuel porte la question : pas de coût propre) ; le programme retient
+l'hypothèse d'un oui en 2027, la loi en 2028 et les premières ventes en
+2029. Modèle du Conseil d'analyse économique (note n° 52, juin 2019) :
+production et distribution sous licence d'État, vente aux majeurs, prix de
+9 € le gramme toutes taxes comprises (5 € hors taxes, droit d'accise de
+50 %, TVA de 20 % : 2,50 € d'accise et 1,50 € de TVA par gramme, calcul),
+entre les prix de rue de la résine (8 €) et de l'herbe (10 €) en 2023.
+Marché de 2023 : 397,4 t pour 2,73 Md€ (OFDT, décembre 2025). Part du
+marché légal : 72 % des consommateurs canadiens achètent dans le circuit
+légal cinq ans après la légalisation (Enquête canadienne sur le cannabis
+2024 : 72 %, contre 4 % en 2018), atteinte ici linéairement en cinq ans
+(hypothèse). Emplois : 55 à 114 par tonne (CAE, directs, indirects et
+induits ; bas de la fourchette retenu), répartis comme la valeur : coût de
+production inférieur à 1 € sur un prix hors taxes de 5 € (CAE), soit 20 %
+dans l'agriculture et 80 % dans le commerce (calcul) ; les cotisations de
+ces emplois sont calculées par le modèle. 10 % de l'accise financent la
+prévention et le soin (le CAE recommande d'y affecter une partie des
+recettes ; part : hypothèse). Les amendes forfaitaires pour usage
+disparaissent : 652 347 dressées de septembre 2020 à fin janvier 2025
+(ministère de l'Intérieur), ≈ 147 700 par an, à 200 € et 34,6 % de
+recouvrement (Cour des comptes, avril 2026) : ≈ 10 M€ par an (calcul,
+majoré : toutes les AFD de stupéfiants sont comptées). Les forces de
+l'ordre (plus d'un million d'heures par an pour l'usage, CAE) sont
+redéployées vers les trafics : la dépense publique de répression du
+cannabis (568 M€, dont 70 % de police et 20 % de justice, CAE) n'est pas
+économisée. -/
+def cannabisTonnes : Int := 397
+def acciseCannabisCentimes : Int := 500 * 50 / 100
+def tvaCannabisCentimes : Int := (500 + acciseCannabisCentimes) * 20 / 100
+def partLegaleCannabis : List Int := ([1, 2, 3, 4, 5] : List Int).map fun k => 72 * k / 5
+def acciseCannabis : List Int :=
+  partLegaleCannabis.map fun p => cannabisTonnes * acciseCannabisCentimes / 100 * p / 100
+def tvaCannabis : List Int :=
+  partLegaleCannabis.map fun p => cannabisTonnes * tvaCannabisCentimes / 100 * p / 100
+def preventionCannabis : List Int := acciseCannabis.map fun a => a / 10
+def afdStupefiantsParAn : Int := 652347 * 12 / 53
+def recettesAfd : Int := afdStupefiantsParAn * 200 * 346 / 1000 / 1000000
+def emploisCannabisAnnuels : Int := 55 * cannabisTonnes * 72 / 100 / 5
+def emploisCannabisAgriculture : Int := emploisCannabisAnnuels / 5
+def repressionCannabis : Int := 568
+
+theorem cannabis_valeurs :
+    acciseCannabisCentimes = 250 ∧ tvaCannabisCentimes = 150 ∧
+    partLegaleCannabis = [14, 28, 43, 57, 72] ∧
+    acciseCannabis = [138, 277, 426, 565, 714] ∧ tvaCannabis = [83, 166, 255, 339, 428] ∧
+    afdStupefiantsParAn = 147701 ∧ recettesAfd = 10 ∧
+    emploisCannabisAnnuels = 3144 ∧ emploisCannabisAgriculture = 628 := by decide
+
+/-- Légalisation de la prostitution sur le modèle allemand (O-106), soumise
+à référendum (même scrutin qu'O-105) ; hypothèse d'un oui. Abrogation de la
+pénalisation des clients (loi du 13 avril 2016) ; activité légale, exercée
+comme indépendant ou salarié, déclarée et imposée ; établissements soumis
+à autorisation ; enregistrement obligatoire et consultation de santé
+annuelle, préservatif obligatoire (Prostitutionsgesetz de 2002 et
+Prostituiertenschutzgesetz de 2017). La traite, le proxénétisme de
+contrainte et la prostitution des mineurs restent réprimés ; le parcours
+de sortie de la loi de 2016 est maintenu. Recettes : l'activité non
+déclarée prive l'État et la sécurité sociale de 853 M€ par an pour 37 000
+personnes (étude ProstCost, Mouvement du Nid et Psytel, 2015 ; chiffres
+contestés, le ministère de l'Intérieur comptant 20 000 personnes). En
+Allemagne, 32 300 personnes sont enregistrées fin 2024 (Destatis) sur
+200 000 à 400 000 estimées (gouvernement fédéral, avril 2023) : 10,7 % au
+milieu de la fourchette (calcul), appliqués au manque à gagner : 91 M€ par
+an à partir de 2029 (calcul). Point juridique : la convention des Nations
+unies du 2 décembre 1949, ratifiée par la France en 1960 (l'Allemagne n'y
+est pas partie), oblige à punir quiconque tient ou finance une maison de
+prostitution (article 2) : les établissements autorisés supposent de la
+dénoncer. -/
+def manqueAGagnerProstitution : Int := 853
+def partDeclareeProstitutionPm : Int := 32300 * 1000 / 300000
+def recettesProstitution : Int := manqueAGagnerProstitution * partDeclareeProstitutionPm / 1000
+
+theorem prostitution_valeurs : partDeclareeProstitutionPm = 107 ∧ recettesProstitution = 91 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -2158,13 +2234,47 @@ def mesures : List Mesure := [
     titre := "Production de la coopérative d'engrais : première usine en service en 2031"
     source := s!"Texte Orientation D, mesure 104 ; 250 emplois directs (FertigHy) ; {ammoniacParUsineKt} 000 t d'ammoniac à 12,12 MWh par tonne (AFT, ALTERFI) : {electriciteEngraisGwh} GWh d'électricité par an (voir `electriciteEngraisGwh`)"
     leviers := [.implantations .industrie 250, .annonceEmplois 250, .consommationElectrique electriciteEngraisGwh]
-    debut := 4 }
+    debut := 4 },
+
+  { id := "O-105"
+    titre := "Légalisation encadrée du cannabis après référendum : vente sous licence aux majeurs, 9 € le gramme"
+    source := s!"Texte Orientation D, mesure 105 ; hypothèse d'un oui au référendum de 2027, ventes en 2029 ; modèle du CAE (note n° 52, 2019) : {acciseCannabisCentimes} centimes d'accise et {tvaCannabisCentimes} de TVA par gramme ; {cannabisTonnes} t (OFDT, 2023) ; part légale portée à 72 % en cinq ans (Canada, 2024) : accise jusqu'à {acciseCannabis.getLastD 0} M€, TVA {tvaCannabis.getLastD 0} M€ ; 10 % de l'accise à la prévention ; amendes forfaitaires perdues : {recettesAfd} M€ (voir `cannabisTonnes`)"
+    leviers := [.recetteEcheancier (some .autres) acciseCannabis,
+                .recetteEcheancier (some .tva) tvaCannabis,
+                .depenseEcheancier .sante preventionCannabis,
+                .recetteEcheancier none [-recettesAfd]]
+    debut := 2
+    variantes := [
+      { nom := "moitié des coûts de police et de justice de la répression économisée (255 M€)",
+        leviers := [.recetteEcheancier (some .autres) acciseCannabis,
+                    .recetteEcheancier (some .tva) tvaCannabis,
+                    .depenseEcheancier .sante preventionCannabis,
+                    .recetteEcheancier none [-recettesAfd],
+                    .economieSur .securiteJustice (repressionCannabis * 90 / 100 / 2)] }] },
+
+  { id := "O-105b"
+    titre := "Filière légale du cannabis : production et distribution sous licence (emplois)"
+    source := s!"Texte Orientation D, mesure 105 ; 55 emplois par tonne (CAE, bas de la fourchette) sur la part légale du marché : {emploisCannabisAnnuels} emplois de plus chaque année de 2029 à 2033, dont {emploisCannabisAgriculture} dans l'agriculture (voir `emploisCannabisAnnuels`)"
+    leviers := [.implantations .agriculture emploisCannabisAgriculture,
+                .implantations .tertiaireMarchand (emploisCannabisAnnuels - emploisCannabisAgriculture),
+                .annonceEmplois emploisCannabisAnnuels]
+    debut := 2
+    repetitions := 5 },
+
+  { id := "O-106"
+    titre := "Légalisation de la prostitution sur le modèle allemand après référendum : activité déclarée, établissements autorisés, fin de la pénalisation des clients"
+    source := s!"Texte Orientation D, mesure 106 ; hypothèse d'un oui au référendum de 2027 ; manque à gagner de {manqueAGagnerProstitution} M€ (ProstCost, 2015, contesté) ; part déclarée de {partDeclareeProstitutionPm} ‰, celle de l'Allemagne (32 300 enregistrées sur 200 000 à 400 000) : {recettesProstitution} M€ par an à partir de 2029 (voir `recettesProstitution`)"
+    leviers := [.prelevementSur .cotisations recettesProstitution]
+    debut := 2
+    variantes := [
+      { nom := "estimation basse du nombre de personnes en Allemagne (200 000) : 16 % déclarés",
+        leviers := [.prelevementSur .cotisations (manqueAGagnerProstitution * 32300 / 200000)] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
