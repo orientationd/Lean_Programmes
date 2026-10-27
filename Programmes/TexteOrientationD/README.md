@@ -9,9 +9,9 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 3,91 % |
-| Dette publique | 156,7 % du PIB | 132,6 % |
-| Chômage | 7,90 % | 9,38 % |
+| Déficit public | 9,27 % du PIB | 3,93 % |
+| Dette publique | 156,7 % du PIB | 132,7 % |
+| Chômage | 7,90 % | 9,37 % |
 | Indice de développement humain | 0,9392 | 0,9412 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 282 Mt CO₂e |
 
@@ -19,9 +19,9 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,29 | 5,05 | 4,87 | 4,64 | 4,44 | 4,34 | 4,17 | 4,09 | 3,91 |
-| Offre | 5,57 | 5,20 | 4,92 | 4,71 | 4,47 | 4,29 | 4,22 | 4,08 | 4,05 | 3,93 |
-| Équilibre | 5,58 | 5,25 | 4,99 | 4,77 | 4,54 | 4,35 | 4,26 | 4,11 | 4,05 | 3,90 |
+| Demande | 5,58 | 5,29 | 5,06 | 4,88 | 4,65 | 4,45 | 4,35 | 4,18 | 4,10 | 3,93 |
+| Offre | 5,57 | 5,21 | 4,93 | 4,72 | 4,48 | 4,30 | 4,23 | 4,10 | 4,06 | 3,94 |
+| Équilibre | 5,58 | 5,25 | 4,99 | 4,78 | 4,55 | 4,36 | 4,27 | 4,12 | 4,06 | 3,91 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-94 mesures, en quatorze catégories. Effet de chaque mesure prise isolément en
+99 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -257,6 +257,7 @@ milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 | **O-76** Allègements recentrés : sortie à 2 SMIC au lieu de 3, économie reversée aux salaires de 1 à 1,6 SMIC, à coût constant | −0,04 pt | +43 700 | +0,1 |
 | **O-77** Accompagnement renforcé des demandeurs d'emploi : 10 000 conseillers de plus à France Travail | −0,06 pt | +43 700 | +0,5 |
 | **O-94** Emplois aidés ciblés sur l'industrie : 20 000 contrats initiative emploi | ≈ 0 | +3 200 | ≈ 0 |
+| **O-96** Revenu minimum au niveau du SMIC net pendant les cinq premières années d'exploitation agricole | +0,05 pt | +1 700 | +0,1 |
 
 **O-09 — Démission indemnisée.** Six mois d'indemnités, une fois tous les cinq ans. Coût estimé 3 Md€/an
 (recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois) ;
@@ -386,6 +387,21 @@ emploi en cours dans l'industrie (hypothèse), aidés à 47 % du SMIC brut
 estime à 0,16 l'emploi net créé par CIE (aubaine et substitution : 84 %) :
 ≈ 3 200 emplois, soit ≈ 63 000 € par emploi net. Variante : 0,25 emploi
 net par contrat (emplois d'avenir du secteur marchand).
+
+**O-96 — Revenu minimum des nouveaux exploitants agricoles.** Pendant les
+cinq premières années d'installation, l'État complète le revenu
+professionnel des chefs d'exploitation jusqu'au SMIC net. 43 % des
+agriculteurs gagnent moins que le SMIC ; l'écart au SMIC a été de 3,3 Md€
+par an en moyenne de 2015 à 2024, et de 5,22 Md€ en 2024 (Observatoire de
+la rémunération agricole équitable, Max Havelaar France, avril 2026). Les
+installés depuis moins de cinq ans représentent 17 % des chefs
+d'exploitation (5 × 12 661 installations en 2024, sur 374 062 chefs ;
+MSA) : 558 M€ par an une fois cinq promotions installées, au prorata
+(calcul), une promotion de plus chaque année. Les nouveaux installés ont
+souvent des revenus plus faibles, mais un revenu négatif n'est complété
+que jusqu'au SMIC : l'écart réel reste à documenter avec la MSA. L'effet
+sur le nombre d'installations (12 661 en 2024, −7 % sur un an) n'est pas
+chiffré. Variante : écart de 2024 (883 M€).
 
 ### Retraites
 
@@ -895,6 +911,55 @@ bas de la fourchette moins les crédits existants, 2,4 Md€ de dépense
 nouvelle (justice, police, hébergement et accompagnement des victimes).
 Variante : haut de la fourchette (5,4 Md€).
 
+### Cybersécurité
+
+| Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
+|---|---|---|---|
+| **O-95** Divisions régionales de cybersécurité de la police : 18 divisions de 50 enquêteurs et ingénieurs | ≈ 0 | +300 | ≈ 0 |
+| **O-98** Accompagnement des entreprises en cybersécurité : chèque cyber pour 50 000 TPE et PME par an, Cybermalveillance.gouv.fr et CSIRT régionaux | +0,02 pt | +600 | ≈ 0 |
+| **O-99** Amende automatique de 2 % du chiffre d'affaires mondial en cas de fuite de données massive dans une entreprise de plus de 50 M€ de chiffre d'affaires | −0,01 pt | ≈ 0 | ≈ 0 |
+
+**O-95 — Divisions régionales de cybersécurité de la police.** Une
+division par région (13 en métropole, 5 outre-mer), de 50 enquêteurs et
+ingénieurs : 900 agents recrutés en trois ans, au coût moyen d'un emploi
+de la police nationale (78 900 € par an : 12,09 Md€ de crédits de
+personnel pour 153 285 emplois, PLF 2026), soit 71 M€ par an, plus 1 M€ de
+laboratoire de criminalistique numérique par division (hypothèse). Elles
+s'ajoutent à l'Office anti-cybercriminalité, qui doit passer de 380 à
+720 enquêteurs et de 18 à 45 antennes d'ici 2027, pour les enquêtes et
+l'appui aux victimes (plus de 500 000 demandes d'assistance à
+Cybermalveillance.gouv.fr en 2025, + 20 %).
+
+**O-98 — Accompagnement des entreprises.** Chèque cyber : l'État paie
+50 % des dépenses de sécurité, au plus 2 500 € pour une TPE et 10 000 €
+pour une PME (modèle du chèque de l'Île-de-France, fermé en février 2025),
+pour 40 000 TPE et 10 000 PME par an (hypothèse) : 200 M€. 16 % des
+TPE-PME ont subi un incident en douze mois, 77 % dépensent moins de
+2 000 € par an en sécurité et 37 % demandent une aide financière
+(baromètre Cybermalveillance, octobre 2025). Cybermalveillance.gouv.fr,
+dont la subvention de l'ANSSI est restée à 0,845 M€ par an depuis 2017,
+passe à 3 M€, le minimum recommandé par le Sénat ; les centres régionaux
+de réponse aux incidents (CSIRT), que l'ANSSI ne finance plus, reçoivent
+1 M€ par région sur trois ans. Les cyberattaques ont coûté ≈ 2 Md€ aux
+entreprises en 2022 (Asterès) : le gain attendu n'est pas chiffré.
+Variante : chèque pour 25 000 entreprises par an.
+
+**O-99 — Amendes automatiques en cas de fuite massive.** Sans relever les
+taux du RGPD : pour une entreprise de plus de 50 M€ de chiffre d'affaires
+(au-delà des PME au sens européen), une fuite due à un défaut de sécurité
+et touchant plus d'un million de personnes entraîne d'office l'amende
+maximale de l'article 83.4, 2 % du chiffre d'affaires mondial, au lieu
+d'une amende fixée au cas par cas (Free : 42 M€ en janvier 2026, pour
+24 millions de contrats exposés). Environ 40 fuites par an touchent plus
+d'un million de personnes (CNIL) ; hypothèses : 10 dans des entreprises
+de plus de 50 M€, 1 Md€ de chiffre d'affaires médian, 95 % de recouvrement
+(taux de la CNIL) : ≈ 190 M€ par an, versés au budget de l'État et appelés
+à baisser à mesure que les entreprises se protègent. Point juridique :
+l'article 83.2 du RGPD impose à la CNIL d'apprécier chaque cas ;
+l'automaticité devra passer par une sanction nationale (article 84) ou
+par la loi de transposition de NIS2, et reste à expertiser. Variantes :
+seuil de 1 Md€ de chiffre d'affaires ; dissuasion complète, sans recette.
+
 ### Familles et solidarités
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -957,6 +1022,7 @@ dématérialisés ; scrutins couplés aux élections, sans coût propre.
 | **O-65** Électrification totale des outre-mer : raccordement de tous les foyers | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-66** Électrification des outre-mer : électricité des foyers raccordés (péréquation tarifaire) | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-89** Fin de l'octroi de mer, compensée aux collectivités par l'État | +0,08 pt | +2 800 | +0,1 |
+| **O-97** Prime de 100 000 € à l'installation des médecins à Mayotte et en Guyane | ≈ 0 | ≈ 0 | ≈ 0 |
 
 | Mesure | Chiffrage |
 |---|---|
@@ -997,34 +1063,44 @@ modèle applique l'effet sur la demande d'un impôt national : la part
 importée de la consommation ultramarine, plus forte qu'en métropole,
 n'est pas isolée.
 
+**O-97 — Médecins à Mayotte et en Guyane.** 76 médecins pour 100 000
+habitants à Mayotte et 261 en Guyane, contre 346 en France (Insee,
+1er janvier 2025) : il en manque 891 et 248 pour atteindre la densité
+nationale. Prime de 100 000 € versée en cinq ans (20 000 € par an) contre
+un engagement d'exercice de cinq ans, en plus de l'aide d'O-92 en zone
+prioritaire ; pour 113 installations par an (écart comblé en dix ans) :
+jusqu'à 11 M€ par an. La Guadeloupe, la Martinique et La Réunion sont à
+la densité nationale et n'y sont pas éligibles. Variante : prime de
+50 000 €.
+
 ## Points à arbitrer
 
 Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 3,91 % | 9,38 % | 0,9412 | oui / oui / oui |
-| Sans O-84 (deuxième journée de solidarité) | 4,14 % | 9,40 % | 0,9410 | oui / oui / oui |
-| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,84 % | 9,20 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 3,96 % | 9,35 % | 0,9424 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,74 % | 9,39 % | 0,9412 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 3,16 % | 9,43 % | 0,9411 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,67 % | 9,93 % | 0,9405 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,50 % | 10,46 % | 0,9399 | oui / oui / oui |
+| Programme actuel | 3,93 % | 9,37 % | 0,9412 | oui / oui / oui |
+| Sans O-84 (deuxième journée de solidarité) | 4,15 % | 9,39 % | 0,9411 | oui / oui / oui |
+| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,86 % | 9,19 % | 0,9412 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 3,97 % | 9,35 % | 0,9424 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,76 % | 9,38 % | 0,9412 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 3,18 % | 9,43 % | 0,9411 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,68 % | 9,93 % | 0,9405 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,51 % | 10,45 % | 0,9399 | oui / oui / oui |
 
 1. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,08 point en 2034 (demande), 0,03 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
+   des marges minimales de 0,08 point en 2034 (demande), 0,04 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
    (niches réduites de 1,5 Md€ de plus par an de 2029 à 2035) et à O-84
    (deuxième journée de solidarité, −0,23 point en 2035) ; sans O-84,
-   le déficit 2035 serait de 4,14 %. Toute dépense nouvelle non financée
+   le déficit 2035 serait de 4,15 %. Toute dépense nouvelle non financée
    réduit ces marges : chaque piste de dépense est à apparier à une recette
    ou à une économie.
-2. **Chômage.** 9,38 % en 2035 contre 7,90 % sans programme. Premières
+2. **Chômage.** 9,37 % en 2035 contre 7,90 % sans programme. Premières
    causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000 emplois)
    et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
    +20 000), O-76 et O-77 (+44 000 et +44 000) et O-84 (+7 000)
    compensent en partie. Au-delà de 9 %, le complément de fin de droits de
-   l'assurance chômage se déclenche. L'option B le réduit (9,20 %) ;
+   l'assurance chômage se déclenche. L'option B le réduit (9,19 %) ;
    passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit
    plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
@@ -1073,14 +1149,14 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,07 pt | +0,6 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,11 pt | −0,05 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,24 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,10 pt | +0,8 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,03 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,16 pt | −0,08 pt | +0,8 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,12 pt | −0,06 pt | +0,6 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,10 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,23 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,15 pt | −0,10 pt | +0,8 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,08 pt | −0,05 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,08 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,15 pt | −0,08 pt | +0,8 |
 | Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,23 pt | −0,11 pt | +1,1 |
 | Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
 
@@ -1098,7 +1174,7 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 
 ### Chiffrages à documenter
 
-* 34 mesures sur 94 reposent au moins en partie sur une hypothèse ; les plus
+* 37 mesures sur 99 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
