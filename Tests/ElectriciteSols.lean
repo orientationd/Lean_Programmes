@@ -173,6 +173,20 @@ theorem emplois_aides :
     s.depensesF.affairesEconomiques - s0.depensesF.affairesEconomiques = 80 := by
   decide +kernel
 
+/-- Rénovations d'ampleur : 10 000 logements par an à 40 000 € d'aide et
+12 570 kWh d'économie chacun : 400 M€ de dépense, et des économies de fioul
+et de gaz aux parts nationales du sous-modèle rénovation, qui s'ajoutent
+chaque année. -/
+theorem renovations_ampleur :
+    let R := H.energie.renovation
+    let s0 := etatDepart H
+    let s := (mesure [.renovationsAmpleur .national 10000 40000 12570]).etatInitial D H
+    s.depensesF.logementEnvironnement - s0.depensesF.logementEnvironnement = 400 ∧
+    s.economiesFioulMWhAnnuelles = 125700 * R.partFioulNationalPm / 1000 ∧
+    s.economiesGazMWhAnnuelles = 125700 * R.partGazNationalPm / 1000 ∧
+    0 < s.emploi.construction - s0.emploi.construction := by
+  decide +kernel
+
 /-- Implantations : 10 000 emplois industriels qui produisent ; la
 production nouvelle est exportée (ou remplace des importations). -/
 theorem implantations_exportees :
