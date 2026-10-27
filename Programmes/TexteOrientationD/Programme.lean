@@ -418,11 +418,19 @@ def desindexation (masse : Int) : List Int :=
   (List.range 20).map fun k =>
     -(masse * ((10000 + inflationPb) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 + inflationPb) ^ (k + 1))
 
-/-- TVA (O-29) : taux normal porté de 20 % à 22 %. Un point de taux normal
-rapporte un peu plus de 8 Md€ (FIPECO, IPP, Sénat, cités par L'Essentiel de
-l'éco, septembre 2026) : rendement statique `tvaDeuxPoints` = 16 Md€, net de
-la fuite fiscale du modèle. -/
-def tvaDeuxPoints : Int := 16000
+/-- TVA (O-29) : taux normal porté de 20 % à 23 %, taux intermédiaire de
+10 % à 11 %, taux réduit de 5,5 % à 6,5 % (taux super-réduit de 2,1 %
+inchangé). Rendement d'un point (FIPECO, fiche « La TVA », 2025) : taux
+normal ≈ 8,2 Md€, taux de 10 % 1,6 Md€, taux de 5,5 % 2,3 Md€ ; rendement
+statique `tvaHausse` = 3 × 8,2 + 1,6 + 2,3 = 28,5 Md€ (calcul), net de la
+fuite fiscale du modèle. Variantes : taux normal seul à 23 % (24,6 Md€) ;
+version précédente du programme, taux normal à 22 % (16,4 Md€). -/
+def tvaPointNormal : Int := 8200
+def tvaPointIntermediaire : Int := 1600
+def tvaPointReduit : Int := 2300
+def tvaHausse : Int := 3 * tvaPointNormal + tvaPointIntermediaire + tvaPointReduit
+
+theorem tvaHausse_eq : tvaHausse = 28500 := by decide
 
 /-- Jets privés (O-30) : taxe forfaitaire de `taxeAtterrissage` = 3 000 € par
 atterrissage. 84 885 vols de jets privés au départ de la France en 2022
@@ -1152,6 +1160,79 @@ def recettesProstitution : Int := manqueAGagnerProstitution * partDeclareeProsti
 
 theorem prostitution_valeurs : partDeclareeProstitutionPm = 107 ∧ recettesProstitution = 91 := by decide
 
+/-- Rénovation des passoires thermiques dans les villes moyennes (O-107) :
+programme dédié dans les 244 villes du plan Action cœur de ville (≈ 20
+millions d'habitants, 23 % de la population, Banque des Territoires),
+porté par l'Anah et les collectivités : rénovations d'ampleur des
+logements classés F et G. 120 306 rénovations d'ampleur aidées en 2025
+(Anah, bilan 2025) ; à la part de ces villes dans la population, 27 670 par
+an (calcul) : le programme en finance autant de plus chaque année, soit le
+double du rythme actuel. Aide moyenne d'une rénovation d'ampleur :
+40 429 € en 2025 (Anah ; 32 567 € pour les ménages modestes et 45 580 €
+pour les très modestes en Provence-Alpes-Côte d'Azur, DREAL). Économie
+d'énergie : 0,9 TWh par an pour 71 600 rénovations d'ampleur engagées en
+2023 (SDES, décembre 2024), 12 569 kWh par logement (calcul) ; 60 % des
+logements rénovés par MaPrimeRénov' Sérénité étaient des passoires
+(même source). Fioul et gaz aux parts nationales du sous-modèle
+rénovation (pas de donnée propre aux villes moyennes). Coût : 1,12 Md€ par
+an (calcul). -/
+def renovationsAmpleur2025 : Int := 120306
+def renovationsVillesMoyennes : Int := renovationsAmpleur2025 * 23 / 100
+def aideRenovationAmpleurEuros : Int := 40429
+def economieRenovationAmpleurKWh : Int := 900000000000 / 71600 / 1000
+
+theorem passoires_valeurs :
+    renovationsVillesMoyennes = 27670 ∧ economieRenovationAmpleurKWh = 12569 ∧
+    renovationsVillesMoyennes * aideRenovationAmpleurEuros / 1000000 = 1118 := by decide
+
+/-- Décarbonation des sites industriels (O-108) : l'industrie émet 58,4 Mt
+en 2025 (Citepa, voir `Hypotheses.emissions2025`) et suit la tendance à
+mesures existantes (−3 % par an), 50,2 Mt en 2030 contre 42 Mt pour
+l'objectif sectoriel de la SNBC-3 : 8 Mt d'écart. La DGE (1er avril 2026)
+estime à ≈ 22 Md€ le soutien public nécessaire de 2024 à 2030 pour passer de
+63 Mt (2023) à ≈ 45 Mt (quatrième budget carbone, 2029-2033), soit
+1 222 M€ de soutien par Mt évitée chaque année (calcul). Le programme
+comble l'écart : 2 Mt de plus chaque année de 2027 à 2030 (électrification
+des procédés, chaleur bas carbone, captage sur les 50 sites les plus
+émetteurs, qui pèsent 55 % des émissions de l'industrie et se sont engagés
+sur −45 % en 2030 ; 50 à 70 Md€ d'investissements, ministère de l'Industrie,
+13 décembre 2023), 2,44 Md€ d'aides par an pendant quatre ans. La
+consommation d'électricité supplémentaire n'est pas comptée. -/
+def soutienParMt : Int := 22000 / (63 - 45)
+def mtParAnIndustrie : Int := 2
+def aideDecarbonation : Int := mtParAnIndustrie * soutienParMt
+
+theorem decarbonation_valeurs : soutienParMt = 1222 ∧ aideDecarbonation = 2444 := by decide
+
+/-- Places en Ehpad publics (O-109, O-109b) : la DREES prévoit 108 000
+résidents de plus en Ehpad en 2030 dans son scénario central (Études et
+résultats n° 1172, décembre 2020) ; le public accueille 275 900 des 573 100
+résidents fin 2023 (48 %, Études et résultats n° 1351, novembre 2025) et ses
+places ont baissé de 0,9 % depuis 2019. Le programme crée la part publique
+du besoin, 51 993 places (calcul), 10 398 par an de 2027 à 2031, ouvertes
+l'année suivante. Construction : ≈ 85 000 € HT par place en 2012 (Anap et
+CNSA, Observatoire des coûts de la construction médico-sociale), actualisés
+par l'indice du coût de la construction (1 617 au 1er trimestre 2012, 2 058
+au 4e trimestre 2025, Insee) : 108 181 € (calcul). Fonctionnement à la
+charge des administrations : soins financés par l'assurance maladie,
+12 755 € par place et par an, et APA en établissement, 338 € par mois en
+moyenne (valeurs 2019 : La Banque Postale d'après le rapport Libault ;
+DREES), 16 811 € par place (calcul, non actualisé) ; l'hébergement reste
+payé par les résidents. -/
+def residentsSupplementaires2030 : Int := 108000
+def placesEhpadPubliques : Int := residentsSupplementaires2030 * 275900 / 573100
+def placesEhpadParAn : Int := placesEhpadPubliques / 5
+def coutPlaceEhpadEuros : Int := 85000 * 2058 / 1617
+def fonctionnementPlaceEhpadEuros : Int := 12755 + 338 * 12
+def investissementEhpad : Int := placesEhpadParAn * coutPlaceEhpadEuros / 1000000
+def fonctionnementEhpad : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * placesEhpadParAn * fonctionnementPlaceEhpadEuros / 1000000
+
+theorem ehpad_valeurs :
+    placesEhpadPubliques = 51993 ∧ placesEhpadParAn = 10398 ∧ coutPlaceEhpadEuros = 108181 ∧
+    fonctionnementPlaceEhpadEuros = 16811 ∧ investissementEhpad = 1124 ∧
+    fonctionnementEhpad = [174, 349, 524, 699, 874] := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -1715,10 +1796,13 @@ def mesures : List Mesure := [
         leviers := [.depenseEcheancier .retraites (desindexation masseTresHautes)] }] },
 
   { id := "O-29"
-    titre := "TVA : taux normal porté de 20 % à 22 %"
-    source := s!"Texte Orientation D, mesure 29 ; un point de taux normal ≈ 8 Md€ (FIPECO, IPP, Sénat) : {tvaDeuxPoints} M€ de rendement statique, net de la fuite fiscale du modèle"
-    leviers := [.prelevementSur .tva tvaDeuxPoints]
-    debut := 0 },
+    titre := "TVA : taux normal porté de 20 % à 23 %, taux de 10 % à 11 % et de 5,5 % à 6,5 %"
+    source := s!"Texte Orientation D, mesure 29 ; rendement d'un point (FIPECO, 2025) : {tvaPointNormal} M€ au taux normal, {tvaPointIntermediaire} M€ à 10 %, {tvaPointReduit} M€ à 5,5 % : {tvaHausse} M€ de rendement statique, net de la fuite fiscale du modèle (voir `tvaHausse`)"
+    leviers := [.prelevementSur .tva tvaHausse]
+    debut := 0
+    variantes := [
+      { nom := "taux normal seul porté à 23 %, taux réduits inchangés", leviers := [.prelevementSur .tva (3 * tvaPointNormal)] },
+      { nom := "version précédente : taux normal à 22 %", leviers := [.prelevementSur .tva (2 * tvaPointNormal)] }] },
 
   { id := "O-30"
     titre := "Taxe forfaitaire à l'atterrissage des jets privés"
@@ -2268,13 +2352,40 @@ def mesures : List Mesure := [
     debut := 2
     variantes := [
       { nom := "estimation basse du nombre de personnes en Allemagne (200 000) : 16 % déclarés",
-        leviers := [.prelevementSur .cotisations (manqueAGagnerProstitution * 32300 / 200000)] }] }
+        leviers := [.prelevementSur .cotisations (manqueAGagnerProstitution * 32300 / 200000)] }] },
+
+  { id := "O-107"
+    titre := "Rénovation des passoires thermiques dans les villes moyennes : 27 670 rénovations d'ampleur de plus par an"
+    source := s!"Texte Orientation D, mesure 107 ; 244 villes Action cœur de ville (23 % de la population) ; {renovationsAmpleur2025} rénovations d'ampleur en 2025 (Anah), {renovationsVillesMoyennes} de plus par an à {aideRenovationAmpleurEuros} € d'aide ; {economieRenovationAmpleurKWh} kWh économisés par logement (SDES) ; 1,12 Md€ par an (voir `renovationsVillesMoyennes`)"
+    leviers := [.renovationsAmpleur .national renovationsVillesMoyennes aideRenovationAmpleurEuros economieRenovationAmpleurKWh]
+    variantes := [
+      { nom := "moitié du volume (13 835 rénovations par an)",
+        leviers := [.renovationsAmpleur .national (renovationsVillesMoyennes / 2) aideRenovationAmpleurEuros economieRenovationAmpleurKWh] }] },
+
+  { id := "O-108"
+    titre := "Décarbonation des sites industriels : 2 Mt évitées de plus chaque année de 2027 à 2030, 2,44 Md€ d'aides par an"
+    source := s!"Texte Orientation D, mesure 108 ; écart de 8 Mt à l'objectif SNBC-3 de l'industrie en 2030 ; soutien public de {soutienParMt} M€ par Mt évitée (DGE, 22 Md€ de 2024 à 2030 pour 18 Mt) : {aideDecarbonation} M€ par an pendant quatre ans (voir `soutienParMt`)"
+    leviers := [.depenseEcheancier .affairesEconomiques [aideDecarbonation, 0],
+                .transition .industrie mtParAnIndustrie 0]
+    repetitions := 4 },
+
+  { id := "O-109"
+    titre := "Ehpad publics : 52 000 places de plus, construites de 2027 à 2031"
+    source := s!"Texte Orientation D, mesure 109 ; part publique (48 %) des 108 000 résidents de plus en 2030 (DREES) : {placesEhpadPubliques} places, {placesEhpadParAn} par an à {coutPlaceEhpadEuros} € (Anap-CNSA 2012, actualisé par l'ICC) : {investissementEhpad} M€ par an pendant cinq ans (voir `placesEhpadPubliques`)"
+    leviers := [.investissementEcheancier .sante [investissementEhpad, investissementEhpad, investissementEhpad,
+                                                  investissementEhpad, investissementEhpad, 0]] },
+
+  { id := "O-109b"
+    titre := "Ehpad publics : fonctionnement des places ouvertes (soins et APA)"
+    source := s!"Texte Orientation D, mesure 109 ; {fonctionnementPlaceEhpadEuros} € par place et par an à la charge des administrations (soins 12 755 €, APA 338 € par mois, 2019) : jusqu'à {fonctionnementEhpad.getLastD 0} M€ par an en 2032 (voir `fonctionnementEhpad`)"
+    leviers := [.depenseEcheancier .sante fonctionnementEhpad]
+    debut := 1 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
