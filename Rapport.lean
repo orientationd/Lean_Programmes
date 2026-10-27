@@ -503,21 +503,52 @@ def rapportMarkdown : String := Id.run do
             out := out.push (ligne [p.id, M.id, e.scenario.id, q.id, coche (engagementTenu p e)])
   out := out.push ""
 
+  -- Nombre de scénarios où chaque propriété tient, par moteur, programme et
+  -- propriété : calculé une fois pour le score global et les tableaux.
+  let comptes : List (Moteur × List (Programme × List Nat)) := moteurs.map fun M =>
+    (M, Programmes.tous.map fun p =>
+      (p, props.map fun q => (scens.filter fun H => decide (p.Verifie M H q)).length))
+  let casesParMoteur := props.length * nS
+  let scoreDe (M : Moteur) (p : Programme) : Nat :=
+    match comptes.find? (fun (M', _) => M'.id == M.id) with
+    | some (_, ls) => match ls.find? (fun (p', _) => p'.id == p.id) with
+      | some (_, ks) => ks.foldl (· + ·) 0
+      | none => 0
+    | none => 0
+  let cellScore (k n : Nat) : String :=
+    s!"{pastille k n} {k}/{n} ({if n = 0 then 0 else k * 100 / n} %)"
+
+  -- Score global
+  out := out.push "## Score global : propriétés tenues sur l'ensemble des scénarios"
+  out := out.push ""
+  out := out.push s!"Somme, sur les {props.length} propriétés, du nombre de scénarios où chacune tient ({props.length} × {nS} = {casesParMoteur} cases par moteur). Classement selon la somme des {moteurs.length} moteurs."
+  out := out.push ""
+  out := out.push legendePastilles
+  out := out.push ""
+  out := out.push (ligne (["Rang", "Programme"] ++ moteurs.map (·.nom) ++ ["Ensemble"]))
+  out := out.push (separateur (moteurs.length + 3))
+  let totaux := Programmes.tous.map fun p => (p, moteurs.foldl (fun acc M => acc + scoreDe M p) 0)
+  let classes := totaux.mergeSort fun a b => b.2 ≤ a.2
+  let mut rang := 0
+  for (p, total) in classes do
+    rang := rang + 1
+    out := out.push (ligne ([toString rang, p.id] ++ moteurs.map (fun M => cellScore (scoreDe M p) casesParMoteur)
+      ++ [cellScore total (casesParMoteur * moteurs.length)]))
+  out := out.push ""
+
   -- Synthèse par moteur
-  for M in moteurs do
+  for (M, lignes) in comptes do
     out := out.push s!"## Synthèse, moteur « {M.nom} » : scénarios où la propriété tient"
     out := out.push ""
     out := out.push M.description
     out := out.push ""
     out := out.push legendePastilles
     out := out.push ""
-    out := out.push (ligne ("Programme" :: props.map (·.id)))
-    out := out.push (separateur (props.length + 1))
-    for p in Programmes.tous do
-      let cellules := props.map fun q =>
-        let k := (scens.filter fun H => decide (p.Verifie M H q)).length
-        s!"{pastille k nS} {k}/{nS}"
-      out := out.push (ligne (p.id :: cellules))
+    out := out.push (ligne ("Programme" :: props.map (·.id) ++ ["Score"]))
+    out := out.push (separateur (props.length + 2))
+    for (p, ks) in lignes do
+      let cellules := ks.map fun k => s!"{pastille k nS} {k}/{nS}"
+      out := out.push (ligne (p.id :: cellules ++ [cellScore (ks.foldl (· + ·) 0) casesParMoteur]))
     out := out.push ""
 
   -- Détail par programme

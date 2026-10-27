@@ -33,7 +33,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from synthese_pdf import (  # noqa: E402
     A4, BASE, FOND, GRID, INK, INK2, LARGEUR, MUTED, NBSP, STYLES, TENDANCIEL,
     CondPageBreak, Donnees, PageBreak, Paragraph, SimpleDocTemplate, Spacer, Table,
-    TableStyle, colorer_parts, colors, echap, figure, legende_degrade, mm, nombre, png, style)
+    TableStyle, colorer_parts, colors, echap, figure, legende_degrade, mm, nombre, png, score, style)
 from reportlab.pdfbase.pdfmetrics import stringWidth  # noqa: E402
 
 VERT, ROUGE = "#008300", "#c62f2e"
@@ -427,6 +427,16 @@ def section_proprietes(D: Donnees, p: dict) -> list:
              f"dans chacun des {n} scénarios. Pour chaque moteur : statut au scénario central "
              f"(<font color='{VERT}'>✓</font> tenue, <font color='{ROUGE}'>✗</font> non tenue) et nombre "
              f"de scénarios où elle tient. Classement selon le moteur « {echap(D.nom_moteur(std))} ».")]
+    cases = n * len(D.props)
+    tous = D.d["programmes"]
+    lignes_score = []
+    for m in D.moteurs:
+        k = score(p, m["id"])
+        rang = 1 + sum(1 for x in tous if score(x, m["id"]) > k)
+        lignes_score.append(f"{echap(m['nom'])} : {k}/{cases} ({nombre(100 * k / cases)} %), "
+                            f"rang {rang} sur {len(tous)}")
+    out.append(P("<b>Score global</b> (somme, sur les " f"{len(D.props)} propriétés, du nombre de "
+                 "scénarios où chacune tient) — " + " ; ".join(lignes_score) + ".", "corps"))
     tenues = [q for q in D.props if p["central"][std][q["id"]]]
     non = [q for q in D.props if not p["central"][std][q["id"]]]
     for titre, qs in ((f"Tenues au scénario central ({len(tenues)})", tenues),

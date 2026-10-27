@@ -590,6 +590,38 @@ def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool =
                              for i, p in enumerate(D.progs) for j, q in enumerate(props)})
 
 
+def score(p: dict, mid: str) -> int:
+    """Score global d'un programme sous un moteur : somme, sur toutes les
+    propriétés, du nombre de scénarios où chacune tient (même calcul que la
+    section « Score global » de Rapport.lean)."""
+    return sum(p["matrice"][mid].values())
+
+
+def table_scores(D: Donnees) -> Table:
+    """Classement des programmes par score global (somme des moteurs), cases
+    en dégradé selon la part des cases tenues."""
+    n = D.d["nbScenarios"] * len(D.props)
+    mids = [m["id"] for m in D.moteurs]
+    classes = sorted(D.progs, key=lambda p: -sum(score(p, mid) for mid in mids))
+    ent = ["Rang", f"Programme ({len(D.props)} propriétés × {D.d['nbScenarios']} scénarios)"] \
+        + [D.nom_moteur(mid) for mid in mids] + ["Ensemble"]
+
+    def cel(k, total):
+        return P(f"{k}/{total}<br/>{nombre(100 * k / total)} %", "cellpc")
+
+    rows, parts = [], {}
+    for i, p in enumerate(classes):
+        ks = [score(p, mid) for mid in mids]
+        rows.append([str(i + 1), nom_court(p["nom"])] + [cel(k, n) for k in ks]
+                    + [cel(sum(ks), n * len(mids))])
+        for j, k in enumerate(ks):
+            parts[(j + 2, i + 1)] = k / n
+        parts[(len(mids) + 2, i + 1)] = sum(ks) / (n * len(mids))
+    larg = [0.06, 0.38] + [0.56 / (len(mids) + 1)] * (len(mids) + 1)
+    return colorer_parts(tableau([P(echap(h), "cellgpc") if j > 1 else h for j, h in enumerate(ent)],
+                                 rows, larg, droite_des=9), parts)
+
+
 def puces_electricite_sols(D: Donnees) -> list:
     """Électricité et sols en une ligne chacun (si le rapport les contient)."""
     a0, a1 = D.annees[0], D.annees[-1]
@@ -680,6 +712,12 @@ def section_resume(D: Donnees, meta) -> list:
         "et le PIB par habitant : les enfants nés d'ici là n'arrivent pas sur le marché du travail "
         "avant l'horizon.",
     ] + puces_electricite_sols(D))
+    out.append(P("Score global", "h2"))
+    out.append(table_scores(D))
+    out.append(P(f"Somme, sur les {len(D.props)} propriétés (européennes comprises), du nombre de "
+                 f"scénarios où chacune tient, sous chaque moteur ; classement selon la somme des "
+                 f"moteurs. Toutes les propriétés pèsent autant : le score résume la matrice, il ne "
+                 f"hiérarchise pas les objectifs.", "note"))
     out.append(P(f"Propriétés partagées, moteur « {D.nom_moteur(D.standard)} »", "h2"))
     out.append(table_proprietes(D, avec_central=True))
     out.append(Spacer(1, 3))
