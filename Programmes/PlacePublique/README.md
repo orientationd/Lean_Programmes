@@ -23,6 +23,8 @@ n'a été trouvé. À revoir dès la publication du programme.
 | PP-03 Enseignants : +10 % au moins, jusqu'à +25 % en milieu de carrière | Public Sénat, 31 août 2026 ; Sud Radio, 3 septembre 2026 | +6 Md€ par an de traitement d'agents en poste |
 | PP-04 Leasing social : un million de voitures électriques à 100 € par mois | AFP, 2 octobre 2026 | 200 000 voitures par an à 6 000 € d'aide (6 Md€ sur cinq ans) |
 | PP-05 Abrogation de la réforme des retraites de 2023 : 62 ans | débat BFMTV, 4 octobre 2026 ; Acte 1, p. 43 | âge légal ramené à 62 ans |
+| PP-06 Service civique obligatoire de dix mois | livre de mai 2026 ; LCP, 26 mai 2026 ; Public Sénat, 24 août 2026 | jusqu'à +4,5 Md€/an en cinq ans (indemnité de 505 € et tutorat de 100 € par mois, Maire-info ; calcul) |
+| PP-07 Aide publique au développement à 0,7 % du RNB | Acte 1 | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
 
 Choix de transcription, à revoir avec le programme publié :
 
@@ -104,8 +106,7 @@ ajoute 0,22 point de déficit. Le déficit ne baisse pas chaque année.
 * **Justice, égalité** : police de proximité, lutte contre le narcotrafic ;
   loi intégrale contre les violences sexuelles ; statut des parents solos.
 * **Défense, Europe** : fonds européen de défense de 500 Md€ par emprunt
-  commun (hors budget national) ; service civique obligatoire de dix mois ;
-  réserve opérationnelle accrue ; aucun objectif de dépense en % du PIB.
+  commun (hors budget national) ; réserve opérationnelle accrue ; aucun objectif de dépense en % du PIB.
 * **Budget** : aucune cible de déficit pour 2027 ni engagement sur les
   3 % ; la trajectoire de 120 Md€ d'économies sur cinq ans (septembre
   2025) répondait au budget 2026 et n'est pas reprise.
