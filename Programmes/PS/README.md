@@ -43,8 +43,9 @@ sans contre-expertise ; document non consulté directement.
 
 R. Glucksmann, candidat issu de la primaire « Choisir 2027 » (66,1 %,
 octobre 2026), propose 15 Md€ sur les successions de plus de 2 M€ pour
-baisser la CSG sur le travail : non transcrit (programme du candidat
-distinct du projet du parti).
+baisser la CSG sur le travail : transcrit avec ses autres propositions
+chiffrées dans `Programmes/PlacePublique/` (programme du candidat distinct
+du projet du parti).
 
 ## Non modélisé, faute de montant ou de paramètre dans la source
 

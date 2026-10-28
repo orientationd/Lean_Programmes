@@ -95,7 +95,8 @@ Mesures (extrait) :
   humain (prix minimum de l'alcool, prix du tabac, dépistage du cancer
   colorectal, scolarisation des 18-24 ans) ; **O-82** financement d'une loi
   intégrale contre les violences sexistes et sexuelles ; **O-83**
-  allocations familiales dès le premier enfant.
+  allocations familiales dès le premier enfant ; **O-84** deuxième journée
+  de solidarité affectée à l'autonomie.
 
 Les valeurs marquées « hypothèse » restent à sourcer ou à arbitrer.
 -/
@@ -726,11 +727,24 @@ d'activité au moteur de demande) :
   cotisations réduites de 1,5 Md€ de plus chaque année de 2029 à 2034, sous
   conditions (emploi, salaires, investissement) ; avec O-38 et O-56, 22 Md€
   sur ≈ 80 Md€ d'allègements généraux en 2034.
-* O-62 : niches fiscales : −1 Md€ de plus chaque année de 2029 à 2035 ;
-  avec O-40 et O-57, 25 Md€ sur 88,3 Md€ de dépenses fiscales en 2035 (hors
-  Pacte Dutreil, traité par O-41, et dispositifs des ménages modestes). -/
+* O-62 : niches fiscales : −1,5 Md€ de plus chaque année de 2029 à 2035
+  (−1 Md€ dans la version précédente ; relevé avec le modèle affiné pour
+  que le déficit baisse chaque année sous les trois moteurs) ; avec O-40 et
+  O-57, 28,5 Md€ sur 88,3 Md€ de dépenses fiscales en 2035 (hors Pacte
+  Dutreil, traité par O-41, et dispositifs des ménages modestes). -/
 def aidesSecondeEtape : Int := 1500
-def nichesSecondeEtape : Int := 1000
+def nichesSecondeEtape : Int := 1500
+
+/-- Deuxième journée de solidarité (O-84) : sept heures de travail non
+rémunérées de plus par an (+0,44 % de durée annuelle du travail sur
+1 607 heures, levier `dureeTravail`), contribution de solidarité pour
+l'autonomie des employeurs portée de 0,3 % à 0,6 % de la masse salariale,
+affectée à l'autonomie (dépense de santé, au sens de la nomenclature du
+modèle). Reprend la contribution de solidarité par le travail votée par le
+Sénat le 20 novembre 2024 (PLFSS 2025, amendement adopté par 216 voix
+contre 119), chiffrée à ≈ 2,5 Md€ par an. -/
+def heuresSolidaritePm : Int := 4
+def contributionSolidariteAutonomie : Int := 2500
 
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
@@ -1501,7 +1515,7 @@ def mesures : List Mesure := [
     repetitions := 6 },
 
   { id := "O-62"
-    titre := "Niches fiscales : −1 Md€ de plus par an de 2029 à 2035"
+    titre := "Niches fiscales : −1,5 Md€ de plus par an de 2029 à 2035"
     source := s!"Texte Orientation D, mesure 62 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {nichesSecondeEtape} M€ de plus chaque année de 2029 à 2035 (IR, IS, TVA comme O-57)"
     leviers := [.prelevementSur .ir (nichesSecondeEtape / 2), .prelevementSur .impotSocietes (nichesSecondeEtape / 4),
                 .prelevementSur .tva (nichesSecondeEtape / 4)]
@@ -1642,13 +1656,19 @@ def mesures : List Mesure := [
     variantes := [
       { nom := "75 € par mois, modulés selon le revenu (LexImpact : 3,58 Md€ bruts)",
         leviers := [.depenseSur .famille 3580,
-                    .economieSur .famille (3580 * (allocationsPremierEnfantBrut - allocationsPremierEnfantNet) / allocationsPremierEnfantBrut)] }] }
+                    .economieSur .famille (3580 * (allocationsPremierEnfantBrut - allocationsPremierEnfantNet) / allocationsPremierEnfantBrut)] }] },
+
+  { id := "O-84"
+    titre := "Deuxième journée de solidarité : sept heures de plus par an, contribution des employeurs affectée à l'autonomie"
+    source := s!"Contribution de solidarité par le travail votée par le Sénat le 20 novembre 2024 (PLFSS 2025, 216 voix contre 119) : ≈ 2,5 Md€ par an ; 7 heures sur 1 607 = +{heuresSolidaritePm} ‰ de durée du travail ; CSA de 0,3 % à 0,6 % : {contributionSolidariteAutonomie} M€ de cotisations, dépensés pour l'autonomie"
+    leviers := [.dureeTravail heuresSolidaritePm, .prelevementSur .cotisations contributionSolidariteAutonomie,
+                .depenseSur .sante contributionSolidariteAutonomie] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
