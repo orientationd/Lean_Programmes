@@ -25,6 +25,11 @@ Seule la colonne **État** est imputée aux dépenses publiques. La colonne
 publiques dans le modèle (prêts, prises de participation) ; elle est citée
 dans le champ `source` de chaque mesure.
 
+Ajouts du 28 octobre 2026 (L-34 à L-50) : plans « BTP et logement »
+(24 septembre 2026) et ESR (26 octobre 2026), mesures de *L'Avenir en
+commun* 2025 avec le chiffrage du parti de 2022 ou, à défaut, un chiffrage
+indépendant ou un calcul sur données officielles (constantes ci-dessous).
+
 Les mesures sans montant dans la source (sanctions des flottes
 d'entreprises, critères de production française, moratoire sur les
 fermetures, prix national de l'électricité…) ne sont pas traduites en
@@ -51,6 +56,113 @@ def budget : String :=
 
 def page : String :=
   "melenchon2027.fr/programme/plans-investissement/automobile, tableau « Les investissements supplémentaires »"
+
+/-! ## Ajouts du 28 octobre 2026 : plans thématiques, *L'Avenir en commun* 2025, chiffrages de 2022
+
+Le programme complet (5e édition de *L'Avenir en commun*) paraît le
+6 novembre 2026 ; à défaut, les montants viennent des plans publiés sur
+melenchon2027.fr (colonne État), de chiffrages du parti en 2022 pour les
+mesures reprises dans l'édition 2025, ou de chiffrages indépendants et de
+données officielles (calculs ci-dessous). -/
+
+/-- Plan « BTP et logement » (melenchon2027.fr/programme/plans-investissement/btp-logement,
+24 septembre 2026, modifié le 10 octobre 2026), colonne État, M€ par an :
+construction de 200 000 logements publics par an, 3 100 ; isolation de
+700 000 logements par an, 5 300 ; rénovation de logements sociaux, 250 ;
+confort d'été, 500 ; bâtiments publics, associatifs et tertiaires, 1 000 ;
+sortie du fioul et baisse du gaz, 1 000 ; formation, 60 ; déchets et
+réemploi, 200 ; patrimoine, 600. Total : les « 12 milliards » de l'État du
+plan (calcul). La colonne du pôle public bancaire (≈ 16 Md€ pour la
+construction, ≈ 19 Md€ pour la rénovation) n'est pas imputée. -/
+def planConstruction : Int := 3100
+def planRenovation : Int := 5300 + 250 + 500 + 1000 + 1000 + 60 + 200
+def planPatrimoine : Int := 600
+
+theorem plan_btp_logement : planRenovation = 8310 ∧
+    planConstruction + planRenovation + planPatrimoine = 12010 := by decide
+
+/-- Grand âge : « au moins 210 000 personnes » formées et recrutées (AEC
+2025). Coût par ETP du chiffrage de l'Institut Montaigne pour la mesure
+comparable de Y. Jadot (2022) : 7,7 Md€ pour 203 000 ETP en Ehpad, soit
+37 931 € (calcul) ; montée en charge en cinq ans (hypothèse). -/
+def coutEtpGrandAgeEuros : Int := 7700000000 / 203000
+def coutGrandAge : Int := 210000 * coutEtpGrandAgeEuros / 1000000
+def grandAgeEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * coutGrandAge / 5
+
+theorem grand_age_valeurs : coutEtpGrandAgeEuros = 37931 ∧ coutGrandAge = 7965 ∧
+    grandAgeEcheancier = [1593, 3186, 4779, 6372, 7965] := by decide
+
+/-- 10 000 places par an en Ehpad publics pendant cinq ans (AEC 2025).
+Mêmes coûts que la mesure O-109 du Texte Orientation D : construction
+≈ 85 000 € HT par place en 2012 (Anap et CNSA), actualisés par l'indice du
+coût de la construction (1 617 au 1er trimestre 2012, 2 058 au 4e trimestre
+2025, Insee) ; fonctionnement à la charge des administrations : soins
+(12 755 € par place et par an) et APA en établissement (338 € par mois),
+valeurs 2019 (rapport Libault, DREES) ; l'hébergement reste payé par les
+résidents. -/
+def placesEhpadParAn : Int := 10000
+def coutPlaceEhpadEuros : Int := 85000 * 2058 / 1617
+def fonctionnementPlaceEhpadEuros : Int := 12755 + 338 * 12
+def investissementEhpad : Int := placesEhpadParAn * coutPlaceEhpadEuros / 1000000
+def fonctionnementEhpad : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * placesEhpadParAn * fonctionnementPlaceEhpadEuros / 1000000
+
+theorem ehpad_valeurs : coutPlaceEhpadEuros = 108181 ∧ investissementEhpad = 1081 ∧
+    fonctionnementEhpad = [168, 336, 504, 672, 840] := by decide
+
+/-- AAH au niveau du SMIC (AEC 2025) : 12,7 Md€ versés en 2023 à
+1 352 800 allocataires, montant maximal de 1 033,32 € au 1er avril 2025
+(DREES, minima sociaux, édition 2025) ; porté à 1 600 € (L-11), dépense
+relevée en proportion (calcul ; les nouveaux entrants dus au relèvement du
+plafond ne sont pas comptés). -/
+def hausseAAH : Int := 12700 * (160000 - 103332) / 103332
+
+/-- Minimum vieillesse au seuil de pauvreté (AEC 2025) : ASPA de 1 034,28 €,
+4,1 Md€ versés en 2023 à 723 000 allocataires (DREES) ; seuil de pauvreté
+2024 : 1 337 € (Insee, juillet 2026) ; dépense relevée en proportion
+(calcul). -/
+def hausseASPA : Int := 4100 * (133700 - 103428) / 103428
+
+theorem minima_valeurs : hausseAAH = 6964 ∧ hausseASPA = 1200 := by decide
+
+/-- Coût moyen d'un enseignant, hors pensions : 59,23 Md€ de masse salariale
+hors CAS Pensions pour 852 752 enseignants en 2026 (PLF 2026, rapport du
+Sénat sur la mission Enseignement scolaire), soit 69 457 € (calcul),
+appliqué aux personnels de l'enseignement supérieur (hypothèse). Plan ESR
+(melenchon2027.fr, 26 octobre 2026) : 40 000 personnels statutaires « à
+minima » sur cinq ans. -/
+def coutEnseignantEuros : Int := 59230000000 / 852752
+def postesEsrEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * 8000 * coutEnseignantEuros / 1000000
+
+theorem esr_valeurs : coutEnseignantEuros = 69457 ∧
+    postesEsrEcheancier = [555, 1111, 1666, 2222, 2778] := by decide
+
+/-- Cotisation vieillesse relevée de 0,25 point par an pendant le
+quinquennat (AEC 2025, d'après Votons 2027) : 0,25 % des 1 157,2 Md€ de
+salaires bruts de 2025 (Insee, compte des ménages), soit 2 893 M€ par
+hausse (calcul ; assiette : hypothèse). -/
+def quartDePointCotisations : Int := 1157200 / 400
+def cotisationVieillesse : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * quartDePointCotisations
+
+theorem cotisation_vieillesse_valeurs : quartDePointCotisations = 2893 ∧
+    cotisationVieillesse = [2893, 5786, 8679, 11572, 14465] := by decide
+
+/-- Aide publique au développement portée à 0,7 % du RNB (AEC 2025). En
+2025 : 12,9 Md€, soit 0,42 % du RNB (75 Secondes, 30 août 2026, d'après
+les données préliminaires de l'OCDE d'avril 2026) ; RNB implicite
+12 900 / 0,42 % (calcul) ; écart de 0,28 point, atteint en cinq ans
+(hypothèse). -/
+def apd2025 : Int := 12900
+def rnb2025 : Int := apd2025 * 10000 / 42
+def hausseApd : Int := rnb2025 * 28 / 10000
+def apdEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * hausseApd / 5
+
+theorem apd_valeurs : rnb2025 = 3071428 ∧ hausseApd = 8599 ∧
+    apdEcheancier = [1719, 3439, 5159, 6879, 8599] := by decide
 
 def mesures : List Mesure := [
   { id := "L-01", titre := "Nouvelles lignes de production"
@@ -151,13 +263,69 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .autres 3000] },
   { id := "L-33", titre := "Fin des exonérations de cotisations au-delà de 2 SMIC"
     source := s!"{budget} : non chiffré par le parti ; modèle commun : allègements de 2 à 2,5 SMIC (34,3 % de la tranche 1,6-2,5 SMIC, calcul avec le barème de 2026) et au-delà de 2,5 SMIC, soit ≈ 4,2 Md€ (2025)"
-    leviers := [.allegementsCotisations .intermediaire (-(8850 * 343 / 1000)), .allegementsCotisations .haut (-1200)] }
+    leviers := [.allegementsCotisations .intermediaire (-(8850 * 343 / 1000)), .allegementsCotisations .haut (-1200)] },
+  { id := "L-34", titre := "200 000 logements publics par an pendant cinq ans"
+    source := s!"Plan « BTP et logement » (melenchon2027.fr, 24 septembre 2026) : 400 000 logements abordables par an, dont 200 000 logements publics (140 000 très sociaux) ; État {planConstruction} M€ par an, pôle public bancaire et autres ≈ 16,3 Md€ (non imputés) ; cohérent avec 163 800 à 189 200 € par logement (Institut Montaigne, 2022) pour 100 000 logements de plus que les ≈ 100 000 actuels (USH). Recoupe en partie L-26 (hébergement d'urgence)"
+    leviers := [.investissement .logementEnvironnement planConstruction] },
+  { id := "L-35", titre := "Rénovation : 700 000 isolations par an sans reste à charge, bâtiments publics, sortie du fioul, patrimoine"
+    source := s!"Plan « BTP et logement » (melenchon2027.fr, 24 septembre 2026), colonne État : {planRenovation} M€ par an de rénovation (isolation 5 300, logements sociaux 250, confort d'été 500, bâtiments publics et tertiaires 1 000, fioul et gaz 1 000, formation 60, déchets 200) et {planPatrimoine} M€ pour le patrimoine (voir `planRenovation`) ; économies d'énergie non chiffrées par la source, non modélisées. Recoupement possible avec L-20 (planification écologique, 10 Md€)"
+    leviers := [.investissement .logementEnvironnement planRenovation, .investissement .culture planPatrimoine] },
+  { id := "L-36", titre := "« 100 % Sécu » : remboursement intégral des soins prescrits, mutuelles intégrées à la Sécurité sociale"
+    source := "L'Avenir en commun 2025 ; le parti le dit compensé (frais de gestion 3,5 à 4 Md€, dépassements 3 Md€, médicaments 2,5 Md€, niches des complémentaires 7,25 Md€, chiffrage 2022) ; retenu : coût net de 17,1 Md€ par an (Institut Montaigne, 14 février 2022, fourchette 15 à 26 ; base HCAAM de 22,5 Md€ moins 5,4 Md€ de frais de gestion évités)"
+    leviers := [.depenseSur .sante 17100] },
+  { id := "L-37", titre := "Conscription citoyenne de neuf mois, rémunérée au SMIC, pour les moins de 25 ans"
+    source := "L'Avenir en commun 2025 (abrogation du SNU) ; chiffrage du parti en 2022 : 7,4 Md€ par an (750 000 jeunes, 11,4 Md€ de coûts et 4 Md€ d'économies) ; l'Institut Montaigne l'évaluait à 18,5 Md€ (variante). Imputé à la défense (hypothèse). Même population que L-19"
+    leviers := [.depenseSur .defense 7400]
+    variantes := [
+      { nom := "chiffrage de l'Institut Montaigne (18,5 Md€)", leviers := [.depenseSur .defense 18500] }] },
+  { id := "L-38", titre := "Grand âge : 210 000 professionnels formés et recrutés"
+    source := s!"L'Avenir en commun 2025 : « au moins 210 000 personnes » ; non chiffré par le parti : {coutEtpGrandAgeEuros} € par ETP (Institut Montaigne, 2022), {coutGrandAge} M€ par an en cinq ans (voir `coutEtpGrandAgeEuros`)"
+    leviers := [.depenseEcheancier .sante grandAgeEcheancier, .annonceEmplois 210000] },
+  { id := "L-39", titre := "Ehpad publics : 10 000 places par an pendant cinq ans"
+    source := s!"L'Avenir en commun 2025 ; non chiffré par le parti : {coutPlaceEhpadEuros} € par place construite, {investissementEhpad} M€ par an de 2027 à 2031, puis {fonctionnementPlaceEhpadEuros} € par place et par an de soins et d'APA (voir `coutPlaceEhpadEuros`)"
+    leviers := [.investissementEcheancier .sante [investissementEhpad, investissementEhpad, investissementEhpad,
+                                                  investissementEhpad, investissementEhpad, 0],
+                .depenseEcheancier .sante fonctionnementEhpad] },
+  { id := "L-40", titre := "AAH portée au niveau du SMIC"
+    source := s!"L'Avenir en commun 2025 ; non chiffré : 12,7 Md€ × (1 600 − 1 033,32) / 1 033,32 = {hausseAAH} M€ par an (DREES ; voir `hausseAAH`)"
+    leviers := [.depenseSur .famille hausseAAH] },
+  { id := "L-41", titre := "Minimum vieillesse au niveau du seuil de pauvreté"
+    source := s!"L'Avenir en commun 2025 ; non chiffré : 4,1 Md€ × (1 337 − 1 034,28) / 1 034,28 = {hausseASPA} M€ par an (DREES, Insee ; voir `hausseASPA`) ; le volet « pensions au SMIC pour une carrière complète » n'est pas chiffré"
+    leviers := [.depenseSur .retraites hausseASPA] },
+  { id := "L-42", titre := "500 000 places en crèche en cinq ans"
+    source := "L'Avenir en commun 2025 ; chiffrage du parti en 2022 : 17,5 Md€ d'investissement (3,5 Md€ par an pendant cinq ans) et 9,5 Md€ par an de fonctionnement à plein régime, montée en charge linéaire (hypothèse) ; l'Institut Montaigne retenait 4,3 Md€ de fonctionnement public la cinquième année"
+    leviers := [.investissementEcheancier .famille [3500, 3500, 3500, 3500, 3500, 0],
+                .depenseEcheancier .famille [1900, 3800, 5700, 7600, 9500]] },
+  { id := "L-43", titre := "Gratuité réelle de l'école publique (fournitures, périscolaire, transports)"
+    source := "L'Avenir en commun 2025 ; chiffrage du parti en 2022 : 7,9 Md€ cantine comprise, moins les 3,6 Md€ de la gratuité des cantines (L-22) : 4,3 Md€ (calcul ; 3,3 Md€ selon l'Institut Montaigne)"
+    leviers := [.depenseSur .enseignement 4300] },
+  { id := "L-44", titre := "Enseignement supérieur et recherche : 40 000 personnels statutaires en cinq ans"
+    source := s!"Plan ESR (melenchon2027.fr, 26 octobre 2026) ; non chiffré : 8 000 postes par an à {coutEnseignantEuros} € (hypothèse, voir `coutEnseignantEuros`), {postesEsrEcheancier.getLastD 0} M€ par an en 2031 ; les 8 000 contrats doctoraux de plus par an ne sont pas chiffrés"
+    leviers := [.depenseEcheancier .enseignement postesEsrEcheancier, .annonceEmplois 40000] },
+  { id := "L-45", titre := "Gratuité de l'enseignement supérieur"
+    source := "L'Avenir en commun 2025 et plan ESR ; Institut Montaigne (2022) : droits d'inscription 342 M€ et contribution de vie étudiante 149 M€, moins 112 M€ de compensation des boursiers, soit 379 M€ par an (calcul) ; repas à 1 € au CROUS non chiffré"
+    leviers := [.depenseSur .enseignement 379] },
+  { id := "L-46", titre := "Police de proximité rétablie, BAC et BRAV-M démantelées"
+    source := "L'Avenir en commun 2025 ; chiffrage du parti en 2022 : 0,35 Md€ par an (0,83 Md€ net selon l'Institut Montaigne : 26 700 agents, économie de 0,41 Md€ sur les BAC)"
+    leviers := [.depenseSur .securiteJustice 350] },
+  { id := "L-47", titre := "Impôt sur le revenu à 14 tranches"
+    source := "L'Avenir en commun 2025 ; « au cours du mandat », non chiffré en 2026 ; chiffrage du parti en 2022 : 10 Md€ de baisse et 5 Md€ de hausse, soit −5 Md€ nets (calcul) ; crédit d'impôt par enfant à la place du quotient familial et CSG progressive non chiffrés"
+    leviers := [.prelevementSur .ir (-5000)] },
+  { id := "L-48", titre := "Cotisation vieillesse : +0,25 point par an pendant le quinquennat"
+    source := s!"L'Avenir en commun 2025 (via Votons 2027) ; non chiffré : {quartDePointCotisations} M€ par quart de point (voir `quartDePointCotisations`), {cotisationVieillesse.getLastD 0} M€ en 2031"
+    leviers := [.recetteEcheancier (some .cotisations) cotisationVieillesse] },
+  { id := "L-49", titre := "Sixième semaine de congés payés"
+    source := "L'Avenir en commun 2025 : « généraliser une sixième semaine de congés payés » ; conversion : 35 heures sur 1 607 heures annuelles, −2,2 % de durée du travail (calcul)"
+    leviers := [.dureeTravail (-22)] },
+  { id := "L-50", titre := "Aide publique au développement portée à 0,7 % du RNB"
+    source := s!"L'Avenir en commun 2025 ; non chiffré : de 0,42 % à 0,7 % du RNB, +{hausseApd} M€ par an atteints en cinq ans (voir `apd2025`)"
+    leviers := [.depenseEcheancier .fonctionnement apdEcheancier] }
 ]
 
 def programme : Programme where
   id := "LFI"
   nom := "La France insoumise — Mélenchon 2027 (extraits)"
-  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025), recettes (106,4 Md€, toutes transcrites) et dépenses (72,7 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026, université (250 000 places), fin des exonérations au-delà de 2 SMIC."
+  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025), recettes (106,4 Md€, toutes transcrites) et dépenses (72,7 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026, université (250 000 places), fin des exonérations au-delà de 2 SMIC. Ajouts du 28 octobre 2026 (plans « BTP et logement » et ESR, L'Avenir en commun 2025, chiffrages de 2022) : 200 000 logements publics par an, rénovation, 100 % Sécu, conscription citoyenne, grand âge et Ehpad, AAH et minimum vieillesse, crèches, gratuité de l'école et du supérieur, police de proximité, IR à 14 tranches, cotisation vieillesse, sixième semaine de congés, aide au développement à 0,7 % du RNB."
   mainteneurs := ["@orientationd"]
   source := "https://melenchon2027.fr/programme/plans-investissement/automobile/ (consulté le 21 octobre 2026)"
   mesures := mesures

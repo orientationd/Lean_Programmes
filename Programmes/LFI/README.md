@@ -56,10 +56,10 @@ l'IS, taxe à 15 % sur les géants du numérique (≈ 22,9 Md€ de recettes) et
 ≈ 18 Md€ de dépenses. Le budget rectificatif chiffre le retour à 62 ans
 (9 Md€) ; le programme vise 60 ans et c'est cet objectif qui est modélisé.
 
-Le reste de *L'Avenir en commun* (32 h, 14 tranches d'IR, 200 000
-logements publics par an, 700 000 rénovations, plan de 200 Md€, 10 000
-places d'EHPAD, 500 000 places de crèche, conscription de neuf mois) n'a
-pas de montant annuel public dans les sources lues.
+Les mesures de *L'Avenir en commun* sans montant dans le budget
+rectificatif sont ajoutées plus bas (L-34 à L-50) avec le chiffrage
+retenu ; le plan de 200 Md€ passe par le pôle public bancaire, hors
+administrations publiques.
 
 Objectifs d'emplois annoncés (levier déclaratif `annonceEmplois`, vérifié
 par la propriété « emplois annoncés réalisables ») : plus de 40 000 emplois
@@ -83,6 +83,41 @@ Recettes de la brochure désormais toutes transcrites (106,4 Md€) ; dépenses 
 chiffré ; la remise de 2022 avait coûté ≈ 8 Md€), impôt sur le revenu à
 14 tranches. Recalibrages publiés depuis, non appliqués : SMIC à 1 700 €
 net, retraite d'abord à 62 ans (9 Md€).
+
+## Ajouts du 28 octobre 2026 : plans thématiques et *L'Avenir en commun* 2025
+
+Le programme complet (5e édition de *L'Avenir en commun*) paraît le
+6 novembre 2026. En attendant, les mesures viennent des plans publiés sur
+melenchon2027.fr (colonne État seulement), du chiffrage du parti en 2022
+pour les mesures reprises dans l'édition 2025, ou d'un chiffrage
+indépendant ou d'un calcul sur données officielles (détail dans
+`Programme.lean`).
+
+| Mesure | Levier |
+|---|---|
+| L-34 200 000 logements publics par an | +3,1 Md€/an d'investissement (plan « BTP et logement », État ; ≈ 16 Md€ du pôle public non imputés) |
+| L-35 Rénovation (700 000 isolations par an, bâtiments publics, fioul, patrimoine) | +8,3 Md€/an de logement-environnement et +0,6 Md€/an de patrimoine (même plan) ; recoupement possible avec L-20 |
+| L-36 « 100 % Sécu » | +17,1 Md€/an (Institut Montaigne, 2022 ; le parti la dit compensée) |
+| L-37 Conscription citoyenne de neuf mois au SMIC | +7,4 Md€/an (parti, 2022) ; variante 18,5 Md€ (Institut Montaigne) |
+| L-38 210 000 professionnels du grand âge | jusqu'à +8,0 Md€/an en cinq ans (37 931 € par ETP, Institut Montaigne) |
+| L-39 10 000 places par an en Ehpad publics | 1,08 Md€/an de construction pendant cinq ans, puis 0,84 Md€/an de soins et d'APA |
+| L-40 AAH au niveau du SMIC | +7,0 Md€/an (DREES, calcul) |
+| L-41 Minimum vieillesse au seuil de pauvreté | +1,2 Md€/an (DREES, Insee, calcul) |
+| L-42 500 000 places en crèche | 3,5 Md€/an d'investissement pendant cinq ans, fonctionnement jusqu'à 9,5 Md€/an (parti, 2022) |
+| L-43 Gratuité réelle de l'école | +4,3 Md€/an (parti, 2022, hors cantines) |
+| L-44 40 000 personnels de l'ESR en cinq ans | jusqu'à +2,8 Md€/an (coût moyen d'un enseignant, hypothèse) |
+| L-45 Gratuité du supérieur | +0,38 Md€/an (Institut Montaigne) |
+| L-46 Police de proximité, BAC démantelées | +0,35 Md€/an (parti, 2022) |
+| L-47 IR à 14 tranches | −5 Md€/an d'IR (parti, 2022) |
+| L-48 Cotisation vieillesse +0,25 point par an | jusqu'à +14,5 Md€/an en 2031 (calcul sur les salaires bruts) |
+| L-49 Sixième semaine de congés payés | −2,2 % de durée du travail |
+| L-50 Aide au développement à 0,7 % du RNB | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
+
+Non chiffrés, faute de montant ou de donnée de base : R&D publique à 1,5 %
+du PIB, culture à 1 % du PIB (périmètre non défini), garantie d'emploi,
+8 000 contrats doctoraux de plus par an, 32 heures dans les métiers
+pénibles, blocage des prix, pôle public bancaire (hors administrations
+publiques).
 
 ## Ce qui ne l'est pas, faute de montant dans la source
 
