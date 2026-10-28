@@ -61,18 +61,37 @@ démantèlement évoqué en 2022 ne figurent pas au contre-budget : non
 transcrits.
 
 Selon l'Institut de l'Entreprise, ≈ 7,5 Md€ seulement du plan seraient
-crédibles en 2031. Non transcrit : taxe de 14 % sur les transferts d'argent
-(non chiffrée), taxe sur les transactions intrajournalières (contre-budget
-2026, reprise non confirmée), AME remplacée par l'AMU (recouvrement avec
-RN-08), privatisation de l'audiovisuel public (non confirmée en 2027).
+crédibles en 2031. Non transcrit : taxe sur les transactions
+intrajournalières (contre-budget 2026, reprise non confirmée).
+
+## Ajouts du 28 octobre 2026 : restes d'agrégats et mesures hors contre-budget
+
+Les agrégats du dossier sont décomposés quand la note de l'IDEP ou la
+presse isole une mesure ; le reste d'un agrégat est transcrit comme une
+mesure, dont le champ `source` donne le calcul.
+
+| Mesure | Levier |
+|---|---|
+| RN-23 Défense à 3 % du PIB en 2030 (amendement n° 565, avril 2026) | jusqu'à +15,0 Md€/an en 2030 (0,5 point du PIB au-delà de la LPM), non financé par le contre-budget |
+| RN-24 Énergie, réseaux et concessions | prix national de l'électricité compté comme économie de 9,3 Md€ « sans mécanisme explicité » (IDEP), ≈ 11,7 Md€ de recettes non fiscales (dividendes, tarifs de réseau, autoroutes ; calcul) |
+| RN-25 Familles de travailleurs, troisième enfant | +6,2 Md€ (reste de l'agrégat « prestations », calcul) |
+| RN-26 Droits de douane et tabac | +6,4 Md€ (reste de l'agrégat « Union européenne », calcul) |
+| RN-27 Composante carbone de l'accise ramenée à 2017 | −3,9 Md€/an (correction de l'IDEP) |
+| RN-28 Pacte Dutreil renforcé, suramortissement | −3,9 Md€ (calcul IDEP), moitié droits de mutation, moitié IS |
+| RN-29 Subventions aux associations | −3,7 Md€ à partir de 2028 |
+| RN-30 Taxe de 14 % sur les transferts d'argent | +2 Md€ (assiette non documentée) |
+| RN-31 AME remplacée par une aide d'urgence | −1,3 Md€ (chiffrage de 2026) |
+| RN-32 Privatisation de l'audiovisuel public | jusqu'à −2 Md€/an en quatre ans (Institut Montaigne, 2024) |
+| RN-33 Frais de scolarité des étudiants étrangers | +1,1 Md€ de recettes non fiscales |
 
 ## Non modélisé
 
-* Prix national de l'électricité (9,3 Md€), dividendes d'EDF, TURPE,
-  autoroutes : mécanismes de marché ou de concession sans levier.
-* Flat tax à 30 %, pacte Dutreil, suramortissement, permis gratuit,
-  revalorisation de l'AAH, pilier de capitalisation, proche aidant,
-  dentaire, 3e enfant : sans montant isolé.
+* Indemnisation des sociétés d'autoroutes (≈ 40 Md€ une fois, Institut
+  Montaigne 2022) : opération financière, non modélisée.
+* Flat tax à 30 %, revalorisation de l'AAH, pilier de capitalisation :
+  sans montant isolé.
+* Programme de 2022 non repris au contre-budget : 20 EPR, démantèlement
+  des éoliennes ; hausse de 10 % des salaires exonérée (2024).
 * Mesures du PLF 2027 conservées (3,6 Md€).
 * Trajectoire 2027-2032 et règle d'or : le modèle n'a ni montée en charge
   ni règle budgétaire.
