@@ -35,8 +35,9 @@ def mesures : List Mesure := [
     source := s!"{plan} : 11,5 + 5 + 6 = 22,5 Md€"
     leviers := [.economieSur .fonctionnement 22500] },
   { id := "LR-04", titre := "Fin de soutiens : nouvelles installations photovoltaïques et éoliennes, aide au développement, culture et audiovisuel public, contrats aidés, SNU, MaPrimeRénov'"
-    source := s!"{plan} : 23 Md€ (agrégat)"
-    leviers := [.economieSur .affairesEconomiques 23000] },
+    source := s!"{plan} : 23 Md€ (agrégat) ; installations : fin des volumes aidés de la PPE3, soit les appels d'offres de 2,9 GW/an de solaire et 2 × 800 MW/an d'éolien terrestre (Maire-info, TaiyangNews, février 2026) ; parcs en mer déjà attribués maintenus"
+    leviers := [.economieSur .affairesEconomiques 23000,
+                .capaciteElectrique .solaire (-2900), .capaciteElectrique .eolienTerrestre (-1600)] },
   { id := "LR-05", titre := "Immigration : prestations non contributives après cinq ans, asile hors des frontières"
     source := s!"{plan} : 10 Md€, dont 4,5 conditionnés à une révision constitutionnelle"
     leviers := [.economieSur .famille 10000] },
@@ -76,7 +77,12 @@ def mesures : List Mesure := [
     repetitions := 9 },
   { id := "LR-17", titre := "Fin des 35 heures : durée annuelle de référence portée de 1 607 à 1 623 heures"
     source := "B. Retailleau, Public Sénat, 7 janvier 2026 : +16 heures par an, +1,0 % de durée du travail (calcul)"
-    leviers := [.dureeTravail 10] }
+    leviers := [.dureeTravail 10] },
+  { id := "LR-18", titre := "Suppression du zéro artificialisation nette (ZAN)"
+    source := "Hors du plan du 12 octobre 2026 : proposition de loi n° 3332 (E. Rey-Rinchet, apparentée Droite républicaine, 13 octobre 2026) « visant à supprimer le dispositif du ZAN » ; amendements n° 1063 et 2639 (Boucard, Wauquiez, 2025) : « Le ZAN doit être supprimé ». Consommation d'espaces ramenée au rythme 2011-2021 (modèle commun)"
+    leviers := [.regimeZan 1000]
+    variantes := [
+      { nom := "assouplissement de la proposition de loi TRACE (Sénat, 18 mars 2025), non chiffré : ZAN maintenu", leviers := [] }] }
 ]
 
 def programme : Programme where

@@ -44,12 +44,21 @@ annoncés.
 
 | Mesure | Levier |
 |---|---|
-| RN-16 Fin des subventions aux renouvelables | −5 Md€ (chiffrage du parti ; recouvrement possible avec RN-13) |
+| RN-16 Fin des subventions aux renouvelables | −5 Md€ (chiffrage du parti ; recouvrement possible avec RN-13) ; −2,9 GW/an de solaire et −1,6 GW/an d'éolien terrestre (volumes des appels d'offres de la PPE3) |
 | RN-17 Taxe de 1 000 € par salarié extra-européen | +1,3 Md€ bruts (amendement rejeté en commission) |
 | RN-18 Permis de conduire gratuit, prime d'activité étudiante | +0,7 et +0,6 Md€ |
 | RN-19 Proches aidants, soins dentaires | +2 et +1,4 Md€ |
-| RN-20 30 000 places de prison | 7,1 Md€ sur cinq ans, puis ≈ 1,35 Md€ par an de fonctionnement (hypothèses) |
+| RN-20 30 000 places de prison | 7,1 Md€ sur cinq ans, puis ≈ 1,35 Md€ par an de fonctionnement (hypothèses) ; 728 ha sur cinq ans (17 ha pour 700 places, Saint-Saulve) |
 | RN-21 7 000 policiers et gendarmes | ≈ 0,6 Md€ (hypothèse) |
+| RN-22 Abrogation du ZAN | consommation d'espaces ramenée au rythme 2011-2021 (22 672 ha/an) ; hors du contre-budget : amendement n° 1555 (Meurin, cosigné par M. Le Pen, 4 avril 2025) |
+
+Électricité et sols en 2035 (scénario central) : 44,3 GW de solaire et
+26,7 GW d'éolien terrestre au lieu de 67,5 et 37,5 GW, production
+inchangée (69,3 GW moyens, le nucléaire modulant moins) ; 192 331 ha
+d'espaces naturels, agricoles et forestiers consommés de 2026 à 2035 au
+lieu de 51 150 sous le ZAN. Le moratoire sur l'éolien voté en 2025 et le
+démantèlement évoqué en 2022 ne figurent pas au contre-budget : non
+transcrits.
 
 Selon l'Institut de l'Entreprise, ≈ 7,5 Md€ seulement du plan seraient
 crédibles en 2031. Non transcrit : taxe de 14 % sur les transferts d'argent
