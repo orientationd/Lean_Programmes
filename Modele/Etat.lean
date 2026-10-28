@@ -925,6 +925,10 @@ structure Echeance where
   d'emplois en plus ; une part revient en prélèvements, le reste soutient la
   consommation des ménages (effet de demande d'un transfert). -/
   remuneration : Option NatureRemuneration := none
+  /-- Postes publics créés (levier `creationPostes`) : coût complet d'un poste
+  l'année d'entrée en vigueur, €. Chaque variation du niveau crée (ou
+  supprime) les emplois publics correspondants, un pour un. -/
+  coutParPosteEuros : Option Int := none
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/

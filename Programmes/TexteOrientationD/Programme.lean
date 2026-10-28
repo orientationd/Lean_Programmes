@@ -1247,11 +1247,16 @@ def adjointsSecurite : Int := 20000
 def encadrantsProximite : Int := 6700
 def coutPoliceProximite : Int := (adjointsSecurite * 39015 + encadrantsProximite * 67998) / 1000000
 def agentsProximite : List Int := [670, 2670, 10700, 21300, adjointsSecurite + encadrantsProximite]
+/-- Coût moyen d'un agent de la police de proximité (adjoints et
+encadrants pondérés, calcul), pour le levier `creationPostes`. -/
+def coutAgentProximiteEuros : Int :=
+  (adjointsSecurite * 39015 + encadrantsProximite * 67998) / (adjointsSecurite + encadrantsProximite)
 def policeProximite : List Int :=
   agentsProximite.map fun a => coutPoliceProximite * a / (adjointsSecurite + encadrantsProximite)
 
 theorem policeProximite_valeurs :
-    coutPoliceProximite = 1235 ∧ policeProximite = [30, 123, 494, 985, 1235] := by decide
+    coutPoliceProximite = 1235 ∧ policeProximite = [30, 123, 494, 985, 1235] ∧
+    coutAgentProximiteEuros = 46287 := by decide
 
 /-- Bpifrance (O-111) : 5 % des financements de la banque publique sont
 orientés vers des projets choisis par un vote en ligne des citoyens, parmi
@@ -1469,6 +1474,8 @@ O-88) : 4 000 postes coûtent 150 M€ en année pleine (gouvernement, janvier
 recrutés en cinq ans. -/
 def postesEcole : Int := 90000
 def coutPosteEcoleEuros : Int := 150000000 / 4000
+/-- Effectifs cumulés de O-121, par cinquièmes (levier `creationPostes`). -/
+def postesEcoleCumul : List Int := ([1, 2, 3, 4, 5] : List Int).map fun k => postesEcole * k / 5
 def postesEcoleEcheancier : List Int :=
   ([1, 2, 3, 4, 5] : List Int).map fun k => postesEcole * k / 5 * coutPosteEcoleEuros / 1000000
 
@@ -2457,11 +2464,11 @@ def mesures : List Mesure := [
   { id := "O-88"
     titre := "Médecins scolaires : effectif doublé, 800 de plus en quatre ans"
     source := s!"Texte Orientation D, mesure 88 ; 818 médecins en 2022, un pour 13 300 élèves, 44 % de postes vacants ; +{medecinsScolairesNouveaux} médecins à {coutMedecinScolaireEuros / 1000} k€ par an, revalorisation comprise (hypothèse) : {medecinsScolairesNouveaux * coutMedecinScolaireEuros / 1000000} M€ par an une fois tous recrutés, par quarts (voir `medecinsScolairesNouveaux`)"
-    leviers := [.depenseSur .enseignement (medecinsScolairesNouveaux * coutMedecinScolaireEuros / 1000000 / 4)]
-    repetitions := 4
+    leviers := [.creationPostes .enseignement (([1, 2, 3, 4] : List Int).map fun k => medecinsScolairesNouveaux * k / 4)
+                  coutMedecinScolaireEuros]
     variantes := [
       { nom := "retour au niveau de 2013 (1 143 médecins, 325 de plus)",
-        leviers := [.depenseSur .enseignement (325 * coutMedecinScolaireEuros / 1000000 / 4)] }] },
+        leviers := [.creationPostes .enseignement (([1, 2, 3, 4] : List Int).map fun k => 325 * k / 4) coutMedecinScolaireEuros] }] },
 
   { id := "O-89"
     titre := "Fin de l'octroi de mer, compensée aux collectivités par l'État"
@@ -2518,7 +2525,7 @@ def mesures : List Mesure := [
   { id := "O-95"
     titre := "Divisions régionales de cybersécurité de la police : 18 divisions de 50 enquêteurs et ingénieurs"
     source := s!"Texte Orientation D, mesure 95 ; {agentsCyber} agents à {coutAgentPoliceEuros} € (coût moyen d'un emploi de la police nationale, PLF 2026) : {coutCyberPolice} M€ par an, recrutés en trois ans ; laboratoires 1 M€ par division (hypothèse) ; en plus de l'OFAC (720 enquêteurs en 2027) (voir `divisionsCyber`)"
-    leviers := [.depenseEcheancier .securiteJustice [coutCyberPolice / 3, 2 * coutCyberPolice / 3, coutCyberPolice],
+    leviers := [.creationPostes .securiteJustice [agentsCyber / 3, 2 * agentsCyber / 3, agentsCyber] coutAgentPoliceEuros,
                 .investissementEcheancier .securiteJustice [divisionsCyber, 0],
                 .annonceEmplois agentsCyber] },
 
@@ -2557,7 +2564,8 @@ def mesures : List Mesure := [
   { id := "O-100"
     titre := "2 000 douaniers de plus et contrôle renforcé des produits agricoles et industriels importés"
     source := s!"Texte Orientation D, mesure 100 ; {douaniersSupplementaires} douaniers (1 220 pour revenir aux plafonds de 2019, 780 pour les contrôles de conformité des importations) à {coutDouanierEuros} € (coût moyen du programme 302, PLF 2026) : {coutDouaniers} M€ par an, recrutés en trois ans ; recettes des contrôles non comptées (voir `douaniersSupplementaires`)"
-    leviers := [.depenseEcheancier .securiteJustice [coutDouaniers / 3, 2 * coutDouaniers / 3, coutDouaniers],
+    leviers := [.creationPostes .securiteJustice
+                  [douaniersSupplementaires / 3, 2 * douaniersSupplementaires / 3, douaniersSupplementaires] coutDouanierEuros,
                 .annonceEmplois douaniersSupplementaires] },
 
   { id := "O-101"
@@ -2655,7 +2663,7 @@ def mesures : List Mesure := [
   { id := "O-110"
     titre := "Police de proximité : 20 000 adjoints de sécurité et 6 700 policiers pour les encadrer"
     source := s!"Texte Orientation D, mesure 110 ; chiffrage de l'Institut Montaigne (2022) : 39 015 € par adjoint, 67 998 € par titulaire, {coutPoliceProximite} M€ par an en année pleine, montée en charge en cinq ans ; BAC maintenues (voir `coutPoliceProximite`)"
-    leviers := [.depenseEcheancier .securiteJustice policeProximite,
+    leviers := [.creationPostes .securiteJustice agentsProximite coutAgentProximiteEuros,
                 .annonceEmplois (adjointsSecurite + encadrantsProximite)] },
 
   { id := "O-111"
@@ -2666,9 +2674,9 @@ def mesures : List Mesure := [
   { id := "O-112"
     titre := "Titres de séjour : 500 agents de plus dans les préfectures pour réduire les délais"
     source := s!"Texte Orientation D, mesure 112 ; {agentsPrefectures} emplois à {coutAgentPrefectureEuros} € (amendement II-333 au PLF 2026) : {renfortPrefectures} M€ par an (voir `renfortPrefectures`)"
-    leviers := [.depenseSur .fonctionnement renfortPrefectures, .annonceEmplois agentsPrefectures]
+    leviers := [.creationPostes .fonctionnement [agentsPrefectures] coutAgentPrefectureEuros, .annonceEmplois agentsPrefectures]
     variantes := [
-      { nom := "1 000 agents", leviers := [.depenseSur .fonctionnement (2 * renfortPrefectures), .annonceEmplois (2 * agentsPrefectures)] }] },
+      { nom := "1 000 agents", leviers := [.creationPostes .fonctionnement [2 * agentsPrefectures] coutAgentPrefectureEuros, .annonceEmplois (2 * agentsPrefectures)] }] },
 
   { id := "O-113"
     titre := "Algérie : réponse aux demandes mémorielles (archives, disparus, essais nucléaires, restes humains)"
@@ -2730,7 +2738,7 @@ def mesures : List Mesure := [
   { id := "O-121"
     titre := "Écoles : 90 000 enseignants, AESH et infirmières scolaires de plus en cinq ans"
     source := s!"Texte Orientation D, mesure 121 ; {postesEcole} postes à {coutPosteEcoleEuros} € (4 000 postes = 150 M€, gouvernement, janvier 2025) : {postesEcoleEcheancier.getLastD 0} M€ par an en 2031 (voir `postesEcoleEcheancier`)"
-    leviers := [.depenseEcheancier .enseignement postesEcoleEcheancier, .annonceEmplois postesEcole] },
+    leviers := [.creationPostes .enseignement postesEcoleCumul coutPosteEcoleEuros, .annonceEmplois postesEcole] },
 
   { id := "O-122"
     titre := "Pouvoir d'achat : cotisations salariales réduites d'un demi-point pour tous les salariés"

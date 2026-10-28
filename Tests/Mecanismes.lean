@@ -144,4 +144,32 @@ theorem prelevement_rendement :
     0 < s0.deficit - p.deficit ∧ s0.deficit - p.deficit < 10000 - 10000 * H.eco.fuiteFiscalePm / 1000 + 1 := by
   decide +kernel
 
+/-- Postes publics : 10 000 postes créés à 50 000 € (500 M€) ajoutent
+10 000 emplois publics, l'emploi privé ne bougeant que de la réponse de
+la loi d'Okun à l'écart entre la variation du PIB (multiplicateur) et la
+production publique ajoutée ; la même dépense sans postes (`depenseSur`)
+crée beaucoup moins d'emplois ; une création et une suppression du même
+nombre de postes se compensent presque, au moteur de demande. -/
+theorem postes_publics_un_pour_un :
+    let s0 := etatDepart H
+    let cr := depart (mesure (.creationPostes .enseignement [10000] 50000))
+    let dep := depart (mesure (.depenseSur .enseignement 500))
+    let sup := depart (mesure (.suppressionPostes .enseignement 10000 50000))
+    let dCr := cr.emploiTotal - s0.emploiTotal
+    let dSup := sup.emploiTotal - s0.emploiTotal
+    9000 ≤ dCr ∧ dCr ≤ 10000 ∧ dep.emploiTotal - s0.emploiTotal < dCr / 2 ∧
+      cr.depensesF.enseignement - s0.depensesF.enseignement = 500 ∧
+      -300 ≤ dCr + dSup ∧ dCr + dSup ≤ 300 := by decide +kernel
+
+/-- Échéancier de postes : 2 000 puis 4 000 postes cumulés ; la deuxième
+année ajoute 2 000 emplois publics de plus (à l'arrondi près), au coût du
+poste indexé comme la fonction. -/
+theorem postes_publics_echeancier :
+    let p := mesure (.creationPostes .enseignement [2000, 4000] 50000)
+    let t := Modele.Programme.trajectoire p D H 2 0 (etatDepart H)
+    let a := Modele.trajectoire D H 2 (etatDepart H)
+    let e1 := (t.getD 1 (etatDepart H)).emploi.tertiaireNonMarchand - (a.getD 1 (etatDepart H)).emploi.tertiaireNonMarchand
+    let e0 := (t.getD 0 (etatDepart H)).emploi.tertiaireNonMarchand - (a.getD 0 (etatDepart H)).emploi.tertiaireNonMarchand
+    1900 ≤ e0 ∧ e0 ≤ 2100 ∧ 3800 ≤ e1 ∧ e1 ≤ 4200 := by decide +kernel
+
 end Tests.Mecanismes

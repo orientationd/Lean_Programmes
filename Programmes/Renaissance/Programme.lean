@@ -48,8 +48,9 @@ def mesures : List Mesure := [
     leviers := [.economieSur .retraites 6000, .economieSur .famille 4000]
     debut := 1 },
   { id := "RE-04", titre := "100 000 postes de fonctionnaires supprimés par départs volontaires et non-remplacements"
-    source := "G. Attal, Le Parisien, 2 juillet 2026 (via MoneyVox) : Éducation, Armées, Justice et Intérieur préservés ; conversion : 62 500 € par poste → 6,25 Md€/an en régime de croisière"
-    leviers := [.economieSur .fonctionnement 6250] },
+    source := "G. Attal, Le Parisien, 2 juillet 2026 (via MoneyVox) : Éducation, Armées, Justice et Intérieur préservés ; conversion : 62 500 € par poste → 6,25 Md€/an en régime de croisière ; 20 000 postes par an pendant le quinquennat, emplois publics retirés un pour un (levier `suppressionPostes`)"
+    leviers := [.suppressionPostes .fonctionnement 20000 62500]
+    repetitions := 5 },
   { id := "RE-05", titre := "Taxe sur les rachats d'actions"
     source := "Programme de juin 2024 repris en 2026 (Europe 1, Ifrap) : ≈ 300 M€/an"
     leviers := [.prelevementSur .impotSocietes 300] },

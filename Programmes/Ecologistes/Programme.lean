@@ -48,8 +48,10 @@ def mesures : List Mesure := [
     source := s!"{projet}, p. 66 ; rendement non chiffré par la source : 15 Md€/an retenus (chiffrage du budget rectificatif LFI 2027 pour la même mesure, hypothèse)"
     leviers := [.prelevementSur .autres 15000] },
   { id := "E-06", titre := "Justice : 9 000 magistrats, 10 000 greffiers, 7 000 attachés de justice sur dix ans"
-    source := s!"{projet} ; conversion : 26 000 postes × 60 000 € = 1,56 Md€/an en régime de croisière (hypothèse de coût unitaire)"
-    leviers := [.depenseSur .securiteJustice 1560, .annonceEmplois 26000] },
+    source := s!"{projet} ; conversion : 26 000 postes × 60 000 € = 1,56 Md€/an en régime de croisière (hypothèse de coût unitaire), atteint en dix ans (2 600 postes par an), emplois publics comptés un pour un (levier `creationPostes`)"
+    leviers := [.creationPostes .securiteJustice
+                  (([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List Int).map fun k => 2600 * k) 60000,
+                .annonceEmplois 26000] },
   { id := "E-07", titre := "Enseignants : +15 % de salaire en cinq ans ; recherche publique : +10 %"
     source := s!"{projet} ; conversion : masse salariale enseignante ≈ 60 Md€ × 15 % = 9 Md€, recherche publique ≈ 10 Md€ × 10 % = 1 Md€ (hypothèses)"
     leviers := [.depenseSur .enseignement 10000] },
