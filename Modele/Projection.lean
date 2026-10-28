@@ -319,7 +319,36 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let dBornes := (if elec0 = 0 then H.energie.bornesTendanciellesMilliers
     else H.energie.bornesTendanciellesMilliers * elecTendance / elec0) + s.bornesAnnuellesMilliers
   let importsBase := s.importations
+  -- électricité : capacités (installations tendancielles et des mesures,
+  -- jamais négatives), production aux facteurs de charge sur la capacité
+  -- moyenne de l'année, consommation (tendance, voitures électriques du parc
+  -- de fin d'année, mesures) ; la production que ni la consommation ni le
+  -- solde exportateur maximal n'absorbent est retirée au nucléaire
+  let El := H.energie.electricite
+  let capacites := s.capacitesMw.plusPositif ((El.ajoutsA k).plus s.ajoutsCapaciteMw).plancherNul
+  let consoBase := s.consommationBaseGwh + appliquerPb s.consommationBaseGwh El.croissanceConsommationBasePb
+  let consoElec := consoBase + (s.parcElectriqueMilliers + dParc) * El.consommationVoitureKwh / 1000
+    + s.consommationMesuresGwh
+  let potentiel := (s.capacitesMw.moyenne capacites).production El.facteurChargePm
+  let modulation := min potentiel.nucleaire (max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh))
+  -- sols : consommation d'espaces (enveloppe du ZAN où s'imputent les
+  -- surfaces des mesures, ou rythme d'avant la loi selon l'écart choisi par
+  -- les mesures) ; emprise des installations nouvelles de solaire au sol et
+  -- d'éolien terrestre
+  let dSolaire := max 0 (capacites.solaire - s.capacitesMw.solaire)
+  let dEolien := max 0 (capacites.eolienTerrestre - s.capacitesMw.eolienTerrestre)
+  let haEnergie := dSolaire * El.partSolaireSolPm * El.haParMwSolaireCentiemes / 100000
+    + dEolien * El.haParMwEolienCentiemes / 100
+  let surfacesAnnee := (H.sols.surfacesAnnee s.ecartZanPm (s.surfacesMesuresHa.headD {})).ajouter .energie haEnergie
   let s' : Etat := { s with
+    capacitesMw := capacites
+    productionGwh := potentiel.ajouter .nucleaire (-modulation)
+    modulationGwh := modulation
+    consommationBaseGwh := consoBase
+    consommationGwh := consoElec
+    surfacesAnneeHa := surfacesAnnee
+    surfacesHa := s.surfacesHa.plus surfacesAnnee
+    surfacesMesuresHa := s.surfacesMesuresHa.tail
     pib := pib
     impots := impots
     remunerationParEmploiEuros := remuneration

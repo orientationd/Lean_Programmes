@@ -83,6 +83,25 @@ une PR qui touche `Moteurs/` produit l'artefact automatiquement). Une
 propriété peut viser une année précise (« déficit sous 3 % en 2035 ») ou
 l'horizon du scénario.
 
+**Électricité et sols.** Les capacités de chaque filière croissent des
+installations de la programmation pluriannuelle de l'énergie (PPE3, décret
+du 12 février 2026) et de celles des mesures ; la production en découle aux
+facteurs de charge observés par RTE, sur la capacité moyenne de l'année ;
+la consommation suit la trajectoire « décarbonation lente » du bilan
+prévisionnel 2025 de RTE, plus les voitures électriques du parc. La
+production que ni la consommation ni le solde exportateur maximal
+(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation). La
+consommation d'espaces naturels, agricoles et forestiers (ENAF) suit
+l'enveloppe du zéro artificialisation nette (ZAN : la moitié de 2011-2021
+sur 2021-2031, données du Cerema) : ce qu'il en reste fin 2025 permet
+5 117 ha par an, contre 15 119 ha consommés en 2024 ; un programme qui
+abroge le ZAN revient au rythme de 2011-2021 (22 672 ha par an). Sous le
+ZAN, les surfaces des mesures (lignes nouvelles, prisons) s'imputent sur
+l'enveloppe et évincent les autres usages ; sans ZAN, elles s'ajoutent.
+L'emprise des installations nouvelles de solaire au sol et d'éolien
+terrestre est comptée à part (`Hypotheses/Electricite.lean`,
+`Hypotheses/Sols.lean`).
+
 ## Engagements, contrats et évaluation
 
 | | Engagements | Contrats de mesure | Évaluation |
@@ -146,8 +165,10 @@ et dette publics, chômage, population active, emploi par secteur, impôts
 et taxes majeurs (TVA, IR, CSG-CRDS, cotisations, IS, accise sur les
 énergies, taxe foncière, autres), taux de prélèvements obligatoires,
 sensibilité au prix du pétrole (50, 63, 100 $) et à la natalité (1,40,
-1,56, 1,80 enfant par femme), propriétés et engagements, hypothèses et
-sources.
+1,56, 1,80 enfant par femme), électricité produite et consommée (GW
+moyens, capacités par filière), surfaces consommées (ENAF depuis 2021 face
+à l'enveloppe du ZAN, par destination, emprise énergétique), propriétés et
+engagements, hypothèses et sources.
 
 ```sh
 lake env lean --run Rapport.lean --synthese out/synthese.json
@@ -206,6 +227,14 @@ CI) :
   prélèvement, charge d'intérêts, chômage, dette). Les seuils bornent biais
   et erreur moyenne du déficit, des prélèvements, des intérêts, de la masse
   salariale et de la consommation ;
+* **électricité et sols** (`Tests/ElectriciteSols.lean`) : départ conforme
+  au bilan électrique 2025 de RTE ; production de la première année à
+  moins de 3 % de 2025 ; objectifs 2030 et 2035 de la PPE3 atteints ;
+  consommation 2030 entre les trajectoires « stagnation » et
+  « décarbonation rapide » de RTE ; solde exportateur borné ; un levier de
+  capacité ne démantèle rien ; enveloppe 2021-2031 du ZAN tenue par le
+  tendanciel ; abrogation ramenant au rythme 2011-2021 ; imputation des
+  surfaces des mesures sur l'enveloppe ; emprise énergétique ;
 * **tendanciel** (`Tests/Tendanciel.lean`) : la dérive du déficit
   tendanciel 2026-2030 reste à moins d'un demi-point de celle de la
   projection « à politique inchangée » de la mission d'experts sur la
@@ -344,6 +373,10 @@ ses propres mainteneurs. Voir [CONTRIBUTING.md](CONTRIBUTING.md) et les
 * Une preuve ne dit jamais qu'un programme est bon, seulement qu'il est
   cohérent **sous des hypothèses explicites**. L'intérêt est de déplacer le
   débat vers ces hypothèses, versionnées et contestables par PR.
+* Le sous-modèle électrique raisonne en énergie annuelle : pointes,
+  stockage, prix et effacements n'y figurent pas, et le thermique fossile
+  garde son facteur de charge de 2025. Celui des sols ne connaît que les
+  rythmes nationaux (pas de territorialisation des enveloppes).
 * Le modèle jouet doit être remplacé. Piste naturelle : une microsimulation
   (OpenFisca) lancée en CI qui émet des agrégats, que Lean vérifie contre les
   propriétés ; et Catala pour la sémantique juridique fine.

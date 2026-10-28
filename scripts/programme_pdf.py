@@ -380,6 +380,27 @@ def section_cle(D: Donnees, p: dict, meta: dict) -> list:
         ["Émissions (Mt CO₂e)", nombre(t["emissionsMt"]), nombre(s["emissionsMt"]),
          signe(s["emissionsMt"] - t["emissionsMt"], 0)],
     ]
+    if "productionGwh" in s and "surfacesHa" in s:
+        def gw(e, cle):
+            return (sum(e[cle].values()) if isinstance(e[cle], dict) else e[cle]) / 8760
+
+        def enaf(q):
+            tr = D.traj("central", q)
+            return sum(tr[-1]["surfacesHa"][x] - tr[0]["surfacesHa"][x] for x in tr[0]["surfacesHa"] if x != "energie")
+
+        def energie(q):
+            tr = D.traj("central", q)
+            return tr[-1]["surfacesHa"]["energie"] - tr[0]["surfacesHa"]["energie"]
+        lignes += [
+            ["Électricité produite (GW moyens)", nombre(gw(t, "productionGwh"), 1), nombre(gw(s, "productionGwh"), 1),
+             signe(gw(s, "productionGwh") - gw(t, "productionGwh"), 1)],
+            ["Électricité consommée (GW moyens)", nombre(gw(t, "consommationGwh"), 1),
+             nombre(gw(s, "consommationGwh"), 1), signe(gw(s, "consommationGwh") - gw(t, "consommationGwh"), 1)],
+            [f"Espaces consommés {D.annees[0] + 1}-{a1} (ha" + NBSP + "; ZAN" + (" abrogé" if s.get("ecartZanPm", 0) >= 1000 else "") + ")",
+             nombre(enaf(None)), nombre(enaf(pid)), signe(enaf(pid) - enaf(None), 0)],
+            [f"Emprise énergétique {D.annees[0] + 1}-{a1} (ha)", nombre(energie(None)), nombre(energie(pid)),
+             signe(energie(pid) - energie(None), 0)],
+        ]
     out.append(tableau(["Scénario central", "Sans programme", "Programme", "Écart"], lignes,
                        [0.43, 0.19, 0.19, 0.19]))
     out.append(Spacer(1, 8))

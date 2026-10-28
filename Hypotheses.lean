@@ -8,3 +8,5 @@ import Hypotheses.Europe
 import Hypotheses.Communes
 import Hypotheses.Automobile
 import Hypotheses.Historique
+import Hypotheses.Electricite
+import Hypotheses.Sols

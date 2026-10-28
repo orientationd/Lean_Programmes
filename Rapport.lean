@@ -160,6 +160,13 @@ def etatJson (s : Etat) : Json :=
     ("passifsImplicites", toJson s.passifsImplicites), ("detteEtenduePb", toJson s.detteEtenduePb),
     ("passifsPolice", toJson s.passifs.police), ("passifsHopital", toJson s.passifs.hopital),
     ("emissionsSecteursKt", Json.mkObj <| SecteurGes.tous.map fun g => (g.id, toJson (s.emissionsKt.get g))),
+    ("capacitesMw", Json.mkObj <| Filiere.tous.map fun f => (f.id, toJson (s.capacitesMw.get f))),
+    ("productionGwh", Json.mkObj <| Filiere.tous.map fun f => (f.id, toJson (s.productionGwh.get f))),
+    ("consommationGwh", toJson s.consommationGwh),
+    ("modulationGwh", toJson s.modulationGwh),
+    ("surfacesHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesHa.get d))),
+    ("surfacesAnneeHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesAnneeHa.get d))),
+    ("ecartZanPm", toJson s.ecartZanPm),
     ("populationMilliers", toJson s.populationMilliers),
     ("actifs", toJson s.actifs),
     ("emploiTotal", toJson s.emploiTotal),
@@ -344,6 +351,9 @@ def rapportSyntheseJson : Json :=
     ("anneeDepart", toJson annee0),
     ("annees", toJson ((List.range (horizonSynthese + 1)).map (annee0 + ·))),
     ("horizonProprietes", toJson Hypotheses.horizon),
+    ("enveloppeZanHa", toJson Hypotheses.central.sols.enveloppeHa),
+    ("rythmeZanHa", toJson Hypotheses.central.sols.rythmeZanHa),
+    ("rythmeSansZanHa", toJson Hypotheses.central.sols.consommationSansZanHa.total),
     ("nbScenarios", toJson scens.length),
     ("moteurs", Json.arr <| moteurs.toArray.map fun M =>
       Json.mkObj [("id", toJson M.id), ("nom", toJson M.nom), ("description", toJson M.description)]),
@@ -352,6 +362,10 @@ def rapportSyntheseJson : Json :=
       Json.mkObj [("id", toJson x.id), ("nom", toJson x.nom)]),
     ("impots", Json.arr <| Impot.tous.toArray.map fun i =>
       Json.mkObj [("id", toJson i.id), ("nom", toJson i.nom)]),
+    ("filieres", Json.arr <| Filiere.tous.toArray.map fun f =>
+      Json.mkObj [("id", toJson f.id), ("nom", toJson f.nom)]),
+    ("destinations", Json.arr <| Destination.tous.toArray.map fun d =>
+      Json.mkObj [("id", toJson d.id), ("nom", toJson d.nom)]),
     ("secteursGes", Json.arr <| SecteurGes.tous.toArray.map fun g =>
       Json.mkObj [("id", toJson g.id), ("nom", toJson g.nom)]),
     ("fonctions", Json.arr <| Fonction.tous.toArray.map fun f =>
