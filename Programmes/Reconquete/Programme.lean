@@ -68,8 +68,8 @@ def mesures : List Mesure := [
     source := s!"{knafo} : 15 à 20 Md€ (bas de la fourchette retenu ; 20 Md€ en 2022 ; 6,7 Md€ selon l'Institut Montaigne en 2022) ; suppose une révision constitutionnelle"
     leviers := [.economieSur .famille 15000] },
   { id := "RQ-03", titre := "Suppression de l'aide publique au développement"
-    source := s!"{knafo} : 14 à 15 Md€ ; plafonné à l'aide versée en 2025, {apd2025} M€ (voir `apd2025`)"
-    leviers := [.economieSur .fonctionnement apd2025] },
+    source := s!"{knafo} : 14 à 15 Md€ ; plafonné à l'aide versée en 2025, {apd2025} M€ (voir `apd2025`) ; versements à l'étranger, leur suppression ne réduit pas la demande intérieure (recette non fiscale, comme O-114)"
+    leviers := [.recetteEcheancier none [apd2025]] },
   { id := "RQ-04", titre := "Contribution de la France au budget européen ramenée à son niveau d'avant le Covid"
     source := s!"{knafo} : 14 Md€ (Votons 2027 : « diminuer de 20 % la contribution annuelle […] avec un plafond à 20 milliards d'euros par an »)"
     leviers := [.economieSur .fonctionnement 14000] },

@@ -318,8 +318,8 @@ def mesures : List Mesure := [
     source := "L'Avenir en commun 2025 : « généraliser une sixième semaine de congés payés » ; conversion : 35 heures sur 1 607 heures annuelles, −2,2 % de durée du travail (calcul)"
     leviers := [.dureeTravail (-22)] },
   { id := "L-50", titre := "Aide publique au développement portée à 0,7 % du RNB"
-    source := s!"L'Avenir en commun 2025 ; non chiffré : de 0,42 % à 0,7 % du RNB, +{hausseApd} M€ par an atteints en cinq ans (voir `apd2025`)"
-    leviers := [.depenseEcheancier .fonctionnement apdEcheancier] }
+    source := s!"L'Avenir en commun 2025 ; non chiffré : de 0,42 % à 0,7 % du RNB, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `apd2025`)"
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
 ]
 
 def programme : Programme where

@@ -128,8 +128,8 @@ def mesures : List Mesure := [
                                                     investissementAccueil, investissementAccueil, 0],
                 .depenseEcheancier .famille fonctionnementAccueil] },
   { id := "P-22", titre := "Aide publique au développement portée à 0,7 % du RNB"
-    source := s!"{site}, chap. 20 : « augmenter le niveau de l'APD pour atteindre 0,7 % du RNB » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans (voir `hausseApd`)"
-    leviers := [.depenseEcheancier .fonctionnement apdEcheancier] }
+    source := s!"{site}, chap. 20 : « augmenter le niveau de l'APD pour atteindre 0,7 % du RNB » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `hausseApd`)"
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
 ]
 
 def programme : Programme where

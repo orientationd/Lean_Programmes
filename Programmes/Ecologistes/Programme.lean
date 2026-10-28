@@ -87,8 +87,8 @@ def mesures : List Mesure := [
     source := s!"{projet}, p. 111 (via MonVote2027) ; non chiffré : 17,1 Md€ par an pour le « 100 % Sécu » (Institut Montaigne, 14 février 2022, fourchette 15 à 26), majorant si le périmètre se limite aux soins essentiels"
     leviers := [.depenseSur .sante 17100] },
   { id := "E-19", titre := "Aide publique au développement portée à 0,7 % du PNB"
-    source := s!"{projet}, p. 205 ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans (voir `hausseApd`)"
-    leviers := [.depenseEcheancier .fonctionnement apdEcheancier] },
+    source := s!"{projet}, p. 205 ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `hausseApd`)"
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] },
   { id := "E-20", titre := "Congé climatique de cinq jours par an"
     source := s!"{projet} (via Votons 2027 et MonVote2027) ; conversion : 35 heures sur 1 607 heures annuelles, −2,2 % de durée du travail (calcul)"
     leviers := [.dureeTravail (-22)] }

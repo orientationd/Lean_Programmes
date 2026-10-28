@@ -99,8 +99,8 @@ def mesures : List Mesure := [
     source := s!"{campagne} (livre de mai 2026 ; LCP, 26 mai 2026 ; Public Sénat, 24 août 2026) ; non chiffré : {generation - 72000} jeunes de plus par an à 605 € par mois pendant dix mois, {coutServiceCivique} M€ par an atteints en cinq ans (voir `generation`)"
     leviers := [.depenseEcheancier .culture serviceCiviqueEcheancier] },
   { id := "PP-07", titre := "Aide publique au développement portée à 0,7 % du RNB"
-    source := s!"Place publique, Acte 1 (juin 2025) : « 0,7 % du RNB dédié à l'aide publique au développement » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans (voir `hausseApd`)"
-    leviers := [.depenseEcheancier .fonctionnement apdEcheancier] }
+    source := s!"Place publique, Acte 1 (juin 2025) : « 0,7 % du RNB dédié à l'aide publique au développement » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `hausseApd`)"
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
 ]
 
 def programme : Programme where
