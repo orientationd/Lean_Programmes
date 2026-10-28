@@ -49,7 +49,7 @@ déficit la première année. Postes détaillés par les sources :
 | L-22 Cantines gratuites | +3,6 Md€ |
 | L-23 Hôpital, 10 000 postes | +3 Md€ |
 | L-24 Assurance chômage | +3 Md€ |
-| L-25 10 000 enseignants | +0,5 Md€ |
+| L-25 10 000 enseignants | +0,5 Md€ (50 000 € par poste), emplois publics comptés un pour un |
 
 Non détaillés par les sources : taxe sur les cryptoactifs, réforme de
 l'IS, taxe à 15 % sur les géants du numérique (≈ 22,9 Md€ de recettes) et
@@ -105,7 +105,7 @@ indépendant ou d'un calcul sur données officielles (détail dans
 | L-41 Minimum vieillesse au seuil de pauvreté | +1,2 Md€/an (DREES, Insee, calcul) |
 | L-42 500 000 places en crèche | 3,5 Md€/an d'investissement pendant cinq ans, fonctionnement jusqu'à 9,5 Md€/an (parti, 2022) |
 | L-43 Gratuité réelle de l'école | +4,3 Md€/an (parti, 2022, hors cantines) |
-| L-44 40 000 personnels de l'ESR en cinq ans | jusqu'à +2,8 Md€/an (coût moyen d'un enseignant, hypothèse) |
+| L-44 40 000 personnels de l'ESR en cinq ans | jusqu'à +2,8 Md€/an (coût moyen d'un enseignant, hypothèse), emplois publics comptés un pour un |
 | L-45 Gratuité du supérieur | +0,38 Md€/an (Institut Montaigne) |
 | L-46 Police de proximité, BAC démantelées | +0,35 Md€/an (parti, 2022) |
 | L-47 IR à 14 tranches | −5 Md€/an d'IR (parti, 2022) |

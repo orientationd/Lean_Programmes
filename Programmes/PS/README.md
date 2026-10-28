@@ -49,7 +49,7 @@ sans contre-expertise ; document non consulté directement.
 | P-17 Fiscalité des dividendes | +3,8 Md€ d'IR (flat tax de 30 % à 32 %, contre-budget 2026) |
 | P-18 Leasing social : un million de voitures électriques | 200 000 voitures par an à 6 000 € (traduction de PP-04) |
 | P-19 Classes de 19 élèves au plus | jusqu'à +6,8 Md€/an en dix ans (Institut Montaigne, 2022) |
-| P-20 20 000 postes dans le supérieur en dix ans | jusqu'à +1,4 Md€/an (coût moyen d'un enseignant, hypothèse) |
+| P-20 20 000 postes dans le supérieur en dix ans | jusqu'à +1,4 Md€/an (coût moyen d'un enseignant, hypothèse), emplois publics comptés un pour un |
 | P-21 200 000 solutions d'accueil de la petite enfance | 1,4 Md€/an de construction pendant cinq ans, fonctionnement jusqu'à 3,1 Md€/an (coûts de l'Institut Montaigne et de la CNAF) |
 | P-22 Aide au développement à 0,7 % du RNB | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
 

@@ -16,7 +16,7 @@ porte un montant.
 | RE-01 « Droit au brut » : baisse des cotisations salariales (jusqu'à 250 € net/mois au salaire médian) | −40 Md€/an de cotisations (RMC, 6 octobre 2026) |
 | RE-02 Réforme de l'assurance chômage | objectif déclaré de 100 000 emplois (vérifié par la propriété « emplois annoncés réalisables ») |
 | RE-03 Année blanche 2028 sur les prestations (petites retraites épargnées) | −10 Md€/an à partir de 2028 (6 retraites, 4 autres prestations ; conversion documentée) |
-| RE-04 100 000 postes de fonctionnaires (départs volontaires, non-remplacements) | −6,25 Md€/an (62 500 € par poste) |
+| RE-04 100 000 postes de fonctionnaires (départs volontaires, non-remplacements) | −6,25 Md€/an (62 500 € par poste), 20 000 par an, emplois publics retirés un pour un |
 | RE-05 Taxe sur les rachats d'actions | +0,3 Md€ d'IS (Ifrap) |
 
 Objectif annoncé le 2 juillet 2026 : 120 à 150 Md€ d'économies sans hausse
