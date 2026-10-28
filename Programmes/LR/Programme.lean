@@ -24,6 +24,17 @@ open Modele
 
 def plan : String := "Plan Retailleau, 12 octobre 2026 (Public Sénat, Europe 1, AFP)"
 
+/-- Huit EPR2 de plus commandés « dès les deux premières années du
+mandat » si les six en cours avancent bien (republicains.fr, via Votons
+2027). Même hypothèse de financement que PC-08 (PCF) : coût unitaire du
+programme gouvernemental (72,8 Md€ en euros 2020 pour 6 EPR2, devis EDF du
+18 décembre 2025), moitié prêtée par l'État, prêt versé de 2027 à 2050 :
+72 800 / 6 × 8 / 2 / 24 (calcul). Les réacteurs entreraient en service
+après l'horizon de la projection : pas d'effet sur la production. -/
+def pretEPR : Int := 72800 * 8 / 6 / 2 / 24
+
+theorem pretEPR_eq : pretEPR = 2022 := by decide
+
 def mesures : List Mesure := [
   { id := "LR-01", titre := "Non-remplacement de 400 000 agents publics partant à la retraite"
     source := s!"{plan} : 25 Md€ (sur 5,9 millions d'agents)"
@@ -82,13 +93,22 @@ def mesures : List Mesure := [
     source := "Hors du plan du 12 octobre 2026 : proposition de loi n° 3332 (E. Rey-Rinchet, apparentée Droite républicaine, 13 octobre 2026) « visant à supprimer le dispositif du ZAN » ; amendements n° 1063 et 2639 (Boucard, Wauquiez, 2025) : « Le ZAN doit être supprimé ». Consommation d'espaces ramenée au rythme 2011-2021 (modèle commun)"
     leviers := [.regimeZan 1000]
     variantes := [
-      { nom := "assouplissement de la proposition de loi TRACE (Sénat, 18 mars 2025), non chiffré : ZAN maintenu", leviers := [] }] }
+      { nom := "assouplissement de la proposition de loi TRACE (Sénat, 18 mars 2025), non chiffré : ZAN maintenu", leviers := [] }] },
+  { id := "LR-19", titre := "Suppression des doublons entre l'État et les collectivités"
+    source := "Plan Retailleau, 12 octobre 2026 (Acteurs publics) : 4 Md€ (chiffrage du parti), en plus de l'effort des collectivités (LR-11)"
+    leviers := [.economieSur .fonctionnement 4000] },
+  { id := "LR-20", titre := "Fonds France Production pour la modernisation industrielle"
+    source := "Livret « Travail gagnant » (LR, décembre 2025, présenté le 7 janvier 2026) : 600 M€ par an, « intégralement financé » ; sur-amortissement industriel non chiffré ; la « hausse mécanique de l'IS » de 4 Md€ attendue par le livret n'est pas reprise (le modèle calcule ses propres effets)"
+    leviers := [.depenseSur .affairesEconomiques 600] },
+  { id := "LR-21", titre := "Nucléaire : huit EPR2 supplémentaires commandés en début de mandat"
+    source := s!"republicains.fr (via Votons 2027) : commande « dès les deux premières années du mandat » si les six EPR2 en cours avancent bien, exploitation des réacteurs existants sur 80 ans ; prêt de l'État à EDF de {pretEPR} M€ par an (hypothèse de PC-08, voir `pretEPR`) ; 13 GW pour huit réacteurs (AFP, 18 juin 2025), en service après 2035"
+    leviers := [.pretEtat pretEPR] }
 ]
 
 def programme : Programme where
   id := "LR"
   nom := "Les Républicains — plan Retailleau 2027"
-  description := "Transcription partielle et non officielle du plan du 12 octobre 2026 : 197 Md€ d'économies (État, protection sociale, collectivités) et 51 Md€ d'allègements fiscaux, déficit sous 3 % en 2031 ; revenu familial, intérêts d'emprunt des familles, fin des 35 heures ; les 30 Md€ pour les entreprises répartis entre impôts de production et cotisations patronales."
+  description := "Transcription partielle et non officielle du plan du 12 octobre 2026 : 197 Md€ d'économies (État, protection sociale, collectivités) et 51 Md€ d'allègements fiscaux, déficit sous 3 % en 2031 ; revenu familial, intérêts d'emprunt des familles, fin des 35 heures ; les 30 Md€ pour les entreprises répartis entre impôts de production et cotisations patronales. Ajouts du 28 octobre 2026 : doublons État-collectivités, fonds France Production, huit EPR2 de plus."
   mainteneurs := ["@orientationd"]
   source := "Présentation du 12 octobre 2026 (Public Sénat, Europe 1, AFP, consultés le 21 octobre 2026)"
   mesures := mesures

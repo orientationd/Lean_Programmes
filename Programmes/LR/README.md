@@ -60,6 +60,22 @@ d'éolien terrestre au lieu de 67,5 et 37,5 GW ; la production reste de
 à 2035 au lieu de 51 150 sous le ZAN, et 12 210 ha d'emprise énergétique
 au lieu de 33 370.
 
+## Ajouts du 28 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| LR-19 Suppression des doublons État-collectivités | −4 Md€/an (Acteurs publics, 12 octobre 2026) |
+| LR-20 Fonds France Production | +0,6 Md€/an (livret « Travail gagnant ») |
+| LR-21 Huit EPR2 supplémentaires | prêt de l'État à EDF de 2,0 Md€/an (hypothèse de financement du PCF, PC-08), sans production avant 2035 |
+
+Déjà comprises dans les agrégats du plan : assurance chômage (13 Md€ du
+livret) et revenu d'incitation à l'activité (2 Md€) dans LR-09, arrêts
+maladie dans LR-10, immigration hors révision constitutionnelle dans LR-05,
+délégation au privé dans LR-03, volet des retraites hors décote dans LR-08.
+Non chiffrés : taux plein à 65 ans « quelles que soient les annuités »
+(LCI, 22 octobre 2026), exonération des seniors avant l'âge légal,
+transmission d'entreprises payée à la cession, défense, prisons.
+
 ## Non modélisé
 
 * Mécanisme des 42 Md€ de retraites (âge, durée, décote) : non détaillé.
