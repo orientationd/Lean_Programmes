@@ -38,7 +38,7 @@ jobs:
   synthese:
     name: Générer la synthèse PDF
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 60
     env:
       ELAN_NO_OVERRIDE_NOTICE: "1"
     steps:
