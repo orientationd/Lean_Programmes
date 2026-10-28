@@ -1284,6 +1284,86 @@ def renfortPrefectures : Int := agentsPrefectures * coutAgentPrefectureEuros / 1
 
 theorem renfortPrefectures_eq : coutAgentPrefectureEuros = 50000 ∧ renfortPrefectures = 25 := by decide
 
+/-- Algérie : réponse aux demandes mémorielles (O-113). Les demandes portées
+par le gouvernement algérien (ministre des Moudjahidine, 4 juillet 2021) :
+restitution des archives, informations sur les disparus et les lieux où ils
+se trouvent, essais nucléaires (cartes des lieux d'enfouissement des
+déchets, dépollution des sites, indemnisation des victimes), auxquelles
+s'ajoute la restitution des restes humains conservés en France (24 crânes
+rendus en 2020). Réponses et coûts :
+* archives : copie numérique des ≈ 10 km linéaires d'archives rapatriées
+  aux Archives nationales d'outre-mer (rapport Stora, janvier 2021), avec
+  l'ouverture des fonds sur les disparus : 2 M€ par an pendant cinq ans
+  (hypothèse ; pas de devis public) ;
+* essais nucléaires : remise des cartes (sans coût) ; présomption de la loi
+  Morin étendue aux résidents des zones de Reggane et d'In Ekker, où ont eu
+  lieu 17 essais de 1960 à 1966 ; le CIVEN a indemnisé 1 538 dossiers de
+  2010 à 2025 pour 108 M€, soit 70 221 € en moyenne (Sénat, rapport n° 640,
+  2026 ; calcul) ; 1 000 victimes algériennes indemnisées en dix ans
+  (hypothèse, aucune estimation des populations exposées n'étant publiée) :
+  7 M€ par an ; fonds de dépollution des sites avec l'Algérie : 100 M€ sur
+  cinq ans (hypothèse, faute d'inventaire public des déchets) ;
+* restes humains : restitution par la procédure de la loi de 2023, sans coût
+  notable.
+Indemnités et dépollution sont versées en Algérie : sans effet sur la
+demande intérieure (recette négative du modèle, voir `transfertsAlgerie`). -/
+def archivesAlgerie : List Int := [2, 2, 2, 2, 2, 0]
+def indemniteMoyenneCivenEuros : Int := 108000000 / 1538
+def victimesAlgeriennes : Int := 1000
+def indemnisationAlgerie : Int := victimesAlgeriennes * indemniteMoyenneCivenEuros / 1000000 / 10
+def depollutionAlgerie : Int := 100 / 5
+def transfertsAlgerie : List Int :=
+  List.replicate 5 (-(indemnisationAlgerie + depollutionAlgerie)) ++ List.replicate 5 (-indemnisationAlgerie) ++ [0]
+
+theorem algerie_valeurs :
+    indemniteMoyenneCivenEuros = 70221 ∧ indemnisationAlgerie = 7 ∧ depollutionAlgerie = 20 ∧
+    transfertsAlgerie = [-27, -27, -27, -27, -27, -7, -7, -7, -7, -7, 0] := by decide
+
+/-- Haïti : remboursement de la « double dette » (O-114). En 1825, la France
+impose à Haïti une indemnité de 150 millions de francs-or, ramenée à 90
+millions en 1838, payée jusqu'en 1888 avec des emprunts contractés auprès de
+banques parisiennes, remboursés jusqu'au milieu du XXe siècle (Public Sénat,
+17 avril 2025). Le New York Times (enquête « The Ransom », 2022) évalue à
+≈ 560 millions de dollars actuels les sommes versées par Haïti (indemnité et
+emprunts), et à 21 à 115 milliards de dollars la croissance perdue. Le
+président Macron a qualifié l'indemnité d'injuste et créé une commission
+franco-haïtienne d'historiens (17 avril 2025). Le programme rembourse les
+sommes versées : 560 M$ au cours de référence de la BCE (1,1537 dollar pour
+un euro le 16 septembre 2026), 485 M€ (calcul), versés en cinq ans à un fonds
+franco-haïtien (éducation, santé, reconstruction) géré avec l'AFD. Versement
+à l'étranger, sans effet sur la demande intérieure. Variante : bas de la
+fourchette des pertes de croissance (21 Md$, 18,2 Md€) en vingt ans. -/
+def sommesVerseesHaitiMusd : Int := 560
+def remboursementHaiti : Int := sommesVerseesHaitiMusd * 10000 / 11537
+def versementsHaiti : List Int := [remboursementHaiti / 5, remboursementHaiti / 5, remboursementHaiti / 5,
+                                   remboursementHaiti / 5, remboursementHaiti / 5, 0]
+def pertesHaitiBasses : Int := 21000 * 10000 / 11537
+
+theorem haiti_valeurs :
+    remboursementHaiti = 485 ∧ versementsHaiti = [97, 97, 97, 97, 97, 0] ∧ pertesHaitiBasses = 18202 := by decide
+
+/-- Afrique : restitution des biens culturels et reconnaissance d'actes
+coloniaux (O-115). Au moins 90 000 objets d'Afrique subsaharienne dans les
+collections publiques, dont 70 000 au musée du quai Branly, 46 000 de ces
+derniers acquis de 1885 à 1960 (rapport Sarr-Savoy, novembre 2018). La loi
+de 2026 sur la restitution des biens culturels (accord en commission mixte
+paritaire le 30 avril 2026) permet de les restituer sans loi d'espèce. Le
+programme applique la loi aux demandes des États africains et finance la
+recherche de provenance : la France verse aujourd'hui 300 000 € par an au
+fonds franco-allemand de recherche de provenance (étude d'impact du projet
+de loi) ; porté à 3 M€ par an (dix fois plus, hypothèse). Appui aux musées
+des pays qui reçoivent les biens : 35 M€ tous les deux ans, montant du
+financement de l'AFD pour le musée d'Abomey après la restitution de 26
+objets au Bénin (même source ; rythme : hypothèse), versé à l'étranger.
+Reconnaissance officielle d'actes coloniaux (massacres de Thiaroye en 1944,
+de Sétif et Guelma en 1945, répression de 1947 à Madagascar, guerre au
+Cameroun) : sans coût budgétaire. -/
+def provenanceAfrique : Int := 300000 * 10 / 1000000
+def appuiMusees : Int := 35 / 2
+def appuiMuseesEcheancier : List Int := List.replicate 10 (-appuiMusees) ++ [0]
+
+theorem afrique_valeurs : provenanceAfrique = 3 ∧ appuiMusees = 17 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -2448,13 +2528,35 @@ def mesures : List Mesure := [
     source := s!"Texte Orientation D, mesure 112 ; {agentsPrefectures} emplois à {coutAgentPrefectureEuros} € (amendement II-333 au PLF 2026) : {renfortPrefectures} M€ par an (voir `renfortPrefectures`)"
     leviers := [.depenseSur .fonctionnement renfortPrefectures, .annonceEmplois agentsPrefectures]
     variantes := [
-      { nom := "1 000 agents", leviers := [.depenseSur .fonctionnement (2 * renfortPrefectures), .annonceEmplois (2 * agentsPrefectures)] }] }
+      { nom := "1 000 agents", leviers := [.depenseSur .fonctionnement (2 * renfortPrefectures), .annonceEmplois (2 * agentsPrefectures)] }] },
+
+  { id := "O-113"
+    titre := "Algérie : réponse aux demandes mémorielles (archives, disparus, essais nucléaires, restes humains)"
+    source := s!"Texte Orientation D, mesure 113 ; copie numérique des archives (2 M€ par an pendant cinq ans, hypothèse) ; {victimesAlgeriennes} victimes des essais indemnisées en dix ans (hypothèse) à {indemniteMoyenneCivenEuros} € (moyenne du CIVEN) ; fonds de dépollution de 100 M€ sur cinq ans (hypothèse) ; versements en Algérie hors demande intérieure (voir `transfertsAlgerie`)"
+    leviers := [.depenseEcheancier .culture archivesAlgerie, .recetteEcheancier none transfertsAlgerie]
+    variantes := [
+      { nom := "5 000 victimes indemnisées en dix ans",
+        leviers := [.depenseEcheancier .culture archivesAlgerie,
+                    .recetteEcheancier none (transfertsAlgerie.map fun x => if x = 0 then 0 else x - 4 * indemnisationAlgerie)] }] },
+
+  { id := "O-114"
+    titre := "Haïti : remboursement des sommes versées au titre de l'indemnité de 1825 (485 M€ en cinq ans)"
+    source := s!"Texte Orientation D, mesure 114 ; {sommesVerseesHaitiMusd} M$ actuels versés par Haïti (New York Times, 2022), {remboursementHaiti} M€ au cours de la BCE du 16 septembre 2026 ; fonds franco-haïtien, versements à l'étranger (voir `remboursementHaiti`)"
+    leviers := [.recetteEcheancier none (versementsHaiti.map (- ·))]
+    variantes := [
+      { nom := "bas des pertes de croissance estimées (21 Md$) en vingt ans",
+        leviers := [.recetteEcheancier none (List.replicate 20 (-(pertesHaitiBasses / 20)) ++ [0])] }] },
+
+  { id := "O-115"
+    titre := "Afrique : restitution des biens culturels, recherche de provenance, reconnaissance d'actes coloniaux"
+    source := s!"Texte Orientation D, mesure 115 ; 90 000 objets d'Afrique subsaharienne dans les collections publiques (Sarr-Savoy, 2018) ; recherche de provenance portée à {provenanceAfrique} M€ par an (hypothèse) ; appui aux musées des pays bénéficiaires, 35 M€ tous les deux ans (hypothèse) ; reconnaissances sans coût (voir `provenanceAfrique`)"
+    leviers := [.depenseSur .culture provenanceAfrique, .recetteEcheancier none appuiMuseesEcheancier] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
