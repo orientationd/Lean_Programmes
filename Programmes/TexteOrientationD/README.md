@@ -19,9 +19,9 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,18 | 4,95 | 4,74 | 4,49 | 4,24 | 4,11 | 3,92 | 3,82 | 3,64 |
-| Offre | 5,57 | 5,10 | 4,83 | 4,63 | 4,40 | 4,19 | 4,11 | 3,98 | 3,94 | 3,82 |
-| Équilibre | 5,58 | 5,14 | 4,89 | 4,68 | 4,45 | 4,22 | 4,11 | 3,95 | 3,87 | 3,72 |
+| Demande | 5,58 | 5,19 | 4,95 | 4,74 | 4,50 | 4,25 | 4,11 | 3,92 | 3,82 | 3,64 |
+| Offre | 5,57 | 5,10 | 4,84 | 4,63 | 4,41 | 4,20 | 4,11 | 3,98 | 3,94 | 3,83 |
+| Équilibre | 5,58 | 5,14 | 4,90 | 4,69 | 4,45 | 4,22 | 4,11 | 3,95 | 3,87 | 3,73 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-115 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
+118 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -1212,6 +1212,72 @@ Le programme reprend la proposition de l'amendement II-333 au PLF 2026 :
 plus courts sur l'emploi déclaré et les cotisations des étrangers
 titulaires n'est pas chiffré. Variante : 1 000 agents.
 
+### Mémoire et relations internationales
+
+| Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
+|---|---|---|---|
+| **O-113** Algérie : réponse aux demandes mémorielles (archives, disparus, essais nucléaires, restes humains) | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-114** Haïti : remboursement des sommes versées au titre de l'indemnité de 1825 (485 M€ en cinq ans) | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-115** Afrique : restitution des biens culturels, recherche de provenance, reconnaissance d'actes coloniaux | ≈ 0 | ≈ 0 | ≈ 0 |
+
+Les versements faits à l'étranger (indemnités, dépollution, fonds pour
+Haïti, appui aux musées) sont modélisés sans effet sur la demande
+intérieure. Les effets diplomatiques et commerciaux de ces mesures ne sont
+pas modélisés.
+
+**O-113 — Algérie : réponse aux demandes mémorielles.** Les demandes du
+gouvernement algérien (ministre des Moudjahidine, juillet 2021) portent sur
+les archives, les disparus et les essais nucléaires (cartes des lieux
+d'enfouissement des déchets, dépollution des sites, indemnisation des
+victimes), auxquelles s'ajoute la restitution des restes humains conservés
+en France (24 crânes rendus en 2020). Réponses :
+* archives et disparus : copie numérique des ≈ 10 km linéaires d'archives
+  rapatriées aux Archives nationales d'outre-mer (rapport Stora, 2021) et
+  ouverture des fonds sur les disparus, 2 M€ par an pendant cinq ans
+  (hypothèse, sans devis public) ;
+* essais nucléaires (17 essais à Reggane et In Ekker de 1960 à 1966) :
+  remise des cartes ; présomption de la loi Morin étendue aux résidents des
+  zones des essais. Le CIVEN a indemnisé 1 538 dossiers de 2010 à 2025 pour
+  108 M€, soit 70 221 € en moyenne ; 1 000 victimes algériennes
+  indemnisées en dix ans (hypothèse : aucune estimation des populations
+  exposées n'est publiée), 7 M€ par an ; fonds de dépollution de 100 M€ sur
+  cinq ans avec l'Algérie (hypothèse, faute d'inventaire public des
+  déchets) ;
+* restes humains : restitution par la procédure de la loi de 2023, sans
+  coût notable.
+
+Au total, 27 M€ par an pendant cinq ans puis 7 M€. Variante : 5 000
+victimes indemnisées.
+
+**O-114 — Haïti : remboursement de la « double dette ».** En 1825, la
+France impose à Haïti une indemnité de 150 millions de francs-or, ramenée à
+90 millions en 1838, payée jusqu'en 1888 grâce à des emprunts auprès de
+banques parisiennes, remboursés jusqu'au milieu du XXe siècle. L'enquête du
+New York Times (2022) évalue à ≈ 560 millions de dollars actuels les sommes
+versées par Haïti, et à 21 à 115 milliards de dollars la croissance perdue.
+Le président de la République a qualifié l'indemnité d'injuste et créé une
+commission franco-haïtienne d'historiens (avril 2025). Le programme
+rembourse les sommes versées : 485 M€ (au cours de la BCE de septembre
+2026), en cinq ans, à un fonds franco-haïtien (éducation, santé,
+reconstruction) géré avec l'AFD, soit 97 M€ par an de 2027 à 2031. Sans
+effet sur le déficit de 2035. Variante : bas de la fourchette des pertes de
+croissance (21 Md$, 18,2 Md€) en vingt ans, +0,05 point de déficit en 2035 ;
+la baisse annuelle tiendrait encore, avec 0,02 point de marge (moteur
+d'offre).
+
+**O-115 — Afrique : restitutions et reconnaissance d'actes coloniaux.** Au
+moins 90 000 objets d'Afrique subsaharienne dans les collections publiques,
+dont 70 000 au musée du quai Branly, 46 000 de ces derniers acquis de 1885 à
+1960 (rapport Sarr-Savoy, 2018). La loi de 2026 sur la restitution des biens
+culturels permet de les rendre sans loi d'espèce ; le programme l'applique
+aux demandes des États africains. Recherche de provenance : la France verse
+300 000 € par an au fonds franco-allemand ; porté à 3 M€ par an
+(hypothèse). Appui aux musées des pays bénéficiaires : 35 M€ tous les deux
+ans, le montant du financement de l'AFD pour le musée d'Abomey après la
+restitution de 26 objets au Bénin (rythme : hypothèse). Reconnaissance
+officielle d'actes coloniaux (Thiaroye 1944, Sétif et Guelma 1945,
+Madagascar 1947, guerre au Cameroun) : sans coût budgétaire.
+
 ### Outre-mer
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -1293,7 +1359,7 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
 | Programme actuel | 3,64 % | 9,36 % | 0,9412 | oui / oui / oui |
 | Sans O-84 (deuxième journée de solidarité) | 3,89 % | 9,38 % | 0,9410 | oui / oui / oui |
 | **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,56 % | 9,18 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 3,66 % | 9,34 % | 0,9424 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 3,67 % | 9,34 % | 0,9424 | oui / oui / oui |
 | IS à 17 % au lieu de 15 % (variante d'O-08) | 3,48 % | 9,37 % | 0,9412 | oui / oui / oui |
 | IS maintenu à 25 % (variante d'O-08) | 2,90 % | 9,42 % | 0,9411 | oui / oui / oui |
 | Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,41 % | 9,92 % | 0,9405 | oui / oui / oui |
@@ -1377,9 +1443,9 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 |---|---|---|---|---|
 | Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,15 pt | −0,07 pt | +0,6 |
 | Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,13 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,25 pt | −0,09 pt | +1,1 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,09 pt | +1,1 |
 | École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,10 pt | +0,8 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,10 pt | −0,05 pt | +0,4 |
 | Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,10 pt | −0,04 pt | +0,4 |
 | Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
 | Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,19 pt | −0,08 pt | +0,8 |
@@ -1401,7 +1467,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 40 mesures sur 115 reposent au moins en partie sur une hypothèse ; les plus
+* 42 mesures sur 118 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
