@@ -11,14 +11,16 @@ et on projette une année avec **la même fonction que les projections**
 * l'environnement macroéconomique observé de l'année `t` : croissance en
   volume, déflateur du PIB, inflation (prix à la consommation, titres
   indexés), taux de l'OAT à 10 ans, croissance potentielle estimée, durée
-  de vie moyenne et part indexée de la dette ;
+  de vie moyenne et part indexée de la dette, valeur des transactions
+  immobilières, coefficient légal de revalorisation des valeurs locatives ;
 * les décisions de l'année `t` : mesures nouvelles de prélèvements
   obligatoires (chiffrage officiel), dépenses primaires et recettes hors
   prélèvements obligatoires effectivement constatées.
 
-Le modèle calcule ce qui relève de ses mécanismes : l'évolution spontanée
-des prélèvements obligatoires (PIB nominal et cycle, élasticités par
-prélèvement), la charge d'intérêts (dette nouvelle et refinancement au taux
+Le modèle calcule ce qui relève de ses mécanismes : les assiettes
+(masse salariale par l'emploi et les rémunérations, consommation, excédent
+des entreprises) et l'évolution spontanée de chaque prélèvement sur la
+sienne (`Assiettes.taux`), la charge d'intérêts (dette nouvelle et refinancement au taux
 de l'année, indexation), le chômage (loi d'Okun) et la dette. Le déficit
 « conditionnel » ainsi obtenu est comparé au déficit observé : l'écart
 mesure l'erreur des mécanismes, pas celle des choix politiques.
@@ -81,6 +83,20 @@ structure AnneeObservee where
   /-- Mesures nouvelles de prélèvements obligatoires de l'année (chiffrage
   officiel, nettes, au sens des prélèvements nets des crédits d'impôt). -/
   mesuresNouvellesPO : Int
+  /-- Assiettes : rémunération des salariés (masse salariale) et dépense de
+  consommation finale des ménages, en valeur. -/
+  remunerationSalaries : Int
+  consommationMenages : Int
+  /-- Croissance du bénéfice fiscal de l'exercice (assiette de l'IS des
+  deux années suivantes), pb. -/
+  croissanceBeneficeFiscalPb : Int
+  /-- Croissance de la valeur des transactions immobilières (nombre de
+  ventes de logements anciens × prix), pb : assiette des droits de mutation
+  à titre onéreux. -/
+  croissanceTransactionsPb : Int
+  /-- Coefficient légal de revalorisation des valeurs locatives de l'année,
+  pb. -/
+  revalorisationFoncierePb : Int
   deriving Repr, Inhabited
 
 namespace AnneeObservee
@@ -90,6 +106,7 @@ def deficitPb (o : AnneeObservee) : Int := ratioPb o.deficit o.pib
 def depensesPrimaires (o : AnneeObservee) : Int := o.depenses - o.interets
 def recettesHorsPO (o : AnneeObservee) : Int := o.recettes - o.prelevements
 def dettePb (o : AnneeObservee) : Int := ratioPb o.dette o.pib
+
 /-- Part de la dette indexée sur l'inflation en fin d'année, pm. -/
 def partIndexeePm (o : AnneeObservee) : Int := if o.dette = 0 then 0 else o.titresIndexes * 1000 / o.dette
 /-- Part de la dette à court terme en fin d'année, pm. -/
@@ -161,6 +178,13 @@ def etatObserve (H : Scenario) (base : Etat) (p o : AnneeObservee) : Etat :=
     chargeIndexationMeur := o.chargeIndexation
     inflationConsoPb := o.inflationConsoPb
     emploi := base.emploi.repartir (emploiCible - base.emploi.total) none
+    -- assiettes observées : rémunération par emploi (masse salariale de
+    -- l'année), consommation, croissance du bénéfice fiscal des deux derniers
+    -- exercices (IS)
+    remunerationParEmploiEuros := if emploiCible = 0 then 0 else o.remunerationSalaries * 1000000 / emploiCible
+    consommationMenages := o.consommationMenages
+    croissanceBeneficePb := o.croissanceBeneficeFiscalPb
+    croissanceBeneficeAvantPb := p.croissanceBeneficeFiscalPb
     chomeursComptes := actifs - emploiCible
     chomeursExcedentaires := 0
     emploisCoutTravailRestants := 0
@@ -198,6 +222,8 @@ def scenarioRetro (H : Scenario) (e : Etat) (o s : AnneeObservee) : Scenario :=
       inflationIndexationAnneesPb := [s.inflationIndexationPb]
       tauxMarginalAnneesPb := [s.tauxOat10Pb]
       tauxCourtAnneesPb := [s.tauxCourtPb]
+      revalorisationFoncierAnneesPb := [s.revalorisationFoncierePb]
+      croissanceImmobilierAnneesPb := [s.croissanceTransactionsPb]
       partDetteCourtTermePm := o.partCourtTermePm
       partDetteIndexeePm := o.partIndexeePm
       renouvellementDettePm := o.renouvellementPm } }
@@ -232,6 +258,11 @@ structure EcartRetro where
   /-- Taux de chômage (loi d'Okun), pb. -/
   chomageModelePb : Int
   chomageObservePb : Int
+  /-- Assiettes : masse salariale et consommation des ménages, M€. -/
+  masseSalarialeModele : Int
+  masseSalarialeObservee : Int
+  consommationModele : Int
+  consommationObservee : Int
   deriving Repr
 
 namespace EcartRetro
@@ -240,6 +271,11 @@ def erreurDeficitPb (e : EcartRetro) : Int := e.deficitModelePb - e.deficitObser
 def erreurPrelevements (e : EcartRetro) : Int := e.prelevementsModele - e.prelevementsObserves
 def erreurInterets (e : EcartRetro) : Int := e.interetsModele - e.interetsObserves
 def erreurDettePb (e : EcartRetro) : Int := e.detteModelePb - e.detteObserveePb
+/-- Erreurs sur les assiettes, pb de la valeur observée. -/
+def erreurMasseSalarialePb (e : EcartRetro) : Int :=
+  ratioPb (e.masseSalarialeModele - e.masseSalarialeObservee) e.masseSalarialeObservee
+def erreurConsommationPb (e : EcartRetro) : Int :=
+  ratioPb (e.consommationModele - e.consommationObservee) e.consommationObservee
 
 end EcartRetro
 
@@ -271,7 +307,9 @@ def ecartAnnee (x : Etat) (regle spontanes po0 : Int) (o s : AnneeObservee) : Ec
     depensesPrimairesRegle := regle, depensesPrimairesObservees := s.depensesPrimaires
     deficitModelePb := ratioPb x.deficit s.pib, deficitObservePb := s.deficitPb
     detteModelePb := ratioPb x.dette s.pib, detteObserveePb := s.dettePb
-    chomageModelePb := x.chomagePb, chomageObservePb := s.chomagePb }
+    chomageModelePb := x.chomagePb, chomageObservePb := s.chomagePb
+    masseSalarialeModele := x.masseSalariale, masseSalarialeObservee := s.remunerationSalaries
+    consommationModele := x.consommationMenages, consommationObservee := s.consommationMenages }
 
 /-- Rétro-test à un an : pour chaque triplet d'années consécutives
 `(p, o, s)`, on part des comptes observés de `o` (année précédente `p`) et

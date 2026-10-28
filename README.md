@@ -58,8 +58,13 @@ consommation publique). Le modèle calcule chaque année l'indice de
 développement humain (formule du PNUD).
 
 Le déficit se calcule année par année : la croissance suit les prévisions
-publiées puis la croissance potentielle ; chaque prélèvement réagit au
-cycle selon son élasticité (LPFP 2023-2027) ; les dépenses primaires
+publiées puis la croissance potentielle ; chaque prélèvement suit son
+assiette naturelle (masse salariale pour les cotisations, la CSG et l'IR,
+dont le barème est revalorisé de l'inflation passée ; consommation des
+ménages pour la TVA ; bénéfice fiscal et règles d'acomptes pour l'IS ;
+volume de carburants pour les accises, fixées en euros par litre ; valeurs
+locatives revalorisées par la loi pour la taxe foncière ; valeur des
+transactions immobilières pour les droits de mutation) ; les dépenses primaires
 suivent les prix (pensions et prestations revalorisées sur l'inflation de
 l'année écoulée) et une tendance en volume par fonction (COR, mission
 d'experts de juillet 2026) ; l'indemnisation du chômage suit, dans
@@ -106,12 +111,12 @@ hypothèse ajoutée plus tard par n'importe qui.
 |---|---|
 | `Modele/` | état, unités, axes d'hypothèses, moteurs, leviers, projection, propriétés, programmes (types), sous-modèles SRU, automobile, attribution, rétro-test |
 | `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes, comptes publics observés 2017-2025 |
-| `Tests/` | tests du modèle commun : comptabilité, mécanismes, rétro-test, tendanciel |
+| `Tests/` | tests du modèle commun : comptabilité, mécanismes, assiettes des prélèvements, rétro-test, tendanciel |
 | `Proprietes/` | propriétés partagées, registre `Proprietes.toutes` |
 | `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` + `PROPRIETAIRES` |
 | `Moteurs/<Nom>/`, `Moteurs.lean` | moteurs contribués (`Moteur.lean` + `PROPRIETAIRES`) et leur registre |
 | `Programmes.lean` | registre `Programmes.tous` |
-| `Engagements.lean` | preuve que tous les engagements sont tenus |
+| `Engagements.lean` | preuve que tous les engagements sont tenus (par blocs pour les programmes aux engagements nombreux, afin de tenir dans la mémoire du noyau) |
 | `Rapport.lean` | exécutable `rapport` : JSON + Markdown, export `--synthese` |
 | `Audit.lean` | refuse `sorry`, `native_decide` et tout `axiom` |
 | `scripts/` | garde-fou syntaxique, diff de rapports, contrôle du registre, synthèse PDF, programme complet en PDF |
@@ -177,49 +182,63 @@ CI) :
   sous chaque moteur ; les mesures d'une année entrent dans la dette de
   cette année ; un programme sans mesure redonne exactement le tendanciel ;
 * **mécanismes** (`Tests/Mecanismes.lean`) : le PIB suit la trajectoire ;
-  loi d'Okun ; semi-élasticité du solde au cycle entre 0,5 et 0,65 (LPFP :
-  0,57 ; Commission : 0,6) ; un point d'inflation coûte la part indexée de
+  loi d'Okun ; semi-élasticité du solde au cycle entre 0,5 et 0,65 une fois
+  l'IS encaissé (LPFP : 0,57 ; Commission : 0,6), un peu moins la première
+  année (acomptes de l'IS) ; un point d'inflation coûte la part indexée de
   la dette ; un point de taux ne relève le taux apparent que de la part
   refinancée ; convergence du taux apparent ; multiplicateur ; symétrie
   dépense-économie ; rendement d'un prélèvement ;
+* **assiettes** (`Tests/Assiettes.lean`) : barème indexé (l'inflation seule
+  ne relève pas l'IR plus que les revenus), progressivité sur la hausse
+  réelle, accises insensibles aux prix, revalorisation légale des valeurs
+  locatives, droits de mutation sur les transactions, accélérateur et
+  modulation des acomptes de l'IS ; élasticités au cycle qui émergent des
+  assiettes (cotisations 0,59, TVA 0,97, IS 1,45 la première année et 3,2 en
+  régime établi ; LPFP : 0,63, 1,00, 2,76) ;
 * **rétro-test** (`Tests/Retro.lean`, `Modele/Retro.lean`,
   `Hypotheses/Historique.lean`) : le modèle part des comptes publics
   observés de l'année précédente et simule l'année, avec la même fonction
   que les projections. Il reçoit ce qui n'est pas de son ressort
-  (croissance, inflation, taux observés ; mesures nouvelles de prélèvements,
-  dépenses primaires et recettes hors prélèvements constatées) et calcule ce
-  qui relève de ses mécanismes (évolution spontanée des prélèvements,
-  charge d'intérêts, chômage, dette). Les seuils bornent biais et erreur
-  moyenne ;
+  (croissance, inflation, taux observés, marché immobilier, revalorisation
+  des valeurs locatives ; mesures nouvelles de prélèvements, dépenses
+  primaires et recettes hors prélèvements constatées) et calcule ce qui
+  relève de ses mécanismes (assiettes, évolution spontanée de chaque
+  prélèvement, charge d'intérêts, chômage, dette). Les seuils bornent biais
+  et erreur moyenne du déficit, des prélèvements, des intérêts, de la masse
+  salariale et de la consommation ;
 * **tendanciel** (`Tests/Tendanciel.lean`) : la dérive du déficit
   tendanciel 2026-2030 reste à moins d'un demi-point de celle de la
   projection « à politique inchangée » de la mission d'experts sur la
   transparence des finances publiques (juillet 2026).
 
 Rétro-test à un an (déficit en % du PIB ; prélèvements et intérêts en
-Md€) :
+Md€ ; masse salariale : écart au montant observé) :
 
-| Année | Déficit observé | Déficit du modèle | Écart | Prélèvements : écart | Intérêts : modèle / observé |
-|---|---|---|---|---|---|
-| 2019 | 2,39 | 2,42 | +0,03 | −0,7 | 38,7 / 38,8 |
-| 2020 | 8,93 | 9,37 | +0,44 | −11,4 | 32,1 / 33,2 |
-| 2021 | 6,58 | 6,54 | −0,04 | −3,8 | 32,9 / 37,6 |
-| 2022 | 4,73 | 5,64 | +0,91 | −26,9 | 49,9 / 52,7 |
-| 2023 | 5,36 | 3,92 | −1,44 | +44,9 | 55,2 / 51,0 |
-| 2024 | 5,76 | 5,14 | −0,62 | +17,5 | 57,4 / 58,1 |
-| 2025 | 5,09 | 5,32 | +0,23 | −4,3 | 67,0 / 64,7 |
+| Année | Déficit observé | Déficit du modèle | Écart | Prélèvements : écart | Intérêts : modèle / observé | Masse salariale |
+|---|---|---|---|---|---|---|
+| 2019 | 2,39 | 2,35 | −0,04 | +1,0 | 38,7 / 38,8 | −0,2 % |
+| 2020 | 8,93 | 8,88 | −0,05 | +0,1 | 32,1 / 33,2 | +0,1 % |
+| 2021 | 6,58 | 7,36 | +0,78 | −24,4 | 32,9 / 37,6 | −1,7 % |
+| 2022 | 4,73 | 4,88 | +0,15 | −6,8 | 49,9 / 52,7 | −1,7 % |
+| 2023 | 5,36 | 4,43 | −0,93 | +30,4 | 55,2 / 51,0 | +0,9 % |
+| 2024 | 5,76 | 5,10 | −0,66 | +18,6 | 57,4 / 58,1 | +1,3 % |
+| 2025 | 5,09 | 5,18 | +0,09 | −0,4 | 67,0 / 64,7 | +0,5 % |
 
-Erreur moyenne sur le déficit : 0,53 point (biais −0,07) ; sur la charge
-d'intérêts : 2,2 Md€ (4,6 Md€ avec l'ancienne convergence du taux à 20 pb
-par an). L'erreur vient surtout de l'évolution spontanée des prélèvements :
-leur élasticité au PIB a été de 1,6 en 2022 et de 0,4 en 2023 (Cour des
-comptes), écarts qu'aucune règle fondée sur le seul PIB ne retrouve ; les
-rattacher à leurs assiettes (masse salariale, consommation, bénéfices) est
-la prochaine étape. En 2020-2021, l'activité partielle a découplé l'emploi
-du PIB (loi d'Okun en défaut). Simulé depuis 2018 sans repartir des
-comptes observés, le déficit 2025 est de 4,75 % (5,09 % observé) et la
-dette de 113,7 % du PIB (115,7 %) : l'écart de dette vient des ajustements
-dette-déficit, que le modèle ne projette pas (trésorerie de 2020).
+Erreur moyenne sur le déficit : 0,39 point (biais −0,09), contre 0,53 quand
+chaque prélèvement suivait le PIB ; erreur maximale : 0,93 point (1,44
+auparavant) ; sur la charge d'intérêts : 2,2 Md€. L'élasticité des
+prélèvements au PIB a été de 1,4 en 2022 et de 0,4 en 2023 (Cour des
+comptes, base 2020) : le bénéfice fiscal de 2021 (+41 %) et les règles
+d'acomptes de l'IS, la chute des transactions immobilières (−22 % en 2023)
+et la revalorisation des valeurs locatives (+7,1 % en 2023) en expliquent
+l'essentiel. Restent la déformation de la consommation vers les taux
+réduits de TVA (2023-2024, IGF), le calendrier du prélèvement à la source
+de l'impôt sur le revenu (la régularisation de l'année précédente) et, en
+2020-2021, l'activité partielle, qui a découplé l'emploi du PIB (loi
+d'Okun en défaut). Simulé depuis 2018 sans repartir des comptes observés,
+le déficit 2025 est de 4,84 % (5,09 % observé) et la dette de 114,1 % du
+PIB (115,7 %) : l'écart de dette vient des ajustements dette-déficit, que
+le modèle ne projette pas (trésorerie de 2020).
 
 ## CI
 

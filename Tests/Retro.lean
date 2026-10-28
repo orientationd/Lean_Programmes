@@ -13,8 +13,13 @@ n'a aucun paramètre ajusté sur ces années).
 Repères : l'erreur de prévision du déficit de l'année en cours par le
 Gouvernement, à l'automne, est de l'ordre d'un demi-point (2023 : 4,9 %
 prévus dans le PLF 2024, 5,5 % constatés). L'élasticité des prélèvements
-au PIB a varié de 0,4 (2023) à 1,6 (2022) : aucune règle fondée sur le seul
-PIB ne retrouve ces deux années, d'où un seuil large sur l'écart maximal.
+au PIB a varié de 0,4 (2023) à 1,4 (2022, base 2020). Chaque prélèvement
+étant calculé sur son assiette (masse salariale, consommation, bénéfice
+fiscal et règles d'acomptes de l'IS, transactions immobilières, valeurs
+locatives), l'essentiel de ces écarts est retrouvé ; restent la
+déformation de la consommation vers les taux réduits de TVA (2023-2024,
+IGF), le calendrier du prélèvement à la source de l'IR et l'écart entre
+bénéfice fiscal et excédent des entreprises.
 -/
 
 namespace Tests.Retro
@@ -38,22 +43,36 @@ theorem sept_annees : unAn.map (·.annee) = [2019, 2020, 2021, 2022, 2023, 2024,
 theorem deficit_sans_biais : Int.natAbs (moyenne (unAn.map (·.erreurDeficitPb))) ≤ 25 := by
   decide +kernel
 
-/-- Erreur absolue moyenne inférieure à 0,6 point de PIB. -/
-theorem deficit_erreur_moyenne : moyenneAbsolue (unAn.map (·.erreurDeficitPb)) ≤ 60 := by
+/-- Erreur absolue moyenne inférieure à 0,5 point de PIB (0,53 quand les
+prélèvements suivaient le seul PIB). -/
+theorem deficit_erreur_moyenne : moyenneAbsolue (unAn.map (·.erreurDeficitPb)) ≤ 50 := by
   decide +kernel
 
-/-- Aucune année au-delà de 1,6 point (2023 : 1,4 point, élasticité des
-prélèvements de 0,4). -/
-theorem deficit_erreur_maximale : unAn.all (fun e => decide (Int.natAbs e.erreurDeficitPb ≤ 160)) = true := by
+/-- Aucune année au-delà de 1,1 point (2023 : 1,44 point quand les
+prélèvements suivaient le seul PIB). -/
+theorem deficit_erreur_maximale : unAn.all (fun e => decide (Int.natAbs e.erreurDeficitPb ≤ 110)) = true := by
   decide +kernel
 
 /-! ## Prélèvements obligatoires -/
 
 /-- Évolution spontanée des prélèvements : biais moyen inférieur à 0,5 point
-d'évolution, erreur absolue moyenne inférieure à 1,5 point. -/
+d'évolution, erreur absolue moyenne inférieure à 1,2 point. -/
 theorem prelevements_spontanes :
     let ecarts := unAn.map fun e => e.evolutionSpontaneeModelePb - e.evolutionSpontaneeObserveePb
-    Int.natAbs (moyenne ecarts) ≤ 50 ∧ moyenneAbsolue ecarts ≤ 150 := by decide +kernel
+    Int.natAbs (moyenne ecarts) ≤ 50 ∧ moyenneAbsolue ecarts ≤ 120 := by decide +kernel
+
+/-! ## Assiettes -/
+
+/-- Masse salariale à un an (emploi par la loi d'Okun, rémunération par
+emploi selon la productivité tendancielle, l'inflation et le cycle) :
+erreur absolue moyenne inférieure à 1,2 %. -/
+theorem masse_salariale_un_an : moyenneAbsolue (unAn.map (·.erreurMasseSalarialePb)) ≤ 120 := by
+  decide +kernel
+
+/-- Consommation des ménages à un an (volume de l'activité, prix à la
+consommation) : erreur absolue moyenne inférieure à 1,2 %. -/
+theorem consommation_un_an : moyenneAbsolue (unAn.map (·.erreurConsommationPb)) ≤ 120 := by
+  decide +kernel
 
 /-! ## Charge d'intérêts -/
 

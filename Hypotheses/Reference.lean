@@ -232,8 +232,9 @@ def impots2025 : ParImpot where
   accisesEnergie := 30500  -- TICPE, 30,5 Md€ en 2022, dernier chiffre publié (MTE, via Journal de l'Automobile)
   taxeFonciere := 44100    -- dérivé : TFPB +1,2 Md€ soit +2,8 % (DGCL, note REI 2025)
   droitsMutation := 20700  -- successions 16,2 + donations 4,5 Md€ en 2025 (Legifiscal, 23/09/2026)
+  mutationsOnereuses := 17600  -- dérivé : 16,9 Md€ en 2023 (IGF, juillet 2024), −12,9 % en 2024 (INSEE, IP n° 2054), +19,4 % en 2025 (Cour des comptes, juillet 2026)
   patrimoine := 2300       -- IFI ≈ 2,3 Md€ en 2025, 193 600 foyers (DGFiP, via Previssima)
-  autres := 233400         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
+  autres := 215800         -- solde : impôts 882,0 + cotisations 446,3 − postes ci-dessus
 
 /-- Éléments temporaires de la situation de départ : dépenses et recettes de
 2025 dont la fin est prévue par les textes ou les calendriers en vigueur.
@@ -359,6 +360,10 @@ def reference2026 : Reference where
     tauxApparentPb := 178          -- dette à moyen et long terme : (64,7 − 5,3 d'indexation − 201 × 2,12 % de BTF) / (3 306,1 − 201)
     tauxEmissionPb := 321          -- OAT 10 ans 2025 (3,37 %) moins rendement réel de la part indexée (8,9 % × 1,75 %)
     chargeIndexationMeur := 5309   -- provision pour indexation en droits constatés (AFT, comptabilité générale)
+    remunerationParEmploiEuros := 39469   -- salaires et traitements bruts 2025, 1 157,2 Md€ (INSEE, compte des ménages) / 29 319 000 emplois
+    consommationMenages := 1545900        -- dépense de consommation des ménages 2025 (INSEE, IP n° 2105)
+    croissanceBeneficePb := 100           -- bénéfice fiscal 2025 : +1,0 % (Cour des comptes, février 2026)
+    croissanceBeneficeAvantPb := -190     -- bénéfice fiscal 2024 : −1,9 % (PLF 2025, Voies et moyens, tome I)
     inflationConsoPb := 90         -- IPC 2025, moyenne annuelle (INSEE)
     detteDebut := 3306100          -- dette de Maastricht fin 2024 (INSEE, mai 2026)
     ajustementDetteAnnee := 1900   -- 3 460,5 − 3 306,1 − 152,5 (calcul)

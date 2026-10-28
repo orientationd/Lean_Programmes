@@ -284,6 +284,9 @@ end ParSecteurGes
 inductive Impot where
   | tva | ir | csgCrds | cotisations | impotSocietes | accisesEnergie | taxeFonciere
   | droitsMutation
+  /-- Droits de mutation à titre onéreux (ventes immobilières) : leur
+  assiette est la valeur des transactions. -/
+  | mutationsOnereuses
   /-- Impôts sur le stock de patrimoine (IFI, taxes sur la fortune ou sur les
   holdings) : payés par les ménages les plus aisés, d'où un faible effet sur
   la demande (voir `Economie.incidencePrelevementPm`). -/
@@ -295,7 +298,7 @@ namespace Impot
 
 def tous : List Impot :=
   [.tva, .ir, .csgCrds, .cotisations, .impotSocietes, .accisesEnergie, .taxeFonciere,
-   .droitsMutation, .patrimoine, .autres]
+   .droitsMutation, .mutationsOnereuses, .patrimoine, .autres]
 
 def nom : Impot → String
   | .tva => "TVA"
@@ -306,6 +309,7 @@ def nom : Impot → String
   | .accisesEnergie => "Accise sur les énergies (TICPE)"
   | .taxeFonciere => "Taxe foncière"
   | .droitsMutation => "Droits de succession et de donation"
+  | .mutationsOnereuses => "Droits de mutation à titre onéreux (DMTO)"
   | .patrimoine => "Impôts sur le patrimoine (IFI, fortune)"
   | .autres => "Autres impôts"
 
@@ -318,6 +322,7 @@ def id : Impot → String
   | .accisesEnergie => "accisesEnergie"
   | .taxeFonciere => "taxeFonciere"
   | .droitsMutation => "droitsMutation"
+  | .mutationsOnereuses => "mutationsOnereuses"
   | .patrimoine => "patrimoine"
   | .autres => "autres"
 
@@ -335,6 +340,9 @@ structure ParImpot where
   /-- Droits de mutation à titre gratuit (successions et donations). Leur
   assiette suit le flux successoral, pas le PIB (voir la projection). -/
   droitsMutation : Int
+  /-- Droits de mutation à titre onéreux (ventes immobilières) : leur
+  assiette est la valeur des transactions (voir la projection). -/
+  mutationsOnereuses : Int
   /-- Impôts sur le stock de patrimoine (IFI…). -/
   patrimoine : Int
   autres : Int
@@ -351,6 +359,7 @@ def get (v : ParImpot) : Impot → Int
   | .accisesEnergie => v.accisesEnergie
   | .taxeFonciere => v.taxeFonciere
   | .droitsMutation => v.droitsMutation
+  | .mutationsOnereuses => v.mutationsOnereuses
   | .patrimoine => v.patrimoine
   | .autres => v.autres
 
@@ -364,12 +373,13 @@ def ajouter (v : ParImpot) (i : Impot) (d : Int) : ParImpot :=
   | .accisesEnergie => { v with accisesEnergie := v.accisesEnergie + d }
   | .taxeFonciere => { v with taxeFonciere := v.taxeFonciere + d }
   | .droitsMutation => { v with droitsMutation := v.droitsMutation + d }
+  | .mutationsOnereuses => { v with mutationsOnereuses := v.mutationsOnereuses + d }
   | .patrimoine => { v with patrimoine := v.patrimoine + d }
   | .autres => { v with autres := v.autres + d }
 
 def total (v : ParImpot) : Int :=
   v.tva + v.ir + v.csgCrds + v.cotisations + v.impotSocietes + v.accisesEnergie
-    + v.taxeFonciere + v.droitsMutation + v.patrimoine + v.autres
+    + v.taxeFonciere + v.droitsMutation + v.mutationsOnereuses + v.patrimoine + v.autres
 
 /-- Toutes les composantes sont dans `[lo, hi]`. -/
 def toutEntre (v : ParImpot) (lo hi : Int) : Bool :=
@@ -385,6 +395,7 @@ def croitre (v : ParImpot) (tauxPb : Int) : ParImpot :=
     accisesEnergie := v.accisesEnergie + appliquerPb v.accisesEnergie tauxPb
     taxeFonciere := v.taxeFonciere + appliquerPb v.taxeFonciere tauxPb
     droitsMutation := v.droitsMutation + appliquerPb v.droitsMutation tauxPb
+    mutationsOnereuses := v.mutationsOnereuses + appliquerPb v.mutationsOnereuses tauxPb
     patrimoine := v.patrimoine + appliquerPb v.patrimoine tauxPb
     autres := v.autres + appliquerPb v.autres tauxPb }
 
@@ -399,13 +410,33 @@ def croitreCycle (v : ParImpot) (tauxPb ecartPb : Int) (e : ParImpot) : ParImpot
     accisesEnergie := g v.accisesEnergie e.accisesEnergie
     taxeFonciere := g v.taxeFonciere e.taxeFonciere
     droitsMutation := g v.droitsMutation e.droitsMutation
+    mutationsOnereuses := g v.mutationsOnereuses e.mutationsOnereuses
     patrimoine := g v.patrimoine e.patrimoine
     autres := g v.autres e.autres }
+
+/-- Chaque prélèvement croît de son propre taux (pb), celui de son
+assiette. -/
+def croitreTaux (v t : ParImpot) : ParImpot :=
+  let g (x r : Int) := x + appliquerPb x r
+  { tva := g v.tva t.tva, ir := g v.ir t.ir, csgCrds := g v.csgCrds t.csgCrds
+    cotisations := g v.cotisations t.cotisations
+    impotSocietes := g v.impotSocietes t.impotSocietes
+    accisesEnergie := g v.accisesEnergie t.accisesEnergie
+    taxeFonciere := g v.taxeFonciere t.taxeFonciere
+    droitsMutation := g v.droitsMutation t.droitsMutation
+    mutationsOnereuses := g v.mutationsOnereuses t.mutationsOnereuses
+    patrimoine := g v.patrimoine t.patrimoine
+    autres := g v.autres t.autres }
+
+/-- Avec un même taux pour tous, `croitreTaux` est `croitre`. -/
+theorem croitreTaux_uniforme (v : ParImpot) (t : Int) :
+    v.croitreTaux ⟨t, t, t, t, t, t, t, t, t, t, t⟩ = v.croitre t := by
+  simp [croitreTaux, croitre]
 
 /-- Avec des élasticités unitaires, `croitreCycle` est la croissance
 proportionnelle au PIB (`croitre`), quel que soit le cycle. -/
 theorem croitreCycle_unitaire (v : ParImpot) (t c : Int) :
-    v.croitreCycle t c ⟨1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000⟩ = v.croitre t := by
+    v.croitreCycle t c ⟨1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000⟩ = v.croitre t := by
   simp [croitreCycle, croitre]
 
 /-- Variation de chaque prélèvement pour une variation `dPib` du niveau du
@@ -418,6 +449,7 @@ def variationCycle (v : ParImpot) (dPib pib : Int) (e : ParImpot) : ParImpot :=
     accisesEnergie := d v.accisesEnergie e.accisesEnergie
     taxeFonciere := d v.taxeFonciere e.taxeFonciere
     droitsMutation := d v.droitsMutation e.droitsMutation
+    mutationsOnereuses := d v.mutationsOnereuses e.mutationsOnereuses
     patrimoine := d v.patrimoine e.patrimoine
     autres := d v.autres e.autres }
 
@@ -428,6 +460,7 @@ def plus (v w : ParImpot) : ParImpot :=
     accisesEnergie := v.accisesEnergie + w.accisesEnergie
     taxeFonciere := v.taxeFonciere + w.taxeFonciere
     droitsMutation := v.droitsMutation + w.droitsMutation
+    mutationsOnereuses := v.mutationsOnereuses + w.mutationsOnereuses
     patrimoine := v.patrimoine + w.patrimoine, autres := v.autres + w.autres }
 
 theorem total_plus (v w : ParImpot) : (v.plus w).total = v.total + w.total := by
@@ -447,12 +480,14 @@ def repartir (v : ParImpot) (d : Int) : ParImpot :=
   let g := part v.accisesEnergie
   let h := part v.taxeFonciere
   let m := part v.droitsMutation
+  let o := part v.mutationsOnereuses
   let p := part v.patrimoine
   { tva := v.tva + a, ir := v.ir + b, csgCrds := v.csgCrds + c
     cotisations := v.cotisations + e, impotSocietes := v.impotSocietes + f
     accisesEnergie := v.accisesEnergie + g, taxeFonciere := v.taxeFonciere + h
-    droitsMutation := v.droitsMutation + m, patrimoine := v.patrimoine + p
-    autres := v.autres + (d - a - b - c - e - f - g - h - m - p) }
+    droitsMutation := v.droitsMutation + m, mutationsOnereuses := v.mutationsOnereuses + o
+    patrimoine := v.patrimoine + p
+    autres := v.autres + (d - a - b - c - e - f - g - h - m - o - p) }
 
 end ParImpot
 
@@ -909,9 +944,28 @@ structure Etat where
   /-- Part de la charge d'intérêts de l'année due à l'indexation du capital
   des titres indexés sur l'inflation, M€ (comprise dans `depensesF.interets`). -/
   chargeIndexationMeur : Int := 0
+  /-- Rémunération moyenne par emploi, € par an : rémunération des salariés
+  de la comptabilité nationale (salaires bruts et cotisations des
+  employeurs) rapportée à l'emploi total. Avec l'emploi, elle donne la masse
+  salariale (`masseSalariale`), assiette des cotisations, de la CSG sur les
+  revenus d'activité et de l'impôt sur le revenu des salaires : toute
+  variation de l'emploi, quelle qu'en soit la cause, change l'assiette. -/
+  remunerationParEmploiEuros : Int := 0
+  /-- Dépense de consommation finale des ménages, M€ : assiette de la TVA. -/
+  consommationMenages : Int := 0
+  /-- Croissance du bénéfice fiscal (assiette de l'impôt sur les sociétés)
+  de l'exercice de l'année, pb : l'IS des deux années suivantes en dépend
+  (acomptes calculés sur l'exercice précédent, solde l'année suivante). -/
+  croissanceBeneficePb : Int := 0
+  /-- Même croissance, l'exercice d'avant, pb. -/
+  croissanceBeneficeAvantPb : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
+
+/-- Masse salariale (rémunération des salariés), M€ : emploi × rémunération
+moyenne par emploi. -/
+def masseSalariale (s : Etat) : Int := s.emploi.total * s.remunerationParEmploiEuros / 1000000
 
 /-- Recettes des administrations publiques, M€. -/
 def recettes (s : Etat) : Int := s.impots.total + s.autresRecettes

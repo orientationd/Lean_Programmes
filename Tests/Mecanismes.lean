@@ -54,12 +54,17 @@ theorem okun_un_point :
     35 ≤ d ∧ d ≤ 45 := by decide +kernel
 
 /-- Semi-élasticité du solde public au cycle : un point de croissance en
-volume de plus réduit le déficit d'environ 0,5 à 0,65 point de PIB (LPFP
-2023-2027 : 0,57 ; Commission européenne : 0,6 environ). -/
+volume de plus réduit le déficit d'environ 0,5 à 0,65 point de PIB une
+fois l'IS encaissé (LPFP 2023-2027 : 0,57 ; Commission européenne : 0,6
+environ), un peu moins la première année : l'IS des entreprises hors
+cinquième acompte suit le bénéfice avec un an de retard (acomptes et
+solde), ce que les élasticités de la LPFP, contemporaines, ne
+représentent pas. -/
 theorem semi_elasticite_solde :
-    let haut := an1 (avecPremiereAnnee (H.eco.croissancePotentiellePb + 100) H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb)
-    let d := (an1 base).deficitPb - haut.deficitPb
-    50 ≤ d ∧ d ≤ 65 := by decide +kernel
+    let haut := avecPremiereAnnee (H.eco.croissancePotentiellePb + 100) H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb
+    let d1 := (an1 base).deficitPb - (an1 haut).deficitPb
+    let d2 := (projeterN D base 2 (etatDepart base)).deficitPb - (projeterN D haut 2 (etatDepart haut)).deficitPb
+    40 ≤ d1 ∧ d1 ≤ 55 ∧ 50 ≤ d2 ∧ d2 ≤ 65 := by decide +kernel
 
 /-! ## Charge d'intérêts -/
 

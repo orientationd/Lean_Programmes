@@ -155,4 +155,26 @@ instance (p : Programme) : Decidable p.EngagementsTenus :=
 
 end Programme
 
+/-- Une propriété vraie sur chaque bloc de `n` éléments d'une liste (les `m`
+premiers blocs, puis le reste) l'est sur toute la liste. Sert à vérifier
+les engagements par blocs : le noyau garde en mémoire les calculs d'une
+même vérification, et un programme aux engagements nombreux la ferait
+dépasser la mémoire disponible. -/
+theorem forall_mem_blocs {α : Type} (P : α → Prop) (n : Nat) :
+    ∀ (m : Nat) (L : List α), (∀ k, k < m → ∀ e ∈ (L.drop (n * k)).take n, P e) →
+      (∀ e ∈ L.drop (n * m), P e) → ∀ e ∈ L, P e := by
+  intro m
+  induction m with
+  | zero => intro L _ h e he; exact h e (by simpa using he)
+  | succ m ih =>
+    intro L hb hr e he
+    rw [← List.take_append_drop n L] at he
+    rcases List.mem_append.mp he with h | h
+    · exact hb 0 (by omega) e (by simpa using h)
+    · refine ih (L.drop n) (fun k hk x hx => hb (k + 1) (by omega) x ?_) (fun x hx => hr x ?_) e h
+      · rw [List.drop_drop] at hx
+        rwa [show n * (k + 1) = n + n * k by rw [Nat.mul_succ]; omega]
+      · rw [List.drop_drop] at hx
+        rwa [show n * (m + 1) = n + n * m by rw [Nat.mul_succ]; omega]
+
 end Modele

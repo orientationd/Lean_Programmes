@@ -15,6 +15,110 @@ s'accumulent dans la dette, dont la charge d'intérêts suit.
 
 namespace Modele
 
+/-- Croissances de l'année des assiettes et de leurs déterminants, pb. -/
+structure CroissanceAssiettes where
+  /-- Masse salariale, pensions, consommation des ménages. -/
+  masse : Int
+  pensions : Int
+  consommation : Int
+  /-- Excédent des entreprises de l'année ; bénéfice fiscal des deux
+  exercices précédents. -/
+  excedent : Int
+  beneficePrecedent : Int
+  beneficeAvant : Int
+  /-- Revenus des indépendants et du capital. -/
+  independants : Int
+  capital : Int
+  /-- Part cyclique de la croissance de la masse salariale (élasticité au
+  cycle × variation de l'écart de production). -/
+  masseCycle : Int
+  /-- PIB en valeur, PIB en valeur à la croissance potentielle (tendance),
+  PIB en volume, variation de l'écart de production. -/
+  pibNominal : Int
+  pibTendance : Int
+  volume : Int
+  cycle : Int
+  /-- Inflation de l'année précédente (revalorisation du barème de l'IR). -/
+  inflationPrecedente : Int
+  /-- Revalorisation des valeurs locatives ; valeur des transactions
+  immobilières. -/
+  revalorisationFonciere : Int
+  immobilier : Int
+  deriving Repr
+
+/-- Croissance du bénéfice fiscal de l'exercice pour une croissance `g` de
+l'excédent des entreprises, pb : celle de la tendance (`tendance`, PIB en
+valeur à la croissance potentielle), plus `elasticiteIsPm` fois l'écart de
+l'excédent à cette tendance (amortissements et intérêts suivent la
+tendance, pas le cycle ni les marges : le bénéfice amplifie leurs
+variations, pas la croissance de long terme). -/
+def Assiettes.beneficeFiscal (A : Assiettes) (tendance g : Int) : Int :=
+  tendance + (g - tendance) * A.elasticiteIsPm / 1000
+
+/-- Croissance de l'IS encaissé, pb, pour une croissance du bénéfice fiscal
+`g0` de l'exercice de l'année, `g1` de l'exercice précédent et `g2` de
+celui d'avant (règles de paiement, art. 1668 du CGI) :
+
+* les entreprises au cinquième acompte (part `partIsAnneeCourantePm` de
+  l'IS) paient dans l'année l'IS de l'exercice ;
+* les autres paient des acomptes égaux à l'IS de l'exercice précédent, ou à
+  celui de l'exercice si leur bénéfice baisse (modulation des acomptes), et
+  le solde de l'exercice précédent : IS dû moins acomptes versés.
+
+Calcul exact en niveaux relatifs (IS dû de l'exercice précédent = 10 000). -/
+def Assiettes.croissanceIs (A : Assiettes) (g0 g1 g2 : Int) : Int :=
+  let u : Int := 10000
+  let l0 := u + g0
+  let l1 := u
+  let l2 := if u + g1 ≤ 0 then u else u * u / (u + g1)
+  let l3 := if u + g2 ≤ 0 then l2 else l2 * u / (u + g2)
+  let a0 := min l1 l0
+  let a1 := min l2 l1
+  let a2 := min l3 l2
+  let c0 := a0 + l1 - a1
+  let c1 := a1 + l2 - a2
+  let p := A.partIsAnneeCourantePm
+  let encaisse := p * l0 + (1000 - p) * c0
+  let encaissePrec := p * l1 + (1000 - p) * c1
+  if encaissePrec ≤ 0 then g0 else (encaisse - encaissePrec) * u / encaissePrec
+
+/-- Croissance de chaque prélèvement selon son assiette, pb (`eAutres` :
+élasticité au cycle des autres impôts).
+
+* **IR** : assiette pondérée (salaires, pensions, revenus des indépendants
+  et du capital) ; barème revalorisé de l'inflation de l'année précédente, la
+  progressivité ne jouant que sur la hausse de l'assiette au-delà.
+* **CSG-CRDS** : taux proportionnels sur les revenus d'activité, de
+  remplacement et du capital.
+* **Cotisations** : masse salariale ; l'élasticité `elasticiteCotisationsPm`
+  (plafond, allègements) ne joue que sur sa part cyclique.
+* **TVA** : consommation des ménages.
+* **IS** : le bénéfice fiscal de l'exercice suit l'excédent des entreprises
+  (`Assiettes.beneficeFiscal`) ; l'IS encaissé suit les règles d'acomptes et
+  de solde (`Assiettes.croissanceIs`).
+* **Accises sur l'énergie** : tarifs par unité, assiette en volume.
+* **Taxe foncière** : valeurs locatives revalorisées du coefficient légal
+  (inflation de novembre à novembre), plus la croissance physique des bases.
+* **Droits de mutation à titre onéreux** : valeur des transactions
+  immobilières.
+* **Droits de succession, patrimoine** : PIB nominal (les droits sont
+  corrigés du flux successoral dans `anneeSuivante`).
+* **Autres impôts** : PIB nominal et cycle. -/
+def Assiettes.taux (A : Assiettes) (eAutres : Int) (c : CroissanceAssiettes) : ParImpot :=
+  let gAssietteIr := (A.irSalairesPm * c.masse + A.irPensionsPm * c.pensions
+    + A.irIndependantsPm * c.independants
+    + (1000 - A.irSalairesPm - A.irPensionsPm - A.irIndependantsPm) * c.capital) / 1000
+  let gIr := gAssietteIr + (A.progressiviteIrPm - 1000) * (gAssietteIr - c.inflationPrecedente) / 1000
+  let gCsg := (A.csgActivitePm * c.masse + A.csgRemplacementPm * c.pensions
+    + (1000 - A.csgActivitePm - A.csgRemplacementPm) * c.capital) / 1000
+  let gIs := A.croissanceIs (A.beneficeFiscal c.pibTendance c.excedent) c.beneficePrecedent c.beneficeAvant
+  { tva := c.consommation, ir := gIr, csgCrds := gCsg
+    cotisations := c.masse + (A.elasticiteCotisationsPm - 1000) * c.masseCycle / 1000, impotSocietes := gIs
+    accisesEnergie := c.volume * A.elasticiteCarburantsPm / 1000
+    taxeFonciere := c.revalorisationFonciere + A.croissancePhysiqueFoncierPb
+    droitsMutation := c.pibNominal, mutationsOnereuses := c.immobilier, patrimoine := c.pibNominal
+    autres := c.pibNominal + (eAutres - 1000) * c.cycle / 1000 }
+
 /-- Une année de projection sous un moteur. -/
 def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let k := s.rang
@@ -62,8 +166,6 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
   let pertePfu := interetsTranche * s.partDefiscaliseePm * tPfu / 1000000
   let interets := long * taux / 10000 + court * H.eco.tauxCourtA k / 10000 + indexation - economieNum
-  -- assiettes : PIB nominal, plus l'effet du cycle selon l'élasticité de
-  -- chaque prélèvement (`ParImpot.croitreCycle`)
   -- la perte de PFU de l'an dernier est déjà dans l'assiette et croît avec
   -- elle : on n'ajoute que l'écart, réparti selon l'affectation du PFU
   let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
@@ -102,12 +204,6 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     else H.demo.hausseDecesMilliers * 10000 / s.decesMilliers
   let tauxDroits := dDecesPb
     + (croissance + H.eco.excesPatrimoineParDecesPb) * H.eco.elasticiteDroitsSuccessionPm / 1000
-  let impots := ((((s.impots.croitreCycle croissance cycle H.eco.elasticiteCycliquePm).ajouter .ir (-dIr)
-    |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
-    |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
-    |>.ajouter .autres (-pertesAcciseGaz)
-    |>.ajouter .ir (cdhr - cdhrReconduite)
-    |>.ajouter .droitsMutation (appliquerPb s.impots.droitsMutation (tauxDroits - croissance))
   -- participations de l'État : valorisation au rythme du PIB nominal, plus les
   -- prises de participation ; dividendes au rendement du portefeuille de départ
   let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
@@ -168,6 +264,54 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let actifs := s.actifs + actifsTendance + actifsMesures
   let dChomeursOkun := actifs * cycle * H.eco.okunPm / 10000000
   let emploisOkun := emploisPourChomeurs H dChomeursOkun
+  -- **prélèvements sur leur assiette naturelle**
+  let A := H.eco.assiettes
+  -- rémunération par emploi tendancielle : productivité tendancielle
+  -- (croissance potentielle moins croissance tendancielle de l'emploi) et prix
+  -- (une part `retardSalairesPm` de l'inflation de l'année précédente, le
+  -- reste de celle de l'année)
+  let emploi0 := s.emploi.total
+  let emploi1 := emploi0 + emploiTendance + emploisOkun
+  let productivite := H.eco.croissancePotentielleA k - (if emploi0 = 0 then 0 else emploiTendance * 10000 / emploi0)
+
+  let pc := H.eco.inflationConsoA k
+  let prixSalaires := (A.retardSalairesPm * s.inflationConsoPb + (1000 - A.retardSalairesPm) * pc) / 1000
+  let tauxRemuneration := productivite + prixSalaires + productivite * prixSalaires / 10000
+  -- masse salariale : tendance (emploi tendanciel, rémunération par emploi)
+  -- et cycle, à son élasticité ; l'emploi suit la loi d'Okun, la
+  -- rémunération par emploi (heures, primes) le reste
+  let croissanceEmploiTendance := if emploi0 = 0 then 0 else emploiTendance * 10000 / emploi0
+  let gMasse := croissanceEmploiTendance + tauxRemuneration + croissanceEmploiTendance * tauxRemuneration / 10000
+    + A.elasticiteMasseSalarialeCyclePm * cycle / 1000
+  let masse0 := s.masseSalariale
+  let masse1 := masse0 + appliquerPb masse0 gMasse
+  let remuneration := if emploi1 = 0 then s.remunerationParEmploiEuros else masse1 * 1000000 / emploi1
+  -- pensions : évolution des dépenses de retraite à législation constante
+  let gPensions := ParFonction.tauxCroissance .retraites tauxDep s.robotisationPb
+  -- consommation des ménages : volume de l'activité, prix à la consommation
+  let gConso := volume + pc + volume * pc / 10000
+  -- excédent des entreprises : leur valeur ajoutée (part du PIB) moins leurs
+  -- rémunérations (part de la masse salariale) ; taux de chaque prélèvement :
+  -- `Assiettes.taux`
+  let excedent0 := s.pib * A.partValeurAjouteePm / 1000 - masse0 * A.partSalairesPm / 1000
+  let excedent1 := pib * A.partValeurAjouteePm / 1000 - masse1 * A.partSalairesPm / 1000
+  let gExcedent := ratioPb (excedent1 - excedent0) excedent0
+  let tauxAssiettes := A.taux H.eco.elasticiteCycliquePm.autres
+    { masse := gMasse, pensions := gPensions, consommation := gConso, excedent := gExcedent
+      beneficePrecedent := s.croissanceBeneficePb, beneficeAvant := s.croissanceBeneficeAvantPb
+      independants := croissance + (A.elasticiteIndependantsCyclePm - 1000) * cycle / 1000
+      capital := croissance + (A.elasticiteCapitalCyclePm - 1000) * cycle / 1000
+      masseCycle := A.elasticiteMasseSalarialeCyclePm * cycle / 1000
+      pibNominal := croissance, pibTendance := croissance - cycle
+      volume := volume, cycle := cycle, inflationPrecedente := s.inflationConsoPb
+      revalorisationFonciere := H.eco.revalorisationFoncierA k s.inflationConsoPb
+      immobilier := H.eco.croissanceImmobilierA k croissance }
+  let impots := ((((s.impots.croitreTaux tauxAssiettes).ajouter .ir (-dIr)
+    |>.ajouter .csgCrds (-dCsg)) |>.ajouter .autres (-(dPerte - dIr - dCsg))
+    |>.ajouter .accisesEnergie (-pertesAccises)) |>.ajouter .tva (-pertesTva))
+    |>.ajouter .autres (-pertesAcciseGaz)
+    |>.ajouter .ir (cdhr - cdhrReconduite)
+    |>.ajouter .droitsMutation (appliquerPb s.impots.droitsMutation (tauxDroits - croissance))
   -- transports : bornes ouvertes au rythme des ventes tendancielles
   -- d'électriques (plus celles des mesures), décès évités par la baisse des
   -- particules, carburant importé évité
@@ -178,6 +322,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let s' : Etat := { s with
     pib := pib
     impots := impots
+    remunerationParEmploiEuros := remuneration
+    consommationMenages := s.consommationMenages + appliquerPb s.consommationMenages gConso
+    croissanceBeneficePb := A.beneficeFiscal (croissance - cycle) gExcedent
+    croissanceBeneficeAvantPb := s.croissanceBeneficePb
     autresRecettes := autresRecettes
     depensesF := depensesF
     tauxApparentPb := taux
