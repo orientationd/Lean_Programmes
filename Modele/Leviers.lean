@@ -50,6 +50,8 @@ inductive Levier where
   /-- Investissement de transition : réduction d'émissions (MtCO₂e) d'un
   secteur pour un coût annuel (M€). -/
   | transition (secteur : SecteurGes) (reductionMt : Int) (coutAnnuel : Int)
+  /-- Comme `transition`, en kt de CO₂e (négatif : émissions en hausse). -/
+  | transitionKt (secteur : SecteurGes) (reductionKt : Int) (coutAnnuel : Int)
   /-- Amende SRU automatique selon la part de logements sociaux manquants
   (barème et propriétés : `Modele/Logement.lean`). C'est un transfert des
   communes vers le FNAP et les établissements fonciers : **neutre sur le
@@ -218,6 +220,10 @@ inductive Levier where
   Les rénovations sont supposées s'ajouter à la tendance (pas d'effet
   d'aubaine). -/
   | renovationsAmpleur (cible : Territoire) (nombreParAn : Int) (aideEuros : Int) (economieKWh : Int)
+  /-- Solaire sur toitures ou ombrières : `mwParAn` MW installés chaque année
+  en plus de la tendance (comme `capaciteElectrique .solaire`), sans emprise
+  au sol (pas d'espace consommé). -/
+  | solaireToiture (mwParAn : Int)
   /-- Investissement public outre-mer, échéancier de niveaux annuels (M€ de
   l'année d'entrée en vigueur ; le dernier niveau est reconduit, 0 pour
   arrêter). Emplois dans la construction ; la part importée de la dépense,
@@ -643,6 +649,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
         { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes) }
   | .transition sec r c, s =>
       appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec (r * 1000))
+  | .transitionKt sec kt c, s =>
+      appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec kt)
   -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
   -- logement (rattrapage induit) demanderait un indicateur et une hypothèse
   -- de comportement des communes : évolution du modèle commun, à discuter
@@ -856,6 +864,9 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       appliquerDepense H Fonction.famille.secteur .famille (n * cout / 1000000)
         { s with chomeursExcedentaires := s.chomeursExcedentaires + n * H.eco.chomeursEvitesParConseiller }
   | .capaciteElectrique f m, s => { s with ajoutsCapaciteMw := s.ajoutsCapaciteMw.ajouter f m }
+  | .solaireToiture m, s =>
+      { s with ajoutsCapaciteMw := s.ajoutsCapaciteMw.ajouter .solaire m
+               ajoutsToitureMw := s.ajoutsToitureMw + m }
   | .consommationElectrique g, s =>
       { s with consommationMesuresGwh := s.consommationMesuresGwh + g
                consommationGwh := s.consommationGwh + g }

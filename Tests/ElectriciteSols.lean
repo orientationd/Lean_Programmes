@@ -76,6 +76,25 @@ theorem levier_capacite :
     (an1 [.capaciteElectrique .solaire (-10000)]).capacitesMw.solaire = s0.capacitesMw.solaire := by
   decide +kernel
 
+/-- Solaire sur toitures : 1 000 MW de plus la première année, la même
+production qu'au sol, mais sans emprise : l'espace consommé par l'énergie
+ne change pas ; le même ajout au sol en consomme. -/
+theorem solaire_toiture :
+    let base := an1 []
+    let toit := an1 [.solaireToiture 1000]
+    let sol := an1 [.capaciteElectrique .solaire 1000]
+    toit.capacitesMw.solaire = base.capacitesMw.solaire + 1000 ∧
+    toit.capacitesMw.solaire = sol.capacitesMw.solaire ∧
+    toit.surfacesAnneeHa.energie = base.surfacesAnneeHa.energie ∧
+    base.surfacesAnneeHa.energie < sol.surfacesAnneeHa.energie := by
+  decide +kernel
+
+/-- `transitionKt` retire des kt d'émissions là où `transition` retire des
+Mt : 1 000 kt valent 1 Mt. -/
+theorem transition_kt :
+    (an1 [.transitionKt .transports 1000 0]).emissionsKt = (an1 [.transition .transports 1 0]).emissionsKt := by
+  decide +kernel
+
 /-! ## Sols -/
 
 /-- Sous le ZAN, la consommation d'ENAF de 2021 à 2030 tient dans

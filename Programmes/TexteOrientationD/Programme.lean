@@ -1364,6 +1364,146 @@ def appuiMuseesEcheancier : List Int := List.replicate 10 (-appuiMusees) ++ [0]
 
 theorem afrique_valeurs : provenanceAfrique = 3 ∧ appuiMusees = 17 := by decide
 
+/-- Densification des zones commerciales (O-116) : les parkings de surface
+des zones commerciales d'entrée de ville sont remplacés par des parkings
+mutualisés en silo, et le sol libéré accueille commerces, activités ou
+logements sans consommer d'espaces naturels. 50 000 ha de zones d'entrée de
+ville à transformer selon le gouvernement (AFP, via Weka, 4 juin 2025) ;
+les parkings occupent 28 % de l'emprise des zones commerciales en
+Île-de-France (Institut Paris Région, via Banque des Territoires, 14 juin
+2023) : 14 000 ha (calcul). Le programme en traite 10 % en dix ans
+(hypothèse) : 140 ha de parkings par an, soit 56 000 places à 25 m²
+(circulations comprises ; ratio usuel, hypothèse). Une place en silo coûte
+10 000 à 15 000 € HT (Réseau national des aménageurs, 2019) : 12 500 € ;
+l'État en finance 30 % (hypothèse) : 210 M€ par an (calcul). Sur quatre
+niveaux (hypothèse), le silo libère 75 % de l'emprise : 105 ha par an qui
+ne sont plus pris sur les espaces naturels pour les activités (calcul). -/
+def zonesCommercialesHa : Int := 50000
+def partParkingsPct : Int := 28
+def parkingsTraitesHaParAn : Int := zonesCommercialesHa * partParkingsPct / 100 / 10 / 10
+def placesSiloParAn : Int := parkingsTraitesHaParAn * 10000 / 25
+def coutPlaceSiloEuros : Int := (10000 + 15000) / 2
+def aideSilos : Int := placesSiloParAn * coutPlaceSiloEuros / 1000000 * 30 / 100
+def haLiberesParAn : Int := parkingsTraitesHaParAn * 3 / 4
+
+theorem silos_valeurs :
+    parkingsTraitesHaParAn = 140 ∧ placesSiloParAn = 56000 ∧ aideSilos = 210 ∧ haLiberesParAn = 105 := by decide
+
+/-- Fret ferroviaire doublé (O-117) : la part modale du fer est de 8,9 % en
+2023 (29,4 Md de tonnes-km, SDES), loin de l'objectif de 18 % en 2030 de la
+stratégie nationale (2021). Le transport intérieur terrestre est de 344 Md
+de tonnes-km en 2024, dont 89 % par la route (SDES, Chiffres clés 2026) ;
+les poids lourds émettent 27,1 Mt de CO₂e en 2024 (Citepa, Secten 2025, via
+la FNTR) : 88,6 g par tonne-km (calcul). Doubler la part du fer reporte
+30,6 Md de tonnes-km de la route et évite 2,71 Mt par an (calcul ; émissions
+du fer, surtout électrique, négligées), atteint en six ans, de 2027 à 2032
+(451 kt de plus chaque année). Moyens : le plan d'investissement Ulysse
+Fret prévoit ≈ 4,5 Md€ d'ici 2032 et l'aide au wagon isolé est de 100 M€
+par an (Sénat, avis sur le PLF 2026) ; le programme double l'un et l'autre :
+4,5 Md€ de plus de 2027 à 2032 (750 M€ par an) et 100 M€ par an. Les
+pertes d'accise sur le gazole et les importations évitées ne sont pas
+comptées. -/
+def fretTkmMd : Int := 344
+def partFerPm : Int := 89
+def emissionsPoidsLourdsKt : Int := 27100
+def mgCo2ParTkm : Int := emissionsPoidsLourdsKt * 1000 / (fretTkmMd * 890 / 1000)
+def fretReporteMtkm : Int := fretTkmMd * 1000 * partFerPm / 1000
+def co2EviteFretKt : Int := fretReporteMtkm * mgCo2ParTkm / 1000000
+def co2EviteFretParAnKt : Int := co2EviteFretKt / 6
+def investissementFret : Int := 4500 / 6
+def aideWagonIsole : Int := 100
+
+theorem fret_valeurs :
+    mgCo2ParTkm = 88562 ∧ fretReporteMtkm = 30616 ∧ co2EviteFretKt = 2711 ∧ co2EviteFretParAnKt = 451 ∧
+    investissementFret = 750 := by decide
+
+/-- Autoroutes sans limitation de vitesse sur certains tronçons (O-118) :
+sur le modèle allemand, la vitesse est libre (vitesse conseillée 130 km/h)
+sur 10 % du réseau autoroutier (hypothèse), choisi pour sa sécurité (tracé,
+trafic). La France compte 11 752 km d'autoroutes (SDES, 2024) : 1 175 km
+(calcul). En Allemagne, 70,4 % des 25 767 km de chaussées autoroutières
+n'ont pas de limitation (BASt, 2015), soit ≈ 9 070 km d'autoroute (calcul),
+et une limitation générale à 120 km/h y éviterait 6,7 Mt de CO₂e par an
+(Umweltbundesamt, janvier 2023) : 0,739 kt par km (calcul). Passer de
+130 km/h à la vitesse libre pèse moins que passer de la vitesse libre à
+120 km/h : la moitié (hypothèse). Hausse : ≈ 433 kt de CO₂e par an (ordre de
+grandeur). Le surcroît de carburant (accises, TVA, importations) et l'effet
+sur l'accidentalité (vitesse et mortalité, ONISR) ne sont pas modélisés. -/
+def autoroutesKm : Int := 11752
+def troncons : Int := autoroutesKm / 10
+def autobahnLibreKm : Int := 25767 * 704 / 1000 / 2
+def ktParKmLibre1000 : Int := 6700 * 1000 / autobahnLibreKm
+def hausseCo2AutobahnKt : Int := troncons * ktParKmLibre1000 / 1000 / 2
+
+theorem autobahn_valeurs :
+    troncons = 1175 ∧ autobahnLibreKm = 9069 ∧ ktParKmLibre1000 = 738 ∧ hausseCo2AutobahnKt = 433 := by decide
+
+/-- Plan contre les fuites des réseaux d'eau (O-119) : ≈ 1 milliard de m³
+perdus chaque année, un litre sur cinq (SISPEA 2021, via UFC-Que Choisir,
+juin 2023), sur ≈ 850 000 km de canalisations ; renouvellement de 0,67 % par
+an contre 1 % visé par les Assises de l'eau de 2019 (même source). Fonds de
+l'État pour les collectivités : 1,5 Md€ par an, le montant de l'amendement
+n° 2034 au PLF 2025 (plan d'investissement pour les canalisations d'eau),
+pendant cinq ans (durée : hypothèse), soit la moitié environ des 2,5 à
+3 Md€ par an jugés nécessaires (UFC-Que Choisir, d'après des experts). L'eau
+économisée n'est pas modélisée. -/
+def fondsFuitesEau : Int := 1500
+
+/-- Aides à domicile du grand âge (O-120) : 475 000 aides à domicile en 2022,
+dont 156 000 salariées de particuliers employeurs ; revenu salarial annuel
+moyen net de 7 040 € en 2021, faute d'heures (740 heures par an en moyenne
+pour les femmes) (DREES, Études et résultats n° 1341, juin 2025, via Weka).
+Revalorisation de 10 % (hypothèse), financée par la hausse du tarif de l'APA
+et du crédit d'impôt pour les particuliers employeurs : masse brute de
+4 287 M€ (net / 0,78, rapport net/brut d'O-102), 428 M€ par an (calcul). -/
+def aidesDomicile : Int := 475000
+def revenuNetAideDomicileEuros : Int := 7040
+def revalorisationAidesDomicile : Int := aidesDomicile * revenuNetAideDomicileEuros * 100 / 78 / 1000000 / 10
+
+theorem aidesDomicile_eq : revalorisationAidesDomicile = 428 := by decide
+
+/-- 90 000 enseignants, AESH et infirmières scolaires (O-121), sur le modèle
+de la proposition du PCF (PC-12, sans les médecins scolaires, déjà dans
+O-88) : 4 000 postes coûtent 150 M€ en année pleine (gouvernement, janvier
+2025), soit 37 500 € par poste et 3 375 M€ pour 90 000 postes (calcul),
+recrutés en cinq ans. -/
+def postesEcole : Int := 90000
+def coutPosteEcoleEuros : Int := 150000000 / 4000
+def postesEcoleEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => postesEcole * k / 5 * coutPosteEcoleEuros / 1000000
+
+theorem postesEcole_valeurs :
+    coutPosteEcoleEuros = 37500 ∧ postesEcoleEcheancier = [675, 1350, 2025, 2700, 3375] := by decide
+
+/-- Cotisations salariales −0,5 point (O-122) : coup de pouce au pouvoir
+d'achat de tous les salariés, public et privé. Salaires et traitements bruts
+de 2025 : 1 157,2 Md€ (Insee, compte des ménages ; voir
+`Hypotheses.Reference`) : un point vaut 11 572 M€ (calcul) ; un demi-point,
+5 786 M€ par an, ≈ 197 € par an au salaire moyen (39 469 € bruts). Le point
+entier (variante) ramène la marge de baisse annuelle du déficit à 0,01
+point. -/
+def masseSalarialeBrute2025 : Int := 1157200
+def pointCotisationsSalariales : Int := masseSalarialeBrute2025 / 100
+def baisseCotisationsSalariales : Int := pointCotisationsSalariales / 2
+
+theorem pointCotisations_eq : pointCotisationsSalariales = 11572 ∧ baisseCotisationsSalariales = 5786 := by decide
+
+/-- Aide ciblée au solaire sur toiture (O-123) : la prime à
+l'autoconsommation des installations résidentielles a été supprimée par
+l'arrêté du 1er juin 2026, et le surplus racheté 1,1 c€/kWh (Selectra). Le
+programme aide les ménages modestes (plafonds de MaPrimeRénov') à poser 3 kWc
+sur leur toit : ≈ 2 000 € par kWc, 6 000 € pour 3 kWc (Selectra) ; l'État
+en paie la moitié, 3 000 € par installation, pour 50 000 installations par an
+(hypothèse) : 150 M€ et 150 MW de plus chaque année, sans emprise au sol
+(nouveau levier `solaireToiture`). -/
+def installationsSolaires : Int := 50000
+def kwcParInstallation : Int := 3
+def aideSolaireEuros : Int := 2000 * kwcParInstallation / 2
+def aideSolaire : Int := installationsSolaires * aideSolaireEuros / 1000000
+def mwSolaireParAn : Int := installationsSolaires * kwcParInstallation / 1000
+
+theorem solaire_valeurs : aideSolaire = 150 ∧ mwSolaireParAn = 150 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -2550,13 +2690,65 @@ def mesures : List Mesure := [
   { id := "O-115"
     titre := "Afrique : restitution des biens culturels, recherche de provenance, reconnaissance d'actes coloniaux"
     source := s!"Texte Orientation D, mesure 115 ; 90 000 objets d'Afrique subsaharienne dans les collections publiques (Sarr-Savoy, 2018) ; recherche de provenance portée à {provenanceAfrique} M€ par an (hypothèse) ; appui aux musées des pays bénéficiaires, 35 M€ tous les deux ans (hypothèse) ; reconnaissances sans coût (voir `provenanceAfrique`)"
-    leviers := [.depenseSur .culture provenanceAfrique, .recetteEcheancier none appuiMuseesEcheancier] }
+    leviers := [.depenseSur .culture provenanceAfrique, .recetteEcheancier none appuiMuseesEcheancier] },
+
+  { id := "O-116"
+    titre := "Zones commerciales densifiées : parkings mutualisés en silo, 105 ha libérés par an pour les activités"
+    source := s!"Texte Orientation D, mesure 116 ; 50 000 ha de zones d'entrée de ville (gouvernement), 28 % de parkings (Institut Paris Région) ; 10 % traités en dix ans (hypothèse) : {placesSiloParAn} places en silo par an à {coutPlaceSiloEuros} € (RNA 2019), 30 % par l'État (hypothèse) : {aideSilos} M€ par an ; {haLiberesParAn} ha libérés par an (voir `aideSilos`)"
+    leviers := [.investissementEcheancier .logementEnvironnement ((List.replicate 10 aideSilos) ++ [0]),
+                .artificialisation .activites ((List.replicate 9 (-haLiberesParAn)))] },
+
+  { id := "O-117"
+    titre := "Fret ferroviaire doublé : part modale de 9 % à 18 % en 2032, plan d'investissement et aide au wagon isolé doublés"
+    source := s!"Texte Orientation D, mesure 117 ; {fretReporteMtkm} millions de tonnes-km reportées de la route à {mgCo2ParTkm} mg par tonne-km (SDES, Citepa) : {co2EviteFretKt} kt évitées en 2032 ; Ulysse Fret doublé ({investissementFret} M€ par an de 2027 à 2032) et wagon isolé (+{aideWagonIsole} M€ par an) (voir `co2EviteFretKt`)"
+    leviers := [.investissementEcheancier .affairesEconomiques ((List.replicate 6 investissementFret) ++ [0]),
+                .depenseSur .affairesEconomiques aideWagonIsole] },
+
+  { id := "O-117b"
+    titre := "Fret ferroviaire : émissions des poids lourds évitées (montée en six ans)"
+    source := s!"Texte Orientation D, mesure 117 ; {co2EviteFretParAnKt} kt de CO₂e évitées de plus chaque année de 2027 à 2032 (voir `co2EviteFretParAnKt`)"
+    leviers := [.transitionKt .transports co2EviteFretParAnKt 0]
+    repetitions := 6 },
+
+  { id := "O-118"
+    titre := "Autoroutes à vitesse libre sur certains tronçons (10 % du réseau), sur le modèle allemand"
+    source := s!"Texte Orientation D, mesure 118 ; {troncons} km (10 % de 11 752 km, hypothèse) ; 6,7 Mt évitées en Allemagne par une limite à 120 km/h sur ≈ {autobahnLibreKm} km libres (UBA 2023, BASt) ; moitié pour 130 km/h → libre (hypothèse) : +{hausseCo2AutobahnKt} kt par an ; accidentalité non modélisée (voir `hausseCo2AutobahnKt`)"
+    leviers := [.transitionKt .transports (-hausseCo2AutobahnKt) 0]
+    variantes := [
+      { nom := "20 % du réseau", leviers := [.transitionKt .transports (-(2 * hausseCo2AutobahnKt)) 0] }] },
+
+  { id := "O-119"
+    titre := "Plan contre les fuites d'eau : 1,5 Md€ par an pendant cinq ans pour renouveler les canalisations"
+    source := s!"Texte Orientation D, mesure 119 ; 1 milliard de m³ perdus par an, un litre sur cinq (SISPEA) ; {fondsFuitesEau} M€ par an (amendement n° 2034 au PLF 2025), cinq ans (hypothèse) (voir `fondsFuitesEau`)"
+    leviers := [.investissementEcheancier .logementEnvironnement ((List.replicate 5 fondsFuitesEau) ++ [0])] },
+
+  { id := "O-120"
+    titre := "Grand âge : salaires des 475 000 aides à domicile revalorisés de 10 %"
+    source := s!"Texte Orientation D, mesure 120 ; {aidesDomicile} aides à domicile, {revenuNetAideDomicileEuros} € nets par an en moyenne (DREES, 2025) ; +10 % (hypothèse) par l'APA et le crédit d'impôt : {revalorisationAidesDomicile} M€ par an (voir `revalorisationAidesDomicile`)"
+    leviers := [.depenseSur .sante revalorisationAidesDomicile] },
+
+  { id := "O-121"
+    titre := "Écoles : 90 000 enseignants, AESH et infirmières scolaires de plus en cinq ans"
+    source := s!"Texte Orientation D, mesure 121 ; {postesEcole} postes à {coutPosteEcoleEuros} € (4 000 postes = 150 M€, gouvernement, janvier 2025) : {postesEcoleEcheancier.getLastD 0} M€ par an en 2031 (voir `postesEcoleEcheancier`)"
+    leviers := [.depenseEcheancier .enseignement postesEcoleEcheancier, .annonceEmplois postesEcole] },
+
+  { id := "O-122"
+    titre := "Pouvoir d'achat : cotisations salariales réduites d'un demi-point pour tous les salariés"
+    source := s!"Texte Orientation D, mesure 122 ; 0,5 % des {masseSalarialeBrute2025} M€ de salaires bruts de 2025 (Insee) : {baisseCotisationsSalariales} M€ par an (voir `baisseCotisationsSalariales`)"
+    leviers := [.prelevementSur .cotisations (-baisseCotisationsSalariales)]
+    variantes := [
+      { nom := "un point entier", leviers := [.prelevementSur .cotisations (-pointCotisationsSalariales)] }] },
+
+  { id := "O-123"
+    titre := "Solaire : 3 000 € d'aide pour 3 kWc sur le toit de 50 000 ménages modestes par an"
+    source := s!"Texte Orientation D, mesure 123 ; prime à l'autoconsommation supprimée le 1er juin 2026 ; ≈ 2 000 € par kWc (Selectra) ; moitié payée pour {installationsSolaires} installations par an (hypothèse) : {aideSolaire} M€ et {mwSolaireParAn} MW par an sur toiture (voir `aideSolaire`)"
+    leviers := [.depenseSur .logementEnvironnement aideSolaire, .solaireToiture mwSolaireParAn] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
