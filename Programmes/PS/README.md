@@ -41,6 +41,25 @@ sans contre-expertise ; document non consulté directement.
 | P-14 Révision des exonérations patronales | −4 Md€ d'allègements, au prorata des tranches (recouvrement possible avec P-03) |
 | P-15 Fraude, travail dissimulé, économies sur l'État et la santé | +2,4 et +1,1 Md€ de recettes, −3,6 et −4 Md€ de dépenses |
 
+## Ajouts du 28 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| P-16 Taxe Zucman (2 % au-delà de 100 M€) | +15 Md€ (chiffrage du parti, contre-budgets 2026 et 2027) |
+| P-17 Fiscalité des dividendes | +3,8 Md€ d'IR (flat tax de 30 % à 32 %, contre-budget 2026) |
+| P-18 Leasing social : un million de voitures électriques | 200 000 voitures par an à 6 000 € (traduction de PP-04) |
+| P-19 Classes de 19 élèves au plus | jusqu'à +6,8 Md€/an en dix ans (Institut Montaigne, 2022) |
+| P-20 20 000 postes dans le supérieur en dix ans | jusqu'à +1,4 Md€/an (coût moyen d'un enseignant, hypothèse) |
+| P-21 200 000 solutions d'accueil de la petite enfance | 1,4 Md€/an de construction pendant cinq ans, fonctionnement jusqu'à 3,1 Md€/an (coûts de l'Institut Montaigne et de la CNAF) |
+| P-22 Aide au développement à 0,7 % du RNB | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
+
+Non retenus : économies de fonctionnement de l'État et aides aux
+entreprises du contre-budget 2026 (recoupement avec P-03, P-05 et P-15),
+cumul emploi-retraite des hauts revenus (montant non détaillé), prévention
+portée à 8 % des dépenses de santé, allocation d'autonomie des 18-25 ans,
+30 000 places d'hébergement pour les demandeurs d'asile, budget de la
+culture et du sport (sans donnée de base sourcée).
+
 R. Glucksmann, candidat issu de la primaire « Choisir 2027 » (66,1 %,
 octobre 2026), propose 15 Md€ sur les successions de plus de 2 M€ pour
 baisser la CSG sur le travail : transcrit avec ses autres propositions
@@ -51,10 +70,9 @@ du projet du parti).
 
 Principales propositions, par thème :
 
-* **Fiscalité** : taxe Zucman de 2 % sur les patrimoines au-delà de
-  100 M€ (rendement non chiffré par la source) ; fusion de l'IR, de la CSG
-  et de la CRDS ; réintégration des revenus financiers dans l'IR et fin de
-  la flat tax ; IS progressif ; TVA à 5,5 % sur un panier de produits et sur
+* **Fiscalité** : fusion de l'IR, de la CSG
+  et de la CRDS ; réintégration des revenus financiers dans l'IR (au-delà
+  de P-17) ; IS progressif ; TVA à 5,5 % sur un panier de produits et sur
   les travaux de rénovation ; taxe anti-rente dès le quatrième logement.
 * **Travail et retraites** : 43 annuités et pénibilité ; écart de 1 à 20
   des rémunérations ; semaine de quatre jours expérimentée ; hausse des
