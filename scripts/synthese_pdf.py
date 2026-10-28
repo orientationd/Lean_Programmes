@@ -63,6 +63,7 @@ COULEURS_PARTIS = {
     "TexteOrientationD": "#C0158A", "PS": "#E86D9A", "LFI": "#D9502D", "PCF": "#A51C1F",
     "Ecologistes": "#2E9E50", "Renaissance": "#D99100", "Horizons": "#1AABC4",
     "LR": "#2F62C2", "RN": "#283C8C", "PlacePublique": "#7B3FA0",
+    "RevolutionPermanente": "#7A0F2E", "Reconquete": "#3D3D3D",
     "ExempleRelance": "#a3a29b", "ExempleConsolidation": "#77766f"}
 MARQUEURS = ["o", "s", "^", "D", "v", "P", "X", "h", "<", ">", "p", "*"]
 FICTIFS = {"ExempleRelance", "ExempleConsolidation"}
