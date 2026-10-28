@@ -235,7 +235,8 @@ def etiquettes_fin(ax, x_fin, series, dec, suffixe):
     ecart = (y1 - y0) * 0.052
     ordre = sorted(series, key=lambda t: t[1])
     pos = []
-    for _nom, y, _c in ordre:
+    for t in ordre:
+        y = t[1]
         pos.append(max(y, pos[-1] + ecart) if pos else y)
     # recentrer le bloc si le dernier déborde en haut
     debord = pos[-1] - (y1 - ecart * 0.3)
@@ -244,11 +245,29 @@ def etiquettes_fin(ax, x_fin, series, dec, suffixe):
         for i in range(len(pos) - 2, -1, -1):
             pos[i] = min(pos[i], pos[i + 1] - ecart)
     xl = x_fin + 0.55
-    for (nom, y, c), p in zip(ordre, pos):
+    for (nom, y, c, *vrai), p in zip(ordre, pos):
         ax.plot([x_fin + 0.12, xl - 0.08], [y, p], color=c, lw=0.6, zorder=1, clip_on=False)
-        val = nombre(y, dec) + suffixe
+        # série hors échelle : la valeur affichée est la vraie, signalée par ▲ ou ▼
+        val = nombre(vrai[0], dec) + suffixe + (" ▲" if vrai[0] > y else " ▼") if vrai else nombre(y, dec) + suffixe
         ax.annotate(f"{nom}  {val}", (xl, p), va="center", ha="left", fontsize=6.3,
                     color=INK2, annotation_clip=False)
+
+
+HORS_ECHELLE = 1.8      # une série dont l'amplitude dépasse 1,8 fois celle des autres est coupée
+
+
+def hors_echelle(series):
+    """Identifiants des séries hors échelle : amplitude (valeur absolue
+    maximale) supérieure à HORS_ECHELLE fois la plus grande des autres. Leur
+    trait est coupé au bord du graphe pour que les autres restent lisibles ;
+    l'étiquette de fin donne leur vraie valeur."""
+    amp = {k: max(abs(v) for v in y) for k, y in series.items()}
+    hors = set()
+    for k, a in amp.items():
+        autres = [b for j, b in amp.items() if j != k]
+        if autres and max(autres) > 0 and a > HORS_ECHELLE * max(autres):
+            hors.add(k)
+    return hors
 
 
 def legende(fig, ncol=3):
@@ -262,16 +281,33 @@ def courbes(D: Donnees, groupe, valeur, titre, dec, suffixe="", ecart=False, ref
     x = D.annees
     base = [valeur(e) for e in D.traj("central", None)]
     fins = []
+    series = {}
     if not ecart:
-        ligne(ax, x, base, TENDANCIEL, "Tendanciel (sans programme)", epaisseur=1.3, z=2, style="--")
-        fins.append(("Tendanciel", base[-1], TENDANCIEL))
+        series[None] = base
     for p in groupe:
         y = [valeur(e) for e in D.traj("central", p["id"])]
         if ecart:
             y = [a - b for a, b in zip(y, base)]
+        series[p["id"]] = y
+    hors = hors_echelle(series)
+    if not ecart:
+        ligne(ax, x, base, TENDANCIEL, "Tendanciel (sans programme)", epaisseur=1.3, z=2, style="--")
+        fins.append(("Tendanciel", base[-1], TENDANCIEL))
+    for p in groupe:
+        y = series[p["id"]]
         ligne(ax, x, y, D.couleur[p["id"]], nom_court(p["nom"]),
               marqueur=D.marqueur[p["id"]], style=D.style[p["id"]])
         fins.append((court_nom(nom_court(p["nom"]), 22), y[-1], D.couleur[p["id"]]))
+    if hors:
+        dans = [v for k, y in series.items() if k not in hors for v in y]
+        lo, hi = min(dans + [0]), max(dans + [0])
+        if reference is not None:
+            lo, hi = min(lo, reference[0]), max(hi, reference[0])
+        marge = (hi - lo) * 0.08 or 1
+        ax.set_ylim(lo - marge, hi + marge)
+        y0, y1 = ax.get_ylim()
+        fins = [(n, min(max(v, y0), y1), c, v) if v > y1 or v < y0 else (n, v, c)
+                for n, v, c in fins]
     if ecart:
         ax.axhline(0, color=BASE, lw=0.8, zorder=1)
     if reference is not None:

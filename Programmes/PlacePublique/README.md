@@ -53,11 +53,11 @@ pour tous les programmes.
 
 | | Sans programme | Place publique |
 |---|---|---|
-| Déficit public (moteur de demande) | 9,27 % du PIB | 11,22 % |
-| Déficit public (offre / équilibre) | 9,31 % / 9,27 % | 11,31 % / 11,25 % |
-| Dette publique | 156,7 % du PIB | 167,7 % |
-| Chômage | 7,90 % | 7,66 % |
-| Indice de développement humain | 0,9392 | 0,9386 |
+| Déficit public (moteur de demande) | 9,27 % du PIB | 11,60 % |
+| Déficit public (offre / équilibre) | 9,31 % / 9,27 % | 11,70 % / 11,64 % |
+| Dette publique | 156,7 % du PIB | 169,3 % |
+| Chômage | 7,90 % | 7,51 % |
+| Indice de développement humain | 0,9392 | 0,9388 |
 
 Effet de chaque mesure prise isolément (moteur de demande) :
 
@@ -68,6 +68,8 @@ Effet de chaque mesure prise isolément (moteur de demande) :
 | PP-03 Enseignants | +0,18 pt | −0,02 pt | +7 100 |
 | PP-04 Leasing social | +0,08 pt | −0,01 pt | +4 400 |
 | PP-05 Retraite à 62 ans | +2,01 pt | −0,14 pt | −609 600 |
+| PP-06 Service civique obligatoire | +0,14 pt | −0,06 pt | +22 500 |
+| PP-07 Aide au développement à 0,7 % | +0,24 pt | −0,09 pt | +31 600 |
 
 Le retour à 62 ans fait l'essentiel du coût : il réduit la population
 active (d'où moins d'emplois mais un chômage plus faible) et accroît les
