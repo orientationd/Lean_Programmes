@@ -19,6 +19,23 @@ engagement n'est déclaré.
 namespace Programmes.Renaissance
 open Modele
 
+/-- 350 députés au lieu de 577, 200 sénateurs au lieu de 348
+(attalpresident.fr, via Votons 2027). Dotations de l'État pour 2026 :
+607,65 M€ pour l'Assemblée nationale, 353,47 M€ pour le Sénat (Sénat,
+rapport sur la mission « Pouvoirs publics », PLF 2026), réduites en
+proportion du nombre d'élus (hypothèse : majorant, une partie des coûts
+étant fixe). Calendrier (hypothèse) : Assemblée élue en 2027, Sénat réduit
+de moitié aux renouvellements de 2029 et de 2032. -/
+def economieAssemblee : Int := 607648 * (577 - 350) / 577 / 1000
+def economieSenat : Int := 353471 * (348 - 200) / 348 / 1000
+def economieParlement : List Int :=
+  [-economieAssemblee, -economieAssemblee, -(economieAssemblee + economieSenat / 2),
+   -(economieAssemblee + economieSenat / 2), -(economieAssemblee + economieSenat / 2),
+   -(economieAssemblee + economieSenat)]
+
+theorem parlement_valeurs : economieAssemblee = 239 ∧ economieSenat = 150 ∧
+    economieParlement = [-239, -239, -314, -314, -314, -389] := by decide
+
 def mesures : List Mesure := [
   { id := "RE-01", titre := "« Droit au brut » : baisse des cotisations salariales, jusqu'à 250 € net par mois au salaire médian"
     source := "G. Attal, RMC, 6 octobre 2026 : coût estimé 40 Md€/an, financement non précisé ; imputé aux cotisations sociales"
@@ -44,13 +61,16 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .ir (-3000)] },
   { id := "RE-08", titre := "1 000 € sur un plan d'épargne retraite à chaque naissance"
     source := "Amendement au PLF 2026 (Le Parisien, via Econostrum), repris au programme : 660 000 naissances × 1 000 € ≈ 0,66 Md€ par an"
-    leviers := [.depenseSur .famille 660] }
+    leviers := [.depenseSur .famille 660] },
+  { id := "RE-09", titre := "350 députés et 200 sénateurs"
+    source := s!"attalpresident.fr/programme (via Votons 2027) : « ramener le nombre de députés à 350 et celui des sénateurs à 200 » ; non chiffré : jusqu'à {economieAssemblee + economieSenat} M€ par an (voir `economieAssemblee`)"
+    leviers := [.depenseEcheancier .fonctionnement economieParlement] }
 ]
 
 def programme : Programme where
   id := "Renaissance"
   nom := "Renaissance — Gabriel Attal 2027"
-  description := "Transcription partielle et non officielle : « droit au brut » (−40 Md€ de cotisations), année blanche 2028 sur les prestations, 100 000 postes de fonctionnaires, taxe sur les rachats d'actions, objectif de 100 000 emplois par la réforme du chômage, « frein d'urgence » sur les dépenses sociales, impôt des classes moyennes, 1 000 € d'épargne retraite par naissance. Retraite universelle par points, quotas d'immigration : sans montant publié. Objectif annoncé : 120 à 150 Md€ d'économies et déficit sous 3 % avant 2032."
+  description := "Transcription partielle et non officielle : « droit au brut » (−40 Md€ de cotisations), année blanche 2028 sur les prestations, 100 000 postes de fonctionnaires, taxe sur les rachats d'actions, objectif de 100 000 emplois par la réforme du chômage, « frein d'urgence » sur les dépenses sociales, impôt des classes moyennes, 1 000 € d'épargne retraite par naissance. Ajout du 28 octobre 2026 : 350 députés et 200 sénateurs. Retraite universelle par points, quotas d'immigration : sans montant publié. Objectif annoncé : 120 à 150 Md€ d'économies et déficit sous 3 % avant 2032."
   mainteneurs := ["@orientationd"]
   source := "attalpresident.fr/programme et presse (RMC 6 octobre 2026, Le Parisien 23 mai 2026, CNews 30 avril 2026), consultés le 22 octobre 2026"
   mesures := mesures

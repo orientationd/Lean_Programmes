@@ -22,6 +22,32 @@ open Modele
 
 def emission : String := "É. Philippe, « L'Heure de vérité », France 2, 8 octobre 2026"
 
+/-- Rémunération moyenne des enseignants +20 % sur le quinquennat (Le
+Figaro, repris par LCP le 24 août 2026). Masse salariale des enseignants
+hors CAS Pensions : 59,23 Md€ en 2026 pour 852 752 enseignants (PLF 2026,
+rapport du Sénat sur la mission Enseignement scolaire) ; +20 % atteints en
+cinq hausses égales (calcul). -/
+def hausseEnseignants : Int := 59230 * 20 / 100
+def enseignantsEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * hausseEnseignants / 5
+
+/-- Réserve portée de 45 000 à 250 000 réservistes et service militaire
+volontaire de 3 000 à 50 000 places par an (edouardphilippe.fr, via
+Votons 2027). Réserve : 98 M€ pour 4 400 réservistes de plus à 45 jours
+par an (Sénat, rapport sur le PLF 2026, Défense), soit 22 272 € par
+réserviste (calcul ; majorant, l'équipement compris). Service militaire
+volontaire : 800 € par mois pendant dix mois (Euronews, 31 août 2026),
+solde seule (plancher). Montée en charge en cinq ans (hypothèse). -/
+def coutReservisteEuros : Int := 98000000 / 4400
+def coutDefense : Int := 205000 * coutReservisteEuros / 1000000 + 47000 * 800 * 10 / 1000000
+def defenseEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * coutDefense / 5
+
+theorem ajouts_valeurs :
+    hausseEnseignants = 11846 ∧ enseignantsEcheancier = [2369, 4738, 7107, 9476, 11846] ∧
+    coutReservisteEuros = 22272 ∧ coutDefense = 4941 ∧
+    defenseEcheancier = [988, 1976, 2964, 3952, 4941] := by decide
+
 def mesures : List Mesure := [
   { id := "H-01", titre := "Âge légal porté progressivement à 65 ans, 45 annuités"
     source := s!"{emission} : 65 ans « en moins de dix ans », un tiers des salariés exemptés (non modélisé) ; +3 mois par an à partir de 2028, 65 ans atteints en 2036 (64 ans et 6 mois en 2033, contre 64 ans au calendrier légal)"
@@ -46,13 +72,19 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .autres (-50000), .economieSur .affairesEconomiques 50000] },
   { id := "H-08", titre := "Part fiscale pleine dès le deuxième enfant"
     source := "edouardphilippe.fr (comparateur IFRAP 2027) ; non chiffré par Horizons : 3,5 Md€ selon le chiffrage par le RN de la même mesure (LCP, 6 octobre 2026), hypothèse"
-    leviers := [.prelevementSur .ir (-3500)] }
+    leviers := [.prelevementSur .ir (-3500)] },
+  { id := "H-09", titre := "Enseignants : rémunération moyenne relevée de 20 % sur le quinquennat"
+    source := s!"É. Philippe (Le Figaro, repris par LCP le 24 août 2026), financée en partie par « près d'un million d'élèves en moins » (non modélisé) ; non chiffré : 20 % de 59,23 Md€, {hausseEnseignants} M€ par an atteints en cinq ans (voir `hausseEnseignants`)"
+    leviers := [.remunerationPublique .traitement .enseignement enseignantsEcheancier] },
+  { id := "H-10", titre := "Défense : 250 000 réservistes, 50 000 places de service militaire volontaire par an"
+    source := s!"edouardphilippe.fr, « Pour une France plus sûre » (via Votons 2027, 9 octobre 2026) ; non chiffré : {coutDefense} M€ par an atteints en cinq ans (voir `coutReservisteEuros`) ; obus, drones et nouvelle LPM sans montant"
+    leviers := [.depenseEcheancier .defense defenseEcheancier] }
 ]
 
 def programme : Programme where
   id := "Horizons"
   nom := "Horizons — Édouard Philippe 2027"
-  description := "Transcription partielle et non officielle des propositions d'octobre 2026 : âge légal à 65 ans, non-remplacement d'un fonctionnaire sur trois, fonds d'adaptation climatique, deux heures supplémentaires exonérées. Pacte fiscal (−50 Md€ d'impôts de production contre −50 Md€ d'aides), part fiscale dès le deuxième enfant. Allocation familiale unique et chômage à 12 mois n'ont pas de montant publié."
+  description := "Transcription partielle et non officielle des propositions d'octobre 2026 : âge légal à 65 ans, non-remplacement d'un fonctionnaire sur trois, fonds d'adaptation climatique, deux heures supplémentaires exonérées. Pacte fiscal (−50 Md€ d'impôts de production contre −50 Md€ d'aides), part fiscale dès le deuxième enfant. Ajouts du 28 octobre 2026 : enseignants +20 %, réserve et service militaire volontaire. Allocation familiale unique et chômage à 12 mois n'ont pas de montant publié."
   mainteneurs := ["@orientationd"]
   source := "« L'Heure de vérité », France 2, 8 octobre 2026 (Euronews, franceinfo, Echos Plus, consultés le 21 octobre 2026)"
   mesures := mesures

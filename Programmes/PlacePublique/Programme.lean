@@ -50,6 +50,33 @@ quinquennat, soit 200 000 voitures par an et 6 000 € d'aide par voiture
 def leasingVoituresParAn : Int := 200000
 def leasingAideEuros : Int := 6000
 
+/-- Service civique obligatoire de dix mois (R. Glucksmann, livre de mai
+2026 ; LCP, 26 mai 2026 ; Public Sénat, 24 août 2026 : « Tous les jeunes
+Français et toutes les jeunes Françaises consacreront dix mois de leur vie
+à la nation »). En 2024, 86 406 missions ont commencé, 10,5 % d'une
+génération, et 72 000 missions sont financées en 2025 ; l'État verse 505 €
+par mois d'indemnité et 100 € de tutorat aux associations (Maire-info,
+17 juillet 2025). Coût : génération implicite (calcul) moins les missions
+déjà financées, × 605 € × 10 mois ; encadrement au-delà du tutorat non
+compté ; montée en charge en cinq ans (hypothèse). -/
+def generation : Int := 86406 * 1000 / 105
+def coutServiceCivique : Int := (generation - 72000) * (505 + 100) * 10 / 1000000
+def serviceCiviqueEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * coutServiceCivique / 5
+
+/-- Aide publique au développement à 0,7 % du RNB (Acte 1). En 2025 :
+12,9 Md€, soit 0,42 % du RNB (75 Secondes, 30 août 2026, d'après les
+données préliminaires de l'OCDE) ; écart de 0,28 point du RNB implicite
+(calcul), atteint en cinq ans (hypothèse). -/
+def hausseApd : Int := 12900 * 10000 / 42 * 28 / 10000
+def apdEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * hausseApd / 5
+
+theorem ajouts_valeurs :
+    generation = 822914 ∧ coutServiceCivique = 4543 ∧
+    serviceCiviqueEcheancier = [908, 1817, 2725, 3634, 4543] ∧
+    apdEcheancier = [1719, 3439, 5159, 6879, 8599] := by decide
+
 def mesures : List Mesure := [
   { id := "PP-01", titre := "Taxe sur les méga-héritages au-delà de 2 M€, Pacte Dutreil réformé"
     source := s!"{campagne} (TF1, 23 août 2026 ; Public Sénat, 24 août ; débats LCI du 23 septembre et BFMTV du 4 octobre) : « 15 milliards d'euros », retenus par an et imputés aux droits de succession et de donation (voir `megaHeritages`). La suppression des niches Dutreil (≈ 3 Md€, communiqué de Place publique du 2 septembre 2025) est supposée comprise"
@@ -67,13 +94,19 @@ def mesures : List Mesure := [
       { nom := "un million de voitures et 6 Md€ par an", leviers := [.aideAchatElectrique 1000000 leasingAideEuros] }] },
   { id := "PP-05", titre := "Retraites : abrogation de la réforme de 2023, âge légal à 62 ans"
     source := s!"{campagne} (débat BFMTV, 4 octobre 2026 : « ce sera 62 ans » ; LCP, 9 octobre) ; Place publique, Acte 1 (juin 2025), p. 43 : « Abroger la réforme Macron de 2023 ». 62 ans dès l'entrée en vigueur : −9 mois en 2027, l'écart au calendrier légal atteint 24 mois en 2033"
-    leviers := [.ageLegalCible 744 0] }
+    leviers := [.ageLegalCible 744 0] },
+  { id := "PP-06", titre := "Service civique obligatoire de dix mois"
+    source := s!"{campagne} (livre de mai 2026 ; LCP, 26 mai 2026 ; Public Sénat, 24 août 2026) ; non chiffré : {generation - 72000} jeunes de plus par an à 605 € par mois pendant dix mois, {coutServiceCivique} M€ par an atteints en cinq ans (voir `generation`)"
+    leviers := [.depenseEcheancier .culture serviceCiviqueEcheancier] },
+  { id := "PP-07", titre := "Aide publique au développement portée à 0,7 % du RNB"
+    source := s!"Place publique, Acte 1 (juin 2025) : « 0,7 % du RNB dédié à l'aide publique au développement » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `hausseApd`)"
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
 ]
 
 def programme : Programme where
   id := "PlacePublique"
   nom := "Place publique — Raphaël Glucksmann (campagne 2027)"
-  description := "Transcription partielle et non officielle des propositions chiffrées de la campagne de Raphaël Glucksmann (taxe sur les méga-héritages et baisse de la CSG sur les salaires, enseignants, leasing social, retraite à 62 ans), en l'absence de programme présidentiel publié au 26 octobre 2026."
+  description := "Transcription partielle et non officielle des propositions chiffrées de la campagne de Raphaël Glucksmann (taxe sur les méga-héritages et baisse de la CSG sur les salaires, enseignants, leasing social, retraite à 62 ans, service civique obligatoire, aide au développement à 0,7 % du RNB), en l'absence de programme présidentiel publié au 26 octobre 2026."
   mainteneurs := ["@orientationd"]
   source := "Déclarations de campagne de R. Glucksmann (août-octobre 2026) ; Place publique, « Notre vision pour la France — Acte 1 » (23 juin 2025)"
   mesures := mesures

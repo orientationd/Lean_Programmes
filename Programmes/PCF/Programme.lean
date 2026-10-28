@@ -84,13 +84,34 @@ def mesures : List Mesure := [
     leviers := [.economieSur .defense 7000] },
   { id := "PC-15", titre := "ISF rétabli et triplé"
     source := "Comparateur IFRAP 2027 ; discours de F. Roussel, 15 septembre 2026 ; non chiffré : l'ISF rapportait 4,1 Md€ en 2017, triplé ≈ 12,3 Md€ statiques, moins l'IFI supprimé (2,3 Md€), soit ≈ 10 Md€ (calcul, hypothèse)"
-    leviers := [.prelevementSur .patrimoine 10000] }
+    leviers := [.prelevementSur .patrimoine 10000] },
+  { id := "PC-16", titre := "SMIC porté à 1 600 € net"
+    source := "20 mesures des parlementaires communistes (Public Sénat, 29 janvier 2025) : « revalorisation du SMIC à 1 600 euros net mensuels ». Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +11,0 % (même conversion que L-11)"
+    leviers := [.revalorisationSmic 1100] },
+  { id := "PC-17", titre := "Retraite à 60 ans à taux plein"
+    source := "pcf.fr, « Retraites : pour une réforme digne des jours heureux » : « rétablir l'âge de départ à 60 ans », financé en taxant les revenus financiers (PC-18) ; reprise en 2026 (France-Vote, 5 octobre 2026). Âge légal fixé à 60 ans dès l'entrée en vigueur ; le coût suit l'hypothèse économique du scénario"
+    leviers := [.ageLegalCible 720 0] },
+  { id := "PC-18", titre := "Cotisation sociale sur les revenus financiers des entreprises"
+    source := "F. Roussel (Public Sénat, 9 septembre 2019) : « récupérer tout de suite 30 milliards d'euros » en soumettant à cotisation dividendes et placements (assiette de 298,8 Md€ de revenus financiers en 2018, L'Info Durable, 14 septembre 2019) ; chiffrage du parti de 2019, non actualisé, sans contre-expertise"
+    leviers := [.prelevementSur .cotisations 30000] },
+  { id := "PC-19", titre := "Point d'indice de la fonction publique relevé de 10 %"
+    source := "20 mesures des parlementaires communistes (29 janvier 2025) : « hausse de 10 % du point d'indice » ; non chiffré : l'Institut Montaigne évaluait la hausse de 30 % du programme de 2022 à 76 Md€ par an, soit ≈ 25,3 Md€ pour 10 % (calcul, proportionnel)"
+    leviers := [.remunerationPublique .traitement .fonctionnement [25300]] },
+  { id := "PC-20", titre := "Logement social : 15 Md€ par an d'aides à la pierre, 200 000 logements par an"
+    source := "F. Roussel, propositions logement (Journal de l'Agence, 28 octobre 2026) : « produire un million de logements sociaux » en cinq ans et « rétablissement de 15 milliards d'euros par an d'aides à la pierre de l'État » ; TVA à 5,5 % sur le logement social et fin de la réduction de loyer de solidarité non chiffrées"
+    leviers := [.investissement .logementEnvironnement 15000] },
+  { id := "PC-21", titre := "« 100 % Sécu » : remboursement intégral des soins"
+    source := "Positions 2026 (France-Vote, 5 octobre 2026) : « cent pour cent Sécurité sociale » ; non chiffré par le parti : 17,1 Md€ par an (Institut Montaigne, 14 février 2022, même mesure de la NUPES, fourchette 15 à 26)"
+    leviers := [.depenseSur .sante 17100] },
+  { id := "PC-22", titre := "Impôt sur les sociétés rétabli à 33 %"
+    source := "20 mesures des parlementaires communistes (29 janvier 2025) : « rétablissement de l'impôt sur les sociétés à 33 % » ; taux normal porté de 25 % à 33,33 %, rendement calculé par le modèle (pilier 2, réponse de l'assiette)"
+    leviers := [.impotSocietes 3333] }
 ]
 
 def programme : Programme where
   id := "PCF"
   nom := "Parti communiste français — Empreinte 2050"
-  description := "Transcription partielle et non officielle du plan climat « Empreinte 2050 » : 28 Md€/an de dépenses publiques chiffrées (ferroviaire, vélo, rénovation), réductions d'émissions annoncées pour 2030, programme de 20 EPR2 financé par prêt de l'État. La source annonce 186 Md€/an d'investissement total, public et privé. Propositions de 2026 (F. Roussel candidat, pas de programme 2027 chiffré) : allocations familiales dès le premier enfant, 90 000 enseignants, 5 Md€ pour la jeunesse, refus de la hausse du budget militaire, ISF triplé."
+  description := "Transcription partielle et non officielle du plan climat « Empreinte 2050 » : 28 Md€/an de dépenses publiques chiffrées (ferroviaire, vélo, rénovation), réductions d'émissions annoncées pour 2030, programme de 20 EPR2 financé par prêt de l'État. La source annonce 186 Md€/an d'investissement total, public et privé. Propositions de 2026 (F. Roussel candidat, pas de programme 2027 chiffré) : allocations familiales dès le premier enfant, 90 000 enseignants, 5 Md€ pour la jeunesse, refus de la hausse du budget militaire, ISF triplé. Ajouts du 28 octobre 2026 (propositions des parlementaires communistes et de F. Roussel) : SMIC à 1 600 € net, retraite à 60 ans, cotisation sur les revenus financiers, point d'indice +10 %, 15 Md€ d'aides à la pierre, 100 % Sécu, IS à 33 %."
   mainteneurs := ["@orientationd"]
   source := "https://ecologie.pcf.fr/plan-climat/ et document « Empreinte 2050 » (consultés le 21 octobre 2026)"
   mesures := mesures

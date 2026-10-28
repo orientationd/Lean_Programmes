@@ -10,6 +10,8 @@ import Programmes.Horizons.Programme
 import Programmes.Renaissance.Programme
 import Programmes.Ecologistes.Programme
 import Programmes.PlacePublique.Programme
+import Programmes.RevolutionPermanente.Programme
+import Programmes.Reconquete.Programme
 
 /-!
 # Registre des programmes
@@ -40,7 +42,9 @@ def tous : List Modele.Programme := [
   Horizons.programme,
   Renaissance.programme,
   Ecologistes.programme,
-  PlacePublique.programme
+  PlacePublique.programme,
+  RevolutionPermanente.programme,
+  Reconquete.programme
 ]
 
 end Programmes

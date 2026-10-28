@@ -26,13 +26,24 @@
 | H-07 Pacte fiscal : −50 Md€ d'impôts de production, −50 Md€ d'aides aux entreprises | −50 Md€ d'autres impôts, −50 Md€ d'affaires économiques (imputation : hypothèse) |
 | H-08 Part fiscale pleine dès le deuxième enfant | −3,5 Md€ d'IR (chiffrage du RN pour la même mesure, hypothèse) |
 
+## Ajouts du 28 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| H-09 Enseignants : +20 % de rémunération moyenne | jusqu'à +11,8 Md€/an de traitements en cinq ans (20 % de 59,23 Md€, PLF 2026) |
+| H-10 Réserve à 250 000, service militaire volontaire à 50 000 places | jusqu'à +4,9 Md€/an en cinq ans (22 272 € par réserviste, Sénat ; 800 € par mois de solde) |
+
 ## Non modélisé, faute de montant dans les sources
 
 * Assurance chômage : durée maximale ramenée de 18 à 12 mois (moins de
   50 ans).
 * Allocation familiale unique de 350 €/mois dès le premier enfant,
-  dégressive avec l'impôt sur le revenu ; réduction d'impôt d'environ
-  3 000 € pour les familles actives.
+  dégressive avec l'impôt sur le revenu (versée par enfant ou par famille :
+  non précisé) ; réduction d'impôt d'environ 3 000 € pendant trois ans
+  après une naissance (part des foyers concernés non publiée).
+* Deux jours de carence d'ordre public, cadre de l'effort budgétaire
+  (déficit à 2 % en fin de quinquennat, moitié sur le social), ingénieurs
+  diplômés portés à 100 000 par an, plafonds de donation relevés.
 * Retraite par capitalisation ; « la moitié de l'effort » sur les
   dépenses sociales, sans montant total ; vingtaine d'ordonnances en
   juillet 2027.

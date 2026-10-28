@@ -35,6 +35,20 @@ de montant : le modèle montre donc le coût brut de la mesure.
 | RE-07 Impôt des classes moyennes, pensions alimentaires non imposables | −3 Md€ d'IR (chiffrages du parti) |
 | RE-08 1 000 € d'épargne retraite par naissance | +0,66 Md€ |
 
+## Ajout du 28 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| RE-09 350 députés et 200 sénateurs | jusqu'à −0,39 Md€/an (dotations de 2026 réduites en proportion du nombre d'élus, majorant ; Assemblée en 2027, Sénat en 2029 et 2032) |
+
+Toujours sans montant ni paramètre (programme consulté via Votons 2027 le
+28 octobre 2026) : moins de 20 élèves par classe, présenté comme financé
+par la baisse démographique ; places de prison par opérations d'intérêt
+national, sans nombre ; 200 000 professionnels de la petite enfance
+formés d'ici 2030 ; baisse des émissions portée à 5 % par an, fossiles
+sous 30 % en 2035 (objectifs sans moyens chiffrés) ; enveloppe de 120 à
+150 Md€ d'économies, non ventilée.
+
 ## Non modélisé, faute de montant dans les sources
 
 * Retraite universelle par points (« un euro cotisé ouvre les mêmes
@@ -44,8 +58,7 @@ de montant : le modèle montre donc le coût brut de la mesure.
   supplémentaires ; « Constitution du travail ».
 * Mutuelle publique à 1 €/jour ; quotas d'immigration votés par le
   Parlement ; formation de 20 millions de salariés à l'IA ; « Choc des
-  savoirs », moins de 20 élèves par classe ; 350 députés et 200 sénateurs ;
-  règle d'or constitutionnelle sans hausse d'impôts des ménages.
+  savoirs », moins de 20 élèves par classe ; règle d'or constitutionnelle sans hausse d'impôts des ménages.
 * Énergie : part des fossiles sous 30 % en 2035, baisse des émissions
   portée à 5 %/an d'ici 2030 : objectifs sans montant public.
 

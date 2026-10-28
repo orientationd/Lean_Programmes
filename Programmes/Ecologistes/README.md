@@ -38,23 +38,34 @@ La source ne publie pas de chiffrage global.
 Non transcrit : plan d'investissement climat de ≈ 10 Md€ (recouvrement
 probable avec E-03), 2 000 centres de santé (non chiffré).
 
+## Ajouts du 28 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| E-16 ISF rétabli | +1,9 Md€ (ISF de 2017 moins IFI de 2025, calcul ; recoupement possible avec E-05) |
+| E-17 Fin des exonérations au-delà de 1,6 SMIC | allègements de la tranche 1,6-2,5 SMIC et au-delà supprimés (≈ 10,1 Md€), effets calculés par le modèle |
+| E-18 Remboursement à 100 %, fin des franchises | +17,1 Md€ (« 100 % Sécu », Institut Montaigne 2022 ; majorant) |
+| E-19 Aide au développement à 0,7 % du PNB | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
+| E-20 Congé climatique de cinq jours | −2,2 % de durée du travail |
+
 ## Non modélisé, faute de montant dans les sources lues
 
 * Garantie d'autonomie à 50 % du SMIC net dès 18 ans, en remplacement du
-  RSA ; congé climatique.
-* ISF climatique, tranche d'IR à 60 % au-delà de 250 000 €, CSG
+  RSA (au-delà de E-13).
+* Composante climatique de l'ISF, tranche d'IR à 60 % au-delà de 250 000 €, CSG
   progressive, TVA verte, TTF à 0,7 %, taxe sur les billets d'avion,
-  héritage (deux tranches supplémentaires), suppression des exonérations
-  de cotisations au-dessus de 1,6 SMIC, taxe sur les superprofits.
+  héritage (deux tranches supplémentaires), taxe sur les superprofits.
 * 500 000 rénovations performantes par an ; 120 000 km de voies cyclables
   en 2032 ; 110 km/h sur autoroute ; 100 % de véhicules neufs zéro
   émission en 2035.
 * Sortie progressive du nucléaire sur une vingtaine d'années ; neutralité
   carbone en 2050 ; agriculture biologique 25 % en 2032.
-* 2 000 centres de santé d'ici 2030 ; 100 % Sécu sur les soins
-  essentiels ; classes à 19 élèves (12 en REP) en 2032.
+* 2 000 centres de santé d'ici 2030 ; 150 000 logements étudiants et
+  foyers de jeunes travailleurs sur le quinquennat (coût unitaire non
+  sourcé).
 * Fonds « France Verte 2040 », exclusion des investissements de transition
-  du calcul du déficit autorisé, aide au développement à 0,7 % du PNB.
+  du calcul du déficit autorisé, budget européen à 2 % du PIB européen en
+  2035.
 
 Dès qu'un chiffrage est publié, ces propositions pourront être ajoutées
 par PR.

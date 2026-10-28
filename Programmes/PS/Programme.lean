@@ -29,6 +29,37 @@ def site : String := "projet-socialiste.fr"
 def contreBudget : String :=
   "Contre-budget 2027 des députés socialistes, 16 septembre 2026 (Selectra, JDN, LCP, Planet ; chiffres du parti, sans contre-expertise)"
 
+/-- Coût moyen d'un enseignant, hors pensions : 59,23 Md€ de masse salariale
+hors CAS Pensions pour 852 752 enseignants en 2026 (PLF 2026, rapport du
+Sénat sur la mission Enseignement scolaire), soit 69 457 € (calcul),
+appliqué aux postes de l'enseignement supérieur (hypothèse). -/
+def coutEnseignantEuros : Int := 59230000000 / 852752
+def postesSuperieur : List Int :=
+  ([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List Int).map fun k => k * 2000 * coutEnseignantEuros / 1000000
+
+/-- Petite enfance, 200 000 solutions d'accueil de plus : construction à
+35 000 € par place (17,5 Md€ pour 500 000 places, Institut Montaigne,
+2022, calcul) en cinq ans ; fonctionnement à 15 381 € par place et par an
+(coût CNAF cité par l'Institut Montaigne), tous financeurs (majorant de la
+part publique). -/
+def placesAccueil : Int := 200000
+def investissementAccueil : Int := placesAccueil * 35000 / 5 / 1000000
+def fonctionnementAccueil : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * placesAccueil * 15381 / 5 / 1000000
+
+/-- Aide publique au développement portée à 0,7 % du RNB (chap. 20). En
+2025 : 12,9 Md€, soit 0,42 % du RNB (75 Secondes, 30 août 2026, d'après
+les données préliminaires de l'OCDE) ; écart de 0,28 point du RNB implicite
+(calcul), atteint en cinq ans (hypothèse). -/
+def hausseApd : Int := 12900 * 10000 / 42 * 28 / 10000
+def apdEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * hausseApd / 5
+
+theorem valeurs :
+    postesSuperieur = [138, 277, 416, 555, 694, 833, 972, 1111, 1250, 1389] ∧
+    investissementAccueil = 1400 ∧ fonctionnementAccueil = [615, 1230, 1845, 2460, 3076] ∧
+    hausseApd = 8599 ∧ apdEcheancier = [1719, 3439, 5159, 6879, 8599] := by decide
+
 def mesures : List Mesure := [
   { id := "P-01", titre := "SMIC porté à 1 690 € net"
     source := s!"{site}, chap. 1 « Redonner du sens et de la valeur au travail ». Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +17,3 %"
@@ -75,13 +106,36 @@ def mesures : List Mesure := [
   { id := "P-15", titre := "Fraude, travail dissimulé, économies sur l'État et sur les marges du secteur de la santé"
     source := s!"{contreBudget} : fraude fiscale 2,4 Md€, travail dissimulé 1,1 Md€, État 3,6 Md€, santé 4 Md€ (Selectra ; 15,1 Md€ détaillés sur 17,5 annoncés)"
     leviers := [.prelevementSur .autres 2400, .prelevementSur .cotisations 1100,
-                .economieSur .fonctionnement 3600, .economieSur .sante 4000] }
+                .economieSur .fonctionnement 3600, .economieSur .sante 4000] },
+  { id := "P-16", titre := "Taxe Zucman : 2 % sur les patrimoines de plus de 100 M€"
+    source := s!"{site}, chap. 16 « Refaire société » : « taxe Zucman de 2 % sur le patrimoine des grandes fortunes de plus de 100 millions d'euros » ; 15 Md€ par an dans les contre-budgets 2026 (30 août 2025) et 2027 (16 septembre 2026), chiffrage du parti (≈ 20 Md€ selon G. Zucman ; « 2 à 3 milliards » selon le rapporteur du Sénat, 4 juin 2025) ; même imputation que L-14 et E-05"
+    leviers := [.prelevementSur .autres 15000] },
+  { id := "P-17", titre := "Fiscalité des dividendes : prélèvement forfaitaire unique relevé"
+    source := s!"{site}, chap. 16 : « suppression du prélèvement forfaitaire unique et hausse de la CSG sur les revenus du capital » ; chiffrage du parti dans le contre-budget 2026 (LCP, Public Sénat, 30 août 2025) : flat tax de 30 % à 32 %, 3,8 Md€ (la suppression coûterait davantage aux contribuables : 3,2 Md€ avec l'exit tax selon l'Institut Montaigne, 2024)"
+    leviers := [.prelevementSur .ir 3800] },
+  { id := "P-18", titre := "Leasing social : un million de voitures électriques à 100 € par mois"
+    source := s!"{site} (via Votons 2027) ; non chiffré par le PS : même traduction que PP-04 (6 Md€ pour un million de voitures selon R. Glucksmann, AFP, 2 octobre 2026), sur cinq ans : 200 000 voitures par an à 6 000 € d'aide"
+    leviers := [.aideAchatElectrique 200000 6000] },
+  { id := "P-19", titre := "Classes de 19 élèves au plus, de 22,4 à 18,2 élèves en moyenne en dix ans"
+    source := s!"{site}, chap. 11 ; non chiffré : 6,8 Md€ par an pour les classes à 19 (Institut Montaigne, 2022, même mesure de LFI, fourchette 4,6 à 11 Md€ ; traduction de E-12), atteints en dix ans (hypothèse)"
+    leviers := [.depenseEcheancier .enseignement (([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List Int).map fun k => k * 680)] },
+  { id := "P-20", titre := "Enseignement supérieur : 20 000 postes en dix ans"
+    source := s!"{site}, chap. 11 : « créer 20 000 postes sur dix ans » ; non chiffré : 2 000 postes par an à {coutEnseignantEuros} € (hypothèse, voir `coutEnseignantEuros`), {postesSuperieur.getLastD 0} M€ par an la dixième année"
+    leviers := [.depenseEcheancier .enseignement postesSuperieur, .annonceEmplois 20000] },
+  { id := "P-21", titre := "Service public de la petite enfance : 200 000 solutions d'accueil de plus"
+    source := s!"{site}, chap. 10 : combler « le déficit de 200 000 solutions d'accueil » de 3 mois à 3 ans ; non chiffré : {investissementAccueil} M€ par an de construction pendant cinq ans, fonctionnement jusqu'à {fonctionnementAccueil.getLastD 0} M€ par an (voir `placesAccueil`)"
+    leviers := [.investissementEcheancier .famille [investissementAccueil, investissementAccueil, investissementAccueil,
+                                                    investissementAccueil, investissementAccueil, 0],
+                .depenseEcheancier .famille fonctionnementAccueil] },
+  { id := "P-22", titre := "Aide publique au développement portée à 0,7 % du RNB"
+    source := s!"{site}, chap. 20 : « augmenter le niveau de l'APD pour atteindre 0,7 % du RNB » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `hausseApd`)"
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
 ]
 
 def programme : Programme where
   id := "PS"
   nom := "Parti socialiste — Le Projet socialiste (2026)"
-  description := "Transcription partielle et non officielle du Projet socialiste (8 propositions chiffrées ou directement modélisables sur environ 400) et du contre-budget 2027 des députés socialistes (16 septembre 2026 : CSG progressive, taxe numérique, santé, climat, école, exonérations, fraude et économies)."
+  description := "Transcription partielle et non officielle du Projet socialiste (8 propositions chiffrées ou directement modélisables sur environ 400) et du contre-budget 2027 des députés socialistes (16 septembre 2026 : CSG progressive, taxe numérique, santé, climat, école, exonérations, fraude et économies). Ajouts du 28 octobre 2026 : taxe Zucman, dividendes, leasing social, classes à 19 élèves, 20 000 postes dans le supérieur, petite enfance, aide au développement à 0,7 % du RNB."
   mainteneurs := ["@orientationd"]
   source := "https://projet-socialiste.fr/ (consulté le 21 octobre 2026)"
   mesures := mesures

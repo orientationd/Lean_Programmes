@@ -96,13 +96,46 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .securiteJustice 600, .annonceEmplois 7000] },
   { id := "RN-22", titre := "Abrogation du zéro artificialisation nette (ZAN)"
     source := "Hors du contre-budget : amendement n° 1555 (J.-P. Meurin, cosigné par M. Le Pen, 4 avril 2025) : l'article 191 de la loi Climat et résilience « est abrogé » ; K. Mauvieux (28 mai 2025) : « Nous ne voulons plus du ZAN ». Consommation d'espaces ramenée au rythme 2011-2021 (modèle commun)"
-    leviers := [.regimeZan 1000] }
+    leviers := [.regimeZan 1000] },
+  { id := "RN-23", titre := "Défense : au moins 3 % du PIB en 2030"
+    source := "Amendement n° 565 au projet de loi d'actualisation de la LPM (n° 2695), déposé le 29 avril 2026 par des députés RN : « une trajectoire visant au minimum 3 % du produit intérieur brut à l'horizon 2030 », contre 2,5 % dans la loi n° 2026-791 que la référence suit. Non financé par le contre-budget. Conversion : 0,5 point du PIB de 2025 (2 992 Md€), soit 14 960 M€, atteint linéairement de 2027 à 2030 (hypothèse)"
+    leviers := [.depenseEcheancier .defense [3740, 7480, 11220, 14960]] },
+  { id := "RN-24", titre := "Énergie, réseaux et concessions : prix national de l'électricité, autoroutes, dividendes et tarifs de réseau"
+    source := s!"{dossier} : agrégat de +29,0 Md€ en 2031, dont CEE 8,0 (RN-13). Prix de l'électricité (−30 % pour les entreprises) : 9,3 Md€ en 2031, « comptabilisé comme une baisse de dépenses […] sans mécanisme explicité » (IDEP) ; reste ≈ 11,7 Md€ de « prélèvements implicites sur l'énergie, les réseaux et les concessions », autoroutes nationalisées comprises (calcul), traité comme recette non fiscale. L'indemnisation des concessions (≈ 40 Md€, Institut Montaigne 2022) n'est pas comptée. Recoupement possible avec RN-16"
+    leviers := [.economieSur .affairesEconomiques 9300, .recetteEcheancier none [11700]] },
+  { id := "RN-25", titre := "Familles de travailleurs et troisième enfant"
+    source := s!"{dossier} : agrégat « ménages, prestations » de −19,1 Md€ en 2031, moins la retraite à 62 ans (9,5, RN-05) et les aidants et le dentaire (3,4, RN-19) : 6,2 Md€ (calcul) ; mesures citées sans montant propre"
+    leviers := [.depenseSur .famille 6200] },
+  { id := "RN-26", titre := "Droits de douane et fiscalité du tabac"
+    source := s!"{dossier} : agrégat « Union européenne » de 19,5 Md€ en 2031, moins la baisse de la contribution (13,1, RN-09) : 6,4 Md€ (calcul) ; imputé aux « autres impôts »"
+    leviers := [.prelevementSur .autres 6400] },
+  { id := "RN-27", titre := "Composante carbone de l'accise sur les carburants ramenée à son niveau de 2017"
+    source := s!"{dossier} : coût de 3,9 Md€ par an de 2027 à 2031 selon la correction de l'IDEP (l'annexe du parti ne le compte qu'en 2027)"
+    leviers := [.prelevementSur .accisesEnergie (-3900)] },
+  { id := "RN-28", titre := "Pacte Dutreil renforcé et suramortissement"
+    source := s!"{dossier} : allègements pour les entreprises de 21,0 Md€, moins CFE, CVAE et C3S (17,1, RN-02) : 3,9 Md€ (IDEP, calcul) ; partagés à parts égales entre droits de mutation et IS (hypothèse)"
+    leviers := [.prelevementSur .droitsMutation (-1950), .prelevementSur .impotSocietes (-1950)] },
+  { id := "RN-29", titre := "Fin des subventions aux associations « ne relevant pas de l'intérêt général »"
+    source := "Contre-budget 2027 (Vert, 7 octobre 2026) : 3,7 Md€ à partir de 2028 (chiffrage du parti ; 3,2 Md€ dans la version de 2026)"
+    leviers := [.depenseEcheancier .fonctionnement [0, -3700]] },
+  { id := "RN-30", titre := "Taxe de 14 % sur les transferts d'argent vers les pays tiers"
+    source := s!"{dossier} : ≈ 2 Md€ par an de 2027 à 2031 (La Grande Conversation, 13 octobre 2026 : assiette implicite de 13,7 Md€ « documentée nulle part ») ; comprise dans l'agrégat « immigration » (29,0 Md€ en 2031, dont 18,1 en RN-08)"
+    leviers := [.prelevementSur .autres 2000] },
+  { id := "RN-31", titre := "Aide médicale d'État remplacée par une aide médicale d'urgence"
+    source := "Chiffrage du parti dans le contre-budget de 2026 : 1,3 Md€ (0,7 Md€ selon l'Institut Montaigne en 2024, pour une AME de 1,2 Md€) ; comprise sans montant dans l'agrégat « immigration » de 2027"
+    leviers := [.economieSur .sante 1300] },
+  { id := "RN-32", titre := "Privatisation de l'audiovisuel public"
+    source := "Citée sans montant dans le contre-budget ; Institut Montaigne (2024) : ≈ 2 Md€ par an après trois à cinq ans, sur un périmètre de 3,64 Md€ (hors France Médias Monde), montée en charge sur quatre ans (hypothèse) ; la recette de cession (≈ 1,5 Md€, une fois) réduit la dette, non modélisée. Recoupement possible avec RN-06 et RN-11"
+    leviers := [.depenseEcheancier .culture [-500, -1000, -1500, -2000]] },
+  { id := "RN-33", titre := "Frais de scolarité des étudiants étrangers"
+    source := "Contre-budget 2027 : 1,1 Md€ en 2031 (La Grande Conversation, 13 octobre 2026) ; recette des établissements, sans effet sur la demande intérieure"
+    leviers := [.recetteEcheancier none [1100]] }
 ]
 
 def programme : Programme where
   id := "RN"
   nom := "Rassemblement national — contre-budget 2027"
-  description := "Transcription partielle et non officielle du dossier « Pour la Renaissance de la France » (6 octobre 2026) : baisses de TVA et d'impôts de production, retraite à 62 ans, économies sur l'État, les collectivités, l'Union européenne, les prestations et la Sécurité sociale. Le RN annonce 141,7 Md€ d'amélioration du solde en 2031. Ajouts : fin des subventions aux renouvelables, taxe sur les salariés extra-européens, jeunesse, aidants et dentaire, 30 000 places de prison, 7 000 policiers et gendarmes."
+  description := "Transcription partielle et non officielle du dossier « Pour la Renaissance de la France » (6 octobre 2026) : baisses de TVA et d'impôts de production, retraite à 62 ans, économies sur l'État, les collectivités, l'Union européenne, les prestations et la Sécurité sociale. Le RN annonce 141,7 Md€ d'amélioration du solde en 2031. Ajouts : fin des subventions aux renouvelables, taxe sur les salariés extra-européens, jeunesse, aidants et dentaire, 30 000 places de prison, 7 000 policiers et gendarmes. Ajouts du 28 octobre 2026 : défense à 3 % du PIB en 2030, énergie et concessions, familles, douanes et tabac, composante carbone, Dutreil, associations, transferts d'argent, AME, audiovisuel public, frais de scolarité des étudiants étrangers."
   mainteneurs := ["@orientationd"]
   source := "Dossier de presse du 6 octobre 2026, via Institut de l'Entreprise (note IDEP) et presse (consultés le 21 octobre 2026)"
   mesures := mesures

@@ -23,6 +23,8 @@ n'a été trouvé. À revoir dès la publication du programme.
 | PP-03 Enseignants : +10 % au moins, jusqu'à +25 % en milieu de carrière | Public Sénat, 31 août 2026 ; Sud Radio, 3 septembre 2026 | +6 Md€ par an de traitement d'agents en poste |
 | PP-04 Leasing social : un million de voitures électriques à 100 € par mois | AFP, 2 octobre 2026 | 200 000 voitures par an à 6 000 € d'aide (6 Md€ sur cinq ans) |
 | PP-05 Abrogation de la réforme des retraites de 2023 : 62 ans | débat BFMTV, 4 octobre 2026 ; Acte 1, p. 43 | âge légal ramené à 62 ans |
+| PP-06 Service civique obligatoire de dix mois | livre de mai 2026 ; LCP, 26 mai 2026 ; Public Sénat, 24 août 2026 | jusqu'à +4,5 Md€/an en cinq ans (indemnité de 505 € et tutorat de 100 € par mois, Maire-info ; calcul) |
+| PP-07 Aide publique au développement à 0,7 % du RNB | Acte 1 | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
 
 Choix de transcription, à revoir avec le programme publié :
 
@@ -51,11 +53,11 @@ pour tous les programmes.
 
 | | Sans programme | Place publique |
 |---|---|---|
-| Déficit public (moteur de demande) | 9,27 % du PIB | 11,22 % |
-| Déficit public (offre / équilibre) | 9,31 % / 9,27 % | 11,31 % / 11,25 % |
-| Dette publique | 156,7 % du PIB | 167,7 % |
-| Chômage | 7,90 % | 7,66 % |
-| Indice de développement humain | 0,9392 | 0,9386 |
+| Déficit public (moteur de demande) | 9,27 % du PIB | 11,81 % |
+| Déficit public (offre / équilibre) | 9,31 % / 9,27 % | 11,91 % / 11,84 % |
+| Dette publique | 156,7 % du PIB | 170,6 % |
+| Chômage | 7,90 % | 7,59 % |
+| Indice de développement humain | 0,9392 | 0,9387 |
 
 Effet de chaque mesure prise isolément (moteur de demande) :
 
@@ -66,6 +68,8 @@ Effet de chaque mesure prise isolément (moteur de demande) :
 | PP-03 Enseignants | +0,18 pt | −0,02 pt | +7 100 |
 | PP-04 Leasing social | +0,08 pt | −0,01 pt | +4 400 |
 | PP-05 Retraite à 62 ans | +2,01 pt | −0,14 pt | −609 600 |
+| PP-06 Service civique obligatoire | +0,14 pt | −0,06 pt | +22 500 |
+| PP-07 Aide au développement à 0,7 % | +0,47 pt | ≈ 0 | ≈ 0 (versements à l'étranger, sans effet sur la demande intérieure) |
 
 Le retour à 62 ans fait l'essentiel du coût : il réduit la population
 active (d'où moins d'emplois mais un chômage plus faible) et accroît les
@@ -104,8 +108,7 @@ ajoute 0,22 point de déficit. Le déficit ne baisse pas chaque année.
 * **Justice, égalité** : police de proximité, lutte contre le narcotrafic ;
   loi intégrale contre les violences sexuelles ; statut des parents solos.
 * **Défense, Europe** : fonds européen de défense de 500 Md€ par emprunt
-  commun (hors budget national) ; service civique obligatoire de dix mois ;
-  réserve opérationnelle accrue ; aucun objectif de dépense en % du PIB.
+  commun (hors budget national) ; réserve opérationnelle accrue ; aucun objectif de dépense en % du PIB.
 * **Budget** : aucune cible de déficit pour 2027 ni engagement sur les
   3 % ; la trajectoire de 120 Md€ d'économies sur cinq ans (septembre
   2025) répondait au budget 2026 et n'est pas reprise.

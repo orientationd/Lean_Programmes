@@ -41,6 +41,30 @@ modélisée.
 | PC-14 Refus de la hausse du budget militaire du PLF 2027 | −7 Md€ sur la défense |
 | PC-15 ISF rétabli et triplé | ≈ +10 Md€ d'impôts sur le patrimoine (hypothèse : ISF de 2017 × 3, moins l'IFI) |
 
+## Ajouts du 28 octobre 2026
+
+F. Roussel est candidat (vote des adhérents, 6 septembre 2026, 72 %) ; le
+PCF n'a pas publié de programme présidentiel consolidé. Mesures reprises
+des 20 propositions des parlementaires communistes (janvier 2025), des
+propositions logement de F. Roussel (octobre 2026) et des positions de 2026 :
+
+| Mesure | Levier |
+|---|---|
+| PC-16 SMIC à 1 600 € net | +11,0 % (même conversion que LFI, L-11) |
+| PC-17 Retraite à 60 ans | âge légal à 60 ans dès 2027 |
+| PC-18 Cotisation sur les revenus financiers | +30 Md€/an de cotisations (chiffrage du parti, 2019) |
+| PC-19 Point d'indice +10 % | +25,3 Md€/an de traitements bruts (calcul d'après l'Institut Montaigne) |
+| PC-20 15 Md€/an d'aides à la pierre, 200 000 logements sociaux par an | +15 Md€/an d'investissement |
+| PC-21 « 100 % Sécu » | +17,1 Md€/an (Institut Montaigne, 2022) |
+| PC-22 IS rétabli à 33 % | taux normal de 25 % à 33,33 %, rendement calculé par le modèle |
+
+Le « Pacte pour la France » (500 Md€ en cinq ans par des prêts à taux zéro,
+août 2025) recoupe PC-01 à PC-08 et n'est pas ajouté. Non retenus faute de
+reprise récente ou de chiffrage à jour : 100 000 recrutements à l'hôpital et
+32 heures (programme de 2022), doublement de la taxe sur les transactions
+financières et fin des exonérations (chiffrages de 2020, taux et
+dispositifs modifiés depuis), baisse de 30 % des tarifs de l'énergie.
+
 ## Non modélisé
 
 * **Parc social** (PC-05) : « jusqu'à 8 Md€/an », financeur non précisé.
