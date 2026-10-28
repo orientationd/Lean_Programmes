@@ -345,7 +345,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- surfaces des mesures, ou rythme d'avant la loi selon l'écart choisi par
   -- les mesures) ; emprise des installations nouvelles de solaire au sol et
   -- d'éolien terrestre
-  let dSolaire := max 0 (capacites.solaire - s.capacitesMw.solaire)
+  -- le solaire des mesures posé sur des toitures n'a pas d'emprise au sol
+  let dSolaire := max 0 (capacites.solaire - s.capacitesMw.solaire - s.ajoutsToitureMw)
   let dEolien := max 0 (capacites.eolienTerrestre - s.capacitesMw.eolienTerrestre)
   let haEnergie := dSolaire * El.partSolaireSolPm * El.haParMwSolaireCentiemes / 100000
     + dEolien * El.haParMwEolienCentiemes / 100

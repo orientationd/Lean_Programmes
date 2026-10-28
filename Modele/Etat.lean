@@ -1170,6 +1170,9 @@ structure Etat where
   /-- Capacités ajoutées chaque année par les mesures, MW/an (flux porté ;
   négatif : moins d'installations que la tendance). -/
   ajoutsCapaciteMw : ParFiliere := {}
+  /-- Part de `ajoutsCapaciteMw.solaire` posée sur des toitures ou des
+  ombrières (sans emprise au sol), MW/an. -/
+  ajoutsToitureMw : Int := 0
   /-- Production d'électricité de l'année, par filière, GWh. -/
   productionGwh : ParFiliere := {}
   /-- Production nucléaire écartée faute de débouchés (consommation et
