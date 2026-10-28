@@ -27,11 +27,16 @@ modules() {
   (cd .lake/build/lib/lean && find . -name '*.olean' | sed 's|^\./||; s|\.olean$||; s|/|.|g' | sort)
 }
 rejouer() {
+  # Mêmes modules qu'en CI, en deux passes : le rejeu d'Engagements occupe à
+  # lui seul ≈ 6 Go, et la mémoire s'accumule d'un module à l'autre (une
+  # passe unique dépasse 7 Go ; les exécuteurs GitHub en ont 16).
   # shellcheck disable=SC2046
-  lake env leanchecker $(modules)
+  lake env leanchecker $(modules | grep -vx Engagements) \
+    && lake env leanchecker Engagements
 }
 
 etape compilation "Compilation" lake build Programmes Moteurs || exit 1
+etape tests "Tests du modèle commun" lake build Tests
 etape rapport "Matrice d'évaluation" lake env lean --run Rapport.lean --json out/rapport.json --md out/rapport.md
 if etape engagements "Engagements (noyau Lean)" lake build Engagements; then
   etape noyau "Rejeu des preuves (leanchecker)" rejouer

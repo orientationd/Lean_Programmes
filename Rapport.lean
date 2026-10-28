@@ -186,6 +186,9 @@ def etatJson (s : Etat) : Json :=
     ("depensesParFonction", Json.mkObj <| Fonction.tous.map fun f => (f.id, toJson (s.depensesF.get f))),
     ("tauxApparentPb", toJson s.tauxApparentPb),
     ("tauxMarginalPb", toJson s.tauxMarginalCourantPb),
+    ("tauxEmissionPb", toJson s.tauxEmissionPb),
+    ("chargeIndexationMeur", toJson s.chargeIndexationMeur),
+    ("detteDebut", toJson s.detteDebut),
     ("soldePrimaire", toJson s.soldePrimaire),
     ("decesPollutionAir", toJson s.decesPollutionAir),
     ("parcElectriqueMilliers", toJson s.parcElectriqueMilliers),
@@ -300,6 +303,33 @@ def effetsVariantes (p : Programme) (n : Nat) : List Json :=
       ("idhMillioniemes", toJson s.idhMillioniemes),
       ("chomagePb", toJson s.chomagePb)]
 
+def ecartRetroJson (e : EcartRetro) : Json :=
+  Json.mkObj [
+    ("annee", toJson e.annee),
+    ("prelevementsModele", toJson e.prelevementsModele), ("prelevementsObserves", toJson e.prelevementsObserves),
+    ("evolutionSpontaneeModelePb", toJson e.evolutionSpontaneeModelePb),
+    ("evolutionSpontaneeObserveePb", toJson e.evolutionSpontaneeObserveePb),
+    ("interetsModele", toJson e.interetsModele), ("interetsObserves", toJson e.interetsObserves),
+    ("indexationModele", toJson e.indexationModele), ("indexationObservee", toJson e.indexationObservee),
+    ("chomageModelePb", toJson e.chomageModelePb), ("chomageObservePb", toJson e.chomageObservePb),
+    ("depensesPrimairesRegle", toJson e.depensesPrimairesRegle),
+    ("depensesPrimairesObservees", toJson e.depensesPrimairesObservees),
+    ("deficitModelePb", toJson e.deficitModelePb), ("deficitObservePb", toJson e.deficitObservePb),
+    ("detteModelePb", toJson e.detteModelePb), ("detteObserveePb", toJson e.detteObserveePb)]
+
+/-- Rétro-test (scénario central, moteur standard) : à un an, et sur
+plusieurs années depuis chaque point de départ de `Hypotheses.departsRetro`. -/
+def retroJson : Json :=
+  let H := Hypotheses.central
+  let base := Hypotheses.reference2026.etat
+  let obs := Hypotheses.observations
+  Json.mkObj [
+    ("unAn", Json.arr <| (retroUnAn standard H base obs).toArray.map ecartRetroJson),
+    ("plusieursAnnees", Json.arr <| Hypotheses.departsRetro.toArray.map fun a =>
+      Json.mkObj [("depart", toJson a),
+        ("annees", Json.arr <| (retroPlusieursAnnees standard H base
+          (obs.dropWhile (·.annee + 1 < a))).toArray.map ecartRetroJson)])]
+
 def rapportSyntheseJson : Json :=
   let annee0 := Hypotheses.reference2026.annee
   let scens := Hypotheses.tous
@@ -374,6 +404,7 @@ def rapportSyntheseJson : Json :=
             ("tendanciel", Json.arr <| (trajectoire M H horizonSynthese (etatDepart H)).toArray.map etatJson),
             ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
               (p.id, Json.arr <| (p.trajectoire M H horizonSynthese 0 (etatDepart H)).toArray.map etatJson))]))]),
+    ("retro", retroJson),
     ("textesEuropeens", Json.arr <| Hypotheses.Europe.textes.toArray.map fun t =>
       Json.mkObj [("id", toJson t.id), ("titre", toJson t.titre), ("reference", toJson t.reference),
         ("critere", toJson t.critere)]),

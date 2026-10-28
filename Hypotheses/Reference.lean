@@ -20,15 +20,18 @@ effets ne sont pas proportionnels au PIB :
   janvier 2028, puis +3 mois par génération ; 64 ans atteints par la
   génération 1969, en 2033. Calendrier par année : `calendrierAgeLegal`.
   La tendance des dépenses de retraite et de la population active est
-  supposée intégrer la réforme de 2023 sans suspension (projections du COR
-  de juin 2025), soit 64 ans dès 2032 : `calendrierAgeTendanciel`. La
+  supposée intégrer la réforme de 2023 sans suspension, soit 64 ans dès
+  2032 : `calendrierAgeTendanciel` (la tendance des retraites de l'axe
+  économique est celle du COR de juin 2026, nette de la suspension). La
   suspension coûte donc 3 mois de départs (≈ 1,9 Md€) de 2027 à 2032,
-  conformément au chiffrage du Gouvernement (1,9 Md€ en 2027).
+  conformément au chiffrage du Gouvernement (1,9 Md€ en 2027 ; ≈ 1,8 Md€
+  par an selon le COR).
 * **Loi de programmation militaire actualisée** (loi n° 2026-791) : crédits
   de la mission Défense hors pensions de 57,1, 63,3, 68,3, 72,8 et 76,3 Md€
   de 2026 à 2030, contre 50,5 Md€ en 2025. Échéancier de dépense :
-  écart à la reconduction tendancielle, en euros 2025 (voir
-  `echeancesDepart`) ; le niveau de 2030 est ensuite reconduit.
+  écart à la reconduction tendancielle (la défense suit les prix, déflateur
+  de l'axe économique central), en euros 2025 (voir `echeancesDepart`) ;
+  le niveau de 2030 est ensuite reconduit.
 * **ETS2** (directive 2003/87/CE modifiée par la directive 2023/959 ; début
   reporté à 2028 par la loi européenne sur le climat 2040, JO de l'UE du
   18 mars 2026) : quotas sur les carburants routiers et le chauffage. Recette
@@ -152,6 +155,17 @@ effets ne sont pas proportionnels au PIB :
 * **Contribution exceptionnelle des organismes complémentaires** (LFSS pour
   2026) : ≈ 1,0 Md€, pour 2026 seulement.
 
+**Dette et charge d'intérêts de départ.** Dette de Maastricht de
+3 306,1 Md€ fin 2024 et 3 460,5 Md€ fin 2025 (INSEE, mai 2026) ; la dette
+de fin d'année se déduit du déficit (152,5 Md€) et de l'ajustement
+dette-déficit observé de 2025 (1,9 Md€), nul ensuite. Charge d'intérêts
+2025 de 64,7 Md€, dont 5,3 Md€ d'indexation des titres indexés (provision
+en droits constatés, AFT) et ≈ 4,3 Md€ sur les BTF (201 Md€ fin 2024, émis
+à 2,12 % en moyenne en 2025, AFT) : taux apparent de la dette à moyen et
+long terme hors indexation de 1,78 % ; taux d'émission de 2025 : OAT à
+10 ans de 3,37 % (moyenne annuelle), moins le rendement réel de la part
+indexée.
+
 **Indice de développement humain** (PNUD, Rapport sur le développement
 humain 2025, données 2023) : IDH 0,920, 26e rang ; espérance de vie
 83,3 ans, durée attendue de scolarisation 16,1 ans, durée moyenne 11,8 ans,
@@ -259,11 +273,11 @@ def echeancesDepart : List Echeance := [
   { fonction := .affairesEconomiques, niveau := 6500, indice := 10000,
     restants := [6700, 6000, 5000, 3800, 2400, 1000, 0] },       -- France 2030
   { fonction := .defense, niveau := 0, indice := 10000,
-    restants := [5295, 9865, 12982, 15414, 16748] },             -- LPM actualisée (2026-2030)
+    restants := [5867, 10943, 14752, 18091, 20396] },            -- LPM actualisée (2026-2030)
   { fonction := .logementEnvironnement, niveau := 0, indice := 10000,
     restants := [0, 0, 2975] },                                  -- ETS2 : moitié redistribuée dès 2028
   { fonction := .fonctionnement, niveau := 0, indice := 10000,
-    restants := [4150, 4150, 6530] },                            -- contribution à l'UE, puis remboursement de NextGenerationEU
+    restants := [4273, 4273, 6592] },                            -- contribution à l'UE, puis remboursement de NextGenerationEU
   { fonction := .famille, niveau := 0, indice := 10000,
     restants := [1310, 1700] },                                  -- prime d'activité revalorisée (avril 2026)
   { fonction := .famille, niveau := 0, indice := 10000,
@@ -342,8 +356,12 @@ def reference2026 : Reference where
     impots := impots2025
     autresRecettes := 233300       -- recettes totales 1 561,6 Md€ − impôts et cotisations 1 328,3 Md€
     depensesF := depenses2025      -- 1 714,1 Md€ de dépenses des APU 2025 (INSEE)
-    tauxApparentPb := 187          -- 64,7 / 3 460,5
-    dette := 3460500               -- dette de Maastricht fin 2025 (INSEE)
+    tauxApparentPb := 178          -- dette à moyen et long terme : (64,7 − 5,3 d'indexation − 201 × 2,12 % de BTF) / (3 306,1 − 201)
+    tauxEmissionPb := 321          -- OAT 10 ans 2025 (3,37 %) moins rendement réel de la part indexée (8,9 % × 1,75 %)
+    chargeIndexationMeur := 5309   -- provision pour indexation en droits constatés (AFT, comptabilité générale)
+    inflationConsoPb := 90         -- IPC 2025, moyenne annuelle (INSEE)
+    detteDebut := 3306100          -- dette de Maastricht fin 2024 (INSEE, mai 2026)
+    ajustementDetteAnnee := 1900   -- 3 460,5 − 3 306,1 − 152,5 (calcul)
     operationsFinancieres := 0     -- flux nets tendanciels supposés nuls (à sourcer)
     smicMensuel := 1820            -- repère provisoire, brut
     emissionsKt := emissions2025   -- 359,4 Mt CO₂e hors puits (Citepa, Secten 2026, estimation 2025)
@@ -381,6 +399,7 @@ def reference2026 : Reference where
     calendrierAgeTendanciel := calendrierAgeReforme2023 }
   populationMilliers := 69100
   partPlus65Pb := 2220             -- 22,2 % au 1er janvier 2026 (INSEE)
+  partPlus65TendancePb := 2350     -- démographie des tendances de dépenses : celle de l'hypothèse centrale
   seuilChomageContracyclePb := 900 -- décret n° 2023-33, art. 9 bis
   surcoutComplementChomageMeur := 4300  -- complément de fin de droits (≈ économie de la règle, Unédic)
   rnbParHabitantPpaDollars := 55800  -- 55 060 $ PPA 2021 en 2023 (PNUD) × PIB réel par habitant 2023-2025 (+1,4 %, calcul)

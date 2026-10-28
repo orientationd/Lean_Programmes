@@ -103,6 +103,16 @@ jobs:
         id: compilation
         run: lake build Programmes Moteurs
 
+      # Batterie de tests du modèle commun (Tests/) : identités comptables,
+      # mécanismes, rétro-test sur les comptes 2018-2025, tendanciel face à
+      # une projection indépendante. Décidés par le noyau, comme les
+      # engagements ; rejoués par leanchecker avec les autres modules.
+      - name: Tests du modèle commun
+        id: tests
+        if: steps.compilation.outcome == 'success'
+        continue-on-error: true
+        run: lake build Tests
+
       - name: Calculer la matrice d'évaluation
         id: rapport
         continue-on-error: true
@@ -149,6 +159,7 @@ jobs:
           GARDE: ${{ steps.garde.outcome }}
           REGISTRE: ${{ steps.registre.outcome }}
           COMPILATION: ${{ steps.compilation.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
           RAPPORT: ${{ steps.rapport.outcome }}
           ENGAGEMENTS: ${{ steps.engagements.outcome }}
           NOYAU: ${{ steps.noyau.outcome }}
@@ -172,6 +183,7 @@ jobs:
             echo "| Garde-fou syntaxique (pas de code exécuté à la compilation) | $(statut "$GARDE") |"
             echo "| Registre des programmes | $(statut "$REGISTRE") |"
             echo "| Compilation (modèle, hypothèses, propriétés, programmes) | $(statut "$COMPILATION") |"
+            echo "| Tests du modèle commun (comptabilité, mécanismes, rétro-test) | $(statut "$TESTS") |"
             echo "| Matrice d'évaluation | $(statut "$RAPPORT") |"
             echo "| Engagements prouvés par le noyau Lean | $(statut "$ENGAGEMENTS") |"
             echo "| Rejeu indépendant des preuves (leanchecker) | $(statut "$NOYAU") |"
@@ -206,13 +218,14 @@ jobs:
           GARDE: ${{ steps.garde.outcome }}
           REGISTRE: ${{ steps.registre.outcome }}
           COMPILATION: ${{ steps.compilation.outcome }}
+          TESTS: ${{ steps.tests.outcome }}
           RAPPORT: ${{ steps.rapport.outcome }}
           ENGAGEMENTS: ${{ steps.engagements.outcome }}
           NOYAU: ${{ steps.noyau.outcome }}
           AUDIT: ${{ steps.audit.outcome }}
         run: |
-          echo "garde=$GARDE registre=$REGISTRE compilation=$COMPILATION rapport=$RAPPORT"
+          echo "garde=$GARDE registre=$REGISTRE compilation=$COMPILATION tests=$TESTS rapport=$RAPPORT"
           echo "engagements=$ENGAGEMENTS noyau=$NOYAU audit=$AUDIT"
-          for s in "$GARDE" "$REGISTRE" "$COMPILATION" "$RAPPORT" "$ENGAGEMENTS" "$NOYAU" "$AUDIT"; do
+          for s in "$GARDE" "$REGISTRE" "$COMPILATION" "$TESTS" "$RAPPORT" "$ENGAGEMENTS" "$NOYAU" "$AUDIT"; do
             [ "$s" = "success" ] || exit 1
           done

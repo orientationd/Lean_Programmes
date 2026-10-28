@@ -388,6 +388,51 @@ def croitre (v : ParImpot) (tauxPb : Int) : ParImpot :=
     patrimoine := v.patrimoine + appliquerPb v.patrimoine tauxPb
     autres := v.autres + appliquerPb v.autres tauxPb }
 
+/-- Croissance avec le cycle : chaque prélèvement croît du taux `tauxPb`
+(PIB nominal) plus `(ε − 1)` fois `ecartPb` (variation de l'écart de
+production), `ε` étant son élasticité à l'écart de production (pm). -/
+def croitreCycle (v : ParImpot) (tauxPb ecartPb : Int) (e : ParImpot) : ParImpot :=
+  let g (x el : Int) := x + appliquerPb x (tauxPb + (el - 1000) * ecartPb / 1000)
+  { tva := g v.tva e.tva, ir := g v.ir e.ir, csgCrds := g v.csgCrds e.csgCrds
+    cotisations := g v.cotisations e.cotisations
+    impotSocietes := g v.impotSocietes e.impotSocietes
+    accisesEnergie := g v.accisesEnergie e.accisesEnergie
+    taxeFonciere := g v.taxeFonciere e.taxeFonciere
+    droitsMutation := g v.droitsMutation e.droitsMutation
+    patrimoine := g v.patrimoine e.patrimoine
+    autres := g v.autres e.autres }
+
+/-- Avec des élasticités unitaires, `croitreCycle` est la croissance
+proportionnelle au PIB (`croitre`), quel que soit le cycle. -/
+theorem croitreCycle_unitaire (v : ParImpot) (t c : Int) :
+    v.croitreCycle t c ⟨1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000⟩ = v.croitre t := by
+  simp [croitreCycle, croitre]
+
+/-- Variation de chaque prélèvement pour une variation `dPib` du niveau du
+PIB due à la demande (cyclique) : `ε × dPib / PIB × prélèvement`. -/
+def variationCycle (v : ParImpot) (dPib pib : Int) (e : ParImpot) : ParImpot :=
+  let d (x el : Int) := if pib = 0 then 0 else x * dPib * el / (pib * 1000)
+  { tva := d v.tva e.tva, ir := d v.ir e.ir, csgCrds := d v.csgCrds e.csgCrds
+    cotisations := d v.cotisations e.cotisations
+    impotSocietes := d v.impotSocietes e.impotSocietes
+    accisesEnergie := d v.accisesEnergie e.accisesEnergie
+    taxeFonciere := d v.taxeFonciere e.taxeFonciere
+    droitsMutation := d v.droitsMutation e.droitsMutation
+    patrimoine := d v.patrimoine e.patrimoine
+    autres := d v.autres e.autres }
+
+/-- Somme terme à terme. -/
+def plus (v w : ParImpot) : ParImpot :=
+  { tva := v.tva + w.tva, ir := v.ir + w.ir, csgCrds := v.csgCrds + w.csgCrds
+    cotisations := v.cotisations + w.cotisations, impotSocietes := v.impotSocietes + w.impotSocietes
+    accisesEnergie := v.accisesEnergie + w.accisesEnergie
+    taxeFonciere := v.taxeFonciere + w.taxeFonciere
+    droitsMutation := v.droitsMutation + w.droitsMutation
+    patrimoine := v.patrimoine + w.patrimoine, autres := v.autres + w.autres }
+
+theorem total_plus (v w : ParImpot) : (v.plus w).total = v.total + w.total := by
+  simp [plus, total]; omega
+
 /-- Répartit `d` au prorata des prélèvements, parts arrondies vers zéro (reste
 sur « autres »). -/
 def repartir (v : ParImpot) (d : Int) : ParImpot :=
@@ -521,29 +566,44 @@ def total (v : ParFonction) : Int :=
     + v.securiteJustice + v.logementEnvironnement + v.culture + v.interets + v.fonctionnement
     + v.nonVentile
 
-/-- Toutes les fonctions sauf la charge d'intérêts croissent du taux `tauxPb` ;
-les fonctions automatisables (services généraux, affaires économiques,
-santé) croissent de `robotisationPb` de moins ; les fonctions soumises à une
-norme de dépense (`Fonction.pilotable`) de `moderationPb` de moins. -/
-def croitrePrimaires (v : ParFonction) (tauxPb robotisationPb : Int) (moderationPb : Int := 0) :
-    ParFonction :=
-  let g (x : Int) := x + appliquerPb x tauxPb
-  let n (x : Int) := x + appliquerPb x (tauxPb - moderationPb)
-  let r (x : Int) := x + appliquerPb x (tauxPb - robotisationPb - moderationPb)
-  { retraites := g v.retraites, sante := r v.sante, famille := g v.famille
-    enseignement := g v.enseignement, affairesEconomiques := r v.affairesEconomiques
-    defense := g v.defense, securiteJustice := n v.securiteJustice
-    logementEnvironnement := n v.logementEnvironnement, culture := n v.culture
-    interets := v.interets, fonctionnement := r v.fonctionnement, nonVentile := n v.nonVentile }
+/-- Fonctions dont la dépense bénéficie des gains de productivité de la
+robotisation (services généraux, affaires économiques, santé). -/
+def _root_.Modele.Fonction.automatisable : Fonction → Bool
+  | .sante | .affairesEconomiques | .fonctionnement => true
+  | _ => false
 
-/-- Taux de croissance tendanciel d'une fonction, pb : celui que lui applique
-`croitrePrimaires` (nul pour la charge d'intérêts, calculée à part). -/
-def tauxCroissance (f : Fonction) (tauxPb robotisationPb : Int) (moderationPb : Int := 0) : Int :=
+/-- Taux de croissance tendanciel d'une fonction, pb : le taux propre à la
+fonction (`taux`), moins `robotisationPb` pour les fonctions automatisables
+et `moderationPb` pour celles soumises à une norme de dépense
+(`Fonction.pilotable`) ; nul pour la charge d'intérêts, calculée à part. -/
+def tauxCroissance (f : Fonction) (taux : ParFonction) (robotisationPb : Int) (moderationPb : Int := 0) : Int :=
   match f with
-  | .sante | .affairesEconomiques | .fonctionnement => tauxPb - robotisationPb - moderationPb
-  | .securiteJustice | .logementEnvironnement | .culture | .nonVentile => tauxPb - moderationPb
   | .interets => 0
-  | _ => tauxPb
+  | _ => taux.get f - (if f.automatisable then robotisationPb else 0)
+           - (if f.pilotable then moderationPb else 0)
+
+/-- Chaque fonction sauf la charge d'intérêts croît de son `tauxCroissance`. -/
+def croitrePrimaires (v : ParFonction) (taux : ParFonction) (robotisationPb : Int) (moderationPb : Int := 0) :
+    ParFonction :=
+  let g (f : Fonction) (x : Int) := x + appliquerPb x (tauxCroissance f taux robotisationPb moderationPb)
+  { retraites := g .retraites v.retraites, sante := g .sante v.sante, famille := g .famille v.famille
+    enseignement := g .enseignement v.enseignement
+    affairesEconomiques := g .affairesEconomiques v.affairesEconomiques
+    defense := g .defense v.defense, securiteJustice := g .securiteJustice v.securiteJustice
+    logementEnvironnement := g .logementEnvironnement v.logementEnvironnement
+    culture := g .culture v.culture, interets := v.interets
+    fonctionnement := g .fonctionnement v.fonctionnement, nonVentile := g .nonVentile v.nonVentile }
+
+/-- Vecteur de taux construit fonction par fonction. -/
+def depuis (g : Fonction → Int) : ParFonction :=
+  { retraites := g .retraites, sante := g .sante, famille := g .famille
+    enseignement := g .enseignement, affairesEconomiques := g .affairesEconomiques
+    defense := g .defense, securiteJustice := g .securiteJustice
+    logementEnvironnement := g .logementEnvironnement, culture := g .culture
+    interets := g .interets, fonctionnement := g .fonctionnement, nonVentile := g .nonVentile }
+
+theorem depuis_get (g : Fonction → Int) (f : Fonction) : (depuis g).get f = g f := by
+  cases f <;> rfl
 
 /-- Toutes les composantes sont dans `[lo, hi]`. -/
 def toutEntre (v : ParFonction) (lo hi : Int) : Bool :=
@@ -551,13 +611,13 @@ def toutEntre (v : ParFonction) (lo hi : Int) : Bool :=
 
 /-- Cohérence : hors intérêts, `croitrePrimaires` fait croître chaque fonction
 exactement de son `tauxCroissance` (utilisé pour indexer les échéanciers). -/
-theorem croitrePrimaires_get (v : ParFonction) (t r m : Int) (f : Fonction) (h : f ≠ .interets) :
+theorem croitrePrimaires_get (v t : ParFonction) (r m : Int) (f : Fonction) (h : f ≠ .interets) :
     (v.croitrePrimaires t r m).get f = v.get f + appliquerPb (v.get f) (tauxCroissance f t r m) := by
   cases f <;> first | exact absurd rfl h | rfl
 
 /-- Cohérence : la norme de dépense retire exactement `m` au taux de
 croissance des fonctions pilotables, et rien aux autres. -/
-theorem tauxCroissance_norme (f : Fonction) (t r m : Int) (h : f ≠ .interets) :
+theorem tauxCroissance_norme (f : Fonction) (t : ParFonction) (r m : Int) (h : f ≠ .interets) :
     tauxCroissance f t r m = tauxCroissance f t r 0 - (if f.pilotable then m else 0) := by
   cases f <;> simp_all [tauxCroissance, Fonction.pilotable] <;> omega
 
@@ -656,12 +716,15 @@ structure Etat where
   /-- Dépenses des administrations publiques par fonction, M€, charge
   d'intérêts comprise (fonction `interets`). -/
   depensesF : ParFonction
-  /-- Taux d'intérêt apparent de la dette (intérêts / dette de l'année
-  précédente), pb. Il converge vers le taux marginal du scénario au rythme
-  du refinancement. -/
+  /-- Taux d'intérêt apparent de l'année, hors indexation du capital des
+  titres indexés : intérêts (hors indexation) / dette de fin d'année
+  précédente, pb. La projection le fait évoluer avec la dette nouvelle et la
+  part du stock refinancée, émises au taux de l'année (`tauxEmissionPb`). -/
   tauxApparentPb : Int
-  /-- Dette publique, M€. -/
-  dette : Int
+  /-- Dette publique (Maastricht) à la fin de l'année précédente, M€. La dette
+  de fin d'année s'en déduit (`Etat.dette`) : déficit de l'année, opérations
+  financières, ajustement de l'année. -/
+  detteDebut : Int
   /-- Opérations financières annuelles des administrations publiques (prêts,
   prises de participation), M€/an : elles accroissent la dette sans entrer
   dans le déficit (traitement de Maastricht). -/
@@ -783,6 +846,14 @@ structure Etat where
   /-- Taux marginal de l'année (taux du scénario corrigé de la prime de risque
   liée au déficit), pb (suivi). -/
   tauxMarginalCourantPb : Int := 0
+  /-- Taux moyen auquel la dette est émise dans l'année (nominale au taux
+  marginal, indexée au taux réel), pb : celui de la dette nouvelle et de la
+  part refinancée du stock. -/
+  tauxEmissionPb : Int := 0
+  /-- Écart de l'année entre variation de la dette et déficit qui ne relève
+  pas des opérations financières suivies (trésorerie, primes d'émission…),
+  M€ : observé pour l'année de départ, nul ensuite. -/
+  ajustementDetteAnnee : Int := 0
   /-- Dépenses à échéancier en cours (voir `Echeance`). -/
   echeances : List Echeance := []
   /-- Recettes à échéancier en cours (voir `EcheanceRecette`). -/
@@ -829,6 +900,15 @@ structure Etat where
   /-- Nouveaux passifs implicites accumulés chaque année, par type, M€/an
   (flux porté, indexé sur le PIB nominal). -/
   fluxPassifs : ParPassif := {}
+  /-- Inflation des prix à la consommation de l'année, pb : base de la
+  revalorisation des pensions et des prestations l'année suivante. -/
+  inflationConsoPb : Int := 0
+  /-- Rang de l'année dans la projection (0 = année de départ) : indexe les
+  trajectoires de l'axe économique (`Economie.croissanceVolumeA`…). -/
+  rang : Nat := 0
+  /-- Part de la charge d'intérêts de l'année due à l'indexation du capital
+  des titres indexés sur l'inflation, M€ (comprise dans `depensesF.interets`). -/
+  chargeIndexationMeur : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace Etat
@@ -904,6 +984,13 @@ def soldePrimaire (s : Etat) : Int := s.recettes - s.depensesPrimaires
 /-- Déficit en pb du PIB. -/
 def deficitPb (s : Etat) : Int := ratioPb s.deficit s.pib
 
+/-- Dette publique (Maastricht) en fin d'année, M€ : celle de fin d'année
+précédente, plus le déficit de l'année (mesures comprises), les opérations
+financières et l'ajustement dette-déficit de l'année. -/
+def dette (s : Etat) : Int :=
+  s.detteDebut + s.deficit + s.operationsFinancieres + s.investissementsParticipations
+    + s.ajustementDetteAnnee
+
 /-- Émissions totales, Mt CO₂e (arrondi au Mt le plus proche). -/
 def emissionsMt (s : Etat) : Int := (s.emissionsKt.total + 500) / 1000
 
@@ -927,6 +1014,14 @@ def detteEtenduePb (s : Etat) : Int := ratioPb (s.dette + s.passifsImplicites) s
 
 /-- Dette en pb du PIB. -/
 def dettePb (s : Etat) : Int := ratioPb s.dette s.pib
+
+/-- Identité dette-déficit : la dette de fin d'année est celle de fin
+d'année précédente plus le déficit, les opérations financières et
+l'ajustement de l'année. -/
+theorem dette_identite (s : Etat) :
+    s.dette - s.detteDebut = s.deficit + s.operationsFinancieres + s.investissementsParticipations
+      + s.ajustementDetteAnnee := by
+  simp [dette]; omega
 
 /-- Emploi total, personnes. -/
 def emploiTotal (s : Etat) : Int := s.emploi.total

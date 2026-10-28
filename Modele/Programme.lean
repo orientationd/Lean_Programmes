@@ -101,7 +101,11 @@ def _root_.Modele.Mesure.sAppliqueA (m : Mesure) (t : Nat) : Bool :=
 vigueur du programme ; le début des mesures est compté depuis celle-ci). -/
 def appliquerAnnee (p : Programme) (M : Moteur) (H : Scenario) (t : Nat) (s : Etat) : Etat :=
   if t < p.entreeEnVigueur then s else
-  (p.mesures.filter (·.sAppliqueA (t - p.entreeEnVigueur))).foldl (fun s m => m.appliquer M H s) s
+  match p.mesures.filter (·.sAppliqueA (t - p.entreeEnVigueur)) with
+  | [] => s
+  -- l'indemnisation du chômage suit, dès l'année, les emplois créés ou
+  -- détruits par les mesures
+  | ms => stabilisateurChomage M H (ms.foldl (fun s m => m.appliquer M H s) s)
 
 /-- Situation de départ après application des mesures immédiates. -/
 def etatInitial (p : Programme) (M : Moteur) (H : Scenario) : Etat :=

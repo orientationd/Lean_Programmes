@@ -19,7 +19,10 @@ normal de l'IS de 25 % depuis 2022.
 65 ans, soit 185 M€ par point de base de part ; `coutSanteParPbPlus65`
 = 20 M€ : les plus de 65 ans consomment environ deux fois la dépense de
 santé moyenne (DREES, comptes de la santé), soit 247 Md€ × (2 − 1) /
-(1 + 0,222) × 10⁻⁴ ≈ 20 M€ par point de base.
+(1 + 0,222) × 10⁻⁴ ≈ 20 M€ par point de base. Ils ne s'appliquent qu'à
+l'écart entre l'hypothèse démographique et la démographie des tendances de
+dépenses (`Reference.partPlus65TendancePb`), déjà vieillissante : nul dans
+le scénario central.
 `contenuImportDemandePm` = 300 : contenu en importations de la demande
 intérieure ≈ 30 % (INSEE, tableaux entrées-sorties).
 Accidents du travail : 564 000 accidents avec arrêt et 759 décès en 2023
@@ -30,20 +33,92 @@ professionnelles comprises, approximation) ; ≈ 40 millions de journées
 indemnisées → 70 jours par accident. Moyenne de l'Union : incidence
 française ≈ 1,75 fois la moyenne UE-27 (Eurostat, accidents non mortels
 > 3 jours, 2022), d'où une cible de 110 pour 10 000.
-`robotisationTendanciellePb` = 20 : gains de productivité de 0,2 %/an sur
-les dépenses de fonctionnement, d'affaires économiques et de santé
-(hypothèse ; la productivité des services publics est mal mesurée).
-`tauxMarginalPb` : taux auquel la dette nouvelle et refinancée est émise
-(OAT 10 ans autour de 3,3 % fin 2025, hypothèse) ; `deriveTauxPb` : le
-taux apparent (1,87 % en 2025, INSEE) y converge d'environ 20 pb par an,
-rythme de renouvellement du stock (maturité moyenne ≈ 8,5 ans, AFT), à la
-hausse comme à la baisse. `primeDeficitPb` = 25 : une hausse d'un point du
-déficit/PIB anticipé relève les taux longs d'environ 25 pb, une hausse d'un
-point de dette/PIB de 3 à 4 pb (Laubach, « New Evidence on the Interest
-Rate Effects of Budget Deficits and Debt », JEEA, 2009). Appliquée à
-l'écart entre le déficit de l'année précédente et celui de départ
-(5,1 %) : un déficit ramené à 3 % abaisse le taux marginal de ≈ 50 pb, un
-déficit de 8 % le relève de ≈ 75 pb.
+`robotisationTendanciellePb` = 0 : les tendances de dépenses ci-dessous
+intègrent déjà les gains de productivité ; la robotisation reste un levier
+des programmes.
+
+**Trajectoire macroéconomique.** Les premières années suivent les
+prévisions publiées (`trajectoireVolume`, `trajectoirePotentiel`,
+`trajectoireDeflateur`, `trajectoireConso`, `trajectoireTaux`,
+`trajectoireTauxCourt`, sources en docstring) : croissance de 0,4 %,
+0,9 % et 1,2 % de 2026 à 2028 (Banque de France, septembre 2026), puis
+rattrapage de 0,2 point par an au-dessus du potentiel en 2029-2030 (mission
+d'experts sur la transparence des finances publiques, juillet 2026) ;
+croissance potentielle de 1,2 % jusqu'en 2028 (PSMT d'octobre 2024, PLF
+2027), puis 1 % (mission d'experts, PSMT) dans le scénario central ;
+déflateur de 1,3 % en 2026 puis 1,7, 1,6, 1,4 et 1,4 % (mission) ;
+inflation de 2,3 %, 1,8 % et 1,6 % de 2026 à 2028 (INSEE, PLF 2027,
+Banque de France) ; OAT à 10 ans à 3,8 % en 2026 et 4,3 % en 2027
+(hypothèses des PLF 2026 et 2027), puis 4,4 % (taux à terme fin 2029 cité
+par la mission). Au-delà : valeurs de long terme de la variante. La loi
+d'Okun et les élasticités des prélèvements s'appliquent à l'écart entre la
+croissance en volume et la croissance potentielle.
+
+**Élasticités des prélèvements au cycle** (`elasticitesCycliques`) : impôt
+sur le revenu et CSG-CRDS 1,86, impôt sur les sociétés 2,76, cotisations
+sociales 0,63, impôts indirects et autres 1,00 : celles de la loi de
+programmation 2023-2027 (DG Trésor, document de travail 2025/2, tableau 1,
+calibrage 2008-2017), qui coïncident avec celles de la Commission
+européenne (Mourre, Poissonnier et Lausegger, 2019) et de l'OCDE (Price,
+Dang et Botev, 2015). Les recettes non fiscales sont acycliques. Avec
+l'élasticité des dépenses de chômage (−3,23), la semi-élasticité du solde
+vaut ≈ 0,57 (LPFP ; 0,63 pour la Commission) : test
+`Tests.Mecanismes.semi_elasticite_solde`.
+
+**Structure de la dette.** `partDetteCourtTerme` = 57 ‰ : BTF (196 Md€ fin
+2025, Agence France Trésor) rapportés à la dette de Maastricht ; renouvelés
+chaque année au taux court (2,25 %, hypothèse du PLF 2026). La dette à
+moyen et long terme est refinancée à raison de `renouvellementDette` =
+109 ‰ par an : durée de vie moyenne de la dette négociable de l'État de
+8,5 ans (AFT, 2025), soit 9,2 ans hors BTF. `partDetteIndexee` = 89 ‰ :
+307 Md€ d'OATi et d'OAT€i fin 2025 (AFT) ; leur capital suit l'inflation
+(charge d'intérêts en comptabilité nationale) et ils sont émis au taux
+réel (taux marginal moins inflation de long terme). `primeDeficitPb` = 25 :
+une hausse d'un point du déficit/PIB anticipé relève les taux longs
+d'environ 25 pb, une hausse d'un point de dette/PIB de 3 à 4 pb (Laubach,
+« New Evidence on the Interest Rate Effects of Budget Deficits and Debt »,
+JEEA, 2009). Appliquée à l'écart entre le déficit de l'année précédente et
+celui de départ (5,1 %) : un déficit ramené à 3 % abaisse le taux marginal
+de ≈ 50 pb, un déficit de 8 % le relève de ≈ 75 pb. Rétro-test 2019-2025
+de la charge d'intérêts : erreur moyenne de 2,2 Md€ (voir
+`Modele/Retro.lean`), contre 4,6 Md€ avec la convergence à 20 pb par an de
+la version précédente.
+
+**Tendances des dépenses à législation constante** (`volumeDepenses`,
+`indexationDecalee`) : prix plus volume propre à chaque fonction, d'après
+les hypothèses « à politique inchangée » de la mission d'experts (rapport du
+15 juillet 2026, p. 6-8 et tableau 4) et du COR (rapport de juin 2026,
+tableau 2.1) :
+* retraites : revalorisation sur l'inflation de l'année précédente (code de
+  la sécurité sociale, art. L. 161-25), volume +0,85 % par an (COR :
+  +0,9 % par an de 2025 à 2045, effectifs +0,5 %, pension moyenne réelle
+  +0,5 % ; moins ≈ 0,05 point pour la suspension de la réforme de 2023, que
+  le modèle compte à part par le calendrier de l'âge légal) ;
+* santé : +1,95 % en volume (ONDAM tendanciel +3,5 % par an en valeur selon
+  la mission, +3,4 % « pur » selon le PLFSS 2027, moins le déflateur de la
+  mission, ≈ 1,55 %) ;
+* famille, chômage, solidarité : revalorisation sur l'inflation de l'année
+  précédente, volume nul (prestations familiales +1,7 % par an, chômage
+  +0,6 %, prestations de l'État au rythme du potentiel nominal : ≈ prix) ;
+* fonctions surtout portées par l'État (enseignement, sécurité et justice) :
+  +0,95 % en volume (crédits des ministères +2,5 % par an en valeur, point
+  d'indice gelé, effectifs stables, glissement vieillesse-technicité
+  +0,6 %) ;
+* fonctions surtout portées par les collectivités (logement et
+  environnement, culture) : +1,1 % en volume (fonctionnement au rythme de
+  la croissance potentielle) ; fonctions mixtes (affaires économiques,
+  services généraux) : +1 % ;
+* défense : prix seulement, la loi de programmation militaire passant par
+  son échéancier (`echeancesDepart`).
+Dépense hors intérêts obtenue : ≈ +2,8 % par an en valeur de 2026 à
+2030 (mission : +3,1 %, avec une contribution à l'Union qui suit la
+proposition de cadre financier 2028-2034, non retenue ici). Test
+`Tests.Tendanciel` : dérive du déficit tendanciel 2026-2030 à moins d'un
+demi-point de celle de la mission. Sur le passé (rétro-test, à titre
+d'information), la règle s'écarte des dépenses observées de +0,4 point de
+PIB en 2019 (maîtrise de la dépense), −1,7 point en 2020 et 2021 (crise
+sanitaire), ≈ 0 en 2022, +1,1 point en 2023 (dépense en retard sur
+l'inflation), +0,2 et +0,1 point en 2024 et 2025.
 Prélèvement forfaitaire unique (PFU) : 31,4 % depuis le 1er janvier 2026
 (loi n° 2025-1403 du 30 décembre 2025 de financement de la Sécurité sociale
 pour 2026, art. L. 136-6 et L. 136-7 CSS), soit 12,8 % d'impôt sur le revenu
@@ -296,6 +371,70 @@ docstring du module). -/
 def baisseEmissionsAME : ParSecteurGes :=
   { transports := 19, batiments := 21, agriculture := 10, industrie := 30, energie := 20, dechets := 22 }
 
+/-- Élasticités des prélèvements à l'écart de production, pm (voir le
+docstring du module). -/
+def elasticitesCycliques : ParImpot :=
+  { tva := 1000, ir := 1860, csgCrds := 1860, cotisations := 630, impotSocietes := 2760,
+    accisesEnergie := 1000, taxeFonciere := 1000, droitsMutation := 1000, patrimoine := 1000,
+    autres := 1000 }
+
+/-- Évolution tendancielle des dépenses à législation constante, en volume,
+par fonction, pb par an (voir le docstring du module). -/
+def volumeDepenses : ParFonction :=
+  { retraites := 85, sante := 195, famille := 0, enseignement := 95,
+    affairesEconomiques := 100, defense := 0, securiteJustice := 95,
+    logementEnvironnement := 110, culture := 110, interets := 0, fonctionnement := 100,
+    nonVentile := 0 }
+
+/-- Part de chaque fonction revalorisée sur l'inflation de l'année
+précédente, pm : pensions et prestations (voir le docstring du module). -/
+def indexationDecalee : ParFonction :=
+  ParFonction.depuis fun f => match f with
+    | .retraites | .famille => 1000
+    | _ => 0
+
+/-- Croissance du PIB en volume, 2026-2030 : Banque de France (projections
+de septembre 2026) pour 2026-2028, puis rattrapage de 0,2 point par an
+au-dessus de la croissance potentielle en 2029 et 2030 (mission d'experts
+sur la transparence des finances publiques, juillet 2026 : 1,2 % pour un
+potentiel de 1 %). -/
+def trajectoireVolume (potentiel : Int) : List Int := [40, 90, 120, potentiel + 20, potentiel + 20]
+
+/-- Croissance potentielle, 2026-2030 : 1,2 % jusqu'en 2028 (plan
+budgétaire et structurel de moyen terme d'octobre 2024, PLF 2027, mission
+d'experts), puis la valeur de long terme de la variante. -/
+def trajectoirePotentiel (potentiel : Int) : List Int := [120, 120, 120, potentiel, potentiel]
+
+/-- Déflateur du PIB, 2026-2030 : ≈ 1,3 % en 2026 (Gouvernement, juillet
+2026), puis croissance nominale moins croissance réelle de la mission
+d'experts (2,7 %, 2,8 %, 2,6 %, 2,6 % ; 1,0 %, 1,2 %, 1,2 %, 1,2 %). -/
+def trajectoireDeflateur : List Int := [130, 170, 160, 140, 140]
+
+/-- Inflation des prix à la consommation, 2026-2028 : 2,3 % (INSEE, note de
+conjoncture de septembre 2026), 1,8 % (PLF 2027), 1,6 % (Banque de France,
+septembre 2026). -/
+def trajectoireConso : List Int := [230, 180, 160]
+
+/-- Taux de l'OAT à 10 ans, 2026-2027 : 3,8 % (hypothèse du PLF 2026 ; 3,7 %
+mi-2026 selon la mission d'experts, 4,84 % le 7 octobre 2026), 4,3 %
+(hypothèse du PLF 2027). Au-delà : valeur de long terme de la variante
+(centrale : 4,4 %, taux à terme fin 2029 cité par la mission d'experts). -/
+def trajectoireTaux : List Int := [380, 430]
+
+/-- Taux des BTF : 2,25 % (hypothèse du PLF 2026), maintenu. -/
+def trajectoireTauxCourt : List Int := [225]
+
+/-- Part du stock de dette refinancée chaque année, pm (voir le docstring du
+module). -/
+def renouvellementDette : Int := 109
+
+/-- Part de la dette à court terme (BTF), pm (voir le docstring du module). -/
+def partDetteCourtTerme : Int := 57
+
+/-- Part de la dette indexée sur l'inflation, pm (voir le docstring du
+module). -/
+def partDetteIndexee : Int := 89
+
 /-- Effet sur la demande de chaque prélèvement, relativement à l'effet moyen
 d'un prélèvement fixé par le moteur, pm (voir le docstring du module). -/
 def incidencePrelevements : ParImpot :=
@@ -335,10 +474,17 @@ def intensiteEmploi2025 : ParSecteur :=
 
 def centrale : Economie where
   id := "eco-centrale"
-  description := "Croissance nominale 3 %, paramètres médians"
-  croissancePb := 300
-  croissanceDepensesPb := 280
-  seuilOkunPb := 300
+  description := "Prévisions publiées jusqu'en 2030, puis croissance potentielle de 1 %, inflation de 1,75 %, OAT à 4,4 %"
+  croissancePotentiellePb := 100
+  croissanceVolumeAnneesPb := trajectoireVolume 100
+  croissancePotentielleAnneesPb := trajectoirePotentiel 100
+  inflationAnneesPb := trajectoireDeflateur
+  inflationConsoAnneesPb := trajectoireConso
+  tauxMarginalAnneesPb := trajectoireTaux
+  tauxCourtAnneesPb := trajectoireTauxCourt
+  elasticiteCycliquePm := elasticitesCycliques
+  croissanceDepensesVolumePb := volumeDepenses
+  indexationDecaleePm := indexationDecalee
   okunPm := 400
   chomageFrictionnelPb := 450
   multiplicateurPm := 800
@@ -358,8 +504,11 @@ def centrale : Economie where
   depenseParEtudiantEuros := 13300
   elasticiteChomageSmicPm := 100
   economieParMoisRetraite := 650
-  tauxMarginalPb := 330
-  deriveTauxPb := 20
+  tauxMarginalPb := 440
+  partDetteCourtTermePm := partDetteCourtTerme
+  tauxCourtPb := 225
+  renouvellementDettePm := renouvellementDette
+  partDetteIndexeePm := partDetteIndexee
   primeDeficitPb := 25
   excesPatrimoineParDecesPb := 40
   elasticiteDroitsSuccessionPm := 1200
@@ -380,7 +529,7 @@ def centrale : Economie where
   coutParPbPlus65 := 185
   coutSanteParPbPlus65 := 20
   contenuImportDemandePm := 300
-  robotisationTendanciellePb := 20
+  robotisationTendanciellePb := 0
   coutParAccidentEuros := 24000
   joursPerdusParAccident := 70
   letaliteAccidentsPdm := 13
@@ -398,14 +547,28 @@ def centrale : Economie where
   coutTravailTrancheMeur := coutTravailTranche2025
   ajustementCoutTravailPm := 350
   chomeursEvitesParConseiller := 5
-  sources := ["À COMPLÉTER"]
+  sources := [
+    "Banque de France, projections macroéconomiques de septembre 2026",
+    "Mission d'experts indépendants sur la transparence des finances publiques, rapport du 15 juillet 2026 (tableaux 3 à 6, p. 6-8)",
+    "PLF 2026 et PLF 2027 (hypothèses de taux, d'inflation et de croissance potentielle) ; avis du HCFP du 1er octobre 2026",
+    "INSEE, note de conjoncture de septembre 2026 (inflation 2026)",
+    "COR, rapport annuel de juin 2026, tableau 2.1 (masse des pensions en volume)",
+    "DG Trésor, document de travail 2025/2 (élasticités des prélèvements et des dépenses de chômage au cycle)",
+    "Agence France Trésor, bulletin mensuel n° 435 et rapport annuel 2025 (structure de la dette)"]
 
 def croissanceBasse : Economie where
   id := "eco-basse"
-  description := "Croissance nominale 2 %, multiplicateur faible, fuite fiscale forte"
-  croissancePb := 200
-  croissanceDepensesPb := 280
-  seuilOkunPb := 300
+  description := "Prévisions publiées jusqu'en 2030, puis croissance potentielle de 0,6 %, inflation de 1,25 %, OAT à 4,8 % ; multiplicateur faible, fuite fiscale forte"
+  croissancePotentiellePb := 60
+  croissanceVolumeAnneesPb := trajectoireVolume 60
+  croissancePotentielleAnneesPb := trajectoirePotentiel 60
+  inflationAnneesPb := trajectoireDeflateur
+  inflationConsoAnneesPb := trajectoireConso
+  tauxMarginalAnneesPb := trajectoireTaux
+  tauxCourtAnneesPb := trajectoireTauxCourt
+  elasticiteCycliquePm := elasticitesCycliques
+  croissanceDepensesVolumePb := volumeDepenses
+  indexationDecaleePm := indexationDecalee
   okunPm := 400
   chomageFrictionnelPb := 450
   multiplicateurPm := 500
@@ -425,8 +588,11 @@ def croissanceBasse : Economie where
   depenseParEtudiantEuros := 13300
   elasticiteChomageSmicPm := 150
   economieParMoisRetraite := 650
-  tauxMarginalPb := 380
-  deriveTauxPb := 25
+  tauxMarginalPb := 480
+  partDetteCourtTermePm := partDetteCourtTerme
+  tauxCourtPb := 225
+  renouvellementDettePm := renouvellementDette
+  partDetteIndexeePm := partDetteIndexee
   primeDeficitPb := 25
   excesPatrimoineParDecesPb := 40
   elasticiteDroitsSuccessionPm := 1200
@@ -447,7 +613,7 @@ def croissanceBasse : Economie where
   coutParPbPlus65 := 185
   coutSanteParPbPlus65 := 20
   contenuImportDemandePm := 300
-  robotisationTendanciellePb := 20
+  robotisationTendanciellePb := 0
   coutParAccidentEuros := 24000
   joursPerdusParAccident := 70
   letaliteAccidentsPdm := 13
@@ -465,14 +631,28 @@ def croissanceBasse : Economie where
   coutTravailTrancheMeur := coutTravailTranche2025
   ajustementCoutTravailPm := 350
   chomeursEvitesParConseiller := 5
-  sources := ["À COMPLÉTER"]
+  sources := [
+    "Banque de France, projections macroéconomiques de septembre 2026",
+    "Mission d'experts indépendants sur la transparence des finances publiques, rapport du 15 juillet 2026 (tableaux 3 à 6, p. 6-8)",
+    "PLF 2026 et PLF 2027 (hypothèses de taux, d'inflation et de croissance potentielle) ; avis du HCFP du 1er octobre 2026",
+    "INSEE, note de conjoncture de septembre 2026 (inflation 2026)",
+    "COR, rapport annuel de juin 2026, tableau 2.1 (masse des pensions en volume)",
+    "DG Trésor, document de travail 2025/2 (élasticités des prélèvements et des dépenses de chômage au cycle)",
+    "Agence France Trésor, bulletin mensuel n° 435 et rapport annuel 2025 (structure de la dette)"]
 
 def croissanceHaute : Economie where
   id := "eco-haute"
-  description := "Croissance nominale 4 %, multiplicateur élevé, fuite fiscale faible"
-  croissancePb := 400
-  croissanceDepensesPb := 280
-  seuilOkunPb := 300
+  description := "Prévisions publiées jusqu'en 2030, puis croissance potentielle de 1,5 %, inflation de 2 %, OAT à 4 % ; multiplicateur élevé, fuite fiscale faible"
+  croissancePotentiellePb := 150
+  croissanceVolumeAnneesPb := trajectoireVolume 150
+  croissancePotentielleAnneesPb := trajectoirePotentiel 150
+  inflationAnneesPb := trajectoireDeflateur
+  inflationConsoAnneesPb := trajectoireConso
+  tauxMarginalAnneesPb := trajectoireTaux
+  tauxCourtAnneesPb := trajectoireTauxCourt
+  elasticiteCycliquePm := elasticitesCycliques
+  croissanceDepensesVolumePb := volumeDepenses
+  indexationDecaleePm := indexationDecalee
   okunPm := 400
   chomageFrictionnelPb := 450
   multiplicateurPm := 1100
@@ -492,8 +672,11 @@ def croissanceHaute : Economie where
   depenseParEtudiantEuros := 13300
   elasticiteChomageSmicPm := 50
   economieParMoisRetraite := 650
-  tauxMarginalPb := 300
-  deriveTauxPb := 20
+  tauxMarginalPb := 400
+  partDetteCourtTermePm := partDetteCourtTerme
+  tauxCourtPb := 225
+  renouvellementDettePm := renouvellementDette
+  partDetteIndexeePm := partDetteIndexee
   primeDeficitPb := 25
   excesPatrimoineParDecesPb := 40
   elasticiteDroitsSuccessionPm := 1200
@@ -514,7 +697,7 @@ def croissanceHaute : Economie where
   coutParPbPlus65 := 185
   coutSanteParPbPlus65 := 20
   contenuImportDemandePm := 300
-  robotisationTendanciellePb := 20
+  robotisationTendanciellePb := 0
   coutParAccidentEuros := 24000
   joursPerdusParAccident := 70
   letaliteAccidentsPdm := 13
@@ -532,7 +715,14 @@ def croissanceHaute : Economie where
   coutTravailTrancheMeur := coutTravailTranche2025
   ajustementCoutTravailPm := 350
   chomeursEvitesParConseiller := 5
-  sources := ["À COMPLÉTER"]
+  sources := [
+    "Banque de France, projections macroéconomiques de septembre 2026",
+    "Mission d'experts indépendants sur la transparence des finances publiques, rapport du 15 juillet 2026 (tableaux 3 à 6, p. 6-8)",
+    "PLF 2026 et PLF 2027 (hypothèses de taux, d'inflation et de croissance potentielle) ; avis du HCFP du 1er octobre 2026",
+    "INSEE, note de conjoncture de septembre 2026 (inflation 2026)",
+    "COR, rapport annuel de juin 2026, tableau 2.1 (masse des pensions en volume)",
+    "DG Trésor, document de travail 2025/2 (élasticités des prélèvements et des dépenses de chômage au cycle)",
+    "Agence France Trésor, bulletin mensuel n° 435 et rapport annuel 2025 (structure de la dette)"]
 
 def toutes : List Economie := [centrale, croissanceBasse, croissanceHaute]
 
