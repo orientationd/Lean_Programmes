@@ -2071,23 +2071,27 @@ theorem lancements_valeurs : programmeLancements = 295 := by decide
 /-- Plan méthane des déchets (O-135, O-135b). Le stockage des déchets non
 dangereux (ISDND) émet 11,4 Mt CO₂e en 2024, uniquement du méthane, soit 75 %
 du secteur des déchets (15,3 Mt ; Citepa, Secten 2026). Objectif de la
-SNBC-3 : 12 Mt par an en moyenne de 2029 à 2033 (décret n° 2026-636,
-art. 3). Le méthane d'un déchet stocké se dégage sur des années
+SNBC-3 : 12 Mt en 2030 (−28 % par rapport à 1990 : résumé de la SNBC-3,
+juillet 2026), et 12 Mt par an en moyenne de 2029 à 2033 (décret
+n° 2026-636, art. 3). Le méthane d'un déchet stocké se dégage sur des années
 (décroissance du premier ordre du GIEC, lignes directrices 2006, vol. 5,
-chap. 3 : demi-vie de sept ans en climat tempéré humide) : une tonne non
-stockée en 2027 n'évite que 7 % de son méthane au cours de l'année 2030
-(calcul). D'ici 2030, c'est surtout le captage du biogaz des alvéoles
-existantes qui compte. Quatre volets :
+chap. 3, tableau 3.3, climat tempéré humide : demi-vie de sept ans pour les
+déchets en vrac, ≈ 3,7 ans pour les déchets alimentaires) : d'ici 2030, c'est
+surtout le captage du biogaz des alvéoles existantes qui compte. Quatre
+volets :
 * captage renforcé (arrêté ISDND : captage dès l'exploitation, couvertures,
   mesure des fuites), porté de ≈ 45 % (DREAL Hauts-de-France, janvier 2025,
   sans source primaire : hypothèse) à 55 % en 2030, le quart de l'écart à
   la cible nationale de 85 % (même source), 2,5 points de plus par an de
   2027 à 2030 (hypothèse). Avec 10 % du méthane oxydé dans la couverture
   (GIEC, valeur par défaut), le méthane produit vaut 11 400 / (0,55 × 0,9)
-  ≈ 23 030 kt CO₂e et chaque point de captage évite ≈ 207 kt (calcul). Coût
-  ≈ 20 €/t CO₂e évitée (12 à 22 €/t : E-CUBE pour Waga Energy, Suez et
-  Veolia, novembre 2023, étude financée par la profession), aidé à 50 % par
-  l'ADEME (hypothèse), et 5 M€ par an de contrôles (hypothèse) ;
+  ≈ 23 030 kt CO₂e en 2024 (calcul), ramené au milieu de la montée (2028)
+  par la baisse tendancielle du secteur (`baisseEmissionsAME`) ; chaque
+  point de captage évite alors ≈ 190 kt (calcul). Coût ≈ 20 €/t CO₂e évitée
+  (12 à 22 €/t : E-CUBE pour Waga Energy, Suez et Veolia, novembre 2023,
+  étude financée par la profession), aidé à 50 % par l'ADEME (hypothèse) et
+  versé en entier dès 2027 (prudent), et 5 M€ par an de contrôles
+  (hypothèse) ;
 * TGAP modulée selon le captage mesuré, bonus-malus à recette constante
   (hypothèse) : sans coût. Depuis 2025, la TGAP ne distingue plus les
   installations qui valorisent leur biogaz (BOFiP, BOI-BAREME-000039) ;
@@ -2096,32 +2100,44 @@ existantes qui compte. Quatre volets :
 * Fonds économie circulaire de l'ADEME ramené à son niveau de 2024 : 301 M€
   d'autorisations d'engagement contre 95 en 2026 (Sénat, rapport n° 139,
   2025-2026, tome III, annexe 10), soit +206 M€ par an.
-Les deux derniers volets détournent du stockage ≈ 0,5 Mt de déchets chacun
-en 2030 (hypothèse) : ≈ −0,2 Mt d'émissions en 2030 par la décroissance du
-premier ordre (calcul), comptées comme 50 kt de plus par an de 2027 à 2030 ;
-leur effet, qui grandit après 2030 (≈ −0,5 Mt en 2035, calcul), n'est pas
-compté au-delà. La baisse tendancielle du secteur (−2,2 % par an,
-`baisseEmissionsAME`) comprend peut-être déjà une partie du captage. -/
+Les deux derniers volets rétablissent les moyens de 2024, quand a été
+observée la baisse sur laquelle est calée la tendance du secteur (−2,2 % par
+an en 2024-2025, `baisseEmissionsAME`) : leur effet sur les émissions est
+supposé déjà dans la tendance et n'est pas compté en plus ; sans eux, cette
+tendance serait moins sûre. -/
 def emissionsStockageKt : Int := 11400
 def captageInitialPm : Int := 450
 def oxydationCouverturePm : Int := 100
 def methaneProduitKt : Int :=
   emissionsStockageKt * 1000000 / ((1000 - captageInitialPm) * (1000 - oxydationCouverturePm))
-def ktParPointCaptage : Int := methaneProduitKt * (1000 - oxydationCouverturePm) / 1000 / 100
+/-- Facteur de la baisse tendancielle des déchets sur `n` années, pm. -/
+def facteurTendancielDechetsPm (n : Nat) : Int :=
+  (List.range n).foldl (fun f _ => f * (1000 - Hypotheses.Eco.baisseEmissionsAME.dechets) / 1000) 1000
+/-- Années de 2024 (inventaire) à 2028 (milieu de la montée). -/
+def anneesJusquAuMilieuMontee : Nat := 4
+def methaneProduitMilieuMonteeKt : Int :=
+  methaneProduitKt * facteurTendancielDechetsPm anneesJusquAuMilieuMontee / 1000
+def ktParPointCaptage : Int := methaneProduitMilieuMonteeKt * (1000 - oxydationCouverturePm) / 1000 / 100
 def pointsCaptage2030 : Int := 10
-def detournementStockageKtParAn : Int := 50
-def dechetsEvitesParAnKt : Int := ktParPointCaptage * pointsCaptage2030 / 4 + detournementStockageKtParAn
+/-- Années de montée des plans méthane et azote (2027 à 2030). -/
+def anneesMontee : Nat := 4
+def captageEviteParAnKt : Int := ktParPointCaptage * pointsCaptage2030 / anneesMontee
 def coutAbattementCaptageEuros : Int := 20
-def aideCaptageBiogaz : Int := ktParPointCaptage * pointsCaptage2030 * coutAbattementCaptageEuros / 1000 / 2
+def aideCaptagePm : Int := 500
+def aideCaptageBiogaz : Int :=
+  ktParPointCaptage * pointsCaptage2030 * coutAbattementCaptageEuros / 1000 * aideCaptagePm / 1000
 def controlesIsdnd : Int := 5
 def aideBiodechets : Int := 100
 def fondsEconomieCirculaire2024 : Int := 301
 def fondsEconomieCirculaire2026 : Int := 95
 def planMethaneDechets : Int :=
   aideCaptageBiogaz + controlesIsdnd + aideBiodechets + (fondsEconomieCirculaire2024 - fondsEconomieCirculaire2026)
+/-- Variante : 7 points de captage en 2030 au lieu de 10 (hypothèse). -/
+def pointsCaptageBas : Int := 7
 
-theorem dechets_valeurs : methaneProduitKt = 23030 ∧ ktParPointCaptage = 207 ∧
-    dechetsEvitesParAnKt = 567 ∧ aideCaptageBiogaz = 20 ∧ planMethaneDechets = 331 := by decide
+theorem dechets_valeurs : methaneProduitKt = 23030 ∧ facteurTendancielDechetsPm 4 = 913 ∧
+    ktParPointCaptage = 189 ∧ captageEviteParAnKt = 472 ∧ aideCaptageBiogaz = 18 ∧
+    planMethaneDechets = 329 := by decide
 
 /-- Plan azote et effluents (O-136, O-136b), hors engins (O-31) et production
 d'engrais (O-104). Agriculture : 77,5 Mt CO₂e en 2024, 76,6 Mt en 2025
@@ -2147,17 +2163,19 @@ juin 2026). Trois volets :
   9,92 Mt (Secten 2026, calcul), pour 1 831 kt d'azote livré (SGPE)
   (calcul) ;
 * additif anti-méthane (3-NOP) pour 75 000 vaches laitières de plus par an
-  (300 000 en 2030, hypothèse), 117 kg de méthane
-  entérique par vache et par an (GIEC, lignes directrices 2006, vol. 4,
-  chap. 10, tableau 10.11, Europe de l'Ouest : valeur prudente pour des
-  vaches françaises plus productives), PRG de 28 (inventaire, AR5), −25 %
-  (−25 à −31 % à l'essai de l'INRAE à Theix ; −15 à −40 % selon l'Idele)
-  (calcul : 819 kg CO₂e évités par vache) ; 0,28 € par vache et par jour
-  (Idele, 2025), payé en entier (hypothèse).
+  (300 000 en 2030, hypothèse), 117 kg de méthane entérique par vache et par
+  an (GIEC, lignes directrices 2006, vol. 4, chap. 10, tableau 10.11, Europe
+  de l'Ouest : valeur prudente pour des vaches françaises plus
+  productives), PRG de 28 (inventaire, AR5), −25 % (−25 à −31 % à l'essai de
+  l'INRAE à Theix ; −15 à −40 % selon l'Idele) (calcul : 819 kg CO₂e évités
+  par vache) ; 0,28 € par vache et par jour (Idele, 2025), payé en entier
+  (hypothèse).
 Ces pratiques ne réduisent les émissions de l'inventaire que si le Citepa
-les intègre à ses données d'activité. L'aide de 2026 à l'achat d'engrais
-azotés (145 M€) et une redevance sur l'azote (30 €/t, IGF, 2023 ;
-amendement I-786 rejeté au PLF 2026) ne sont pas modifiées. -/
+les intègre à ses données d'activité. L'objectif de 68 Mt suppose aussi que
+la conversion électrique des exploitations (O-31) atteint son plafond. Ni
+l'aide de 2026 à l'achat d'engrais azotés (145 M€) n'est modifiée, ni la
+redevance sur l'azote proposée par l'IGF (30 €/t, 2023 ; amendement I-786
+rejeté au PLF 2026) n'est reprise. -/
 def elevagesFossesParAn : Int := 1250
 def tonnesEviteesParFosse : Int := 140
 def investissementFosseEuros : Int := 105000
@@ -2165,12 +2183,14 @@ def aideFossePm : Int := 600
 def aideFosses : Int := elevagesFossesParAn * investissementFosseEuros / 1000 * aideFossePm / 1000000
 def legumineusesHaParAn : Int := 75000
 def azoteEviteKgParHa : Int := 120
-def emissionsEngraisMinerauxKt : Int := 77500 * 128 / 1000
+def emissionsAgriculture2024Kt : Int := 77500
+def partEngraisMinerauxPm : Int := 128
+def emissionsEngraisMinerauxKt : Int := emissionsAgriculture2024Kt * partEngraisMinerauxPm / 1000
 def livraisonsAzoteKt : Int := 1831
 def co2eParKgAzoteDixiemes : Int := emissionsEngraisMinerauxKt * 10 / livraisonsAzoteKt
-def legumineusesEviteesKt : Int := legumineusesHaParAn * azoteEviteKgParHa * co2eParKgAzoteDixiemes / 10 / 1000000
+def legumineusesEviteesKt (kgParHa : Int) : Int :=
+  legumineusesHaParAn * kgParHa * co2eParKgAzoteDixiemes / 10 / 1000000
 def aideLegumineusesEurosParHa : Int := 150
-def aideLegumineuses : Int := legumineusesHaParAn * aideLegumineusesEurosParHa / 1000000
 def vachesAdditifParAn : Int := 75000
 def methaneEnteriqueKgParVache : Int := 117
 def prgMethane : Int := 28
@@ -2178,28 +2198,44 @@ def baisseAdditifPm : Int := 250
 def evitementAdditifKgParVache : Int := methaneEnteriqueKgParVache * prgMethane * baisseAdditifPm / 1000
 def additifEviteKt : Int := vachesAdditifParAn * evitementAdditifKgParVache / 1000000
 def coutAdditifCentimesParJour : Int := 28
-def coutAdditifVacheEuros : Int := coutAdditifCentimesParJour * 365 / 100
-def aideAdditif : Int := vachesAdditifParAn * coutAdditifVacheEuros / 1000000
+def joursParAn : Int := 365
+/-- Aides annuelles ajoutées chaque année de 2027 à 2030 (légumineuses et
+additif), M€ arrondis à l'unité. -/
+def aidesAgricolesParAn : Int :=
+  (legumineusesHaParAn * aideLegumineusesEurosParHa
+    + vachesAdditifParAn * coutAdditifCentimesParJour * joursParAn / 100 + 500000) / 1000000
 def agricultureEviteeParAnKt : Int :=
-  elevagesFossesParAn * tonnesEviteesParFosse / 1000 + legumineusesEviteesKt + additifEviteKt
-def aidesAgricolesParAn : Int := aideLegumineuses + aideAdditif
+  elevagesFossesParAn * tonnesEviteesParFosse / 1000 + legumineusesEviteesKt azoteEviteKgParHa + additifEviteKt
+/-- Variante basse : 95 t par fosse, 80 kg d'azote par hectare, additif non
+pris en compte par l'inventaire (bas des fourchettes). -/
+def tonnesEviteesParFosseBas : Int := 95
+def azoteEviteKgParHaBas : Int := 80
+def agricultureEviteeParAnBasKt : Int :=
+  elevagesFossesParAn * tonnesEviteesParFosseBas / 1000 + legumineusesEviteesKt azoteEviteKgParHaBas
 
 theorem agriculture_valeurs : aideFosses = 78 ∧ emissionsEngraisMinerauxKt = 9920 ∧
-    co2eParKgAzoteDixiemes = 54 ∧ legumineusesEviteesKt = 48 ∧ evitementAdditifKgParVache = 819 ∧
-    additifEviteKt = 61 ∧ coutAdditifVacheEuros = 102 ∧ aideAdditif = 7 ∧
-    agricultureEviteeParAnKt = 284 ∧ aidesAgricolesParAn = 18 := by decide
+    co2eParKgAzoteDixiemes = 54 ∧ legumineusesEviteesKt azoteEviteKgParHa = 48 ∧
+    evitementAdditifKgParVache = 819 ∧ additifEviteKt = 61 ∧ aidesAgricolesParAn = 19 ∧
+    agricultureEviteeParAnKt = 284 ∧ agricultureEviteeParAnBasKt = 150 := by decide
 
 /-- Déchetteries publiques gratuites pour tous (O-137) : sans quota de
 passages pour les particuliers, sans droit d'entrée pour les artisans,
 l'État compensant les recettes perdues par les collectivités (transfert
-interne aux administrations publiques, neutre sur le solde consolidé).
-Dépôts sauvages : 340 à 420 M€ par an d'enlèvement et de nettoyage
-(ministère de la Transition écologique, 2019) ; entreprises et artisans en
-sont les auteurs dans 24 % des cas, et le refus de payer l'accès des
-entreprises en déchetterie ou la tarification incitative est la cause citée
-dans 20 % des cas (ADEME, enquête 2019 auprès des collectivités). Aucune
-élasticité des dépôts sauvages au prix d'accès n'est publiée, en France ou
-ailleurs. Chiffrage, en M€ par an :
+interne aux administrations publiques, neutre sur le solde consolidé). Les
+déchetteries sont financées surtout par la taxe d'enlèvement des ordures
+ménagères (77 % du financement du service public des déchets en 2023 :
+IGF-IGEDD, mars 2026) ; certaines collectivités limitent les passages des
+particuliers ou les facturent au-delà d'un quota, et l'accès des artisans
+est le plus souvent payant (Amorce, enquête de 2013). Dépôts sauvages : 340 à
+420 M€ par an d'enlèvement et de nettoyage (ministère de la Transition
+écologique, 2019) ; entreprises et artisans en sont les auteurs dans 24 %
+des cas, et le refus de payer l'accès des entreprises en déchetterie ou la
+tarification incitative est la cause citée dans 20 % des cas (ADEME,
+enquête 2019 auprès des collectivités). Aucune élasticité des dépôts
+sauvages au prix d'accès des professionnels n'a été trouvée (la
+tarification au sac des ménages en reporte une partie vers les dépôts
+illégaux : Fullerton et Kinnaman, American Economic Review, 1996).
+Chiffrage, en M€ par an :
 * recettes perdues sur les professionnels : aucun total national ; 1 € par
   habitant (hypothèse calée sur Seine-Eure, 0,57 € en 2023, Miribel,
   0,4 €, et Questembert, au plus 3,0 € en 2021 : rapports annuels), pour
@@ -2212,8 +2248,8 @@ ailleurs. Chiffrage, en M€ par an :
   hypothèse) ;
 * tonnages reçus en plus : 0,4 Mt (hypothèse : dépôts sauvages ramenés en
   déchetterie, ≈ 1 Mt par an selon Gestes propres, et apports des artisans
-  qui allaient en déchetterie professionnelle) à 97 € par tonne, la part
-  du traitement des flux (57 % à Mauges, 2024) dans le coût aidé de
+  qui allaient en déchetterie professionnelle privée) à 97 € par tonne, la
+  part du traitement des flux (57 % à Mauges, 2024) dans le coût aidé de
   171 €/t des déchetteries (IGF-IGEDD, mars 2026 ; calcul) ;
 * nettoyage évité : 380 M€ (milieu de la fourchette de 2019) × 24 % de dépôts
   des professionnels × 30 % évités par la gratuité (hypothèse) × 84 %, la
@@ -2222,14 +2258,17 @@ ailleurs. Chiffrage, en M€ par an :
   380 : réponse à la question écrite n° 18121, septembre 2026 ; calcul).
 La filière des déchets du bâtiment (REP PMCB) reprend déjà sans frais les
 déchets triés des artisans dans les déchetteries sous contrat (48 % des
-déchetteries publiques fin 2024 : ADEME, bilan 2024 de la filière), mais
-sa refondation, en discussion pour 2027, supprimerait cette reprise pour
-les petits volumes : la mesure garantit la gratuité quelle qu'en soit
-l'issue. Les recettes observées dans les rapports annuels tiennent déjà
-compte de la reprise sans frais. -/
+déchetteries publiques fin 2024 : ADEME, bilan 2024 de la filière). Sa
+refondation, en discussion pour 2027, supprimerait cette reprise pour les
+petits volumes : la mesure garantirait alors la gratuité, et l'État paierait
+en plus ce que paie aujourd'hui la filière pour ces volumes, non chiffré
+(coût conditionnel, non compté). Les recettes observées dans les rapports
+annuels tiennent déjà compte de la reprise sans frais. Variante haute :
+2 € par habitant et 1 Mt reçue en plus, surtout des apports détournés des
+déchetteries professionnelles privées (le nettoyage évité ne change pas). -/
 def habitantsMilliers2026 : Int := 69082
 def recettesProsCentimesParHabitant : Int := 100
-def recettesProsDechetteries : Int := habitantsMilliers2026 * recettesProsCentimesParHabitant / 100000
+def recettesProsDechetteries (centimes : Int) : Int := habitantsMilliers2026 * centimes / 100000
 def habitantsQuotasMilliers : Int := 5000
 def passagesHorsQuotaPm : Int := 200
 def prixPassageCentimes : Int := 700
@@ -2238,16 +2277,27 @@ def tonnagesDechetteriesKt : Int := 400
 def coutAideDechetterieEurosParT : Int := 171
 def partTraitementFluxPm : Int := 570
 def coutMarginalDechetterieEurosParT : Int := coutAideDechetterieEurosParT * partTraitementFluxPm / 1000
-def tonnagesDechetteries : Int := tonnagesDechetteriesKt * coutMarginalDechetterieEurosParT / 1000
+def tonnagesDechetteries (kt : Int) : Int := kt * coutMarginalDechetterieEurosParT / 1000
 def coutDepotsSauvages : Int := 380
 def partDepotsProfessionnelsPm : Int := 240
 def depotsEvitesPm : Int := 300
 def partHorsFondsRepPm : Int := 840
 def nettoyageEvite : Int :=
   coutDepotsSauvages * partDepotsProfessionnelsPm * depotsEvitesPm * partHorsFondsRepPm / 1000000000
+/-- Variante haute (hypothèses). -/
+def recettesProsCentimesParHabitantHaut : Int := 200
+def tonnagesDechetteriesHautKt : Int := 1000
 
-theorem dechetteries_valeurs : recettesProsDechetteries = 69 ∧ quotasDechetteries = 7 ∧
-    coutMarginalDechetterieEurosParT = 97 ∧ tonnagesDechetteries = 38 ∧ nettoyageEvite = 22 := by decide
+theorem dechetteries_valeurs : recettesProsDechetteries recettesProsCentimesParHabitant = 69 ∧
+    quotasDechetteries = 7 ∧ coutMarginalDechetterieEurosParT = 97 ∧
+    tonnagesDechetteries tonnagesDechetteriesKt = 38 ∧ nettoyageEvite = 22 ∧
+    recettesProsDechetteries recettesProsCentimesParHabitantHaut = 138 ∧
+    tonnagesDechetteries tonnagesDechetteriesHautKt = 97 := by decide
+
+/-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
+carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
+avec le même partage en chèque énergie. -/
+def multipleCarboneEssai : Int := 8
 
 def mesures : List Mesure := [
   { id := "O-01"
@@ -3206,7 +3256,12 @@ def mesures : List Mesure := [
     leviers := [.taxeEnvironnementale .carburantsRoutiers .accisesEnergie assietteVoituresKt 24 (rendementCarboneVoitures / 4),
                 .taxeEnvironnementale .chauffageFossile .accisesEnergie assietteChauffageKt 31 (rendementCarboneChauffage / 4),
                 .depenseSur .famille (chequeCarbone / 4)]
-    repetitions := 4 },
+    repetitions := 4
+    variantes := [
+      { nom := "≈ 488 €/t en 2030 (essai : hausse multipliée par 8)",
+        leviers := [.taxeEnvironnementale .carburantsRoutiers .accisesEnergie assietteVoituresKt (24 * multipleCarboneEssai) (multipleCarboneEssai * rendementCarboneVoitures / 4),
+                    .taxeEnvironnementale .chauffageFossile .accisesEnergie assietteChauffageKt (31 * multipleCarboneEssai) (multipleCarboneEssai * rendementCarboneChauffage / 4),
+                    .depenseSur .famille (multipleCarboneEssai * chequeCarbone / 4)] }] },
 
   { id := "O-125"
     titre := "Amendes proportionnelles aux revenus, sans pouvoir être inférieures au montant actuel"
@@ -3258,44 +3313,44 @@ def mesures : List Mesure := [
 
   { id := "O-135"
     titre := "Plan méthane des déchets : captage du biogaz des décharges porté de 45 % à 55 % en 2030, TGAP modulée selon le captage, aide aux biodéchets rétablie, Fonds économie circulaire ramené à son niveau de 2024"
-    source := s!"Demande de l'auteur (octobre 2026) ; stockage : {emissionsStockageKt} kt CO₂e en 2024 (Secten 2026) ; captage aidé à 50 % à {coutAbattementCaptageEuros} €/t évitée (E-CUBE, 2023) : {aideCaptageBiogaz} M€, contrôles {controlesIsdnd} M€, biodéchets {aideBiodechets} M€ (Fonds vert), Fonds économie circulaire +{fondsEconomieCirculaire2024 - fondsEconomieCirculaire2026} M€ (Sénat) : {planMethaneDechets} M€ par an (voir `planMethaneDechets`)"
+    source := s!"Demande de l'auteur (octobre 2026) ; stockage : {emissionsStockageKt} kt CO₂e en 2024 (Secten 2026) ; captage aidé à 50 % (hypothèse) à {coutAbattementCaptageEuros} €/t évitée (E-CUBE, 2023) : {aideCaptageBiogaz} M€, contrôles {controlesIsdnd} M€, biodéchets {aideBiodechets} M€ (Fonds vert), Fonds économie circulaire +{fondsEconomieCirculaire2024 - fondsEconomieCirculaire2026} M€ (Sénat) : {planMethaneDechets} M€ par an (voir `planMethaneDechets`)"
     leviers := [.depenseSur .logementEnvironnement planMethaneDechets] },
 
   { id := "O-135b"
-    titre := "Plan méthane des déchets : émissions évitées (montée en quatre ans)"
-    source := s!"Demande de l'auteur (octobre 2026) ; 2,5 points de captage de plus par an à {ktParPointCaptage} kt par point (calcul, GIEC) et {detournementStockageKtParAn} kt de détournement du stockage : {dechetsEvitesParAnKt} kt de plus chaque année de 2027 à 2030 (voir `dechetsEvitesParAnKt`)"
-    leviers := [.transitionKt .dechets dechetsEvitesParAnKt 0]
-    repetitions := 4
+    titre := "Plan méthane des déchets : émissions évitées par le captage (montée en quatre ans)"
+    source := s!"Demande de l'auteur (octobre 2026) ; 2,5 points de captage de plus par an à {ktParPointCaptage} kt par point (calcul, GIEC, méthane projeté en 2028) : {captageEviteParAnKt} kt de plus chaque année de 2027 à 2030 ; détournement du stockage supposé dans la tendance (voir `captageEviteParAnKt`)"
+    leviers := [.transitionKt .dechets captageEviteParAnKt 0]
+    repetitions := anneesMontee
     variantes := [
       { nom := "+7 points de captage en 2030 au lieu de +10",
-        leviers := [.transitionKt .dechets (ktParPointCaptage * 7 / 4 + detournementStockageKtParAn) 0] }] },
+        leviers := [.transitionKt .dechets (ktParPointCaptage * pointsCaptageBas / anneesMontee) 0] }] },
 
   { id := "O-136"
     titre := "Plan azote et effluents : fosses à lisier couvertes avec torchère dans 5 000 élevages de 2027 à 2030, aidées à 60 %"
-    source := s!"Demande de l'auteur (octobre 2026) ; {elevagesFossesParAn} élevages par an, {investissementFosseEuros} € d'investissement (INRA 2013, +30 %) aidés à 60 % : {aideFosses} M€ par an de 2027 à 2030 (voir `aideFosses`)"
-    leviers := [.depenseEcheancier .affairesEconomiques ((List.replicate 4 aideFosses) ++ [0])] },
+    source := s!"Demande de l'auteur (octobre 2026) ; {elevagesFossesParAn} élevages par an, {investissementFosseEuros} € d'investissement (INRA 2013, +30 %, hypothèse) aidés à 60 % (hypothèse) : {aideFosses} M€ par an de 2027 à 2030 (voir `aideFosses`)"
+    leviers := [.depenseEcheancier .affairesEconomiques ((List.replicate anneesMontee aideFosses) ++ [0])] },
 
   { id := "O-136b"
-    titre := "Plan azote et effluents : 300 000 ha de légumineuses et additif anti-méthane pour 300 000 vaches laitières en 2030, émissions évitées (montée en quatre ans)"
-    source := s!"Demande de l'auteur (octobre 2026) ; fosses couvertes {tonnesEviteesParFosse} t par élevage, légumineuses {legumineusesEviteesKt} kt ({azoteEviteKgParHa} kg d'azote par ha), additif {additifEviteKt} kt ({evitementAdditifKgParVache} kg par vache) : {agricultureEviteeParAnKt} kt de plus chaque année de 2027 à 2030 ; aides de {aidesAgricolesParAn} M€ de plus chaque année (voir `agricultureEviteeParAnKt`)"
+    titre := "Plan azote et effluents : fosses couvertes, 300 000 ha de légumineuses et additif anti-méthane pour 300 000 vaches laitières en 2030, émissions évitées (montée en quatre ans)"
+    source := s!"Demande de l'auteur (octobre 2026) ; fosses couvertes {tonnesEviteesParFosse} t par élevage (hypothèse), légumineuses {legumineusesEviteesKt azoteEviteKgParHa} kt ({azoteEviteKgParHa} kg d'azote par ha, hypothèse), additif {additifEviteKt} kt ({evitementAdditifKgParVache} kg par vache) : {agricultureEviteeParAnKt} kt de plus chaque année de 2027 à 2030 ; aides aux légumineuses et à l'additif : {aidesAgricolesParAn} M€ de plus chaque année de 2027 à 2030, puis reconduites (voir `agricultureEviteeParAnKt`)"
     leviers := [.transitionKt .agriculture agricultureEviteeParAnKt 0,
                 .depenseSur .affairesEconomiques aidesAgricolesParAn]
-    repetitions := 4
+    repetitions := anneesMontee
     variantes := [
-      { nom := "hypothèses basses : 95 t par élevage, additif non pris en compte par l'inventaire",
-        leviers := [.transitionKt .agriculture (elevagesFossesParAn * 95 / 1000 + legumineusesEviteesKt) 0,
+      { nom := "hypothèses basses : 95 t par élevage, 80 kg d'azote par ha, additif non pris en compte par l'inventaire",
+        leviers := [.transitionKt .agriculture agricultureEviteeParAnBasKt 0,
                     .depenseSur .affairesEconomiques aidesAgricolesParAn] }] },
 
   { id := "O-137"
     titre := "Déchetteries publiques gratuites pour tous, artisans compris et sans quota, contre les dépôts sauvages"
-    source := s!"Demande de l'auteur (octobre 2026) ; recettes des professionnels perdues {recettesProsDechetteries} M€ (1 € par habitant, hypothèse) et quotas {quotasDechetteries} M€, compensées par l'État ; {tonnagesDechetteriesKt} kt reçues en plus à {coutMarginalDechetterieEurosParT} €/t : {tonnagesDechetteries} M€ ; nettoyage des dépôts sauvages évité : {nettoyageEvite} M€ (voir `nettoyageEvite`)"
-    leviers := [.recetteEcheancier none [-(recettesProsDechetteries + quotasDechetteries)],
-                .depenseSur .logementEnvironnement tonnagesDechetteries,
+    source := s!"Demande de l'auteur (octobre 2026) ; recettes des professionnels perdues {recettesProsDechetteries recettesProsCentimesParHabitant} M€ (1 € par habitant, hypothèse) et quotas {quotasDechetteries} M€, compensées par l'État ; {tonnagesDechetteriesKt} kt reçues en plus (hypothèse) à {coutMarginalDechetterieEurosParT} €/t : {tonnagesDechetteries tonnagesDechetteriesKt} M€ ; nettoyage des dépôts sauvages évité : {nettoyageEvite} M€ (voir `nettoyageEvite`)"
+    leviers := [.recetteEcheancier none [-(recettesProsDechetteries recettesProsCentimesParHabitant + quotasDechetteries)],
+                .depenseSur .logementEnvironnement (tonnagesDechetteries tonnagesDechetteriesKt),
                 .economieSur .logementEnvironnement nettoyageEvite]
     variantes := [
       { nom := "fourchette haute : 2 € par habitant de recettes perdues, 1 Mt reçue en plus",
-        leviers := [.recetteEcheancier none [-(2 * recettesProsDechetteries + quotasDechetteries)],
-                    .depenseSur .logementEnvironnement (1000 * coutMarginalDechetterieEurosParT / 1000),
+        leviers := [.recetteEcheancier none [-(recettesProsDechetteries recettesProsCentimesParHabitantHaut + quotasDechetteries)],
+                    .depenseSur .logementEnvironnement (tonnagesDechetteries tonnagesDechetteriesHautKt),
                     .economieSur .logementEnvironnement nettoyageEvite] }] }
 ]
 

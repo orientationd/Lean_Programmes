@@ -13,7 +13,7 @@ Scénario central, 2035, moteur de demande :
 | Dette publique | 156,7 % du PIB | 124,6 % |
 | Chômage | 7,90 % | 9,02 % |
 | Indice de développement humain | 0,9392 | 0,9407 |
-| Émissions de gaz à effet de serre | 296 Mt CO₂e | 260 Mt CO₂e |
+| Émissions de gaz à effet de serre | 296 Mt CO₂e | 261 Mt CO₂e |
 
 Trajectoire du déficit (% du PIB) :
 
@@ -587,9 +587,9 @@ pas. Les conjoints et aides familiaux (proposition de loi Brugerolles,
 | **O-124** Composante carbone remise sur sa trajectoire : 100 €/t en 2030, moitié reversée en chèque énergie | −0,04 pt | −1 000 | ≈ 0 |
 | **O-128** Leasing social électrique : 150 000 voitures par an à 100 € par mois | +0,07 pt | +3 300 | +0,1 |
 | **O-135** Plan méthane des déchets : captage du biogaz des décharges porté de 45 % à 55 % en 2030, TGAP modulée selon le captage, aide aux biodéchets rétablie, Fonds économie circulaire ramené à son niveau de 2024 | +0,02 pt | +1 400 | ≈ 0 |
-| **O-135b** Plan méthane des déchets : émissions évitées (montée en quatre ans) | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-135b** Plan méthane des déchets : émissions évitées par le captage (montée en quatre ans) | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-136** Plan azote et effluents : fosses à lisier couvertes avec torchère dans 5 000 élevages de 2027 à 2030, aidées à 60 % | ≈ 0 | ≈ 0 | ≈ 0 |
-| **O-136b** Plan azote et effluents : 300 000 ha de légumineuses et additif anti-méthane pour 300 000 vaches laitières en 2030, émissions évitées (montée en quatre ans) | ≈ 0 | +200 | ≈ 0 |
+| **O-136b** Plan azote et effluents : fosses couvertes, 300 000 ha de légumineuses et additif anti-méthane pour 300 000 vaches laitières en 2030, émissions évitées (montée en quatre ans) | ≈ 0 | +200 | ≈ 0 |
 | **O-137** Déchetteries publiques gratuites pour tous, artisans compris et sans quota, contre les dépôts sauvages | ≈ 0 | +100 | ≈ 0 |
 
 **O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année.** 10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
@@ -826,17 +826,20 @@ par an).
 **O-135 et O-135b — Plan méthane des déchets.** Demande de l'auteur
 (octobre 2026). Le stockage des déchets émet 11,4 Mt CO₂e en 2024, du
 méthane, soit 75 % des 15,3 Mt du secteur (Citepa, Secten 2026) ; la
-SNBC-3 vise 12 Mt par an de 2029 à 2033 (décret n° 2026-636). Le méthane
-d'un déchet stocké se dégage sur des années (demi-vie de sept ans selon le
-GIEC) : moins stocker ne joue qu'après 2030, et d'ici là c'est le captage du
-biogaz des décharges existantes qui compte. Quatre volets :
+SNBC-3 vise 12 Mt en 2030, et 12 Mt par an en moyenne de 2029 à 2033
+(décret n° 2026-636). Le méthane d'un déchet stocké se dégage sur des
+années (demi-vie de sept ans pour les déchets en vrac, ≈ 3,7 ans pour les
+déchets alimentaires, selon le GIEC) : d'ici 2030, c'est surtout le captage
+du biogaz des décharges existantes qui compte. Quatre volets :
 
 * captage porté de ≈ 45 % (estimation de la DREAL Hauts-de-France, sans
-  source primaire) à 55 % en 2030, par un arrêté renforcé (captage dès
-  l'exploitation, couvertures, mesure des fuites) aidé à 50 % par l'ADEME :
-  chaque point évite ≈ 207 kt (calcul, 10 % du méthane étant oxydé dans la
-  couverture), pour ≈ 20 €/t évitée (étude E-CUBE financée par la
-  profession, 2023) : 20 M€ d'aide et 5 M€ de contrôles par an ;
+  source primaire) à 55 % en 2030, 2,5 points de plus par an (hypothèse),
+  par un arrêté renforcé (captage dès l'exploitation, couvertures, mesure
+  des fuites) aidé à 50 % par l'ADEME (hypothèse) : chaque point évite
+  ≈ 190 kt (calcul : 10 % du méthane oxydé dans la couverture, méthane
+  projeté en 2028 par la baisse tendancielle du secteur), pour ≈ 20 €/t
+  évitée (étude E-CUBE financée par la profession, 2023) : 18 M€ d'aide,
+  versés en entier dès 2027, et 5 M€ de contrôles par an ;
 * TGAP modulée selon le captage mesuré, à recette constante : depuis 2025,
   elle ne distingue plus les décharges qui valorisent leur biogaz ;
 * aide au tri à la source des biodéchets rétablie : 100 M€ par an (Fonds
@@ -844,11 +847,12 @@ biogaz des décharges existantes qui compte. Quatre volets :
 * Fonds économie circulaire de l'ADEME ramené à son niveau de 2024 :
   +206 M€ par an (301 M€ d'engagements contre 95 en 2026).
 
-331 M€ par an. Le secteur passe à 11,5 Mt en 2030 au lieu de 13,7, sous
-l'objectif. Avec 7 points de captage au lieu de 10 (variante), il reste
-juste au-dessus de 12 Mt. Les deux derniers volets jouent surtout après
-2030 (≈ −0,5 Mt en 2035), au-delà de ce qui est compté (50 kt de plus par an
-de 2027 à 2030).
+329 M€ par an. Le secteur passe à 11,9 Mt en 2030 au lieu de 13,7, sous
+l'objectif de 0,13 Mt ; avec 7 points de captage au lieu de 10 (variante),
+il reste à 12,4 Mt. Les deux derniers volets rétablissent les moyens de
+2024, quand a été observée la baisse sur laquelle est calée la tendance du
+secteur (−2,2 % par an en 2024-2025) : le stockage qu'ils évitent est
+supposé déjà dans la tendance et n'est pas compté en plus.
 
 **O-136 et O-136b — Plan azote et effluents d'élevage.** Demande de
 l'auteur (octobre 2026), hors engins (O-31) et production d'engrais
@@ -859,46 +863,54 @@ par levier. Trois volets, montés de 2027 à 2030 :
 * fosses à lisier couvertes avec torchère dans 1 250 élevages par an
   (5 000 en 2030, le quart du potentiel retenu par l'INRA en 2013),
   140 t CO₂e évitées par élevage (hypothèse, 95 à 190 t), 105 000 €
-  d'investissement aidés à 60 % : 78 M€ par an de 2027 à 2030 ;
+  d'investissement (hypothèse) aidés à 60 % (hypothèse) : 78 M€ par an de
+  2027 à 2030 ;
 * 75 000 ha de légumineuses de plus par an (300 000 ha en 2030, pour
-  ≈ 1 Mha aujourd'hui), aidés de 150 €/ha en plus de l'aide couplée, avec
-  120 kg d'azote minéral évités par hectare à 5,4 kg CO₂e par kg (facteur
-  implicite de l'inventaire, calcul) ;
+  ≈ 1 Mha aujourd'hui), aidés de 150 €/ha (hypothèse) en plus de l'aide
+  couplée, avec 120 kg d'azote minéral évités par hectare (hypothèse, 80 à
+  160 kg) à 5,4 kg CO₂e par kg (facteur implicite de l'inventaire, calcul) ;
 * additif anti-méthane (3-NOP) pour 75 000 vaches laitières de plus par an
-  (300 000 en 2030) : −25 % de méthane entérique, soit 819 kg CO₂e par
-  vache (calcul sur la valeur par défaut du GIEC), 102 € par vache et par
-  an, payés en entier.
+  (300 000 en 2030, hypothèse) : −25 % de méthane entérique, soit 819 kg
+  CO₂e par vache (calcul sur la valeur par défaut du GIEC), 0,28 € par
+  vache et par jour (Idele), payés en entier.
 
 ≈ 1,1 Mt évitée en 2030 : l'agriculture passe à 67,8 Mt au lieu de 68,9,
-sous l'objectif. Aides : 78 M€ par an pour les fosses jusqu'en 2030, et
-72 M€ par an en 2030 pour les légumineuses et l'additif. Ces pratiques ne
-réduisent les émissions de l'inventaire que si le Citepa les intègre à ses
-données ; avec des hypothèses basses (95 t par élevage, additif non pris en
-compte : variante), l'agriculture reste à 68,2 Mt, au-dessus de l'objectif.
-L'aide de 2026 à l'achat d'engrais azotés (145 M€) n'est pas modifiée, et
-la redevance sur l'azote proposée par l'IGF en 2023 n'est pas reprise.
+sous l'objectif de 0,2 Mt, si la conversion électrique des exploitations
+(O-31) atteint son plafond. Aides : 78 M€ par an pour les fosses jusqu'en
+2030, et 76 M€ par an à partir de 2030 pour les légumineuses et l'additif.
+Ces pratiques ne réduisent les émissions de l'inventaire que si le Citepa
+les intègre à ses données ; avec les bas des fourchettes (95 t par élevage,
+80 kg d'azote par hectare, additif non pris en compte : variante),
+l'agriculture reste à 68,3 Mt, au-dessus de l'objectif. L'aide de 2026 à
+l'achat d'engrais azotés (145 M€) n'est pas modifiée, et la redevance sur
+l'azote proposée par l'IGF en 2023 n'est pas reprise.
 
 **O-137 — Déchetteries publiques gratuites pour tous.** Demande de
 l'auteur (octobre 2026), contre les dépôts sauvages : 340 à 420 M€ par an
 d'enlèvement et de nettoyage (ministère, 2019) ; entreprises et artisans en
 sont les auteurs dans 24 % des cas, et le refus de payer l'accès des
 entreprises en déchetterie ou la tarification incitative est la cause citée
-dans 20 % des cas (ADEME, enquête de 2019 auprès des collectivités). La
-plupart des particuliers ont déjà un accès gratuit ; la mesure supprime les
-quotas de passages et le droit d'entrée des artisans, et l'État compense
-les collectivités (transfert interne aux administrations). Aucun total
-national des recettes tirées des professionnels n'est publié : 1 € par
-habitant (hypothèse calée sur trois rapports annuels de collectivités, de
-0,4 à 3 €), soit 69 M€, plus 7 M€ de quotas ; 0,4 Mt reçue en plus
-(hypothèse) à 97 €/t : 38 M€ ; nettoyage évité : 22 M€ (30 % des dépôts des
+dans 20 % des cas (ADEME, enquête de 2019 auprès des collectivités). Les
+déchetteries sont financées surtout par la taxe d'enlèvement des ordures
+ménagères (77 % du financement du service public des déchets en 2023 :
+IGF-IGEDD) ; certaines collectivités limitent ou facturent les passages des
+particuliers au-delà d'un quota, et l'accès des artisans est le plus
+souvent payant (Amorce, 2013). La mesure supprime quotas et droits d'entrée, et l'État compense les
+collectivités (transfert interne aux administrations). Aucun total national
+des recettes tirées des professionnels n'est publié : 1 € par habitant
+(hypothèse calée sur trois rapports annuels de collectivités, de 0,4 à
+3 €), soit 69 M€, plus 7 M€ de quotas ; 0,4 Mt reçue en plus (hypothèse) à
+97 €/t : 38 M€ ; nettoyage évité : 22 M€ (30 % des dépôts des
 professionnels, hypothèse : aucune élasticité des dépôts sauvages au prix
-d'accès n'est publiée). Coût net ≈ 92 M€ par an, ≈ 220 M€ dans la
-fourchette haute (2 € par habitant, 1 Mt de plus : variante). La filière
-des déchets du bâtiment reprend déjà sans frais les déchets triés des
-artisans dans les déchetteries sous contrat (48 % des déchetteries
-publiques fin 2024), mais sa refondation prévue pour 2027 supprimerait
-cette reprise pour les petits volumes : la mesure garantit la gratuité
-quelle qu'en soit l'issue.
+d'accès des professionnels n'a été trouvée). Coût net ≈ 92 M€ par an,
+≈ 220 M€ dans la fourchette haute (2 € par habitant, 1 Mt de plus, surtout
+détournée des déchetteries professionnelles privées : variante). La
+filière des déchets du bâtiment reprend déjà sans frais les déchets triés
+des artisans dans les déchetteries sous contrat (48 % des déchetteries
+publiques fin 2024) ; sa refondation, en discussion pour 2027, supprimerait
+cette reprise pour les petits volumes : l'État paierait alors en plus ce
+que paie aujourd'hui la filière pour ces volumes (coût conditionnel, non
+chiffré).
 
 ### Logement et urbanisme
 
@@ -1757,29 +1769,29 @@ supplémentaire qu'il faudrait dans le neuvième des dix-huit scénarios
 (moteur de demande ; entre parenthèses, au scénario central) :
 
 * *Déficit sous le plafond juridique* : ≈ −0,4 point de déficit en 2030
-  pour trois scénarios de plus ; au central, 3,82 % pour un plafond de 3 %.
-* *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,3
-  point de déficit en 2030, soit 4,32 % ramenés à 3 % (−0,8 point).
-* *Budget à l'équilibre en 2035* : ≈ −2,8 points en 2035 (−1,9 point).
+  pour trois scénarios de plus ; au central, 3,83 % pour un plafond de 3 %.
+* *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,35
+  point de déficit en 2030, soit 4,35 % ramenés à 3 % (−0,8 point).
+* *Budget à l'équilibre en 2035* : ≈ −2,85 points en 2035 (−1,9 point).
 * *Dette/PIB stabilisée en 2035* : ≈ −14 points de dette en 2035, soit
-  129,7 % du PIB ramenés à 115,7 %, le niveau de 2025 (−8,8 points) ;
-  règle européenne de −10 points : ≈ −24 points (−18,8 points).
-* *Climat* : 296 Mt en 2030 contre 276 visés par la SNBC-3 et la loi
-  européenne sur le climat, soit −20 Mt. Par secteur, l'agriculture
-  (67,8 Mt), l'industrie (37,7) et les déchets (11,5) tiennent leur
+  129,9 % du PIB ramenés à 115,7 %, le niveau de 2025 (−8,9 points) ;
+  règle européenne de −10 points : ≈ −24 points (−18,9 points).
+* *Climat* : 296,6 Mt en 2030 contre 276 visés par la SNBC-3 et la loi
+  européenne sur le climat, soit −20,6 Mt. Par secteur, l'agriculture
+  (67,8 Mt), l'industrie (37,7) et les déchets (11,9) tiennent leur
   objectif (68, 42 et 12) ; les transports (103,9 Mt contre 92), les
   bâtiments (46,9 contre 37) et la production d'énergie (28,4 contre 25)
-  non. Budget carbone 2029-2033 : 289,6 Mt par an en moyenne contre 262 ;
-  répartition de l'effort : 245,3 Mt contre 210,5. Essais sur le
-  programme (octobre 2026) : les aides (prime à l'électrique, rénovations,
-  pompes à chaleur) font peu bouger les émissions dans le modèle commun ;
-  une composante carbone de ≈ 430 €/t en 2030, au lieu de 100, suffit
-  pour la loi européenne (276 Mt) et améliore le déficit. Avec ≈ 490 €/t
-  (SP95-E10 ≈ +1,2 € par litre TTC par rapport à 2026, calcul d'après
-  O-124) et 3,8 Mt de moins dans la production d'énergie, les quatre
-  propriétés climatiques sont tenues (déficit 2035 : 1,62 %) ; à ≈ 430 €/t,
-  la répartition de l'effort ne l'est pas. France Stratégie (rapport
-  Pisani-Ferry et Mahfouz, mai 2023) chiffre la dépense publique
+  non. Budget carbone 2029-2033 : 289,9 Mt par an en moyenne contre 262 ;
+  répartition de l'effort : 245,7 Mt contre 210,5. Les aides (prime à
+  l'électrique, rénovations, pompes à chaleur) font peu bouger les
+  émissions dans le modèle commun ; la composante carbone, beaucoup. Avec
+  la variante d'O-124 à ≈ 488 €/t en 2030 au lieu de 100 (SP95-E10
+  ≈ +1,2 € par litre TTC par rapport à 2026, calcul d'après O-124), le
+  budget carbone, la loi européenne et la répartition de l'effort sont
+  tenus, et le déficit 2035 baisse à 1,62 % ; il manque alors 3,4 Mt dans
+  la production d'énergie pour les objectifs sectoriels (essai : une baisse
+  de 3,8 Mt sans coût tient les quatre propriétés). France Stratégie
+  (rapport Pisani-Ferry et Mahfouz, mai 2023) chiffre la dépense publique
   supplémentaire nécessaire à 34 Md€ par an en 2030, l'I4CE (juillet 2024)
   à 39 à 71 Md€.
 
@@ -1803,6 +1815,7 @@ sur 25) :
 | IS maintenu à 25 % (variante d'O-08) | 1,56 % | 9,05 % | 0,9407 | oui / oui / oui | 15 | — |
 | Norme renforcée de 100 pb de plus (variante d'O-55) | 0,83 % | 9,52 % | 0,9401 | oui / oui / oui | 14 | Chômage non dégradé |
 | Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 1,86 % | 9,02 % | 0,9407 | oui / oui / oui | 15 | — |
+| Composante carbone à ≈ 488 €/t en 2030 (variante d'O-124 ; budget carbone, loi européenne et répartition de l'effort tenus) | 1,62 % | 9,01 % | 0,9407 | oui / oui / oui | 18 | — |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -1826,7 +1839,7 @@ sur 25) :
    déchets et l'agriculture : taux de captage de départ (45 %, sans source
    primaire), tonnes évitées par fosse couverte, prise en compte de
    l'additif par l'inventaire ; les deux objectifs sectoriels sont tenus
-   avec une marge de 0,5 et 0,2 Mt, et perdus avec les hypothèses basses
+   avec une marge de 0,13 et 0,2 Mt, et perdus avec les hypothèses basses
    (variantes). Pour les déchetteries : recettes perdues sur les
    professionnels et dépôts sauvages évités, faute de données nationales.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
@@ -1841,8 +1854,8 @@ sur 25) :
    sectoriels de la SNBC-3 le sont pour l'agriculture, l'industrie et les
    déchets, pas pour les transports, les bâtiments et la production
    d'énergie. Les quatre propriétés climatiques de la SNBC-3 et de l'Union
-   demandent une composante carbone bien plus haute et des mesures pour la
-   production d'énergie (voir « Propriétés »).
+   demandent une composante carbone bien plus haute (variante d'O-124) et
+   des mesures pour la production d'énergie (voir « Propriétés »).
 7. **Deuxième journée de solidarité (O-84).** Elle finance l'autonomie,
    mais revient à sept heures de travail non rémunérées par an : point
    politique à trancher.
@@ -1901,7 +1914,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 49 mesures sur 138 reposent au moins en partie sur une hypothèse ; les plus
+* 53 mesures sur 143 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,46 point, O-44 : −0,44 point, O-58 : −0,39 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
@@ -1937,10 +1950,15 @@ Assumés, et à garder en tête :
 * les 1 020 policiers des commissariats (O-130) pourraient venir de la
   police de proximité (O-110) ; les 20 000 conseillers de France Travail
   (O-77 et O-26b) ont un effet supposé linéaire ;
-* la baisse tendancielle des émissions des déchets (−2,2 % par an)
-  comprend peut-être une partie du captage du biogaz d'O-135b ; les
-  légumineuses (O-136b) réduisent l'azote minéral dont la coopérative
-  d'engrais (O-104) suppose la demande ;
+* la baisse tendancielle des émissions des déchets (−2,2 % par an, calée
+  sur 2024-2025) comprend peut-être une partie du captage d'O-135b, et
+  l'effet du rétablissement des aides aux biodéchets et à l'économie
+  circulaire (O-135) n'est pas compté en plus d'elle ; celle de
+  l'agriculture (−1 % par an) comprend peut-être une partie des
+  légumineuses d'O-136b (stratégie protéines de 2020) ;
+* l'objectif agricole n'est tenu que si la conversion électrique (O-31)
+  atteint son plafond ; les légumineuses (O-136b) réduisent l'azote
+  minéral dont la coopérative d'engrais (O-104) suppose la demande ;
 * les recettes des déchetteries perdues sur les artisans (O-137) sont
   estimées après la reprise sans frais de la filière des déchets du
   bâtiment, qu'elles ne recomptent pas.
