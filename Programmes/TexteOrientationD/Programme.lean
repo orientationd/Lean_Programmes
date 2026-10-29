@@ -757,6 +757,54 @@ contre 119), chiffrée à ≈ 2,5 Md€ par an. -/
 def heuresSolidaritePm : Int := 4
 def contributionSolidariteAutonomie : Int := 2500
 
+/-- Santé mentale (O-85) : 100 M€ de moyens de plus par an. Ordre de
+grandeur : 23 Md€ remboursés chaque année par l'Assurance maladie pour les
+troubles psychiques et les maladies psychiatriques, son premier poste de
+dépenses (La Banque Postale, d'après le ministère de la Santé, 24 avril
+2025) ; la santé mentale est grande cause nationale 2025. -/
+def santeMentale : Int := 100
+
+/-- Liberté fiscale des collectivités (O-86). Taxe foncière : chaque commune
+vote son taux, au plus 2,5 fois le taux moyen de l'année précédente dans le
+département ou en France (CGI, art. 1636 B septies : plafond de 99,35 % en
+2025 pour un taux moyen national de 39,74 %, DGCL), et sous les règles de
+lien entre les taux (art. 1636 B sexies) ; la mesure lève plafond et liens.
+Taxe d'habitation des résidences principales, supprimée de 2020 à 2023 :
+15,3 Md€ perdus par les communes et 7,5 Md€ par les intercommunalités, tous
+compensés (DGCL, FAQ de la refonte de la fiscalité locale) ; la mesure
+permet de la rétablir, les compensations restant acquises. Sans effet sur
+le solde à taux inchangés ; le rétablissement partiel est évalué en
+variante. -/
+def produitTaxeHabitation : Int := 15300 + 7500
+
+/-- Référendum d'initiative citoyenne (O-87), par révision de la
+Constitution (article 89). Un référendum coûte ≈ 200 M€, ≈ 100 M€
+dématérialisé (ministre de l'Intérieur, RTL, 11 mai 2025, via Acteurs
+publics). Hypothèse : un scrutin par an, non couplé à une élection. -/
+def coutReferendum : Int := 200
+
+/-- Médecins scolaires (O-88) : 818 en 2022 contre 1 143 en 2013 (Sénat,
+proposition de loi du 13 mars 2024), un pour 13 300 élèves, 44 % des postes
+vacants (La Revue du praticien, 19 janvier 2026) ; la Cour des comptes
+(avril 2020) juge une revalorisation « indispensable ». La mesure double
+l'effectif : 800 médecins de plus en quatre ans (un pour 6 700 élèves
+environ), à 100 000 € par médecin et par an, traitement, indemnités
+revalorisées pour pourvoir les postes et cotisations de l'employeur
+comprises (hypothèse). -/
+def medecinsScolairesNouveaux : Int := 800
+def coutMedecinScolaireEuros : Int := 100000
+
+/-- Octroi de mer (O-89) : 1,644 Md€ de recettes nettes en 2022 (Cour des
+comptes, 5 mars 2024, via economie.gouv.fr), dont 75,8 % pour les communes
+(32 % de leurs produits de gestion), le reste pour les régions ; +4,64 % par
+an de 2014 à 2022, prolongés jusqu'en 2025 : 1 883 M€ (calcul). Suppression
+compensée aux collectivités par une dotation de l'État : la recette
+disparaît, les prix baissent dans les cinq départements et régions
+d'outre-mer. -/
+def octroiDeMer2025 : Int := 1644 * 10464 * 10464 * 10464 / 1000000000000
+
+theorem octroiDeMer2025_eq : octroiDeMer2025 = 1883 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -1681,13 +1729,50 @@ def mesures : List Mesure := [
     titre := "Deuxième journée de solidarité : sept heures de plus par an, contribution des employeurs affectée à l'autonomie"
     source := s!"Contribution de solidarité par le travail votée par le Sénat le 20 novembre 2024 (PLFSS 2025, 216 voix contre 119) : ≈ 2,5 Md€ par an ; 7 heures sur 1 607 = +{heuresSolidaritePm} ‰ de durée du travail ; CSA de 0,3 % à 0,6 % : {contributionSolidariteAutonomie} M€ de cotisations, dépensés pour l'autonomie"
     leviers := [.dureeTravail heuresSolidaritePm, .prelevementSur .cotisations contributionSolidariteAutonomie,
-                .depenseSur .sante contributionSolidariteAutonomie] }
+                .depenseSur .sante contributionSolidariteAutonomie] },
+
+  { id := "O-85"
+    titre := "Santé mentale : 100 M€ de moyens supplémentaires par an"
+    source := s!"Texte Orientation D, mesure 85 ; +{santeMentale} M€ par an, ≈ 0,4 % des 23 Md€ remboursés pour les troubles psychiques (voir `santeMentale`)"
+    leviers := [.depenseSur .sante santeMentale] },
+
+  { id := "O-86"
+    titre := "Liberté fiscale des collectivités : taux de taxe foncière sans plafond ni lien, taxe d'habitation rétablissable"
+    source := s!"Texte Orientation D, mesure 86 ; plafond actuel du taux de taxe foncière : 2,5 fois le taux moyen (CGI, art. 1636 B septies) ; taxe d'habitation des résidences principales : {produitTaxeHabitation} M€ avant sa suppression, compensés (DGCL) ; sans effet sur le solde à taux inchangés (voir `produitTaxeHabitation`)"
+    leviers := []
+    variantes := [
+      { nom := "taxe d'habitation rétablie par des collectivités pesant 10 % de l'ancien produit (2,3 Md€), compensations maintenues",
+        leviers := [.prelevementSur .autres (produitTaxeHabitation / 10)] }] },
+
+  { id := "O-87"
+    titre := "Référendum d'initiative citoyenne"
+    source := s!"Texte Orientation D, mesure 87 ; révision constitutionnelle ; {coutReferendum} M€ par scrutin non dématérialisé (ministre de l'Intérieur, 11 mai 2025) ; hypothèse : un scrutin par an, non couplé à une élection (voir `coutReferendum`)"
+    leviers := [.depenseSur .fonctionnement coutReferendum]
+    variantes := [
+      { nom := "scrutins dématérialisés (100 M€)", leviers := [.depenseSur .fonctionnement (coutReferendum / 2)] },
+      { nom := "scrutins couplés aux élections (sans coût d'organisation propre)", leviers := [] }] },
+
+  { id := "O-88"
+    titre := "Médecins scolaires : effectif doublé, 800 de plus en quatre ans"
+    source := s!"Texte Orientation D, mesure 88 ; 818 médecins en 2022, un pour 13 300 élèves, 44 % de postes vacants ; +{medecinsScolairesNouveaux} médecins à {coutMedecinScolaireEuros / 1000} k€ par an, revalorisation comprise (hypothèse) : {medecinsScolairesNouveaux * coutMedecinScolaireEuros / 1000000} M€ par an une fois tous recrutés, par quarts (voir `medecinsScolairesNouveaux`)"
+    leviers := [.depenseSur .enseignement (medecinsScolairesNouveaux * coutMedecinScolaireEuros / 1000000 / 4)]
+    repetitions := 4
+    variantes := [
+      { nom := "retour au niveau de 2013 (1 143 médecins, 325 de plus)",
+        leviers := [.depenseSur .enseignement (325 * coutMedecinScolaireEuros / 1000000 / 4)] }] },
+
+  { id := "O-89"
+    titre := "Fin de l'octroi de mer, compensée aux collectivités par l'État"
+    source := s!"Texte Orientation D, mesure 89 ; 1,644 Md€ en 2022 (Cour des comptes, 5 mars 2024), {octroiDeMer2025} M€ en 2025 (calcul, voir `octroiDeMer2025`) ; effet sur la demande d'un impôt national (la part importée de la consommation des outre-mer n'est pas isolée)"
+    leviers := [.prelevementSur .autres (-octroiDeMer2025)]
+    variantes := [
+      { nom := "remplacé par une TVA régionale de même rendement (scénario de rupture de la Cour des comptes)", leviers := [] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
