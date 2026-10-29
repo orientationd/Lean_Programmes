@@ -2068,6 +2068,187 @@ def programmeLancements : Int := (2 * prixAriane62 + prixVegaC) / 100 + achatsMi
 
 theorem lancements_valeurs : programmeLancements = 295 := by decide
 
+/-- Plan méthane des déchets (O-135, O-135b). Le stockage des déchets non
+dangereux (ISDND) émet 11,4 Mt CO₂e en 2024, uniquement du méthane, soit 75 %
+du secteur des déchets (15,3 Mt ; Citepa, Secten 2026). Objectif de la
+SNBC-3 : 12 Mt par an en moyenne de 2029 à 2033 (décret n° 2026-636,
+art. 3). Le méthane d'un déchet stocké se dégage sur des années
+(décroissance du premier ordre du GIEC, lignes directrices 2006, vol. 5,
+chap. 3 : demi-vie de sept ans en climat tempéré humide) : une tonne non
+stockée en 2027 n'évite que 7 % de son méthane au cours de l'année 2030
+(calcul). D'ici 2030, c'est surtout le captage du biogaz des alvéoles
+existantes qui compte. Quatre volets :
+* captage renforcé (arrêté ISDND : captage dès l'exploitation, couvertures,
+  mesure des fuites), porté de ≈ 45 % (DREAL Hauts-de-France, janvier 2025,
+  sans source primaire : hypothèse) à 55 % en 2030, le quart de l'écart à
+  la cible nationale de 85 % (même source), 2,5 points de plus par an de
+  2027 à 2030 (hypothèse). Avec 10 % du méthane oxydé dans la couverture
+  (GIEC, valeur par défaut), le méthane produit vaut 11 400 / (0,55 × 0,9)
+  ≈ 23 030 kt CO₂e et chaque point de captage évite ≈ 207 kt (calcul). Coût
+  ≈ 20 €/t CO₂e évitée (12 à 22 €/t : E-CUBE pour Waga Energy, Suez et
+  Veolia, novembre 2023, étude financée par la profession), aidé à 50 % par
+  l'ADEME (hypothèse), et 5 M€ par an de contrôles (hypothèse) ;
+* TGAP modulée selon le captage mesuré, bonus-malus à recette constante
+  (hypothèse) : sans coût. Depuis 2025, la TGAP ne distingue plus les
+  installations qui valorisent leur biogaz (BOFiP, BOI-BAREME-000039) ;
+* aide au tri à la source des biodéchets rétablie : 100 M€ par an (Fonds
+  vert depuis 2023, mesure supprimée en 2026 : Les EPL, avril 2026) ;
+* Fonds économie circulaire de l'ADEME ramené à son niveau de 2024 : 301 M€
+  d'autorisations d'engagement contre 95 en 2026 (Sénat, rapport n° 139,
+  2025-2026, tome III, annexe 10), soit +206 M€ par an.
+Les deux derniers volets détournent du stockage ≈ 0,5 Mt de déchets chacun
+en 2030 (hypothèse) : ≈ −0,2 Mt d'émissions en 2030 par la décroissance du
+premier ordre (calcul), comptées comme 50 kt de plus par an de 2027 à 2030 ;
+leur effet, qui grandit après 2030 (≈ −0,5 Mt en 2035, calcul), n'est pas
+compté au-delà. La baisse tendancielle du secteur (−2,2 % par an,
+`baisseEmissionsAME`) comprend peut-être déjà une partie du captage. -/
+def emissionsStockageKt : Int := 11400
+def captageInitialPm : Int := 450
+def oxydationCouverturePm : Int := 100
+def methaneProduitKt : Int :=
+  emissionsStockageKt * 1000000 / ((1000 - captageInitialPm) * (1000 - oxydationCouverturePm))
+def ktParPointCaptage : Int := methaneProduitKt * (1000 - oxydationCouverturePm) / 1000 / 100
+def pointsCaptage2030 : Int := 10
+def detournementStockageKtParAn : Int := 50
+def dechetsEvitesParAnKt : Int := ktParPointCaptage * pointsCaptage2030 / 4 + detournementStockageKtParAn
+def coutAbattementCaptageEuros : Int := 20
+def aideCaptageBiogaz : Int := ktParPointCaptage * pointsCaptage2030 * coutAbattementCaptageEuros / 1000 / 2
+def controlesIsdnd : Int := 5
+def aideBiodechets : Int := 100
+def fondsEconomieCirculaire2024 : Int := 301
+def fondsEconomieCirculaire2026 : Int := 95
+def planMethaneDechets : Int :=
+  aideCaptageBiogaz + controlesIsdnd + aideBiodechets + (fondsEconomieCirculaire2024 - fondsEconomieCirculaire2026)
+
+theorem dechets_valeurs : methaneProduitKt = 23030 ∧ ktParPointCaptage = 207 ∧
+    dechetsEvitesParAnKt = 567 ∧ aideCaptageBiogaz = 20 ∧ planMethaneDechets = 331 := by decide
+
+/-- Plan azote et effluents (O-136, O-136b), hors engins (O-31) et production
+d'engrais (O-104). Agriculture : 77,5 Mt CO₂e en 2024, 76,6 Mt en 2025
+(Citepa, Secten 2026) ; objectif de la SNBC-3 : 68 Mt en 2030 (67 Mt par an
+en moyenne de 2029 à 2033, décret n° 2026-636, art. 3) ; engrais minéraux
+azotés −30 % en 2030 par rapport à 2020, couverture des fosses généralisée,
+méthanisation, sans tonnage par levier (ministère, page SNBC agriculture,
+juin 2026). Trois volets :
+* fosses à lisier couvertes avec torchère : 1 250 élevages par an de 2027 à
+  2030 (hypothèse : 5 000 en 2030, le quart des 20 000 retenus par l'INRA,
+  « Quelle contribution de l'agriculture française à la réduction des
+  émissions de gaz à effet de serre ? », 2013, action 9 : 3,4 Mt par an),
+  140 t CO₂e évitées par élevage (hypothèse, fourchette de 95 à 190 t
+  d'après l'INRA converti aux PRG actuels et minoré pour le recul du
+  cheptel), 105 000 € d'investissement (81 200 € en 2013 selon l'INRA, +30 %,
+  hypothèse) aidés à 60 % (hypothèse ; 40 % pour l'aide PE-ELEVAGE de 2024) ;
+* légumineuses : 75 000 ha de plus par an (300 000 ha en 2030, pour ≈ 1 Mha
+  et une cible de 2,7 Mha : SGPE, revue sectorielle agriculture, mars
+  2026), 150 € par hectare (hypothèse, en plus de l'aide couplée de 122 à
+  124 €/ha), 120 kg d'azote minéral évités par hectare (hypothèse,
+  fourchette de 80 à 160), à 5,4 kg CO₂e par kg d'azote : les engrais
+  minéraux émettent 12,8 % des 77,5 Mt de l'agriculture en 2024, soit
+  9,92 Mt (Secten 2026, calcul), pour 1 831 kt d'azote livré (SGPE)
+  (calcul) ;
+* additif anti-méthane (3-NOP) pour 75 000 vaches laitières de plus par an
+  (300 000 en 2030, hypothèse), 117 kg de méthane
+  entérique par vache et par an (GIEC, lignes directrices 2006, vol. 4,
+  chap. 10, tableau 10.11, Europe de l'Ouest : valeur prudente pour des
+  vaches françaises plus productives), PRG de 28 (inventaire, AR5), −25 %
+  (−25 à −31 % à l'essai de l'INRAE à Theix ; −15 à −40 % selon l'Idele)
+  (calcul : 819 kg CO₂e évités par vache) ; 0,28 € par vache et par jour
+  (Idele, 2025), payé en entier (hypothèse).
+Ces pratiques ne réduisent les émissions de l'inventaire que si le Citepa
+les intègre à ses données d'activité. L'aide de 2026 à l'achat d'engrais
+azotés (145 M€) et une redevance sur l'azote (30 €/t, IGF, 2023 ;
+amendement I-786 rejeté au PLF 2026) ne sont pas modifiées. -/
+def elevagesFossesParAn : Int := 1250
+def tonnesEviteesParFosse : Int := 140
+def investissementFosseEuros : Int := 105000
+def aideFossePm : Int := 600
+def aideFosses : Int := elevagesFossesParAn * investissementFosseEuros / 1000 * aideFossePm / 1000000
+def legumineusesHaParAn : Int := 75000
+def azoteEviteKgParHa : Int := 120
+def emissionsEngraisMinerauxKt : Int := 77500 * 128 / 1000
+def livraisonsAzoteKt : Int := 1831
+def co2eParKgAzoteDixiemes : Int := emissionsEngraisMinerauxKt * 10 / livraisonsAzoteKt
+def legumineusesEviteesKt : Int := legumineusesHaParAn * azoteEviteKgParHa * co2eParKgAzoteDixiemes / 10 / 1000000
+def aideLegumineusesEurosParHa : Int := 150
+def aideLegumineuses : Int := legumineusesHaParAn * aideLegumineusesEurosParHa / 1000000
+def vachesAdditifParAn : Int := 75000
+def methaneEnteriqueKgParVache : Int := 117
+def prgMethane : Int := 28
+def baisseAdditifPm : Int := 250
+def evitementAdditifKgParVache : Int := methaneEnteriqueKgParVache * prgMethane * baisseAdditifPm / 1000
+def additifEviteKt : Int := vachesAdditifParAn * evitementAdditifKgParVache / 1000000
+def coutAdditifCentimesParJour : Int := 28
+def coutAdditifVacheEuros : Int := coutAdditifCentimesParJour * 365 / 100
+def aideAdditif : Int := vachesAdditifParAn * coutAdditifVacheEuros / 1000000
+def agricultureEviteeParAnKt : Int :=
+  elevagesFossesParAn * tonnesEviteesParFosse / 1000 + legumineusesEviteesKt + additifEviteKt
+def aidesAgricolesParAn : Int := aideLegumineuses + aideAdditif
+
+theorem agriculture_valeurs : aideFosses = 78 ∧ emissionsEngraisMinerauxKt = 9920 ∧
+    co2eParKgAzoteDixiemes = 54 ∧ legumineusesEviteesKt = 48 ∧ evitementAdditifKgParVache = 819 ∧
+    additifEviteKt = 61 ∧ coutAdditifVacheEuros = 102 ∧ aideAdditif = 7 ∧
+    agricultureEviteeParAnKt = 284 ∧ aidesAgricolesParAn = 18 := by decide
+
+/-- Déchetteries publiques gratuites pour tous (O-137) : sans quota de
+passages pour les particuliers, sans droit d'entrée pour les artisans,
+l'État compensant les recettes perdues par les collectivités (transfert
+interne aux administrations publiques, neutre sur le solde consolidé).
+Dépôts sauvages : 340 à 420 M€ par an d'enlèvement et de nettoyage
+(ministère de la Transition écologique, 2019) ; entreprises et artisans en
+sont les auteurs dans 24 % des cas, et le refus de payer l'accès des
+entreprises en déchetterie ou la tarification incitative est la cause citée
+dans 20 % des cas (ADEME, enquête 2019 auprès des collectivités). Aucune
+élasticité des dépôts sauvages au prix d'accès n'est publiée, en France ou
+ailleurs. Chiffrage, en M€ par an :
+* recettes perdues sur les professionnels : aucun total national ; 1 € par
+  habitant (hypothèse calée sur Seine-Eure, 0,57 € en 2023, Miribel,
+  0,4 €, et Questembert, au plus 3,0 € en 2021 : rapports annuels), pour
+  69,08 millions d'habitants (INSEE, 1er janvier 2026) ;
+* quotas des particuliers supprimés : 5 millions d'habitants concernés
+  (hypothèse, sur ≈ 9 millions en tarification incitative, où les quotas
+  sont fréquents : Localtis, février 2025), 0,2 passage hors quota par
+  habitant (Clisson Sèvre et Maine, 2024 : 12 059 passages pour 58 933
+  habitants, calcul), 7 € par passage (Mauges : 5,76 à 8,63 € HT,
+  hypothèse) ;
+* tonnages reçus en plus : 0,4 Mt (hypothèse : dépôts sauvages ramenés en
+  déchetterie, ≈ 1 Mt par an selon Gestes propres, et apports des artisans
+  qui allaient en déchetterie professionnelle) à 97 € par tonne, la part
+  du traitement des flux (57 % à Mauges, 2024) dans le coût aidé de
+  171 €/t des déchetteries (IGF-IGEDD, mars 2026 ; calcul) ;
+* nettoyage évité : 380 M€ (milieu de la fourchette de 2019) × 24 % de dépôts
+  des professionnels × 30 % évités par la gratuité (hypothèse) × 84 %, la
+  part qui n'est pas déjà financée par le fonds « dépôts sauvages » de la
+  filière à responsabilité élargie des déchets du bâtiment (≈ 60 M€ sur
+  380 : réponse à la question écrite n° 18121, septembre 2026 ; calcul).
+La filière des déchets du bâtiment (REP PMCB) reprend déjà sans frais les
+déchets triés des artisans dans les déchetteries sous contrat (48 % des
+déchetteries publiques fin 2024 : ADEME, bilan 2024 de la filière), mais
+sa refondation, en discussion pour 2027, supprimerait cette reprise pour
+les petits volumes : la mesure garantit la gratuité quelle qu'en soit
+l'issue. Les recettes observées dans les rapports annuels tiennent déjà
+compte de la reprise sans frais. -/
+def habitantsMilliers2026 : Int := 69082
+def recettesProsCentimesParHabitant : Int := 100
+def recettesProsDechetteries : Int := habitantsMilliers2026 * recettesProsCentimesParHabitant / 100000
+def habitantsQuotasMilliers : Int := 5000
+def passagesHorsQuotaPm : Int := 200
+def prixPassageCentimes : Int := 700
+def quotasDechetteries : Int := habitantsQuotasMilliers * passagesHorsQuotaPm * prixPassageCentimes / 100000000
+def tonnagesDechetteriesKt : Int := 400
+def coutAideDechetterieEurosParT : Int := 171
+def partTraitementFluxPm : Int := 570
+def coutMarginalDechetterieEurosParT : Int := coutAideDechetterieEurosParT * partTraitementFluxPm / 1000
+def tonnagesDechetteries : Int := tonnagesDechetteriesKt * coutMarginalDechetterieEurosParT / 1000
+def coutDepotsSauvages : Int := 380
+def partDepotsProfessionnelsPm : Int := 240
+def depotsEvitesPm : Int := 300
+def partHorsFondsRepPm : Int := 840
+def nettoyageEvite : Int :=
+  coutDepotsSauvages * partDepotsProfessionnelsPm * depotsEvitesPm * partHorsFondsRepPm / 1000000000
+
+theorem dechetteries_valeurs : recettesProsDechetteries = 69 ∧ quotasDechetteries = 7 ∧
+    coutMarginalDechetterieEurosParT = 97 ∧ tonnagesDechetteries = 38 ∧ nettoyageEvite = 22 := by decide
+
 def mesures : List Mesure := [
   { id := "O-01"
     titre := "Remplacement gratuit par l'État de 10 000 voitures parmi les plus polluantes chaque année"
@@ -3073,13 +3254,55 @@ def mesures : List Mesure := [
   { id := "O-134"
     titre := "Programme de lancements de satellites sur lanceurs français et européens"
     source := s!"Demande de l'auteur (octobre 2026) ; deux Ariane 62 et un Vega-C de plus par an (prix des contrats de l'ESA) et des achats d'ancrage de mini-lanceurs français : {programmeLancements} M€ par an, lancement seul (voir `programmeLancements`)"
-    leviers := [.depenseSur .enseignement programmeLancements] }
+    leviers := [.depenseSur .enseignement programmeLancements] },
+
+  { id := "O-135"
+    titre := "Plan méthane des déchets : captage du biogaz des décharges porté de 45 % à 55 % en 2030, TGAP modulée selon le captage, aide aux biodéchets rétablie, Fonds économie circulaire ramené à son niveau de 2024"
+    source := s!"Demande de l'auteur (octobre 2026) ; stockage : {emissionsStockageKt} kt CO₂e en 2024 (Secten 2026) ; captage aidé à 50 % à {coutAbattementCaptageEuros} €/t évitée (E-CUBE, 2023) : {aideCaptageBiogaz} M€, contrôles {controlesIsdnd} M€, biodéchets {aideBiodechets} M€ (Fonds vert), Fonds économie circulaire +{fondsEconomieCirculaire2024 - fondsEconomieCirculaire2026} M€ (Sénat) : {planMethaneDechets} M€ par an (voir `planMethaneDechets`)"
+    leviers := [.depenseSur .logementEnvironnement planMethaneDechets] },
+
+  { id := "O-135b"
+    titre := "Plan méthane des déchets : émissions évitées (montée en quatre ans)"
+    source := s!"Demande de l'auteur (octobre 2026) ; 2,5 points de captage de plus par an à {ktParPointCaptage} kt par point (calcul, GIEC) et {detournementStockageKtParAn} kt de détournement du stockage : {dechetsEvitesParAnKt} kt de plus chaque année de 2027 à 2030 (voir `dechetsEvitesParAnKt`)"
+    leviers := [.transitionKt .dechets dechetsEvitesParAnKt 0]
+    repetitions := 4
+    variantes := [
+      { nom := "+7 points de captage en 2030 au lieu de +10",
+        leviers := [.transitionKt .dechets (ktParPointCaptage * 7 / 4 + detournementStockageKtParAn) 0] }] },
+
+  { id := "O-136"
+    titre := "Plan azote et effluents : fosses à lisier couvertes avec torchère dans 5 000 élevages de 2027 à 2030, aidées à 60 %"
+    source := s!"Demande de l'auteur (octobre 2026) ; {elevagesFossesParAn} élevages par an, {investissementFosseEuros} € d'investissement (INRA 2013, +30 %) aidés à 60 % : {aideFosses} M€ par an de 2027 à 2030 (voir `aideFosses`)"
+    leviers := [.depenseEcheancier .affairesEconomiques ((List.replicate 4 aideFosses) ++ [0])] },
+
+  { id := "O-136b"
+    titre := "Plan azote et effluents : 300 000 ha de légumineuses et additif anti-méthane pour 300 000 vaches laitières en 2030, émissions évitées (montée en quatre ans)"
+    source := s!"Demande de l'auteur (octobre 2026) ; fosses couvertes {tonnesEviteesParFosse} t par élevage, légumineuses {legumineusesEviteesKt} kt ({azoteEviteKgParHa} kg d'azote par ha), additif {additifEviteKt} kt ({evitementAdditifKgParVache} kg par vache) : {agricultureEviteeParAnKt} kt de plus chaque année de 2027 à 2030 ; aides de {aidesAgricolesParAn} M€ de plus chaque année (voir `agricultureEviteeParAnKt`)"
+    leviers := [.transitionKt .agriculture agricultureEviteeParAnKt 0,
+                .depenseSur .affairesEconomiques aidesAgricolesParAn]
+    repetitions := 4
+    variantes := [
+      { nom := "hypothèses basses : 95 t par élevage, additif non pris en compte par l'inventaire",
+        leviers := [.transitionKt .agriculture (elevagesFossesParAn * 95 / 1000 + legumineusesEviteesKt) 0,
+                    .depenseSur .affairesEconomiques aidesAgricolesParAn] }] },
+
+  { id := "O-137"
+    titre := "Déchetteries publiques gratuites pour tous, artisans compris et sans quota, contre les dépôts sauvages"
+    source := s!"Demande de l'auteur (octobre 2026) ; recettes des professionnels perdues {recettesProsDechetteries} M€ (1 € par habitant, hypothèse) et quotas {quotasDechetteries} M€, compensées par l'État ; {tonnagesDechetteriesKt} kt reçues en plus à {coutMarginalDechetterieEurosParT} €/t : {tonnagesDechetteries} M€ ; nettoyage des dépôts sauvages évité : {nettoyageEvite} M€ (voir `nettoyageEvite`)"
+    leviers := [.recetteEcheancier none [-(recettesProsDechetteries + quotasDechetteries)],
+                .depenseSur .logementEnvironnement tonnagesDechetteries,
+                .economieSur .logementEnvironnement nettoyageEvite]
+    variantes := [
+      { nom := "fourchette haute : 2 € par habitant de recettes perdues, 1 Mt reçue en plus",
+        leviers := [.recetteEcheancier none [-(2 * recettesProsDechetteries + quotasDechetteries)],
+                    .depenseSur .logementEnvironnement (1000 * coutMarginalDechetterieEurosParT / 1000),
+                    .economieSur .logementEnvironnement nettoyageEvite] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
