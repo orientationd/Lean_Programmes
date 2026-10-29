@@ -48,7 +48,14 @@ Trois choix structurants :
 Un **moteur** (`Hypotheses/Moteurs.lean`) est un jeu de règles
 d'interprétation des leviers : « demande » (effets de demande permanents
 et symétriques) et « offre » (économies à demi-multiplicateur, effet des
-prélèvements obligatoires sur la croissance). Le moteur fixe l'effet moyen
+prélèvements obligatoires sur la croissance, canal du capital). Le canal du
+capital relie le PIB potentiel à l'investissement public des mesures (stock
+de capital public déprécié de 5 % par an, élasticité de la production de
+0,12 : un point de PIB d'investissement durable ajoute ≈ 1,5 % de PIB en dix
+ans) et au taux d'IS (coût du capital des entreprises : +0,10 % de PIB à long
+terme par point de taux en moins, atteint à 61 % en dix ans) ; il joue
+entièrement au moteur d'offre, pour moitié au moteur « Exemple équilibre »,
+pas au moteur de demande. Le moteur fixe l'effet moyen
 d'un prélèvement sur la demande ; l'axe économique le répartit selon l'impôt
 (TVA, IR, CSG au-dessus de la moyenne ; IS, successions, patrimoine bien
 en dessous). Les allègements de cotisations patronales passent par le coût

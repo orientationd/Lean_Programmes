@@ -584,9 +584,44 @@ Mésange et FR-BDF n'ont pas de canal d'offre du capital public (INSEE,
 document de travail 2024-07 ; Banque de France, document de travail 750). -/
 def depreciationCapitalPublic : Int := 50
 
-/-- Canal du capital des entreprises : à compléter (sources en cours). -/
-def effetPibLongTermePointIS : Int := 0
-def ajustementCapitalPrive : Int := 0
+/-- Canal du capital des entreprises : coût d'usage du capital de
+Hall-Jorgenson, facteur fiscal `(1 − τz)/(1 − τ)`, avec un taux d'IS combiné
+de 25,83 % (statistiques de l'OCDE, 2023) et une valeur actualisée des
+amortissements fiscaux de 74,2 % par euro investi (moyenne pondérée de la
+France, Tax Foundation, 2025) : un point de taux en moins abaisse le coût
+d'usage de 0,42 % (calcul ; OFCE, Revue n° 152, 2017 : −1,1 % pour la baisse
+de 2019). Élasticité de long terme du capital au coût d'usage : 0,44 (Mésange,
+DG Trésor et INSEE, 2017 ; 0,34 dans le modèle de l'OFCE ; 0,31 à 0,38 sur
+données d'entreprises françaises : Chatelain et Tiomo, Banque de France,
+2002 ; Chatelain et al., BCE, 2001). Part du capital 0,35 (complément de
+`elasticitePibHeuresPm`) : à emploi donné, `dY/Y = −α σ/(1 − α) dc/c`, soit
++0,10 % de PIB à long terme par point de taux en moins (calcul ;
+fourchette de 0 à 0,25 % selon l'élasticité retenue ; une méta-analyse,
+Gechert et Heimberger, European Economic Review, 2022, ne rejette pas un
+effet nul une fois corrigé le biais de publication ; repère : +0,17 % de PIB
+à long terme pour 0,4 point de PIB d'IS en moins financé par la TVA, QUEST,
+Commission européenne, Discussion Paper 077, 2018). -/
+def tauxISCombinePb : Int := 2583
+def amortissementsActualisesPm : Int := 742
+def facteurFiscalPpm (tauxPb : Int) : Int :=
+  (10000 * 1000 - tauxPb * amortissementsActualisesPm) * 1000000 / ((10000 - tauxPb) * 1000)
+def baisseCoutUsagePointISPpm : Int :=
+  (facteurFiscalPpm tauxISCombinePb - facteurFiscalPpm (tauxISCombinePb - 100)) * 1000000
+    / facteurFiscalPpm tauxISCombinePb
+def elasticiteCapitalCoutUsagePm : Int := 440
+def partCapitalPm : Int := 350
+def effetPibLongTermePointIS : Int :=
+  partCapitalPm * elasticiteCapitalCoutUsagePm * baisseCoutUsagePointISPpm / ((1000 - partCapitalPm) * 1000)
+
+theorem capitalPrive_eq : baisseCoutUsagePointISPpm = 4245 ∧ effetPibLongTermePointIS = 1005 := by decide
+
+/-- Accumulation du capital des entreprises : 9 % de l'écart comblé chaque
+année (demi-vie ≈ 7 ans, calcul), soit 38 % de l'effet à cinq ans et 61 % à
+dix ans ; Mésange, baisse de cotisations employeurs d'un point de PIB : 41 %
+de l'effet de long terme à cinq ans et 60 % à dix ans (DG Trésor et INSEE,
+2017, diapositive 41 ; calcul) ; Barro et Furman (Brookings Papers, 2018) :
+5 % par an. -/
+def ajustementCapitalPrive : Int := 90
 
 def centrale : Economie where
   id := "eco-centrale"

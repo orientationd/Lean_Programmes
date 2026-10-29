@@ -6,7 +6,9 @@ import Modele
 Lecture intermédiaire entre les moteurs « demande » et « offre » du socle :
 les économies de dépense gardent les trois quarts de leur effet de demande,
 et chaque point de prélèvements obligatoires au-dessus du niveau de départ
-retire 0,05 point de croissance par an.
+retire 0,05 point de croissance par an ; le canal du capital (investissement
+public et IS sur le PIB potentiel, `Hypotheses/Economie.lean`) joue pour
+moitié.
 
 Copier ce dossier pour proposer son propre moteur ; expliquer ici les choix
 et leurs sources. Les paramètres disponibles sont ceux de
@@ -18,7 +20,7 @@ namespace Moteurs.ExempleEquilibre
 def moteur : Modele.Moteur where
   id := "ExempleEquilibre"
   nom := "Exemple équilibre"
-  description := "Économies aux trois quarts du multiplicateur ; +1 point de prélèvements obligatoires retire 0,05 point de croissance par an (exemple)"
+  description := "Économies aux trois quarts du multiplicateur ; +1 point de prélèvements obligatoires retire 0,05 point de croissance par an ; canal du capital pour moitié (exemple)"
   multiplicateurEconomiesPm := 750
   multiplicateurPrelevementsPm := 500
   elasticiteCroissancePoPm := 50
