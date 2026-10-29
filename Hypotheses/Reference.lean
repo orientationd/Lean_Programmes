@@ -10,7 +10,6 @@ départ des projections (année 0). Chaque valeur cite sa source ; les
 valeurs marquées « dérivé » sont calculées à partir des évolutions publiées
 par l'INSEE (niveau 2025 = hausse publiée × (1 + 1 / taux de hausse)).
 
-Valeur encore provisoire : SMIC (repère).
 
 ## Lois en vigueur
 
@@ -369,8 +368,8 @@ def reference2026 : Reference where
     inflationConsoPb := 90         -- IPC 2025, moyenne annuelle (INSEE)
     detteDebut := 3306100          -- dette de Maastricht fin 2024 (INSEE, mai 2026)
     ajustementDetteAnnee := 1900   -- 3 460,5 − 3 306,1 − 152,5 (calcul)
-    operationsFinancieres := 0     -- flux nets tendanciels supposés nuls (à sourcer)
-    smicMensuel := 1820            -- repère provisoire, brut
+    operationsFinancieres := 0     -- écart variation de dette − déficit : +1,9 Md€/an en moyenne 2015-2025 hors 2020 (INSEE, calcul), surtout trésorerie et primes d'émission, réversibles : nul en tendance
+    smicMensuel := 1802            -- SMIC brut mensuel de 2025 : 1 801,80 € (décret n° 2024-951, en vigueur du 1er novembre 2024 à fin 2025)
     emissionsKt := emissions2025   -- 359,4 Mt CO₂e hors puits (Citepa, Secten 2026, estimation 2025)
     ageLegalMois := 753            -- 62 ans et 9 mois, gelé par la LFSS pour 2026 (loi n° 2025-1403, art. 45)
     populationMilliers := 69100    -- population au 1er janvier 2026 (INSEE, bilan démographique 2025)

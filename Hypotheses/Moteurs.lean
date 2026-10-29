@@ -12,9 +12,17 @@ Deux lectures des mêmes mesures (plus le moteur contribué « Exemple
 * **offre** : une économie de dépense ne retire que la moitié de l'effet
   de demande d'une dépense équivalente ; chaque point de prélèvements
   obligatoires au-dessus de son niveau de départ retire 0,1 point de
-  croissance par an (et en ajoute autant en dessous). Ordres de grandeur
-  d'une lecture « offre » de la littérature (élasticité de la croissance au
-  taux de PO : hypothèse, à sourcer). S'y ajoute le canal du capital
+  croissance par an (et en ajoute autant en dessous). Haut de la fourchette
+  de la littérature : 10 points de PIB de dépenses ou de recettes publiques
+  de plus vont de pair avec 0,5 à 1 point de croissance annuelle en moins
+  dans les pays riches (Bergh et Henrekson, Journal of Economic Surveys,
+  2011, revue de la littérature ; causalité discutée), −0,12 point par point
+  de recettes dans l'OCDE (Afonso et Furceri, BCE, document de travail 849,
+  2008, tableau 3 ; −0,05 à −0,08 dans les tests de robustesse). Le moteur
+  « Exemple équilibre » retient le bas de la fourchette (0,05). Un effet en
+  niveau plutôt qu'en taux est mieux étayé (Gemmell, Kneller et Sanz,
+  Economic Journal, 2011) ; sur dix ans, les deux formulations restent
+  proches. S'y ajoute le canal du capital
   (`canalCapitalPm`) : l'investissement public des mesures accroît le stock
   de capital public, donc le PIB potentiel (élasticité de 0,12) ; le taux
   d'IS des mesures change le coût du capital des entreprises, dont le stock

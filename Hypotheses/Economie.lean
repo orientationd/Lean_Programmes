@@ -316,9 +316,15 @@ le taux de chômage ne dépend donc pas de la taille de la population active
 * `tauxEmploiMigrantsPm` = 876 : taux de chômage des immigrés de 12,4 % en
   2025, contre 7,7 % pour l'ensemble (INSEE, enquête Emploi).
 * `absorptionChomagePm` = 200 : 20 % de l'écart résorbé par an (demi-vie
-  ≈ 3 ans). Hypothèse, à sourcer : convergence du chômage des immigrés avec
-  l'ancienneté de résidence, retour au taux d'avant choc en 5 à 10 ans dans
-  la littérature sur les chocs migratoires.
+  ≈ 3 ans). Simulation par l'OFCE d'une hausse durable de 2 % de la
+  population active (modèle e-mod.fr, pour le HCFiPS ; COR, séance du
+  27 janvier 2022, document 13, tableau 9) : écart de chômage de +1,7 point
+  la première année, +0,7 la cinquième, nul la dixième, soit ≈ 20 % par an
+  sur les cinq premières années (calcul). Fourchette : 11 % par an pour les
+  chocs nationaux en Europe (Beyer et Smets, BCE, document de travail 1767,
+  tableau 3 ; calcul) à une absorption presque immédiate dans la littérature
+  sur l'immigration (Card, 1990 ; Hunt, 1992, pour les rapatriés d'Algérie)
+  et dans le modèle comptable de la DG Trésor (COR, 26 mars 2026).
 
 Incidence des prélèvements (`incidencePrelevementPm`). Le moteur fixe
 l'effet moyen d'un prélèvement sur la demande (moitié de celui d'une dépense

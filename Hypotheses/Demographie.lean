@@ -67,7 +67,9 @@ def vieillissementRapide : Demographie where
   delaiEffetMortaliteAns := delaisEffet
   anneesVieParDecesPollutionDixiemes := 110
   anneesVieParDecesAccidentDixiemes := 300
-  sources := ["Variante : hypothèses à sourcer (projections de population INSEE 2021-2070) ; hausse des décès du scénario central de l'INSEE (2026)"]
+  sources := ["Part des 65 ans et plus : +1,0 point par rapport au scénario central, comme le scénario « population âgée » des projections INSEE 2021-2070 en 2035 (26,3 % contre 25,3 %, Insee Première n° 1881, figure 5a)",
+    "Solde migratoire de 140 000 : entre le central et la variante basse des projections INSEE de 2026 (150 000 et 70 000 par an, Insee Première n° 2108) ; décès et gains d'espérance de vie : hypothèses",
+    "Hausse des décès du scénario central de l'INSEE (2026)"]
 
 def toutes : List Demographie := [centrale, vieillissementRapide]
 

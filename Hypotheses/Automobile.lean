@@ -21,20 +21,24 @@ open Modele
 /-- Véhicule thermique ancien retiré : 7 L/100 km sur 11 000 km/an. -/
 def litresVoitureAncienne : Int := 770
 
-/-- Citadine électrique : 17 kWh/100 km sur 11 000 km/an (hypothèse). -/
+/-- Citadine électrique : 17 kWh/100 km sur 11 000 km/an. RTE (Enjeux du
+développement de l'électromobilité, 2019) : 16,6 à 17,0 kWh/100 km
+(calcul sur ses hypothèses de batteries et d'autonomie) ; base Car Labelling
+de l'ADEME : 14,5 (petite) à 21,2 kWh/100 km (SUV) ; pertes de recharge de
+10 à 25 % selon l'ADAC (non comptées). -/
 def kwhCitadineElectrique : Int := 1870
 
 def petroleModere : HypAuto where
   id := "auto-petrole-modere"
-  description := "Carburant importé à 0,56 €/L, électricité exportée à 60 €/MWh"
+  description := "Carburant importé à 0,56 €/L, électricité exportée à 59 €/MWh (2025)"
   litresEvitesParAn := litresVoitureAncienne
   valeurImportCarburantCts := 56
   kwhParAn := kwhCitadineElectrique
-  valeurExportElecEurMWh := 60
+  valeurExportElecEurMWh := 59
   sources := [
     "Kilométrage et consommation : CCFA, L'industrie automobile française 2025, p. 53-54 (parc 2024 : 11 622 km/an ; gazole 5,93 L/100, essence 6,72 L/100) ; véhicule ancien à 7 L/100 et 11 000 km : hypothèse",
     "Valeur à l'import : cotation Rotterdam ≈ 35 % du prix du gazole (Connaissance des énergies, mars 2026) × 1,60 €/L (hypothèse de prix à la pompe)",
-    "Électricité : 17 kWh/100 km et 60 €/MWh à l'export : hypothèses (à sourcer : RTE, bilan électrique)"]
+    "Électricité : 17 kWh/100 km (RTE 2019, ADEME Car Labelling) ; 59 €/MWh, valeur des exportations nettes de 2025 au prix français (RTE, Bilan électrique 2025, p. 14 : 92,3 TWh pour 5,4 Md€)"]
 
 def petroleCher : HypAuto where
   id := "auto-petrole-cher"
