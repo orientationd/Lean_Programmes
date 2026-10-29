@@ -1054,6 +1054,19 @@ structure Etat where
   mesures (allègements de cotisations par tranche), personnes : la demande
   de travail s'ajuste progressivement (`ajustementCoutTravailPm`). -/
   emploisCoutTravailRestants : Int := 0
+  /-- Canal du capital public (moteurs qui l'activent, `Moteur.canalCapitalPm`) :
+  flux annuel d'investissement public des mesures, M€ courants (leviers
+  d'investissement et échéanciers de construction) ; stock de capital public
+  qu'il a constitué, net de la dépréciation, M€ courants ; effet sur le PIB
+  potentiel déjà appliqué, ppm du PIB (avant pondération par le moteur). -/
+  investissementPublicMesures : Int := 0
+  capitalPublicMesures : Int := 0
+  effetCapitalPublicPpm : Int := 0
+  /-- Canal du capital des entreprises : écart du taux effectif d'IS fixé par
+  les mesures au taux du scénario, pb ; effet sur le PIB potentiel déjà
+  appliqué, ppm du PIB (avant pondération par le moteur). -/
+  ecartTauxISPb : Int := 0
+  effetCapitalPrivePpm : Int := 0
   /-- Indice des prix (base 10 000 l'année de départ) : déflate le PIB pour le
   RNB par habitant en volume de l'IDH. -/
   indicePrix : Int := 10000

@@ -551,6 +551,43 @@ def intensiteEmploi2025 : ParSecteur :=
   { agriculture := 1455, industrie := 754, construction := 1174,
     tertiaireMarchand := 899, tertiaireNonMarchand := 1345 }
 
+/-- Canal du capital public (moteurs qui l'activent : `Moteur.canalCapitalPm`).
+Élasticité de la production au capital public : 0,12 à long terme pour le
+capital installé par l'État, 0,083 à court terme (Bom et Ligthart, Journal of
+Economic Surveys 28(5), 2014, méta-analyse de 578 estimations) ; 0,12 dans
+QUEST (Commission européenne, Motyovszki, Pfeiffer et in 't Veld, Discussion
+Paper 204, 2024, tableau 2.1) ; 0,17 pour les infrastructures de base dans les
+simulations du FMI (WEO, octobre 2014, chap. 3). Retenu : 0,12. -/
+def elasticitePibCapitalPublic : Int := 120
+
+/-- Actifs fixes nets des administrations publiques fin 2024 : actifs non
+financiers (2 821 Md€) moins terrains (903), autres actifs non produits (154)
+et stocks (32), soit 1 732 Md€ (Insee Première n° 2081, novembre 2025), pour
+un PIB 2024 de ≈ 2 935 Md€ (2 991,1 Md€ en 2025, +1,9 % en valeur : Insee
+Première n° 2105, 2026) : 59 % du PIB (calcul). -/
+def actifsFixesApu2024 : Int := 2821000 - 903000 - 154000 - 32000
+def pib2024 : Int := 2935000
+def stockCapitalPublicPib : Int := actifsFixesApu2024 * 1000 / pib2024
+
+theorem stockCapitalPublic_eq : actifsFixesApu2024 = 1732000 ∧ stockCapitalPublicPib = 590 := by decide
+
+/-- Dépréciation du capital public : 5 % par an (QUEST, ibid. ; OCDE, document
+de travail n° 1351, 2016 : 4,2 à 5 %) ; 4,55 % pour les pays à haut revenu dans
+la base du FMI (Investment and Capital Stock Dataset, manuel 2021) ; 6,5 %
+implicites dans les comptes français, qui incluent les logiciels et la R&D
+(consommation de capital fixe des APU de 113,1 Md€ en 2025, INSEE, tableau
+1.112 ; calcul). À +1 point de PIB d'investissement public durable, le PIB
+potentiel gagne 1,6 % en dix ans et 4 % à très long terme (calcul) ; le FMI
+trouve +1,5 % après quatre ans (estimation empirique, demande comprise) et
+≈ +2,5 % à long terme (modèle GIMF, avec éviction). Les modèles français
+Mésange et FR-BDF n'ont pas de canal d'offre du capital public (INSEE,
+document de travail 2024-07 ; Banque de France, document de travail 750). -/
+def depreciationCapitalPublic : Int := 50
+
+/-- Canal du capital des entreprises : à compléter (sources en cours). -/
+def effetPibLongTermePointIS : Int := 0
+def ajustementCapitalPrive : Int := 0
+
 def centrale : Economie where
   id := "eco-centrale"
   description := "Prévisions publiées jusqu'en 2030, puis croissance potentielle de 1 %, inflation de 1,75 %, OAT à 4,4 %"
@@ -627,6 +664,11 @@ def centrale : Economie where
   emploiPriveTrancheMilliers := emploiPriveTranche2025
   coutTravailTrancheMeur := coutTravailTranche2025
   ajustementCoutTravailPm := 350
+  elasticitePibCapitalPublicPm := elasticitePibCapitalPublic
+  stockCapitalPublicPibPm := stockCapitalPublicPib
+  depreciationCapitalPublicPm := depreciationCapitalPublic
+  effetPibLongTermePointISPpm := effetPibLongTermePointIS
+  ajustementCapitalPrivePm := ajustementCapitalPrive
   chomeursEvitesParConseiller := 5
   sources := [
     "Banque de France, projections macroéconomiques de septembre 2026",
@@ -713,6 +755,11 @@ def croissanceBasse : Economie where
   emploiPriveTrancheMilliers := emploiPriveTranche2025
   coutTravailTrancheMeur := coutTravailTranche2025
   ajustementCoutTravailPm := 350
+  elasticitePibCapitalPublicPm := elasticitePibCapitalPublic
+  stockCapitalPublicPibPm := stockCapitalPublicPib
+  depreciationCapitalPublicPm := depreciationCapitalPublic
+  effetPibLongTermePointISPpm := effetPibLongTermePointIS
+  ajustementCapitalPrivePm := ajustementCapitalPrive
   chomeursEvitesParConseiller := 5
   sources := [
     "Banque de France, projections macroéconomiques de septembre 2026",
@@ -799,6 +846,11 @@ def croissanceHaute : Economie where
   emploiPriveTrancheMilliers := emploiPriveTranche2025
   coutTravailTrancheMeur := coutTravailTranche2025
   ajustementCoutTravailPm := 350
+  elasticitePibCapitalPublicPm := elasticitePibCapitalPublic
+  stockCapitalPublicPibPm := stockCapitalPublicPib
+  depreciationCapitalPublicPm := depreciationCapitalPublic
+  effetPibLongTermePointISPpm := effetPibLongTermePointIS
+  ajustementCapitalPrivePm := ajustementCapitalPrive
   chomeursEvitesParConseiller := 5
   sources := [
     "Banque de France, projections macroéconomiques de septembre 2026",

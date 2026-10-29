@@ -22,5 +22,6 @@ def moteur : Modele.Moteur where
   multiplicateurEconomiesPm := 750
   multiplicateurPrelevementsPm := 500
   elasticiteCroissancePoPm := 50
+  canalCapitalPm := 500
 
 end Moteurs.ExempleEquilibre

@@ -37,6 +37,7 @@ def offre : Moteur where
   multiplicateurEconomiesPm := 500
   multiplicateurPrelevementsPm := 500
   elasticiteCroissancePoPm := 100
+  canalCapitalPm := 1000
 
 def tous : List Moteur := [demande, offre]
 

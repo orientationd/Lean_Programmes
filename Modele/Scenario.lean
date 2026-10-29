@@ -649,6 +649,17 @@ structure Economie where
   emploiPriveTrancheMilliers : ParTranche
   coutTravailTrancheMeur : ParTranche
   ajustementCoutTravailPm : Int
+  /-- Canal du capital public : élasticité de la production au stock de
+  capital public, pm ; stock net de capital public (actifs fixes des
+  administrations publiques), pm du PIB ; dépréciation annuelle, pm. -/
+  elasticitePibCapitalPublicPm : Int
+  stockCapitalPublicPibPm : Int
+  depreciationCapitalPublicPm : Int
+  /-- Canal du capital des entreprises : effet de long terme sur le PIB d'une
+  baisse d'un point (100 pb) du taux effectif d'IS, ppm ; part de l'écart à
+  cet effet comblée chaque année (accumulation du capital), pm. -/
+  effetPibLongTermePointISPpm : Int
+  ajustementCapitalPrivePm : Int
   /-- Accompagnement des demandeurs d'emploi : baisse du nombre de chômeurs
   (personnes, en régime permanent) par conseiller supplémentaire. -/
   chomeursEvitesParConseiller : Int
@@ -910,6 +921,11 @@ abbrev ValideTravail (H : Scenario) : Prop :=
   H.eco.emploiPriveTrancheMilliers.toutEntre 0 30000 = true ∧
   H.eco.coutTravailTrancheMeur.toutEntre 1 2000000 = true ∧
   0 ≤ H.eco.ajustementCoutTravailPm ∧ H.eco.ajustementCoutTravailPm ≤ 1000 ∧
+  0 ≤ H.eco.elasticitePibCapitalPublicPm ∧ H.eco.elasticitePibCapitalPublicPm ≤ 500 ∧
+  0 < H.eco.stockCapitalPublicPibPm ∧ H.eco.stockCapitalPublicPibPm ≤ 3000 ∧
+  0 ≤ H.eco.depreciationCapitalPublicPm ∧ H.eco.depreciationCapitalPublicPm ≤ 200 ∧
+  0 ≤ H.eco.effetPibLongTermePointISPpm ∧ H.eco.effetPibLongTermePointISPpm ≤ 20000 ∧
+  0 ≤ H.eco.ajustementCapitalPrivePm ∧ H.eco.ajustementCapitalPrivePm ≤ 1000 ∧
   0 ≤ H.eco.chomeursEvitesParConseiller ∧ H.eco.chomeursEvitesParConseiller ≤ 100 ∧
   0 ≤ H.reference.seuilChomageContracyclePb ∧ 0 ≤ H.reference.surcoutComplementChomageMeur ∧
   -500 ≤ H.eco.inflationPb ∧ H.eco.inflationPb ≤ 2000 ∧

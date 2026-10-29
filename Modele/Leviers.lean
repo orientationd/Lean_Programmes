@@ -454,7 +454,8 @@ def effetCreationPostes (H : Scenario) (f : Fonction) (depense postes : Int) (s 
 construction, effet sur la demande de l'investissement. -/
 def appliquerInvestissement (H : Scenario) (f : Fonction) (montant : Int) (s : Etat) : Etat :=
   effetDemande H (some .construction) (appliquerPm montant H.eco.incidenceInvestissementPm)
-    { s with depensesF := s.depensesF.ajouter f montant }
+    { s with depensesF := s.depensesF.ajouter f montant
+             investissementPublicMesures := s.investissementPublicMesures + montant }
 
 /-- Poids de l'impulsion de demande d'une dépense à échéancier : celui de
 l'investissement si elle va à la construction, sinon celui de sa fonction. -/
@@ -668,8 +669,11 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       -- recettes après réponse de l'assiette : IS × tEff/t0 × (1 + ε × (t0 − tEff)/100)
       let apres := s.impots.impotSocietes * tEff
         * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tEff)) / (t0 * 100000)
+      -- canal du capital : le coût du capital suit l'écart du taux effectif au
+      -- taux du scénario (effet sur le PIB potentiel dans la projection)
       effetDemande H none (-(appliquerPm statique (poidsPrelevement M H .impotSocietes)))
-        { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes) }
+        { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes)
+                 ecartTauxISPb := tEff - t0 }
   | .transition sec r c, s =>
       appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec (r * 1000))
   | .transitionKt sec kt c, s =>
@@ -812,9 +816,11 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let part := partInterieureOutreMer H
       let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
                             secteur := some .construction, partInterieurePm := part }
+      -- le capital est installé outre-mer, part importée comprise
       let s' : Etat := { s with echeances := s.echeances ++ [e]
                                 depensesF := s.depensesF.ajouter f n
-                                importations := s.importations + n * (1000 - part) / 1000 }
+                                importations := s.importations + n * (1000 - part) / 1000
+                                investissementPublicMesures := s.investissementPublicMesures + n }
       effetDemande H (some .construction) (appliquerPm (n * part / 1000) H.eco.incidenceInvestissementPm) s'
   | .remunerationPublique _ _ [], s => s
   | .remunerationPublique nat f (n :: reste), s =>

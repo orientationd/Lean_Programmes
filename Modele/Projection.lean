@@ -119,6 +119,33 @@ def Assiettes.taux (A : Assiettes) (eAutres : Int) (c : CroissanceAssiettes) : P
     droitsMutation := c.pibNominal, mutationsOnereuses := c.immobilier, patrimoine := c.pibNominal
     autres := c.pibNominal + (eAutres - 1000) * c.cycle / 1000 }
 
+/-- Canal du capital, une année (moteurs où `canalCapitalPm` > 0 ; sans
+effet sinon). L'investissement public de l'année écoulée s'ajoute au capital
+public des mesures (`investissementAnnee`, M€), réévalué aux prix (`prix`,
+pb, déflateur du PIB) et déprécié. Le PIB potentiel augmente
+de `élasticité × capital des mesures / capital public total`, le capital
+public total valant `stockCapitalPublicPibPm` du PIB. Le capital des
+entreprises rejoint progressivement le niveau que fixe le taux effectif
+d'IS des mesures. Chocs d'offre : recettes au prorata, sans effet d'Okun
+(comme le volume d'heures). -/
+def canalCapital (M : Moteur) (H : Scenario) (prix investissementAnnee : Int) (s : Etat) : Etat :=
+  let E := H.eco
+  let k := s.capitalPublicMesures + appliquerPb s.capitalPublicMesures prix
+  let k := k - appliquerPm k E.depreciationCapitalPublicPm + investissementAnnee
+  let publicPpm := if s.pib = 0 then 0
+    else k * E.elasticitePibCapitalPublicPm * 1000000 / (E.stockCapitalPublicPibPm * s.pib)
+  let ciblePrivePpm := -(s.ecartTauxISPb * E.effetPibLongTermePointISPpm / 100)
+  let privePpm := s.effetCapitalPrivePpm
+    + (ciblePrivePpm - s.effetCapitalPrivePpm) * E.ajustementCapitalPrivePm / 1000
+  let dPpm := (publicPpm - s.effetCapitalPublicPpm) + (privePpm - s.effetCapitalPrivePpm)
+  let dPib := s.pib * dPpm * M.canalCapitalPm / 1000000000
+  let dRecettes := if s.pib = 0 then 0 else dPib * s.recettes / s.pib
+  { s.ajouterRecettesProrata dRecettes with
+    pib := s.pib + dPib
+    capitalPublicMesures := k
+    effetCapitalPublicPpm := publicPpm
+    effetCapitalPrivePpm := privePpm }
+
 /-- Une année de projection sous un moteur. -/
 def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let k := s.rang
@@ -127,8 +154,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- croissance potentielle), amputée de l'effet d'offre du moteur
   -- (prélèvements obligatoires au-dessus de leur niveau de départ →
   -- croissance amputée ; en dessous → croissance accrue)
+  -- pour l'IS, la part `canalCapitalPm` de l'effet passe par le canal du
+  -- capital (coût du capital des entreprises) plutôt que par cet effet générique
+  let poGeneriquePb (e : Etat) : Int :=
+    ratioPb (e.impots.total - appliquerPm e.impots.impotSocietes M.canalCapitalPm) e.pib
   let volume := H.eco.croissanceVolumeA k
-    - appliquerPm (s.prelevementsPb - ref.prelevementsPb) M.elasticiteCroissancePoPm
+    - appliquerPm (poGeneriquePb s - poGeneriquePb ref) M.elasticiteCroissancePoPm
   let prix := H.eco.inflationA k
   let croissance := volume + prix + volume * prix / 10000
   -- variation de l'écart de production : croissance en volume au-delà de la
@@ -365,6 +396,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     surfacesHorsZanMesuresHa := s.surfacesHorsZanMesuresHa.tail
     surfacesHorsZanHa := s.surfacesHorsZanHa + horsZan.totalEnaf
     consommationMesuresGwh := consoMesures
+    -- investissement public des mesures reconduit (les échéanciers de
+    -- construction en changent ensuite le niveau)
+    investissementPublicMesures := s.investissementPublicMesures
+      + appliquerPb s.investissementPublicMesures croissance
     pib := pib
     impots := impots
     remunerationParEmploiEuros := remuneration
@@ -487,9 +522,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       -- qu'elle avait créés (intensité en emplois symétrique) ; une économie
       -- (niveau négatif) n'a pas de secteur
       let secteur := if e.niveau < 0 then none else (e.secteur <|> e.fonction.secteur)
+      -- un échéancier de construction est un investissement public : sa
+      -- variation change le flux qui accroît le capital public
+      let dInvestissement := if e.secteur = some .construction then d else 0
       effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) (poidsEcheance H e))
         { st with depensesF := st.depensesF.ajouter e.fonction d
-                  importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
+                  importations := st.importations + d * (1000 - e.partInterieurePm) / 1000
+                  investissementPublicMesures := st.investissementPublicMesures + dInvestissement })
     ({ s₂ with echeances := pasEcheances.map (·.1) } : Etat)
   -- recettes à échéancier : indexées sur le PIB nominal (comme les assiettes) ;
   -- un impôt a l'effet de demande d'un prélèvement, une recette non fiscale aucun
@@ -536,6 +575,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     indicePrix := s.indicePrix + appliquerPb s.indicePrix H.eco.inflationPb
     esperanceVieTendanceCentiemes := s.esperanceVieTendanceCentiemes + H.demo.gainEsperanceVieCentiemes
     dureeMoyenneCentiemes := s.dureeMoyenneCentiemes + H.reference.hausseDureeMoyenneCentiemes }
+  let s₇ := canalCapital M H prix s.investissementPublicMesures s₇
   -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
   -- d'année (cycle, tendance et mesures de l'année)
   let s₈ := stabilisateurChomage M H s₇

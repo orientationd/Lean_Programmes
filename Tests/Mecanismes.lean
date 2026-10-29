@@ -172,4 +172,22 @@ theorem postes_publics_echeancier :
     let e0 := (t.getD 0 (etatDepart H)).emploi.tertiaireNonMarchand - (a.getD 0 (etatDepart H)).emploi.tertiaireNonMarchand
     1900 ≤ e0 ∧ e0 ≤ 2100 ∧ 3800 ≤ e1 ∧ e1 ≤ 4200 := by decide +kernel
 
+def O : Moteur := Hypotheses.Moteurs.offre
+
+/-- Le moteur d'offre sans canal du capital. -/
+def O0 : Moteur := { O with canalCapitalPm := 0 }
+
+/-- Canal du capital public : un investissement public durable d'un point
+de PIB relève le PIB de 2035, au moteur d'offre, de 1,2 à 1,7 % de plus que
+sans le canal (calcul : 1,6 % avec une élasticité de 0,12, un stock de
+59 % du PIB et 5 % de dépréciation ; FMI, WEO 2014 : +1,5 % après quatre
+ans, demande comprise) ; le moteur de demande n'a pas ce canal. -/
+theorem capital_public_offre :
+    let p := mesure (.investissement .affairesEconomiques ((etatDepart H).pib / 100))
+    let a := p.resultatA O H 10
+    let b := p.resultatA O0 H 10
+    let dPm := (a.pib - b.pib) * 10000 / b.pib
+    120 ≤ dPm ∧ dPm ≤ 170 ∧ D.canalCapitalPm = 0 := by
+  decide +kernel
+
 end Tests.Mecanismes
