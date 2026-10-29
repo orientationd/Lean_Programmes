@@ -20,8 +20,8 @@ Trajectoire du déficit (% du PIB) :
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Demande | 5,58 | 5,01 | 4,58 | 4,23 | 3,83 | 3,39 | 3,05 | 2,66 | 2,28 | 1,88 |
-| Offre | 5,57 | 4,93 | 4,40 | 3,98 | 3,53 | 3,04 | 2,66 | 2,29 | 1,89 | 1,51 |
-| Équilibre | 5,58 | 4,97 | 4,48 | 4,09 | 3,67 | 3,20 | 2,84 | 2,46 | 2,04 | 1,65 |
+| Offre | 5,57 | 4,93 | 4,39 | 3,96 | 3,51 | 3,02 | 2,64 | 2,26 | 1,86 | 1,48 |
+| Équilibre | 5,58 | 4,97 | 4,49 | 4,10 | 3,67 | 3,20 | 2,84 | 2,46 | 2,04 | 1,65 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs et passe sous 3 % en
@@ -1618,7 +1618,7 @@ au moins un moteur) :
 | IDH non dégradé | 36/36 | 36/36 | 36/36 |
 | UE : déficit sous 3 % ⚠ | 4/36 | 6/36 | 4/36 |
 | UE : ajustement 0,5 pt/an ⚠ | 4/36 | 6/36 | 4/36 |
-| UE : dette −1 pt/an ⚠ | 0/36 | 2/36 | 2/36 |
+| UE : dette −1 pt/an ⚠ | 0/36 | 4/36 | 2/36 |
 | UE : climat 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | UE : répartition de l'effort 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | UE : recharge (AFIR) 2030 | 36/36 | 36/36 | 36/36 |
@@ -1653,7 +1653,7 @@ de demande : 13 des 18 scénarios où la clause dérogatoire le porte à 5 %,
 Les six mesures ajoutées ensuite (O-129 à O-134) pèsent peu : +0,02 point de
 déficit en 2035. Le canal du capital du modèle commun (octobre 2026 :
 investissement public et IS sur le PIB potentiel, moteurs d'offre et
-d'équilibre) améliore le déficit de 2035 de 0,17 point au moteur d'offre.
+d'équilibre) améliore le déficit de 2035 de 0,2 point au moteur d'offre.
 
 Propriétés que ces mesures ne suffisent pas à tenir, et effort
 supplémentaire qu'il faudrait dans le neuvième des dix-huit scénarios
@@ -1716,7 +1716,7 @@ sur 25) :
    premier) et achats de mini-lanceurs ; O-134 ne paie que les lancements,
    et l'essentiel du second porte-avions tombe après 2035.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,34 point en 2032 (demande), 0,37 point en 2033 (offre), 0,36 point en 2032 (équilibre). Sans la deuxième journée de
+   des marges minimales de 0,34 point en 2032 (demande), 0,38 point en 2032 (offre), 0,36 point en 2032 (équilibre). Sans la deuxième journée de
    solidarité (O-84), le déficit 2035 serait de 2,13 %.
 5. **Chômage.** 9,00 % en 2035 contre 7,90 % sans programme : la propriété
    porte sur 2030, où le programme fait légèrement mieux que le tendanciel
