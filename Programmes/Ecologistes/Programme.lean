@@ -33,7 +33,7 @@ theorem apd_valeurs : apdEcheancier = [1719, 3439, 5159, 6879, 8599] := by decid
 
 def mesures : List Mesure := [
   { id := "E-01", titre := "SMIC porté à 2 000 € brut dès 2027"
-    source := s!"{projet}, p. 55 ; hausse calculée sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +6,7 %"
+    source := s!"{projet}, p. 55 ; hausse calculée sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +6,6 %"
     leviers := [.smicCibleBrut 2000] },
   { id := "E-02", titre := "Âge légal ramené de 64 à 62 ans, objectif 60 ans selon la pénibilité"
     source := s!"{projet}, p. 116 ; 62 ans dès l'entrée en vigueur, écart au calendrier légal de 9 mois en 2027 et 24 mois en 2033 (l'objectif de 60 ans n'est pas modélisé)"

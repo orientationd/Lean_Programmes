@@ -444,6 +444,7 @@ structure SmicParPoint where
   allegementsMeur : Int
   remunerationPubliqueMeur : Int
   cotisationsMeur : Int
+  csgMeur : Int
   impotRevenuMeur : Int
   prestationsMeur : Int
   revenuDisponiblePriveMeur : Int
@@ -548,9 +549,10 @@ structure Economie where
   coutParDepistageEuros : Int := 0
   jeunesParGenerationMilliers : Int := 0
   depenseParEtudiantEuros : Int := 0
-  /-- SMIC : emplois perdus à terme par point de hausse (effet du coût du
-  travail, diffusion et hausse automatique des allègements comprises, hors
-  effet de demande, calculé par le modèle) ; effets budgétaires par point. -/
+  /-- SMIC : emplois perdus à terme par point de hausse par l'effet brut du
+  coût du travail (diffusion comprise, avant la hausse automatique des
+  allègements et l'effet de demande, que le modèle calcule) ; effets
+  budgétaires par point. -/
   emploisParPointSmic : Int
   smicParPoint : SmicParPoint
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
@@ -957,7 +959,8 @@ abbrev ValideTravail (H : Scenario) : Prop :=
 abbrev ValideSmic (H : Scenario) : Prop :=
   0 ≤ H.eco.emploisParPointSmic ∧ H.eco.emploisParPointSmic ≤ 100000 ∧
   0 ≤ H.eco.smicParPoint.allegementsMeur ∧ 0 ≤ H.eco.smicParPoint.remunerationPubliqueMeur ∧
-  0 ≤ H.eco.smicParPoint.cotisationsMeur ∧ 0 ≤ H.eco.smicParPoint.impotRevenuMeur ∧
+  0 ≤ H.eco.smicParPoint.cotisationsMeur ∧ 0 ≤ H.eco.smicParPoint.csgMeur ∧
+  0 ≤ H.eco.smicParPoint.impotRevenuMeur ∧
   0 ≤ H.eco.smicParPoint.prestationsMeur ∧ 0 ≤ H.eco.smicParPoint.revenuDisponiblePriveMeur
 
 /-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est

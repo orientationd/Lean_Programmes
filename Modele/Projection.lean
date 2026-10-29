@@ -160,7 +160,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- entreprises) plutôt que par cet effet générique ; les surtaxes et les
   -- variations cycliques de l'IS y restent
   let poGeneriquePb (e : Etat) : Int :=
-    ratioPb (e.impots.total - appliquerPm e.isTauxMeur M.canalCapitalPm) e.pib
+    ratioPb (e.impots.total - appliquerPm e.isTauxMeur M.canalCapitalPm - e.smicPrelevementsMeur) e.pib
   let volume := H.eco.croissanceVolumeA k
     - appliquerPm (poGeneriquePb s - poGeneriquePb ref) M.elasticiteCroissancePoPm
   let prix := H.eco.inflationA k
@@ -399,10 +399,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     surfacesHorsZanMesuresHa := s.surfacesHorsZanMesuresHa.tail
     surfacesHorsZanHa := s.surfacesHorsZanHa + horsZan.totalEnaf
     consommationMesuresGwh := consoMesures
-    -- SMIC : revalorisé chaque année comme les prix à la consommation
-    -- (revalorisation légale : inflation des ménages modestes et moitié du
-    -- gain de pouvoir d'achat du salaire horaire des ouvriers et employés)
+    -- SMIC : revalorisé chaque année comme les prix à la consommation de
+    -- l'année (la revalorisation légale suit l'inflation des ménages modestes
+    -- sur les douze mois précédents, plus la moitié du gain de pouvoir
+    -- d'achat du salaire horaire des ouvriers et employés, non modélisée ;
+    -- 2026 : 1 843 € projetés pour 1 848,69 € en moyenne, deux
+    -- revalorisations ayant eu lieu, au 1er janvier et au 1er juin)
     smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel pc
+    smicPrelevementsMeur := s.smicPrelevementsMeur + appliquerPb s.smicPrelevementsMeur croissance
     -- investissement public du levier `investissement`, reconduit comme la
     -- dépense de sa fonction (norme comprise)
     investissementPublicMesures := s.investissementPublicMesures.croitrePrimaires tauxDep

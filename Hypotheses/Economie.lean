@@ -560,40 +560,48 @@ def intensiteEmploi2025 : ParSecteur :=
 généraux indexée sur le SMIC ; le décret n° 2026-509 l'a gelée à 12,02 €/h
 en juin 2026 : une hausse non suivie par la référence renchérirait bien
 davantage le travail au SMIC et réduirait les allègements).
-* Emplois : −13 800 à terme (OFCE, Heyer et Plane, Revue de l'OFCE,
-  hors-série 2012, tableau 2 : −26 000 par l'effet du coût du travail,
-  diffusion comprise, +12 200 par la hausse automatique des allègements ;
-  l'effet de demande, +11 500 pour l'OFCE, est calculé par le modèle).
-  Variantes : −20 000 (élasticité de 0,9 au SMIC de la maquette MATIS de la
-  DG Trésor, 2015, pour 2,2 millions de salariés concernés au 1er novembre
-  2024, DARES : calcul) et −3 000 (élasticité médiane de 0,13 de la
-  méta-analyse de la note du CAE n° 91, 2026 : calcul). Laroque et Salanié
-  (Économie et Statistique n° 331, 2000) : −290 000 à long terme pour
-  +10 %.
+* Emplois, effet brut du coût du travail : −26 000 à terme (OFCE, Heyer et
+  Plane, Revue de l'OFCE, hors-série 2012, tableau 2, diffusion comprise).
+  Le modèle y ajoute les emplois que sauvent les allègements en plus
+  (élasticité de la première tranche : ≈ +21 600 pour 1 490 M€) et l'effet de
+  demande (≈ +1 600), soit ≈ −2 800 par point, proche du solde de l'OFCE
+  (−2 300, avec +12 200 par les allègements et +11 500 par la demande).
+  Variantes : −29 000 (Laroque et Salanié, Économie et Statistique n° 331,
+  2000 : −290 000 à long terme pour +10 %) et −19 800 (élasticité de 0,9 au
+  SMIC de la maquette MATIS de la DG Trésor, 2015, pour les 2,2 millions de
+  salariés concernés au 1er novembre 2024, DARES, sans diffusion : calcul).
+  La méta-analyse de la note du CAE n° 91 (2026) trouve une élasticité
+  médiane de 0,13 au salaire minimum, sans allègements automatiques.
 * Allègements : +1 490 M€ (Institut Montaigne, 2024 : 21,5 Md€ pour un SMIC à
   1 600 € nets, soit +14,4 %, tassement des salaires compris, avec la
   réduction générale actuelle ; calcul) ; 700 M€ pour l'OFCE en 2012 et
   400 M€ pour le Groupe d'experts sur le SMIC en 2017, avant la bascule du
   CICE en allègements.
-* Agents publics : +280 M€ (indice minimum relevé de 353 à 361 en mai 2023
-  pour une hausse du SMIC de 2,19 % : plus de 410 M€, Acteurs publics ;
-  260 M€ pour le Groupe d'experts en 2017, 300 M€ pour l'IGF : calcul).
-* Salariés du privé, d'après la décomposition du Groupe d'experts sur le
-  SMIC (rapport 2017, cité par l'Institut Montaigne et la Fondation
-  Jean-Jaurès), portée aux salaires de 2025 (SMIC de 1 480,27 € en 2017 et
-  1 801,80 € en 2025, × 1,217 : calcul) : cotisations salariales +292 M€,
-  impôt sur le revenu +85 M€, prestations (prime d'activité) −134 M€ ; revenu
-  disponible des ménages +840 M€, dont ≈ 640 M€ pour ceux du privé (les
-  agents publics sont comptés par la rémunération publique ; calcul). -/
+* Décomposition du Groupe d'experts sur le SMIC (rapport 2017, citée par
+  l'Institut Montaigne et la Fondation Jean-Jaurès), portée aux salaires de
+  2025 (SMIC de 1 480,27 € en 2017 et 1 801,80 € en 2025, × 1,217 : calcul) :
+  agents publics payés près du SMIC +260 M€ → 316 M€ (leurs retenues sont
+  calculées par le levier) ; cotisations salariales, CSG comprise, +240 M€,
+  et impôt sur le revenu +70 M€, pour l'ensemble des salariés, ramenés à la
+  part du privé (640 M€ du revenu disponible sur 840 : calcul) et répartis
+  entre cotisations (11,31 %) et CSG-CRDS (9,53 %) : cotisations +120 M€,
+  CSG +102 M€, impôt sur le revenu +64 M€ ; prestations sociales (dont prime
+  d'activité) −133 M€ ; revenu disponible des ménages du privé +640 M€. -/
+def facteurSalaires2017 : Int := 180180 * 1000 / 148027
+def prive (x : Int) : Int := x * facteurSalaires2017 / 1000 * 640 / 840
 def smicParPoint : SmicParPoint :=
-  { allegementsMeur := 1490, remunerationPubliqueMeur := 280, cotisationsMeur := 292,
-    impotRevenuMeur := 85, prestationsMeur := 134, revenuDisponiblePriveMeur := 640 }
-def emploisParPointSmicCentral : Int := 26000 - 12200
+  { allegementsMeur := 1490, remunerationPubliqueMeur := 260 * facteurSalaires2017 / 1000,
+    cotisationsMeur := prive 240 * 1131 / 2084, csgMeur := prive 240 - prive 240 * 1131 / 2084,
+    impotRevenuMeur := prive 70, prestationsMeur := 110 * facteurSalaires2017 / 1000,
+    revenuDisponiblePriveMeur := 640 }
+def emploisParPointSmicCentral : Int := 26000
+def emploisParPointSmicLaroqueSalanie : Int := 290000 / 10
 def emploisParPointSmicMatis : Int := 2200000 * 900 / 1000 / 100
-def emploisParPointSmicMeta : Int := 2200000 * 130 / 1000 / 100
 
-theorem smic_valeurs : emploisParPointSmicCentral = 13800 ∧ emploisParPointSmicMatis = 19800 ∧
-    emploisParPointSmicMeta = 2860 := by decide
+theorem smic_valeurs : facteurSalaires2017 = 1217 ∧ smicParPoint.remunerationPubliqueMeur = 316 ∧
+    smicParPoint.cotisationsMeur = 120 ∧ smicParPoint.csgMeur = 102 ∧ smicParPoint.impotRevenuMeur = 64 ∧
+    smicParPoint.prestationsMeur = 133 ∧ emploisParPointSmicLaroqueSalanie = 29000 ∧
+    emploisParPointSmicMatis = 19800 := by decide
 
 /-- Canal du capital public (moteurs qui l'activent : `Moteur.canalCapitalPm`).
 Élasticité de la production au capital public : 0,12 à long terme pour le
@@ -792,7 +800,7 @@ def croissanceBasse : Economie where
   coutParDepistageEuros := 70
   jeunesParGenerationMilliers := 800
   depenseParEtudiantEuros := 13300
-  emploisParPointSmic := emploisParPointSmicMatis
+  emploisParPointSmic := emploisParPointSmicLaroqueSalanie
   smicParPoint := smicParPoint
   economieParMoisRetraite := 650
   tauxMarginalPb := 480
@@ -884,7 +892,7 @@ def croissanceHaute : Economie where
   coutParDepistageEuros := 70
   jeunesParGenerationMilliers := 800
   depenseParEtudiantEuros := 13300
-  emploisParPointSmic := emploisParPointSmicMeta
+  emploisParPointSmic := emploisParPointSmicMatis
   smicParPoint := smicParPoint
   economieParMoisRetraite := 650
   tauxMarginalPb := 400

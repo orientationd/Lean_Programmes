@@ -29,7 +29,9 @@ def programme2027 : String :=
 
 /-- SMIC à 2 000 € net : 2 526 € bruts au ratio net/brut du SMIC
 (1 443,11 / 1 823,03 au 1er janvier 2026) ; la hausse se calcule sur le SMIC
-projeté de 2027 (≈ 1 875 € bruts), soit ≈ +35 % (calcul). -/
+projeté de 2027 (≈ 1 876 € bruts), soit ≈ +34,6 % (calcul) ; les agents publics
+sont déjà augmentés de 500 € nets par RP-02 : composante publique du levier
+non comptée. -/
 def smicCibleBrutEuros : Int := 2000 * 10000 / 7916
 
 theorem smicCible_valeur : smicCibleBrutEuros = 2526 := by decide
@@ -69,7 +71,7 @@ theorem valeurs :
 def mesures : List Mesure := [
   { id := "RP-01", titre := "SMIC à 2 000 € net"
     source := s!"{programme2027} : « SMIC à 2000 € net », allocations revalorisées et indexées ; {smicCibleBrutEuros} € bruts (voir `smicCibleBrutEuros`)"
-    leviers := [.smicCibleBrut smicCibleBrutEuros] },
+    leviers := [.smicCibleBrut smicCibleBrutEuros false] },
   { id := "RP-02", titre := "+500 € net sur tous les salaires, indexés sur les prix : part des agents publics"
     source := s!"{programme2027} : « augmentation des salaires de 500 € » ; agents publics : {coutHausseAgents} M€ bruts par an (voir `hausseBruteMensuelleEuros`) ; hausse dans le privé non modélisée"
     leviers := [.remunerationPublique .traitement .fonctionnement [coutHausseAgents]] },

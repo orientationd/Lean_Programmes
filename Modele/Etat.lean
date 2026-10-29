@@ -1071,6 +1071,12 @@ structure Etat where
   par le moteur). -/
   ecartTauxISPb : Int := 0
   isTauxMeur : Int := 0
+  /-- Prélèvements dus aux hausses du SMIC (allègements en plus, nets des
+  cotisations, de la CSG et de l'impôt sur les salaires), M€ courants,
+  indexés sur le PIB nominal : ils compensent le coût du travail, dont
+  l'effet sur l'emploi est compté à part, et ne sont pas une baisse
+  d'impôt pour l'effet générique des prélèvements (moteur d'offre). -/
+  smicPrelevementsMeur : Int := 0
   effetCapitalPrivePpm : Int := 0
   /-- Indice des prix (base 10 000 l'année de départ) : déflate le PIB pour le
   RNB par habitant en volume de l'IDH. -/

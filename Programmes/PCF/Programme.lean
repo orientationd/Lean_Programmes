@@ -86,8 +86,8 @@ def mesures : List Mesure := [
     source := "Comparateur IFRAP 2027 ; discours de F. Roussel, 15 septembre 2026 ; non chiffré : l'ISF rapportait 4,1 Md€ en 2017, triplé ≈ 12,3 Md€ statiques, moins l'IFI supprimé (2,3 Md€), soit ≈ 10 Md€ (calcul, hypothèse)"
     leviers := [.prelevementSur .patrimoine 10000] },
   { id := "PC-16", titre := "SMIC porté à 1 600 € net"
-    source := "20 mesures des parlementaires communistes (Public Sénat, 29 janvier 2025) : « revalorisation du SMIC à 1 600 euros net mensuels ». Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : 2 021 € bruts, hausse calculée sur le SMIC projeté de 2027 (même conversion que L-11)"
-    leviers := [.smicCibleBrut 2021] },
+    source := "20 mesures des parlementaires communistes (Public Sénat, 29 janvier 2025) : « revalorisation du SMIC à 1 600 euros net mensuels ». Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : 2 021 € bruts, hausse calculée sur le SMIC projeté de 2027, ≈ +7,7 % (même conversion que L-11) ; agents publics déjà relevés de 10 % par PC-19 : composante publique non comptée"
+    leviers := [.smicCibleBrut 2021 false] },
   { id := "PC-17", titre := "Retraite à 60 ans à taux plein"
     source := "pcf.fr, « Retraites : pour une réforme digne des jours heureux » : « rétablir l'âge de départ à 60 ans », financé en taxant les revenus financiers (PC-18) ; reprise en 2026 (France-Vote, 5 octobre 2026). Âge légal fixé à 60 ans dès l'entrée en vigueur ; le coût suit l'hypothèse économique du scénario"
     leviers := [.ageLegalCible 720 0] },

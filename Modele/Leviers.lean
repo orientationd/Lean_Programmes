@@ -44,16 +44,19 @@ inductive Levier where
   population de l'année de mise en œuvre). -/
   | prestationParHabitant (eurosParAn : Int)
   /-- Revalorisation du SMIC, pb : emplois perdus progressivement (coût du
-  travail au voisinage du SMIC, `emploisParPointSmic`), allègements généraux,
-  rémunération des agents publics, prélèvements sur les salaires privés,
-  prestations et revenu des ménages (`smicParPoint`), proportionnels à la
-  hausse (au-delà d'une dizaine de points, l'effet est sans doute plus que
-  proportionnel : davantage de salariés rattrapés par le SMIC). -/
+  travail au voisinage du SMIC, `emploisParPointSmic`, moins ceux que
+  sauvent les allègements en plus), allègements généraux, rémunération des
+  agents publics, prélèvements sur les salaires privés, prestations et revenu
+  des ménages (`smicParPoint`), proportionnels à la hausse (au-delà d'une
+  dizaine de points, l'effet est sans doute plus que proportionnel :
+  davantage de salariés rattrapés par le SMIC). -/
   | revalorisationSmic (hausse : Int)
   /-- SMIC brut mensuel porté à `euros` (euros de l'année d'entrée en
   vigueur) : hausse calculée sur le SMIC projeté de l'année (indexé sur les
-  prix), sans effet s'il est déjà au-dessus. -/
-  | smicCibleBrut (euros : Int)
+  prix), sans effet s'il est déjà au-dessus. `agentsPublics := false` quand
+  le programme relève déjà la rémunération de tous les agents d'au moins
+  autant (point d'indice) : la composante publique n'est pas comptée. -/
+  | smicCibleBrut (euros : Int) (agentsPublics : Bool := true)
   /-- Modification de l'âge légal, mois (positif = recul), par rapport au
   calendrier en vigueur (qui continue de s'appliquer). -/
   | ageLegal (deltaMois : Int)
@@ -392,9 +395,8 @@ def chocDemandeTravail (H : Scenario) (cible : Option Secteur) (d : Int) (s : Et
   let dActifs := d * H.eco.flexionPm / (1000 + H.eco.flexionPm)
   ajouterEmploi H cible d { s with actifs := s.actifs + dActifs }
 
-/-- Emplois correspondant à `dChomeurs` chômeurs de moins (loi d'Okun,
-élasticité au SMIC… sont exprimées en chômage) : `(1000 + flexion)/1000`
-emploi par chômeur. -/
+/-- Emplois correspondant à `dChomeurs` chômeurs de moins (la loi d'Okun est
+exprimée en chômage) : `(1000 + flexion)/1000` emploi par chômeur. -/
 def emploisPourChomeurs (H : Scenario) (dChomeurs : Int) : Int :=
   dChomeurs * (1000 + H.eco.flexionPm) / 1000
 
@@ -616,36 +618,47 @@ def varierAllegements (M : Moteur) (H : Scenario) (t : TrancheSalaire) (m : Int)
              emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois
              emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants + ponderes }
 
-/-- Revalorisation du SMIC de `h` pb. Emplois : ceux que perd la hausse du
-coût du travail au voisinage du SMIC rejoignent progressivement l'emploi
-(comme une variation d'allègements de la première tranche, pondérés par son
-coût par emploi pour le PIB). Finances publiques, par point, ramenées au PIB
-courant : allègements en plus (cotisations en moins, suivis sur la première
-tranche), rémunération des agents publics (comme le levier
-`remunerationPublique`), cotisations et impôt sur le revenu des salariés du
-privé, prestations en moins ; revenu disponible des ménages du privé (effet
-de demande d'un transfert). -/
-def revaloriserSmic (M : Moteur) (H : Scenario) (h : Int) (s : Etat) : Etat :=
+/-- Revalorisation du SMIC de `h` pb. Emplois : l'effet brut du coût du
+travail (`emploisParPointSmic`) moins les emplois que sauvent les allègements
+en plus (élasticité de la première tranche, comme `varierAllegements`, sans
+son effet sur les marges : la hausse des salaires les réduit d'autant)
+rejoignent progressivement l'emploi, pondérés par le coût par emploi de la
+tranche pour le PIB. Finances publiques, par point, ramenées au PIB
+courant : allègements en plus (suivis sur la première tranche),
+cotisations, CSG et impôt sur le revenu des salariés du privé, prestations
+en moins ; rémunération des agents publics payés près du SMIC (si
+`agentsPublics`), avec leurs retenues (CSG-CRDS 9,53 %, retenue pour pension
+11,10 %, sans impôt sur le revenu à ce niveau de salaire) ; revenu disponible
+des ménages (effet de demande d'un transfert). Les prélèvements nets dus au
+SMIC sont suivis à part (`smicPrelevementsMeur`). -/
+def revaloriserSmic (M : Moteur) (H : Scenario) (agentsPublics : Bool) (h : Int) (s : Etat) : Etat :=
   let P := H.eco.smicParPoint
   let ref := H.reference.etat.pib
   let parPoint (x : Int) : Int := if ref = 0 then 0 else x * h * s.pib / (100 * ref)
   let allegements := parPoint P.allegementsMeur
-  let remuneration := parPoint P.remunerationPubliqueMeur
-  let emplois := -(H.eco.emploisParPointSmic * h / 100)
+  let remuneration := if agentsPublics then parPoint P.remunerationPubliqueMeur else 0
+  let csgPublique := remuneration * 953 / 10000
+  let pensionPublique := remuneration * 1110 / 10000
   let cout := H.eco.coutTravailTrancheMeur.get .bas
   let emploiT := H.eco.emploiPriveTrancheMilliers.get .bas
+  let sauves := if s.pib = 0 ∨ cout = 0 then 0
+    else allegements * H.eco.elasticiteEmploiCoutTravailPm.get .bas * emploiT * ref / (cout * s.pib)
+  let emplois := sauves - H.eco.emploisParPointSmic * h / 100
   let ponderes := if emploiT = 0 ∨ H.eco.coutTravailTrancheMeur.total = 0 then 0
     else emplois * cout * H.eco.emploiPriveTrancheMilliers.total / (emploiT * H.eco.coutTravailTrancheMeur.total)
+  let dCotisations := parPoint P.cotisationsMeur - allegements + pensionPublique
+  let dCsg := parPoint P.csgMeur + csgPublique
+  let dIr := parPoint P.impotRevenuMeur
   let s₁ : Etat := { s with
     smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h
-    impots := ((s.impots.ajouter .cotisations (parPoint P.cotisationsMeur - allegements)).ajouter .ir
-      (parPoint P.impotRevenuMeur))
+    impots := ((s.impots.ajouter .cotisations dCotisations).ajouter .csgCrds dCsg).ajouter .ir dIr
     allegementsTranche := s.allegementsTranche.ajouter .bas allegements
     depensesF := (s.depensesF.ajouter .famille (-(parPoint P.prestationsMeur))).ajouter .fonctionnement remuneration
+    smicPrelevementsMeur := s.smicPrelevementsMeur + dCotisations + dCsg + dIr
     emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois
     emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants + ponderes }
-  effetDemande H none (appliquerPm (parPoint P.revenuDisponiblePriveMeur) M.multiplicateurPrelevementsPm)
-    (effetRemuneration M H .traitement remuneration s₁)
+  let revenu := parPoint P.revenuDisponiblePriveMeur + remuneration - csgPublique - pensionPublique
+  effetDemande H none (appliquerPm revenu M.multiplicateurPrelevementsPm) s₁
 
 /-- Hausses régulières de `pas` mois par an jusqu'à `reste` mois (dernière
 hausse partielle). Vide si `reste` ou `pas` n'est pas positif. -/
@@ -687,10 +700,10 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
       appliquerDepense H none .famille (e * s.populationMilliers / 1000) s
-  | .revalorisationSmic h, s => revaloriserSmic M H h s
-  | .smicCibleBrut e, s =>
+  | .revalorisationSmic h, s => revaloriserSmic M H true h s
+  | .smicCibleBrut e pub, s =>
       let h := if s.smicMensuel = 0 then 0 else e * 10000 / s.smicMensuel - 10000
-      if h ≤ 0 then s else revaloriserSmic M H h s
+      if h ≤ 0 then s else { revaloriserSmic M H pub h s with smicMensuel := e }
   | .ageLegal d, s => reculDepart H (d * 1000) s
   | .dureeCotisation m part, s => reculDepart H (m * part) s
   | .ageLegalCible c r, s =>

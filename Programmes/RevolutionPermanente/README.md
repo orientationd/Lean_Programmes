@@ -19,7 +19,7 @@ ou repris de chiffrages indépendants de mesures comparables (détail dans
 
 | Mesure | Levier |
 |---|---|
-| RP-01 SMIC à 2 000 € net | cible de 2 526 € bruts, ≈ +35 % sur le SMIC projeté de 2027 (effets supposés proportionnels : sans doute sous-estimés pour une telle hausse) |
+| RP-01 SMIC à 2 000 € net | cible de 2 526 € bruts, ≈ +34,6 % sur le SMIC projeté de 2027, agents publics déjà augmentés par RP-02 (effets supposés proportionnels : sans doute sous-estimés pour une telle hausse) |
 | RP-02 +500 € net sur les salaires : part des agents publics | +42,4 Md€/an de traitements bruts (5,6 millions d'agents) ; la hausse dans le privé n'a pas de levier |
 | RP-03 Retraite à 60 ans, 55 ans pour les métiers pénibles, sans condition d'annuités | âge légal à 60 ans dès 2027 (55 ans et durée non modélisés : coût sous-estimé) |
 | RP-04 Aucune pension sous le SMIC | +13,9 Md€/an (minimum contributif au SMIC, Institut Montaigne 2024 ; plancher) |

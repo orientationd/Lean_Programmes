@@ -50,7 +50,7 @@ propositions logement de F. Roussel (octobre 2026) et des positions de 2026 :
 
 | Mesure | Levier |
 |---|---|
-| PC-16 SMIC à 1 600 € net | cible de 2 021 € bruts, ≈ +7,8 % sur le SMIC projeté de 2027 (comme L-11) |
+| PC-16 SMIC à 1 600 € net | cible de 2 021 € bruts, ≈ +7,7 % sur le SMIC projeté de 2027, comme L-11 (agents publics déjà relevés par PC-19) |
 | PC-17 Retraite à 60 ans | âge légal à 60 ans dès 2027 |
 | PC-18 Cotisation sur les revenus financiers | +30 Md€/an de cotisations (chiffrage du parti, 2019) |
 | PC-19 Point d'indice +10 % | +25,3 Md€/an de traitements bruts (calcul d'après l'Institut Montaigne) |

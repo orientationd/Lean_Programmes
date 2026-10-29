@@ -362,8 +362,8 @@ le modèle commun, la suppression creusait le déficit de 2035 de 0,08 point
 et accroissait le chômage de 0,10 point en 2030 : indemnisation et
 recettes perdues dépassaient l'économie) ; 10 000 d'entre eux, 2 500 par an
 de 2027 à 2030, renforcent l'accompagnement à France Travail (O-26b, en
-plus des 10 000 conseillers d'O-77), les autres les contrôles et l'accueil
-(effets non modélisés). Coût complet
+plus des 10 000 conseillers d'O-77), 1 500 le contrôle fiscal d'O-45, les
+autres les contrôles et l'accueil (effets non modélisés). Coût complet
 d'un poste de catégorie B ou C : `coutPosteControle` = 55 000 € par an
 (hypothèse : salaire net moyen de la fonction publique de l'État 3 018 €
 par mois en 2024, toutes catégories (DGAFP), plus bas en B et C, cotisations
@@ -2398,7 +2398,7 @@ def mesures : List Mesure := [
 
   { id := "O-40"
     titre := "Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes"
-    source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2)"
+    source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2) ; diminué de son taux appliqué au CIR (O-69) et aux heures supplémentaires (O-73) déjà réduits (voir `recouvrementNichesIr`)"
     leviers := [.prelevementSur .ir (4000 - recouvrementNichesIr / 10),
                 .prelevementSur .impotSocietes (2000 - recouvrementNichesIs / 10), .prelevementSur .tva 2000]
     debut := 0 },
@@ -2517,7 +2517,7 @@ def mesures : List Mesure := [
 
   { id := "O-57"
     titre := "Niches fiscales : −2 % par an pendant cinq ans (en plus de O-40)"
-    source := s!"Texte Orientation D, mesure 57 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {rabotNiches} M€ de plus chaque année de 2027 à 2031 (IR, IS, TVA)"
+    source := s!"Texte Orientation D, mesure 57 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {rabotNiches} M€ de plus chaque année de 2027 à 2031 (IR, IS, TVA) ; diminué de son taux appliqué au CIR (O-69) et aux heures supplémentaires (O-73) déjà réduits (voir `recouvrementNichesIr`)"
     leviers := [.prelevementSur .ir (rabotNiches / 2 - recouvrementNichesIr * 2 / 100),
                 .prelevementSur .impotSocietes (rabotNiches / 4 - recouvrementNichesIs * 2 / 100),
                 .prelevementSur .tva (rabotNiches / 4)]
@@ -2549,7 +2549,7 @@ def mesures : List Mesure := [
 
   { id := "O-62"
     titre := "Niches fiscales : −1,5 Md€ de plus par an de 2029 à 2035"
-    source := s!"Texte Orientation D, mesure 62 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {nichesSecondeEtape} M€ de plus chaque année de 2029 à 2035 (IR, IS, TVA comme O-57)"
+    source := s!"Texte Orientation D, mesure 62 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {nichesSecondeEtape} M€ de plus chaque année de 2029 à 2035 (IR, IS, TVA comme O-57) ; diminué de son taux appliqué au CIR (O-69) et aux heures supplémentaires (O-73) déjà réduits (voir `recouvrementNichesIr`)"
     leviers := [.prelevementSur .ir (nichesSecondeEtape / 2 - recouvrementNichesIr * nichesSecondeEtape / depensesFiscales2026),
                 .prelevementSur .impotSocietes
                   (nichesSecondeEtape / 4 - recouvrementNichesIs * nichesSecondeEtape / depensesFiscales2026),
