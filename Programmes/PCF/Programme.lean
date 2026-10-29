@@ -75,7 +75,7 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .famille 2800] },
   { id := "PC-12", titre := "90 000 enseignants, AESH, infirmières et médecins scolaires"
     source := "pcf.fr, 14 octobre 2026 ; non chiffré : 4 000 postes coûtent 150 M€ en année pleine (gouvernement, janvier 2025), soit ≈ 3,4 Md€ (calcul, hypothèse)"
-    leviers := [.depenseSur .enseignement 3400, .annonceEmplois 90000] },
+    leviers := [.creationPostes .enseignement [90000] 37500, .annonceEmplois 90000] },
   { id := "PC-13", titre := "5 Md€ pour la jeunesse et la rénovation du bâti scolaire"
     source := "pcf.fr, 14 octobre 2026 : 5 Md€ « immédiatement »"
     leviers := [.depenseSur .enseignement 5000] },

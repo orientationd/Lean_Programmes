@@ -20,7 +20,7 @@ lorsqu'elles ont été réaffirmées depuis. Objectif annoncé : « au minimum
 
 | Mesure | Levier |
 |---|---|
-| RQ-01 Non-remplacement de 800 000 départs en cinq ans | jusqu'à −40 Md€/an en 2031 (Sud Radio, 14 septembre 2026) |
+| RQ-01 Non-remplacement de 800 000 départs en cinq ans | jusqu'à −40 Md€/an en 2031 (Sud Radio, 14 septembre 2026), 160 000 par an, emplois publics retirés un pour un |
 | RQ-02 Prestations non contributives réservées aux Français | −15 Md€/an (bas de la fourchette du parti, 15 à 20) |
 | RQ-03 Suppression de l'aide au développement | −12,9 Md€/an (aide versée en 2025 ; le parti chiffre 14 à 15) |
 | RQ-04 Contribution européenne au niveau d'avant le Covid | −14 Md€/an |

@@ -13,7 +13,7 @@
 | Mesure | Levier |
 |---|---|
 | H-01 Âge légal à 65 ans, 45 annuités | +12 mois (un tiers de salariés exemptés : non modélisé) |
-| H-02 250 000 fonctionnaires non remplacés sur cinq ans | −15,6 Md€ (conversion : 62 500 € par poste et par an) |
+| H-02 250 000 fonctionnaires non remplacés sur cinq ans | −15,6 Md€ (conversion : 62 500 € par poste et par an), 50 000 par an, emplois publics retirés un pour un |
 | H-03 Fonds unique d'adaptation au changement climatique | +2 Md€/an, logement-environnement |
 | H-04 Deux heures supplémentaires par semaine exonérées | +1,7 % d'heures par emploi (recours 30 %, hypothèse), −0,3 Md€ de cotisations |
 | H-05 Immigration légale divisée par deux | solde migratoire −90 000 par an (hypothèse de conversion) ; population et population active suivent |

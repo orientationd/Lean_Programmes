@@ -62,8 +62,9 @@ theorem valeurs :
 
 def mesures : List Mesure := [
   { id := "RQ-01", titre := "Non-remplacement de 800 000 départs dans l'administration en cinq ans"
-    source := "S. Knafo, Sud Radio, 14 septembre 2026 : 40 Md€ ; enseignants, soignants, policiers et militaires exclus ; 160 000 départs non remplacés par an (voir `economiePostes`)"
-    leviers := [.depenseEcheancier .fonctionnement economiePostes] },
+    source := "S. Knafo, Sud Radio, 14 septembre 2026 : 40 Md€ ; enseignants, soignants, policiers et militaires exclus ; 160 000 départs non remplacés par an à 50 000 € (voir `economiePostes`), emplois publics retirés un pour un (levier `suppressionPostes`)"
+    leviers := [.suppressionPostes .fonctionnement 160000 50000]
+    repetitions := 5 },
   { id := "RQ-02", titre := "Prestations non contributives réservées aux Français (RSA, APL, allocations familiales, minimum vieillesse)"
     source := s!"{knafo} : 15 à 20 Md€ (bas de la fourchette retenu ; 20 Md€ en 2022 ; 6,7 Md€ selon l'Institut Montaigne en 2022) ; suppose une révision constitutionnelle"
     leviers := [.economieSur .famille 15000] },

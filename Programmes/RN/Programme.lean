@@ -44,8 +44,9 @@ def mesures : List Mesure := [
     source := s!"{dossier} : le parti chiffre 9 Md€/an ; le modèle applique son propre coût par mois d'âge légal (hypothèse économique du scénario) ; 62 ans dès l'entrée en vigueur, écart au calendrier légal de 9 mois en 2027 et 24 mois en 2033"
     leviers := [.ageLegalCible 744 0] },
   { id := "RN-06", titre := "Non-renouvellement de 201 000 postes publics"
-    source := s!"{dossier} : ≈ 13,5 Md€/an en 2032 (presse)"
-    leviers := [.economieSur .fonctionnement 13500] },
+    source := s!"{dossier} : ≈ 13,5 Md€/an en 2032 (presse), soit 67 164 € par poste (calcul) ; 40 200 postes non renouvelés par an de 2027 à 2031, emplois publics retirés un pour un (levier `suppressionPostes`)"
+    leviers := [.suppressionPostes .fonctionnement 40200 67164]
+    repetitions := 5 },
   { id := "RN-07", titre := "Effort des collectivités territoriales"
     source := s!"{dossier} : 8,2 Md€/an (presse)"
     leviers := [.economieSur .fonctionnement 8200] },
@@ -93,7 +94,7 @@ def mesures : List Mesure := [
                 .depenseEcheancier .securiteJustice [0, 0, 270, 540, 810, 1080, 1350]] },
   { id := "RN-21", titre := "7 000 policiers et gendarmes de plus"
     source := "Comparateur IFRAP 2027 ; ≈ 85 000 € par poste (Institut Montaigne, 2022, coût d'un recrutement dans la justice, hypothèse) : ≈ 0,6 Md€"
-    leviers := [.depenseSur .securiteJustice 600, .annonceEmplois 7000] },
+    leviers := [.creationPostes .securiteJustice [7000] 85000, .annonceEmplois 7000] },
   { id := "RN-22", titre := "Abrogation du zéro artificialisation nette (ZAN)"
     source := "Hors du contre-budget : amendement n° 1555 (J.-P. Meurin, cosigné par M. Le Pen, 4 avril 2025) : l'article 191 de la loi Climat et résilience « est abrogé » ; K. Mauvieux (28 mai 2025) : « Nous ne voulons plus du ZAN ». Consommation d'espaces ramenée au rythme 2011-2021 (modèle commun)"
     leviers := [.regimeZan 1000] },

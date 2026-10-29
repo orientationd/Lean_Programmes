@@ -238,8 +238,8 @@ def mesures : List Mesure := [
     source := s!"{budget} : 3 Md€/an"
     leviers := [.depenseSur .famille 3000] },
   { id := "L-25", titre := "10 000 postes d'enseignants"
-    source := s!"{budget} : 0,5 Md€/an"
-    leviers := [.depenseSur .enseignement 500, .annonceEmplois 10000] },
+    source := s!"{budget} : 0,5 Md€/an, soit 50 000 € par poste (calcul) ; postes publics comptés un pour un (levier `creationPostes`)"
+    leviers := [.creationPostes .enseignement [10000] 50000, .annonceEmplois 10000] },
   { id := "L-26", titre := "Logement d'urgence et réquisitions contre le sans-abrisme"
     source := s!"{budget} : +3 Md€/an (chiffrage du parti)"
     leviers := [.depenseSur .logementEnvironnement 3000] },
@@ -301,7 +301,8 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .enseignement 4300] },
   { id := "L-44", titre := "Enseignement supérieur et recherche : 40 000 personnels statutaires en cinq ans"
     source := s!"Plan ESR (melenchon2027.fr, 26 octobre 2026) ; non chiffré : 8 000 postes par an à {coutEnseignantEuros} € (hypothèse, voir `coutEnseignantEuros`), {postesEsrEcheancier.getLastD 0} M€ par an en 2031 ; les 8 000 contrats doctoraux de plus par an ne sont pas chiffrés"
-    leviers := [.depenseEcheancier .enseignement postesEsrEcheancier, .annonceEmplois 40000] },
+    leviers := [.creationPostes .enseignement [8000, 16000, 24000, 32000, 40000] coutEnseignantEuros,
+                .annonceEmplois 40000] },
   { id := "L-45", titre := "Gratuité de l'enseignement supérieur"
     source := "L'Avenir en commun 2025 et plan ESR ; Institut Montaigne (2022) : droits d'inscription 342 M€ et contribution de vie étudiante 149 M€, moins 112 M€ de compensation des boursiers, soit 379 M€ par an (calcul) ; repas à 1 € au CROUS non chiffré"
     leviers := [.depenseSur .enseignement 379] },

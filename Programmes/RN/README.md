@@ -22,7 +22,7 @@ et une règle d'or soumise à référendum.
 | RN-03 Fiscalité des grandes entreprises | +5,6 Md€ d'IS |
 | RN-04 Autres baisses d'impôts des ménages | −9,9 Md€ d'autres impôts (agrégat moins RN-01) |
 | RN-05 Retraite à 62 ans, 42 annuités | −24 mois d'âge légal (coût selon l'hypothèse du scénario ; le parti chiffre 9 Md€) |
-| RN-06 201 000 postes publics non renouvelés | −13,5 Md€ |
+| RN-06 201 000 postes publics non renouvelés | −13,5 Md€ (67 164 € par poste), 40 200 par an de 2027 à 2031, emplois publics retirés un pour un |
 | RN-07 Effort des collectivités | −8,2 Md€ |
 | RN-08 Priorité nationale (prestations) | −18,1 Md€ |
 | RN-09 Contribution à l'UE | −13,1 Md€ |
@@ -49,7 +49,7 @@ annoncés.
 | RN-18 Permis de conduire gratuit, prime d'activité étudiante | +0,7 et +0,6 Md€ |
 | RN-19 Proches aidants, soins dentaires | +2 et +1,4 Md€ |
 | RN-20 30 000 places de prison | 7,1 Md€ sur cinq ans, puis ≈ 1,35 Md€ par an de fonctionnement (hypothèses) ; 728 ha sur cinq ans (17 ha pour 700 places, Saint-Saulve) |
-| RN-21 7 000 policiers et gendarmes | ≈ 0,6 Md€ (hypothèse) |
+| RN-21 7 000 policiers et gendarmes | ≈ 0,6 Md€ (hypothèse), emplois publics comptés un pour un |
 | RN-22 Abrogation du ZAN | consommation d'espaces ramenée au rythme 2011-2021 (22 672 ha/an) ; hors du contre-budget : amendement n° 1555 (Meurin, cosigné par M. Le Pen, 4 avril 2025) |
 
 Électricité et sols en 2035 (scénario central) : 44,3 GW de solaire et

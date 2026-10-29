@@ -161,10 +161,12 @@ def pretEPR2Total : Int := 6067
 
 /-! ## O-07 à O-11 — Hypothèses de chiffrage -/
 
-/-- Impôt sur les sociétés à 15 % (`tauxISCible`), le taux minimal du
-pilier 2, contre 25 % en France (12 % dans la version précédente : taux
-hongrois de 9 %, le plus bas de l'Union, plus trois points). À 15 %, le
-plancher du pilier 2 ne joue plus : tous les groupes paient le même taux.
+/-- Impôt sur les sociétés à 20 % (`tauxISCible`), contre 25 % en France.
+Amendement d'octobre 2026 (choix de l'auteur) : le texte visait 15 %, le
+taux minimal du pilier 2 (12 % dans une version antérieure : taux hongrois
+de 9 %, le plus bas de l'Union, plus trois points) ; 20 % allège de moitié
+le coût de la baisse pour tenir le déficit sous 3 % en 2035. Au-dessus de
+15 %, le plancher du pilier 2 ne joue pas.
 
 Le modèle commun applique désormais lui-même (levier `impotSocietes`, axe
 économique) :
@@ -180,7 +182,7 @@ Le modèle commun applique désormais lui-même (levier `impotSocietes`, axe
 
 `tauxMinimumPilier2` ne sert plus qu'au calcul de O-60 (taux des grands
 groupes). -/
-def tauxISCible : Int := 1500
+def tauxISCible : Int := 2000
 def tauxMinimumPilier2 : Int := 1500
 
 /-- Démission indemnisée six mois, une fois tous les cinq ans. Hypothèse :
@@ -354,7 +356,14 @@ def revalorisationsEnseignants : List Int :=
     masseEnseignants2027 * ((10200 : Int) ^ (k + 1) - (10000 : Int) ^ (k + 1)) / (10000 : Int) ^ (k + 1)
 
 /-- Automatisation des contrôles administratifs (O-26). 10 000 postes par an
-pendant cinq ans (50 000), non remplacés au départ en retraite. Coût complet
+pendant cinq ans (50 000) libérés par l'automatisation. Amendement
+d'octobre 2026 : les agents sont redéployés au lieu d'être supprimés (dans
+le modèle commun, la suppression creusait le déficit de 2035 de 0,08 point
+et accroissait le chômage de 0,10 point en 2030 : indemnisation et
+recettes perdues dépassaient l'économie) ; 10 000 d'entre eux, 2 500 par an
+de 2027 à 2030, renforcent l'accompagnement à France Travail (O-26b, en
+plus des 10 000 conseillers d'O-77), les autres les contrôles et l'accueil
+(effets non modélisés). Coût complet
 d'un poste de catégorie B ou C : `coutPosteControle` = 55 000 € par an
 (hypothèse : salaire net moyen de la fonction publique de l'État 3 018 €
 par mois en 2024, toutes catégories (DGAFP), plus bas en B et C, cotisations
@@ -362,6 +371,7 @@ employeur comprises hors pensions). Outil : `investissementParPoste` =
 30 000 € par poste supprimé, la même année, et `maintenanceParPoste` =
 3 000 € par an ensuite (hypothèses). -/
 def postesControleParAn : Int := 10000
+def agentsRedeployesParAn : Int := 2500
 def coutPosteControle : Int := 55000
 def investissementParPoste : Int := 30000
 def maintenanceParPoste : Int := 3000
@@ -699,8 +709,11 @@ intérêts :
 * O-54 : prolongation de la CRDS au-delà de 2033 pour amortir la dette de
   l'ACOSS (59,4 Md€ fin 2025, ≈ 65 Md€ fin 2026, sans ressource dédiée) :
   9,55 Md€ (euros 2027) à partir de 2034 ; loi organique nécessaire.
-* O-55 : norme de dépense renforcée de 100 pb (soit 150 pb avec O-42) :
-  dépenses pilotables à +1,3 % par an en valeur, ≈ −0,5 % en volume.
+* O-55 : norme de dépense renforcée de 200 pb (soit 250 pb avec O-42) :
+  dépenses pilotables à +0,3 % par an en valeur, ≈ −1,5 % en volume.
+  Amendement d'octobre 2026 : 100 pb dans la version précédente ; les
+  100 pb de plus, variante « piste vers l'équilibre », sont retenus pour
+  tenir le déficit sous 3 % en 2035 sous les trois moteurs.
 * O-56 : aides aux entreprises (211 Md€ selon la commission d'enquête du
   Sénat, juillet 2025) : exonérations de cotisations réduites de 1,5 Md€
   par an pendant six ans (9 Md€ en 2032), en les conditionnant.
@@ -711,7 +724,7 @@ intérêts :
   par an, 80 % des départs concernés (`partDepartsDuree`).
 -/
 def crdsProlongee : List Int := (List.range 20).map fun k => if k < 7 then 0 else 9550
-def normeRenforceePb : Int := 100
+def normeRenforceePb : Int := 200
 def baisseAidesEntreprises : Int := 1500
 def rabotNiches : Int := 2000
 
@@ -1201,8 +1214,15 @@ consommation d'électricité supplémentaire n'est pas comptée. -/
 def soutienParMt : Int := 22000 / (63 - 45)
 def mtParAnIndustrie : Int := 2
 def aideDecarbonation : Int := mtParAnIndustrie * soutienParMt
+/-- Renforcement d'octobre 2026 : 1,25 Mt de plus par an de 2027 à 2030,
+au même soutien par Mt (13 Mt en tout au lieu de 8, au-delà de l'objectif
+SNBC-3 de l'industrie) pour ramener les émissions de 2030 sous le plafond
+de 300 Mt avec O-124. -/
+def ktSupplementairesIndustrie : Int := 1250
+def aideDecarbonationSupplementaire : Int := ktSupplementairesIndustrie * soutienParMt / 1000
 
-theorem decarbonation_valeurs : soutienParMt = 1222 ∧ aideDecarbonation = 2444 := by decide
+theorem decarbonation_valeurs : soutienParMt = 1222 ∧ aideDecarbonation = 2444 ∧
+    aideDecarbonationSupplementaire = 1527 := by decide
 
 /-- Places en Ehpad publics (O-109, O-109b) : la DREES prévoit 108 000
 résidents de plus en Ehpad en 2030 dans son scénario central (Études et
@@ -1247,11 +1267,16 @@ def adjointsSecurite : Int := 20000
 def encadrantsProximite : Int := 6700
 def coutPoliceProximite : Int := (adjointsSecurite * 39015 + encadrantsProximite * 67998) / 1000000
 def agentsProximite : List Int := [670, 2670, 10700, 21300, adjointsSecurite + encadrantsProximite]
+/-- Coût moyen d'un agent de la police de proximité (adjoints et
+encadrants pondérés, calcul), pour le levier `creationPostes`. -/
+def coutAgentProximiteEuros : Int :=
+  (adjointsSecurite * 39015 + encadrantsProximite * 67998) / (adjointsSecurite + encadrantsProximite)
 def policeProximite : List Int :=
   agentsProximite.map fun a => coutPoliceProximite * a / (adjointsSecurite + encadrantsProximite)
 
 theorem policeProximite_valeurs :
-    coutPoliceProximite = 1235 ∧ policeProximite = [30, 123, 494, 985, 1235] := by decide
+    coutPoliceProximite = 1235 ∧ policeProximite = [30, 123, 494, 985, 1235] ∧
+    coutAgentProximiteEuros = 46287 := by decide
 
 /-- Bpifrance (O-111) : 5 % des financements de la banque publique sont
 orientés vers des projets choisis par un vote en ligne des citoyens, parmi
@@ -1466,14 +1491,18 @@ theorem aidesDomicile_eq : revalorisationAidesDomicile = 428 := by decide
 de la proposition du PCF (PC-12, sans les médecins scolaires, déjà dans
 O-88) : 4 000 postes coûtent 150 M€ en année pleine (gouvernement, janvier
 2025), soit 37 500 € par poste et 3 375 M€ pour 90 000 postes (calcul),
-recrutés en cinq ans. -/
+recrutés en quatre ans, de 2027 à 2030 (hypothèse ; cinq ans dans la
+version précédente). -/
 def postesEcole : Int := 90000
 def coutPosteEcoleEuros : Int := 150000000 / 4000
+/-- Effectifs cumulés de O-121, par quarts (levier `creationPostes`). -/
+def postesEcoleCumul : List Int := ([1, 2, 3, 4] : List Int).map fun k => postesEcole * k / 4
 def postesEcoleEcheancier : List Int :=
-  ([1, 2, 3, 4, 5] : List Int).map fun k => postesEcole * k / 5 * coutPosteEcoleEuros / 1000000
+  ([1, 2, 3, 4] : List Int).map fun k => postesEcole * k / 4 * coutPosteEcoleEuros / 1000000
 
 theorem postesEcole_valeurs :
-    coutPosteEcoleEuros = 37500 ∧ postesEcoleEcheancier = [675, 1350, 2025, 2700, 3375] := by decide
+    coutPosteEcoleEuros = 37500 ∧ postesEcoleCumul = [22500, 45000, 67500, 90000] ∧
+    postesEcoleEcheancier = [843, 1687, 2531, 3375] := by decide
 
 /-- Cotisations salariales −0,5 point (O-122) : coup de pouce au pouvoir
 d'achat de tous les salariés, public et privé. Salaires et traitements bruts
@@ -1823,6 +1852,80 @@ def partImposeeAvant : Int := 600
 
 /-! ## Mesures -/
 
+/-! ## O-124 à O-128 — Tenue des propriétés au scénario central (octobre 2026)
+
+Mesures ajoutées pour que chaque propriété non tenue au scénario central
+le soit dans au moins 18 des 36 scénarios sous les trois moteurs, quand
+c'est atteignable avec des mesures sourcées : déficit sous le plafond
+juridique en 2030, déficit sous 3 % en 2035, baisse du déficit chaque
+année, chômage de 2030 non dégradé, émissions de 2030 sous 300 Mt (voir
+README, « Propriétés »). -/
+
+/-- Composante carbone remise sur sa trajectoire (O-124). Gelée à 44,6 €/t
+depuis 2018 ; la loi n° 2015-992 (transition énergétique, art. 1) visait
+100 €/t en 2030 : +55,4 €/t, en quatre hausses égales de 2027 à 2030.
+Assiettes : voitures particulières, 53,24 % des émissions des transports
+en 2024 (Citepa, via la FNTR), appliqués aux 122,9 Mt de 2025 : 65,4 Mt
+(calcul) ; chauffage au fioul et au gaz, 85 % des 54,9 Mt des bâtiments
+(hypothèse : hors gaz fluorés) : 46,7 Mt. Hausse de prix : gazole
++14,7 c€ HT par litre (2,65 kg CO₂/l), +10,7 % TTC sur 1,648 €/l ;
+SP95-E10 +12,6 c€ (2,28 kg/l), +8,8 % sur 1,714 €/l (moyennes 2025,
+prix-carburant.eu ; facteurs d'émission usuels, hypothèse) ; moyenne
+9,8 % (moitié gazole, hypothèse), 24 ‰ par étape ; gaz +1,26 c€ HT par
+kWh (0,227 kg/kWh), +12,6 % TTC sur ≈ 12 c€/kWh (hypothèse), 31 ‰ par
+étape. Élasticités-prix du modèle commun (0,6 et 0,3). Rendement statique :
+65,4 × 55,4 = 3 624 M€ et 46,7 × 55,4 = 2 585 M€ (calcul), dont la moitié
+reversée aux ménages modestes en chèque énergie. -/
+def assietteVoituresKt : Int := 122900 * 5324 / 10000
+def assietteChauffageKt : Int := 54900 * 85 / 100
+def hausseCarbone : Int := 554
+def rendementCarboneVoitures : Int := assietteVoituresKt * hausseCarbone / 10000
+def rendementCarboneChauffage : Int := assietteChauffageKt * hausseCarbone / 10000
+def chequeCarbone : Int := (rendementCarboneVoitures + rendementCarboneChauffage) / 2
+
+theorem carbone_valeurs : assietteVoituresKt = 65431 ∧ assietteChauffageKt = 46665 ∧
+    rendementCarboneVoitures = 3624 ∧ rendementCarboneChauffage = 2585 ∧ chequeCarbone = 3104 := by decide
+
+/-- Amendes proportionnelles aux revenus (O-125), sur le modèle des
+jours-amendes nordiques : l'amende est le montant actuel multiplié par le
+rapport entre le niveau de vie du contrevenant et le niveau de vie médian,
+sans pouvoir être inférieure au montant actuel (demande de l'auteur).
+Amendes de la circulation et du stationnement encaissées en 2025 :
+2,13 Md€ pour 45 millions de contraventions (Cour des comptes, via
+L'argus, 13 octobre 2026). Niveaux de vie 2024 (Insee) : médiane 26 740 €,
+D6 29 880, D7 33 680, D8 38 780, D9 48 580 € ; moyenne du dernier décile
+1,5 × D9 (hypothèse) ; contrevenants répartis comme la population
+(hypothèse). Supplément moyen = Σ (milieu de chaque dixième au-dessus de la
+médiane − médiane) / (10 × médiane) = 79 170 / 267 400 ≈ 29,6 % (calcul),
+soit 630 M€ par an ; effet dissuasif non compté. -/
+def amendesCirculation : Int := 2130
+def excedentNiveauxDeVie : Int :=
+  (28310 - 26740) + (31780 - 26740) + (36230 - 26740) + (43680 - 26740) + (48580 * 3 / 2 - 26740)
+def recettesAmendesProportionnelles : Int := amendesCirculation * excedentNiveauxDeVie / (10 * 26740)
+
+theorem amendes_valeurs : excedentNiveauxDeVie = 79170 ∧ recettesAmendesProportionnelles = 630 := by decide
+
+/-- Contrats aidés non marchands (O-127, parcours emploi compétences) :
+32 000 financés en 2025, aidés à 37 % (circulaire DGEFP, via Carenews,
+15 mai 2025), contre plus de 300 000 contrats aidés avant 2017. Le
+programme finance 200 000 contrats en cours (100 000 de plus en 2027 et
+en 2028), aidés à 60 % du SMIC brut sur 26 heures par semaine : 12,02 € ×
+26 × 52 × 60 % = 9 750 € par contrat et par an (calcul). Effet net sur
+l'emploi : dans le secteur non marchand, à budget constant de l'employeur,
+il est égal au taux de prise en charge, 0,6 emploi par contrat (Insee,
+Note de conjoncture, décembre 2019), soit 400 ‰ d'effet d'aubaine. -/
+def contratsAidesParAn : Int := 100000
+def aideContratAideEuros : Int := 1202 * 26 * 52 * 60 / 100 / 100
+
+theorem contratsAides_valeurs : aideContratAideEuros = 9750 := by decide
+
+/-- Leasing social électrique (O-128) : 150 000 voitures par an à 6 000 €
+d'aide (6 Md€ pour un million de voitures, même coût unitaire que la
+proposition de R. Glucksmann, PP-04) ; 50 000 voitures par édition depuis
+2024. Émissions évitées par le sous-modèle automobile du modèle commun. -/
+def leasingSocialParAn : Int := 150000
+def leasingSocialAideEuros : Int := 6000
+
 def mesures : List Mesure := [
   { id := "O-01"
     titre := "Remplacement gratuit par l'État de 10 000 voitures parmi les plus polluantes chaque année"
@@ -1922,10 +2025,11 @@ def mesures : List Mesure := [
       { nom := "écart de 6 mois au calendrier légal dès 2027", leviers := [.ageLegal (-6)] }] },
 
   { id := "O-08"
-    titre := "Impôt sur les sociétés à 15 %, le taux minimal du pilier 2"
-    source := s!"Texte Orientation D, mesure 8 ; {tauxISCible / 100} %, taux minimal de la directive (UE) 2022/2523 (pilier 2) ; réponse de l'assiette appliquée par le modèle commun (axe économique)"
+    titre := "Impôt sur les sociétés à 20 % (amendé : 15 % dans le texte)"
+    source := s!"Texte Orientation D, mesure 8, amendée en octobre 2026 : {tauxISCible / 100} % au lieu de 15 %, le taux minimal de la directive (UE) 2022/2523 (pilier 2), pour tenir le déficit sous 3 % en 2035 (voir `tauxISCible`) ; réponse de l'assiette appliquée par le modèle commun (axe économique)"
     leviers := [.impotSocietes tauxISCible]
     variantes := [
+      { nom := "15 % (texte initial, taux minimal du pilier 2)", leviers := [.impotSocietes 1500] },
       { nom := "12 % (trois points au-dessus du taux hongrois de 9 %, version précédente)", leviers := [.impotSocietes 1200] },
       { nom := "17 % (minimum de 15 % du pilier 2 + 2 points)", leviers := [.impotSocietes 1700] },
       { nom := "IS maintenu à 25 % (abandon de la baisse, piste vers l'équilibre)", leviers := [] }] },
@@ -2033,13 +2137,24 @@ def mesures : List Mesure := [
     debut := 0 },
 
   { id := "O-26"
-    titre := "Automatisation des tâches administratives : 10 000 postes de contrôle supprimés par an pendant cinq ans"
-    source := s!"Texte Orientation D, mesure 26 ; {postesControleParAn} postes par an × 5, non remplacés, à {coutPosteControle} € (hypothèse, DGAFP 2024) ; outil : {investissementParPoste} € par poste la même année puis {maintenanceParPoste} €/an (hypothèses)"
-    leviers := [.suppressionPostes .fonctionnement postesControleParAn coutPosteControle,
-                .depenseEcheancier .fonctionnement [postesControleParAn * investissementParPoste / 1000000, 0],
+    titre := "Automatisation des tâches administratives : 10 000 postes libérés par an pendant cinq ans, agents redéployés"
+    source := s!"Texte Orientation D, mesure 26, amendée en octobre 2026 : {postesControleParAn} postes libérés par an × 5, agents redéployés (voir `postesControleParAn`) ; outil : {investissementParPoste} € par poste la même année puis {maintenanceParPoste} €/an (hypothèses)"
+    leviers := [.depenseEcheancier .fonctionnement [postesControleParAn * investissementParPoste / 1000000, 0],
                 .depenseSur .fonctionnement (postesControleParAn * maintenanceParPoste / 1000000)]
     debut := 0
-    repetitions := 5 },
+    repetitions := 5
+    variantes := [
+      { nom := "postes supprimés (version précédente, 55 000 € par poste)",
+        leviers := [.suppressionPostes .fonctionnement postesControleParAn coutPosteControle,
+                    .depenseEcheancier .fonctionnement [postesControleParAn * investissementParPoste / 1000000, 0],
+                    .depenseSur .fonctionnement (postesControleParAn * maintenanceParPoste / 1000000)]
+      }] },
+
+  { id := "O-26b"
+    titre := "Agents redéployés par l'automatisation : 10 000 conseillers de plus à France Travail en quatre ans"
+    source := s!"Texte Orientation D, mesure 26 amendée : {agentsRedeployesParAn} agents par an de 2027 à 2030, déjà rémunérés (coût nul), formés à l'accompagnement ; chômage d'équilibre du modèle commun (5 chômeurs de moins par conseiller, comme O-77)"
+    leviers := [.accompagnementDemandeurs agentsRedeployesParAn 0]
+    repetitions := 4 },
 
   { id := "O-27"
     titre := "Médecins généralistes : simplification des tâches administratives ; enquêteurs humains sur les cas anormaux à la place des contrôles systématiques"
@@ -2125,9 +2240,10 @@ def mesures : List Mesure := [
     variantes := [{ nom := "chiffrage du groupe PS (10 Md€)", leviers := [.prelevementSur .autres 10000] }] },
 
   { id := "O-38"
-    titre := "Reconfiguration des exonérations de cotisations patronales"
-    source := s!"Texte Orientation D, mesure 38 ; chiffrage du groupe PS : {exonerationsCotisations} M€"
-    leviers := [.reductionAllegements exonerationsCotisations]
+    titre := "Reconfiguration des exonérations de cotisations patronales, ciblée sur les salaires de 1,6 à 2,5 SMIC"
+    source := s!"Texte Orientation D, mesure 38 ; chiffrage du groupe PS : {exonerationsCotisations} M€ ; amendée en octobre 2026 : la réduction porte sur la tranche de 1,6 à 2,5 SMIC (élasticité de l'emploi au coût du travail de 0,25 contre 0,4 sous 1,6 SMIC, modèle commun) au lieu d'une réduction au prorata, qui touchait surtout les bas salaires"
+    leviers := [.allegementsCotisations .intermediaire (-exonerationsCotisations)]
+    variantes := [{ nom := "réduction au prorata des allègements (version précédente)", leviers := [.reductionAllegements exonerationsCotisations] }]
     debut := 0 },
 
   { id := "O-39"
@@ -2237,12 +2353,12 @@ def mesures : List Mesure := [
     leviers := [.recetteEcheancier (some .csgCrds) crdsProlongee] },
 
   { id := "O-55"
-    titre := "Norme de dépense renforcée : dépenses pilotables à −0,5 % par an en volume (avec O-42)"
-    source := s!"Texte Orientation D, mesure 55 ; +{normeRenforceePb} pb de modération, soit 150 pb avec O-42 : 1,3 % par an en valeur au lieu de 2,8 %"
+    titre := "Norme de dépense renforcée : dépenses pilotables à −1,5 % par an en volume (avec O-42)"
+    source := s!"Texte Orientation D, mesure 55, amendée en octobre 2026 : +{normeRenforceePb} pb de modération (100 pb dans la version précédente), soit 250 pb avec O-42 : 0,3 % par an en valeur au lieu de 2,8 % ; les dépenses à échéancier du programme (postes, investissements) sont indexées hors norme"
     leviers := [.normeDepense normeRenforceePb]
     variantes := [
-      { nom := "norme renforcée de 100 pb de plus (250 pb avec O-42, piste vers l'équilibre)", leviers := [.normeDepense (normeRenforceePb + 100)] },
-      { nom := "norme renforcée de 200 pb de plus (350 pb avec O-42, piste vers l'équilibre)", leviers := [.normeDepense (normeRenforceePb + 200)] }] },
+      { nom := "norme de 100 pb (version précédente, 150 pb avec O-42)", leviers := [.normeDepense 100] },
+      { nom := "norme renforcée de 100 pb de plus (350 pb avec O-42, piste vers l'équilibre)", leviers := [.normeDepense (normeRenforceePb + 100)] }] },
 
   { id := "O-56"
     titre := "Aides aux entreprises : exonérations de cotisations réduites de 1,5 Md€ par an pendant six ans, sous conditions"
@@ -2457,11 +2573,11 @@ def mesures : List Mesure := [
   { id := "O-88"
     titre := "Médecins scolaires : effectif doublé, 800 de plus en quatre ans"
     source := s!"Texte Orientation D, mesure 88 ; 818 médecins en 2022, un pour 13 300 élèves, 44 % de postes vacants ; +{medecinsScolairesNouveaux} médecins à {coutMedecinScolaireEuros / 1000} k€ par an, revalorisation comprise (hypothèse) : {medecinsScolairesNouveaux * coutMedecinScolaireEuros / 1000000} M€ par an une fois tous recrutés, par quarts (voir `medecinsScolairesNouveaux`)"
-    leviers := [.depenseSur .enseignement (medecinsScolairesNouveaux * coutMedecinScolaireEuros / 1000000 / 4)]
-    repetitions := 4
+    leviers := [.creationPostes .enseignement (([1, 2, 3, 4] : List Int).map fun k => medecinsScolairesNouveaux * k / 4)
+                  coutMedecinScolaireEuros]
     variantes := [
       { nom := "retour au niveau de 2013 (1 143 médecins, 325 de plus)",
-        leviers := [.depenseSur .enseignement (325 * coutMedecinScolaireEuros / 1000000 / 4)] }] },
+        leviers := [.creationPostes .enseignement (([1, 2, 3, 4] : List Int).map fun k => 325 * k / 4) coutMedecinScolaireEuros] }] },
 
   { id := "O-89"
     titre := "Fin de l'octroi de mer, compensée aux collectivités par l'État"
@@ -2518,7 +2634,7 @@ def mesures : List Mesure := [
   { id := "O-95"
     titre := "Divisions régionales de cybersécurité de la police : 18 divisions de 50 enquêteurs et ingénieurs"
     source := s!"Texte Orientation D, mesure 95 ; {agentsCyber} agents à {coutAgentPoliceEuros} € (coût moyen d'un emploi de la police nationale, PLF 2026) : {coutCyberPolice} M€ par an, recrutés en trois ans ; laboratoires 1 M€ par division (hypothèse) ; en plus de l'OFAC (720 enquêteurs en 2027) (voir `divisionsCyber`)"
-    leviers := [.depenseEcheancier .securiteJustice [coutCyberPolice / 3, 2 * coutCyberPolice / 3, coutCyberPolice],
+    leviers := [.creationPostes .securiteJustice [agentsCyber / 3, 2 * agentsCyber / 3, agentsCyber] coutAgentPoliceEuros,
                 .investissementEcheancier .securiteJustice [divisionsCyber, 0],
                 .annonceEmplois agentsCyber] },
 
@@ -2557,7 +2673,8 @@ def mesures : List Mesure := [
   { id := "O-100"
     titre := "2 000 douaniers de plus et contrôle renforcé des produits agricoles et industriels importés"
     source := s!"Texte Orientation D, mesure 100 ; {douaniersSupplementaires} douaniers (1 220 pour revenir aux plafonds de 2019, 780 pour les contrôles de conformité des importations) à {coutDouanierEuros} € (coût moyen du programme 302, PLF 2026) : {coutDouaniers} M€ par an, recrutés en trois ans ; recettes des contrôles non comptées (voir `douaniersSupplementaires`)"
-    leviers := [.depenseEcheancier .securiteJustice [coutDouaniers / 3, 2 * coutDouaniers / 3, coutDouaniers],
+    leviers := [.creationPostes .securiteJustice
+                  [douaniersSupplementaires / 3, 2 * douaniersSupplementaires / 3, douaniersSupplementaires] coutDouanierEuros,
                 .annonceEmplois douaniersSupplementaires] },
 
   { id := "O-101"
@@ -2634,11 +2751,14 @@ def mesures : List Mesure := [
         leviers := [.renovationsAmpleur .national (renovationsVillesMoyennes / 2) aideRenovationAmpleurEuros economieRenovationAmpleurKWh] }] },
 
   { id := "O-108"
-    titre := "Décarbonation des sites industriels : 2 Mt évitées de plus chaque année de 2027 à 2030, 2,44 Md€ d'aides par an"
-    source := s!"Texte Orientation D, mesure 108 ; écart de 8 Mt à l'objectif SNBC-3 de l'industrie en 2030 ; soutien public de {soutienParMt} M€ par Mt évitée (DGE, 22 Md€ de 2024 à 2030 pour 18 Mt) : {aideDecarbonation} M€ par an pendant quatre ans (voir `soutienParMt`)"
-    leviers := [.depenseEcheancier .affairesEconomiques [aideDecarbonation, 0],
-                .transition .industrie mtParAnIndustrie 0]
-    repetitions := 4 },
+    titre := "Décarbonation des sites industriels : 3,25 Mt évitées de plus chaque année de 2027 à 2030, 3,97 Md€ d'aides par an"
+    source := s!"Texte Orientation D, mesure 108 ; écart de 8 Mt à l'objectif SNBC-3 de l'industrie en 2030, porté à 13 Mt en octobre 2026 pour tenir le plafond de 300 Mt (voir `ktSupplementairesIndustrie`) ; soutien public de {soutienParMt} M€ par Mt évitée (DGE, 22 Md€ de 2024 à 2030 pour 18 Mt) : {aideDecarbonation + aideDecarbonationSupplementaire} M€ par an pendant quatre ans (voir `soutienParMt`)"
+    leviers := [.depenseEcheancier .affairesEconomiques [aideDecarbonation + aideDecarbonationSupplementaire, 0],
+                .transition .industrie mtParAnIndustrie 0, .transitionKt .industrie ktSupplementairesIndustrie 0]
+    repetitions := 4
+    variantes := [
+      { nom := "2 Mt par an (version précédente, objectif SNBC-3 de l'industrie)",
+        leviers := [.depenseEcheancier .affairesEconomiques [aideDecarbonation, 0], .transition .industrie mtParAnIndustrie 0] }] },
 
   { id := "O-109"
     titre := "Ehpad publics : 52 000 places de plus, construites de 2027 à 2031"
@@ -2655,7 +2775,7 @@ def mesures : List Mesure := [
   { id := "O-110"
     titre := "Police de proximité : 20 000 adjoints de sécurité et 6 700 policiers pour les encadrer"
     source := s!"Texte Orientation D, mesure 110 ; chiffrage de l'Institut Montaigne (2022) : 39 015 € par adjoint, 67 998 € par titulaire, {coutPoliceProximite} M€ par an en année pleine, montée en charge en cinq ans ; BAC maintenues (voir `coutPoliceProximite`)"
-    leviers := [.depenseEcheancier .securiteJustice policeProximite,
+    leviers := [.creationPostes .securiteJustice agentsProximite coutAgentProximiteEuros,
                 .annonceEmplois (adjointsSecurite + encadrantsProximite)] },
 
   { id := "O-111"
@@ -2666,9 +2786,9 @@ def mesures : List Mesure := [
   { id := "O-112"
     titre := "Titres de séjour : 500 agents de plus dans les préfectures pour réduire les délais"
     source := s!"Texte Orientation D, mesure 112 ; {agentsPrefectures} emplois à {coutAgentPrefectureEuros} € (amendement II-333 au PLF 2026) : {renfortPrefectures} M€ par an (voir `renfortPrefectures`)"
-    leviers := [.depenseSur .fonctionnement renfortPrefectures, .annonceEmplois agentsPrefectures]
+    leviers := [.creationPostes .fonctionnement [agentsPrefectures] coutAgentPrefectureEuros, .annonceEmplois agentsPrefectures]
     variantes := [
-      { nom := "1 000 agents", leviers := [.depenseSur .fonctionnement (2 * renfortPrefectures), .annonceEmplois (2 * agentsPrefectures)] }] },
+      { nom := "1 000 agents", leviers := [.creationPostes .fonctionnement [2 * agentsPrefectures] coutAgentPrefectureEuros, .annonceEmplois (2 * agentsPrefectures)] }] },
 
   { id := "O-113"
     titre := "Algérie : réponse aux demandes mémorielles (archives, disparus, essais nucléaires, restes humains)"
@@ -2728,9 +2848,9 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .sante revalorisationAidesDomicile] },
 
   { id := "O-121"
-    titre := "Écoles : 90 000 enseignants, AESH et infirmières scolaires de plus en cinq ans"
-    source := s!"Texte Orientation D, mesure 121 ; {postesEcole} postes à {coutPosteEcoleEuros} € (4 000 postes = 150 M€, gouvernement, janvier 2025) : {postesEcoleEcheancier.getLastD 0} M€ par an en 2031 (voir `postesEcoleEcheancier`)"
-    leviers := [.depenseEcheancier .enseignement postesEcoleEcheancier, .annonceEmplois postesEcole] },
+    titre := "Écoles : 90 000 enseignants, AESH et infirmières scolaires de plus en quatre ans"
+    source := s!"Texte Orientation D, mesure 121 ; {postesEcole} postes à {coutPosteEcoleEuros} € (4 000 postes = 150 M€, gouvernement, janvier 2025) : {postesEcoleEcheancier.getLastD 0} M€ par an en 2030, recrutés en quatre ans (voir `postesEcoleEcheancier`)"
+    leviers := [.creationPostes .enseignement postesEcoleCumul coutPosteEcoleEuros, .annonceEmplois postesEcole] },
 
   { id := "O-122"
     titre := "Pouvoir d'achat : cotisations salariales réduites d'un demi-point pour tous les salariés"
@@ -2742,13 +2862,37 @@ def mesures : List Mesure := [
   { id := "O-123"
     titre := "Solaire : 3 000 € d'aide pour 3 kWc sur le toit de 50 000 ménages modestes par an"
     source := s!"Texte Orientation D, mesure 123 ; prime à l'autoconsommation supprimée le 1er juin 2026 ; ≈ 2 000 € par kWc (Selectra) ; moitié payée pour {installationsSolaires} installations par an (hypothèse) : {aideSolaire} M€ et {mwSolaireParAn} MW par an sur toiture (voir `aideSolaire`)"
-    leviers := [.depenseSur .logementEnvironnement aideSolaire, .solaireToiture mwSolaireParAn] }
+    leviers := [.depenseSur .logementEnvironnement aideSolaire, .solaireToiture mwSolaireParAn] },
+
+  { id := "O-124"
+    titre := "Composante carbone remise sur sa trajectoire : 100 €/t en 2030, moitié reversée en chèque énergie"
+    source := s!"Loi n° 2015-992, art. 1 (100 €/t en 2030) ; composante gelée à 44,6 €/t depuis 2018 ; +55,4 €/t en quatre étapes (2027-2030) sur les voitures particulières ({assietteVoituresKt} kt) et le chauffage au fioul et au gaz ({assietteChauffageKt} kt) ; rendement statique {rendementCarboneVoitures + rendementCarboneChauffage} M€, dont {chequeCarbone} M€ reversés en chèque énergie (voir `assietteVoituresKt`) ; recul des activités selon les élasticités-prix du modèle commun"
+    leviers := [.taxeEnvironnementale .carburantsRoutiers .accisesEnergie assietteVoituresKt 24 (rendementCarboneVoitures / 4),
+                .taxeEnvironnementale .chauffageFossile .accisesEnergie assietteChauffageKt 31 (rendementCarboneChauffage / 4),
+                .depenseSur .famille (chequeCarbone / 4)]
+    repetitions := 4 },
+
+  { id := "O-125"
+    titre := "Amendes proportionnelles aux revenus, sans pouvoir être inférieures au montant actuel"
+    source := s!"Demande de l'auteur (octobre 2026), sur le modèle des jours-amendes nordiques ; amendes de la circulation et du stationnement : {amendesCirculation} M€ en 2025 (Cour des comptes) ; montant actuel × niveau de vie / niveau de vie médian, plancher au montant actuel : +{recettesAmendesProportionnelles} M€ par an (Insee 2024, calcul ; voir `recettesAmendesProportionnelles`)"
+    leviers := [.recetteEcheancier none [recettesAmendesProportionnelles]] },
+
+  { id := "O-127"
+    titre := "Contrats aidés non marchands : 200 000 parcours emploi compétences, aidés à 60 %"
+    source := s!"32 000 PEC financés en 2025 (DGEFP) ; {contratsAidesParAn} de plus en 2027 puis en 2028, à {aideContratAideEuros} € par contrat et par an (60 % du SMIC brut sur 26 heures) ; 0,6 emploi net par contrat (Insee, décembre 2019) (voir `contratsAidesParAn`)"
+    leviers := [.emploisAides .tertiaireNonMarchand contratsAidesParAn aideContratAideEuros 400]
+    repetitions := 2 },
+
+  { id := "O-128"
+    titre := "Leasing social électrique : 150 000 voitures par an à 100 € par mois"
+    source := s!"{leasingSocialParAn} voitures par an à {leasingSocialAideEuros} € d'aide (coût unitaire de PP-04) ; 50 000 voitures par édition depuis 2024 ; émissions évitées par le sous-modèle automobile (voir `leasingSocialParAn`)"
+    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

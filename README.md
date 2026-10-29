@@ -54,7 +54,11 @@ d'un prélèvement sur la demande ; l'axe économique le répartit selon l'impô
 en dessous). Les allègements de cotisations patronales passent par le coût
 du travail, tranche de salaire par tranche de salaire. L'effet d'une
 dépense dépend de sa nature (transferts moins, investissement plus que la
-consommation publique). Le modèle calcule chaque année l'indice de
+consommation publique). Les postes publics créés ou supprimés, quand un
+programme les chiffre en postes (leviers `creationPostes` et
+`suppressionPostes`), comptent un pour un dans l'emploi ; l'emploi privé ne
+répond qu'à l'écart entre la variation du PIB et la production publique
+ajoutée ou retirée. Le modèle calcule chaque année l'indice de
 développement humain (formule du PNUD).
 
 Le déficit se calcule année par année : la croissance suit les prévisions

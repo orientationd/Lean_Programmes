@@ -17,7 +17,7 @@ déficit sous 3 % du PIB en 2031 et de 2,2 % en fin de quinquennat.
 
 | Mesure | Levier |
 |---|---|
-| LR-01 400 000 agents non remplacés | −25 Md€ |
+| LR-01 400 000 agents non remplacés | −25 Md€ (62 500 € par poste), 80 000 par an pendant le quinquennat, emplois publics retirés un pour un |
 | LR-02 Opérateurs de l'État | −12,5 Md€ |
 | LR-03 Base zéro, délégation au privé, formation pro aux régions | −22,5 Md€ |
 | LR-04 Fin de soutiens (ENR, APD, culture, contrats aidés, SNU, MaPrimeRénov') | −23 Md€ |

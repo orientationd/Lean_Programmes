@@ -37,8 +37,9 @@ theorem pretEPR_eq : pretEPR = 2022 := by decide
 
 def mesures : List Mesure := [
   { id := "LR-01", titre := "Non-remplacement de 400 000 agents publics partant à la retraite"
-    source := s!"{plan} : 25 Md€ (sur 5,9 millions d'agents)"
-    leviers := [.economieSur .fonctionnement 25000] },
+    source := s!"{plan} : 25 Md€ (sur 5,9 millions d'agents), soit 62 500 € par poste (calcul) ; 80 000 départs non remplacés par an pendant le quinquennat, emplois publics retirés un pour un (levier `suppressionPostes`)"
+    leviers := [.suppressionPostes .fonctionnement 80000 62500]
+    repetitions := 5 },
   { id := "LR-02", titre := "Opérateurs de l'État : départs volontaires, suppressions"
     source := s!"{plan} : 5 + 7,5 = 12,5 Md€"
     leviers := [.economieSur .fonctionnement 12500] },

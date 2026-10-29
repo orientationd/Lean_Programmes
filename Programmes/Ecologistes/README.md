@@ -19,7 +19,7 @@ La source ne publie pas de chiffrage global.
 | E-03 Plan d'adaptation au changement climatique | 7 Md€/an d'ici 2032 | +7 Md€, construction |
 | E-04 Loi intégrale contre les VSS | 3 Md€ | +3 Md€/an |
 | E-05 Taxe Zucman 2 % au-delà de 100 M€ | p. 66 | +15 Md€ (chiffrage externe, hypothèse) |
-| E-06 Justice : 26 000 postes sur dix ans | — | +1,56 Md€ (60 000 € par poste, hypothèse) |
+| E-06 Justice : 26 000 postes sur dix ans | — | +1,56 Md€ (60 000 € par poste, hypothèse), atteints en dix ans, emplois publics comptés un pour un |
 | E-07 Salaires des enseignants +15 %, chercheurs +10 % | — | +10 Md€ (hypothèses de masse salariale) |
 | E-08 AAH +250 €/mois | — | +3,9 Md€ (1,3 million d'allocataires, hypothèse) |
 | E-09 32 heures dans les métiers pénibles ou de nuit | p. 57 | −1,3 % d'heures par emploi (15 % des salariés, hypothèse) |

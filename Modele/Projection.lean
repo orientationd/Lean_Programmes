@@ -459,8 +459,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     | [] => ({ e with indice := indice, niveau := reconduit }, 0, 0)
     | x :: r =>
       let prevu := x * indice / 10000
-      ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit,
-        poids prevu - poids reconduit)
+      -- postes publics : la troisième composante est la variation des effectifs
+      -- (prévus moins ceux de l'année précédente), pas l'impulsion
+      let troisieme := match e.coutParPosteEuros with
+        | some c => if c * e.indice = 0 then 0
+            else x * 1000000 / c - e.niveau * 10000000000 / (c * e.indice)
+        | none => poids prevu - poids reconduit
+      ({ e with restants := r, indice := indice, niveau := prevu }, prevu - reconduit, troisieme)
   let pasEcheances := s.echeances.map pas
   -- la part importée de la dépense (investissement outre-mer) ne soutient
   -- pas l'activité intérieure et suit les importations
@@ -471,6 +476,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
           -- rémunération d'agents en poste : prélèvements en retour et effet
           -- de demande d'un transfert, sans secteur ni importations
           effetRemuneration M H nat d { st with depensesF := st.depensesF.ajouter e.fonction d }
+      | none =>
+      match e.coutParPosteEuros with
+      | some _ =>
+          -- postes publics : la variation de l'échéancier crée (ou supprime) les
+          -- emplois publics prévus ; la dépense suit le niveau indexé
+          effetCreationPostes H e.fonction d impulsion st
       | none =>
       -- une dépense qui baisse ou s'arrête détruit les emplois du secteur
       -- qu'elle avait créés (intensité en emplois symétrique) ; une économie

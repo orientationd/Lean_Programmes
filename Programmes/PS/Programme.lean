@@ -121,7 +121,8 @@ def mesures : List Mesure := [
     leviers := [.depenseEcheancier .enseignement (([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List Int).map fun k => k * 680)] },
   { id := "P-20", titre := "Enseignement supérieur : 20 000 postes en dix ans"
     source := s!"{site}, chap. 11 : « créer 20 000 postes sur dix ans » ; non chiffré : 2 000 postes par an à {coutEnseignantEuros} € (hypothèse, voir `coutEnseignantEuros`), {postesSuperieur.getLastD 0} M€ par an la dixième année"
-    leviers := [.depenseEcheancier .enseignement postesSuperieur, .annonceEmplois 20000] },
+    leviers := [.creationPostes .enseignement (([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List Int).map fun k => 2000 * k)
+                  coutEnseignantEuros, .annonceEmplois 20000] },
   { id := "P-21", titre := "Service public de la petite enfance : 200 000 solutions d'accueil de plus"
     source := s!"{site}, chap. 10 : combler « le déficit de 200 000 solutions d'accueil » de 3 mois à 3 ans ; non chiffré : {investissementAccueil} M€ par an de construction pendant cinq ans, fonctionnement jusqu'à {fonctionnementAccueil.getLastD 0} M€ par an (voir `placesAccueil`)"
     leviers := [.investissementEcheancier .famille [investissementAccueil, investissementAccueil, investissementAccueil,

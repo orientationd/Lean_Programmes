@@ -147,6 +147,15 @@ inductive Levier where
   l'emploi privé (loi d'Okun) à la seule part de la variation du PIB qui
   n'est pas la production publique supprimée. -/
   | suppressionPostes (f : Fonction) (postes : Int) (coutParPosteEuros : Int)
+  /-- Création d'emplois publics dans la fonction `f`, symétrique de
+  `suppressionPostes` : `postes` = effectifs supplémentaires cumulés année
+  par année depuis l'entrée en vigueur (échéancier, le dernier est
+  conservé), au coût complet `coutParPosteEuros` par an (euros de l'année
+  d'entrée en vigueur, indexés comme la fonction). Dépense (impulsion de
+  demande de la fonction), hausse directe de l'emploi public, et réponse
+  de l'emploi privé (loi d'Okun) à la seule part de la variation du PIB qui
+  n'est pas la production publique ajoutée. -/
+  | creationPostes (f : Fonction) (postes : List Int) (coutParPosteEuros : Int)
   /-- Dépense à échéancier sur la fonction `f` : `niveaux` = montants des
   années successives, M€ de l'année d'entrée en vigueur (le premier est
   versé tout de suite, les suivants dans la projection, indexés ; le dernier
@@ -426,6 +435,20 @@ def appliquerDepense (H : Scenario) (cible : Option Secteur) (f : Fonction) (mon
     (s : Etat) : Etat :=
   effetDemande H cible (appliquerPm montant (H.eco.incidenceDepensePm.get f))
     { s with depensesF := s.depensesF.ajouter f montant }
+
+/-- Création (ou, si négatifs, suppression) de `postes` emplois publics
+pour une dépense de `depense` M€ dans la fonction `f` : impulsion de
+demande de la fonction ; les emplois publics s'ajoutent un pour un, et
+l'emploi privé répond (loi d'Okun) à l'écart entre la variation du PIB et
+la production publique ajoutée (symétrique de `suppressionPostes`). -/
+def effetCreationPostes (H : Scenario) (f : Fonction) (depense postes : Int) (s : Etat) : Etat :=
+  let dPib := appliquerPm (appliquerPm depense (H.eco.incidenceDepensePm.get f)) H.eco.multiplicateurPm
+  let s₁ := chocPibSeul H dPib { s with depensesF := s.depensesF.ajouter f depense }
+  let s₂ := chocDemandeTravail H (some .tertiaireNonMarchand) postes s₁
+  let reste := dPib - depense
+  let dEmploi := if s₂.pib = 0 then 0
+    else s₂.actifs * reste * H.eco.okunPm * (1000 + H.eco.flexionPm) / (s₂.pib * 1000000)
+  chocDemandeTravail H none dEmploi s₂
 
 /-- Investissement public imputé à la fonction `f` : emplois dans la
 construction, effet sur la demande de l'investissement. -/
@@ -722,6 +745,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let dEmploi := if s₂.pib = 0 then 0
         else s₂.actifs * reste * H.eco.okunPm * (1000 + H.eco.flexionPm) / (s₂.pib * 1000000)
       chocDemandeTravail H none dEmploi s₂
+  | .creationPostes _ [] _, s => s
+  | .creationPostes f (n :: reste) cout, s =>
+      let niveau := n * cout / 1000000
+      let e : Echeance := { fonction := f, restants := reste.map (· * cout / 1000000), niveau := niveau,
+                            indice := 10000, coutParPosteEuros := some cout }
+      effetCreationPostes H f niveau n { s with echeances := s.echeances ++ [e] }
   | .depenseEcheancier _ [], s => s
   | .depenseEcheancier f (n :: reste), s =>
       let s' := { s with echeances := s.echeances ++ [{ fonction := f, restants := reste, niveau := n, indice := 10000 }] }
