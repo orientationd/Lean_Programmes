@@ -154,10 +154,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- croissance potentielle), amputée de l'effet d'offre du moteur
   -- (prélèvements obligatoires au-dessus de leur niveau de départ →
   -- croissance amputée ; en dessous → croissance accrue)
-  -- pour l'IS, la part `canalCapitalPm` de l'effet passe par le canal du
-  -- capital (coût du capital des entreprises) plutôt que par cet effet générique
+  -- la variation d'IS due au taux fixé par les mesures passe, pour la part
+  -- `canalCapitalPm`, par le canal du capital (coût du capital des
+  -- entreprises) plutôt que par cet effet générique ; les surtaxes et les
+  -- variations cycliques de l'IS y restent
   let poGeneriquePb (e : Etat) : Int :=
-    ratioPb (e.impots.total - appliquerPm e.impots.impotSocietes M.canalCapitalPm) e.pib
+    let tEff := H.eco.tauxISPb + e.ecartTauxISPb
+    let dIsTaux := if tEff = 0 then 0 else e.impots.impotSocietes * e.ecartTauxISPb / tEff
+    ratioPb (e.impots.total - appliquerPm dIsTaux M.canalCapitalPm) e.pib
   let volume := H.eco.croissanceVolumeA k
     - appliquerPm (poGeneriquePb s - poGeneriquePb ref) M.elasticiteCroissancePoPm
   let prix := H.eco.inflationA k

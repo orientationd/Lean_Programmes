@@ -33,9 +33,11 @@ structure Moteur where
   /-- Part du canal du capital appliquée, pm (`0` : l'investissement public et
   le taux d'IS n'agissent sur le PIB que par la demande ; `1000` : effet
   entier sur le PIB potentiel, par le stock de capital public et par le coût
-  du capital des entreprises). Pour l'IS, ce canal remplace l'effet générique
-  des prélèvements dans la même proportion : `elasticiteCroissancePoPm` ne
-  porte que sur la part `1000 − canalCapitalPm` des variations d'IS. -/
+  du capital des entreprises). Pour le taux d'IS fixé par les mesures, ce
+  canal remplace l'effet générique des prélèvements dans la même proportion :
+  `elasticiteCroissancePoPm` ne porte que sur la part `1000 − canalCapitalPm`
+  de la variation d'IS due au taux (surtaxes et cycle restent dans l'effet
+  générique). -/
   canalCapitalPm : Int := 0
   deriving Repr
 
