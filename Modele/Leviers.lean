@@ -22,9 +22,10 @@ Conséquences :
 * ajouter un levier ou changer son interprétation est une modification du
   modèle commun, revue par les mainteneurs (CODEOWNERS).
 
-Ce modèle est volontairement **jouet** : il sert à montrer l'architecture.
-Le remplacer par un modèle sérieux (ou brancher une microsimulation qui émet
-des certificats vérifiés ici) est le premier chantier.
+Le modèle est un modèle agrégé, en entiers, dont chaque paramètre cite sa
+source (`Hypotheses/`) et que le rétro-test confronte aux comptes de 2018 à
+2025 ; il ne remplace pas une microsimulation (barèmes, ménages types), qui
+pourrait émettre des certificats vérifiés ici.
 -/
 
 namespace Modele
@@ -42,8 +43,17 @@ inductive Levier where
   /-- Prestation forfaitaire, €/an par habitant (coût calculé sur la
   population de l'année de mise en œuvre). -/
   | prestationParHabitant (eurosParAn : Int)
-  /-- Revalorisation du SMIC, pb. -/
+  /-- Revalorisation du SMIC, pb : emplois perdus progressivement (coût du
+  travail au voisinage du SMIC, `emploisParPointSmic`), allègements généraux,
+  rémunération des agents publics, prélèvements sur les salaires privés,
+  prestations et revenu des ménages (`smicParPoint`), proportionnels à la
+  hausse (au-delà d'une dizaine de points, l'effet est sans doute plus que
+  proportionnel : davantage de salariés rattrapés par le SMIC). -/
   | revalorisationSmic (hausse : Int)
+  /-- SMIC brut mensuel porté à `euros` (euros de l'année d'entrée en
+  vigueur) : hausse calculée sur le SMIC projeté de l'année (indexé sur les
+  prix), sans effet s'il est déjà au-dessus. -/
+  | smicCibleBrut (euros : Int)
   /-- Modification de l'âge légal, mois (positif = recul), par rapport au
   calendrier en vigueur (qui continue de s'appliquer). -/
   | ageLegal (deltaMois : Int)
@@ -606,6 +616,37 @@ def varierAllegements (M : Moteur) (H : Scenario) (t : TrancheSalaire) (m : Int)
              emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois
              emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants + ponderes }
 
+/-- Revalorisation du SMIC de `h` pb. Emplois : ceux que perd la hausse du
+coût du travail au voisinage du SMIC rejoignent progressivement l'emploi
+(comme une variation d'allègements de la première tranche, pondérés par son
+coût par emploi pour le PIB). Finances publiques, par point, ramenées au PIB
+courant : allègements en plus (cotisations en moins, suivis sur la première
+tranche), rémunération des agents publics (comme le levier
+`remunerationPublique`), cotisations et impôt sur le revenu des salariés du
+privé, prestations en moins ; revenu disponible des ménages du privé (effet
+de demande d'un transfert). -/
+def revaloriserSmic (M : Moteur) (H : Scenario) (h : Int) (s : Etat) : Etat :=
+  let P := H.eco.smicParPoint
+  let ref := H.reference.etat.pib
+  let parPoint (x : Int) : Int := if ref = 0 then 0 else x * h * s.pib / (100 * ref)
+  let allegements := parPoint P.allegementsMeur
+  let remuneration := parPoint P.remunerationPubliqueMeur
+  let emplois := -(H.eco.emploisParPointSmic * h / 100)
+  let cout := H.eco.coutTravailTrancheMeur.get .bas
+  let emploiT := H.eco.emploiPriveTrancheMilliers.get .bas
+  let ponderes := if emploiT = 0 ∨ H.eco.coutTravailTrancheMeur.total = 0 then 0
+    else emplois * cout * H.eco.emploiPriveTrancheMilliers.total / (emploiT * H.eco.coutTravailTrancheMeur.total)
+  let s₁ : Etat := { s with
+    smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h
+    impots := ((s.impots.ajouter .cotisations (parPoint P.cotisationsMeur - allegements)).ajouter .ir
+      (parPoint P.impotRevenuMeur))
+    allegementsTranche := s.allegementsTranche.ajouter .bas allegements
+    depensesF := (s.depensesF.ajouter .famille (-(parPoint P.prestationsMeur))).ajouter .fonctionnement remuneration
+    emploisCoutTravailRestants := s.emploisCoutTravailRestants + emplois
+    emploisPonderesCoutTravailRestants := s.emploisPonderesCoutTravailRestants + ponderes }
+  effetDemande H none (appliquerPm (parPoint P.revenuDisponiblePriveMeur) M.multiplicateurPrelevementsPm)
+    (effetRemuneration M H .traitement remuneration s₁)
+
 /-- Hausses régulières de `pas` mois par an jusqu'à `reste` mois (dernière
 hausse partielle). Vide si `reste` ou `pas` n'est pas positif. -/
 def pasReguliers (reste pas : Int) : List Int :=
@@ -646,12 +687,10 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
       appliquerDepense H none .famille (e * s.populationMilliers / 1000) s
-  -- le chômage augmente de `hausse × élasticité` : autant d'emplois en moins,
-  -- et autant d'heures en moins dans le PIB
-  | .revalorisationSmic h, s =>
-      let dEmploi := -(emploisPourChomeurs H (s.actifs * h * H.eco.elasticiteChomageSmicPm / 10000000))
-      chocEmploi H dEmploi (chocDemandeTravail H none dEmploi
-        { s with smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel h })
+  | .revalorisationSmic h, s => revaloriserSmic M H h s
+  | .smicCibleBrut e, s =>
+      let h := if s.smicMensuel = 0 then 0 else e * 10000 / s.smicMensuel - 10000
+      if h ≤ 0 then s else revaloriserSmic M H h s
   | .ageLegal d, s => reculDepart H (d * 1000) s
   | .dureeCotisation m part, s => reculDepart H (m * part) s
   | .ageLegalCible c r, s =>

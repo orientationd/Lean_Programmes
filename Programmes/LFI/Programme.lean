@@ -196,8 +196,8 @@ def mesures : List Mesure := [
     source := "L'Avenir en commun 2025, chap. 8 « Travailler tous, travailler moins, travailler mieux », § 8 (melenchon2027.fr/programme2025/livre/chapitre8/s8) ; âge légal fixé à 60 ans dès l'entrée en vigueur (−33 mois en 2027, puis l'écart au calendrier légal se creuse jusqu'à 48 mois en 2033), 40 annuités non modélisées ; le coût suit l'hypothèse économique du scénario"
     leviers := [.ageLegalCible 720 0] },
   { id := "L-11", titre := "SMIC porté à 1 600 € net"
-    source := "L'Avenir en commun 2025 (melenchon2027.fr, « SMIC à 1600 € net »). Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +11,0 %"
-    leviers := [.revalorisationSmic 1100] },
+    source := "L'Avenir en commun 2025 (melenchon2027.fr, « SMIC à 1600 € net »). Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : 2 021 € bruts ; la hausse se calcule sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +7,8 %"
+    leviers := [.smicCibleBrut 2021] },
   { id := "L-12", titre := "ISF climatique"
     source := s!"{budget} : 10 Md€/an"
     leviers := [.prelevementSur .autres 10000] },

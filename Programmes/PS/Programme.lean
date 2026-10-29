@@ -62,8 +62,8 @@ theorem valeurs :
 
 def mesures : List Mesure := [
   { id := "P-01", titre := "SMIC porté à 1 690 € net"
-    source := s!"{site}, chap. 1 « Redonner du sens et de la valeur au travail ». Conversion : la référence du modèle (1 820 € brut) vaut ≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre 2024), d'où +17,3 %"
-    leviers := [.revalorisationSmic 1730] },
+    source := s!"{site}, chap. 1 « Redonner du sens et de la valeur au travail ». Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : 2 134 € bruts, hausse calculée sur le SMIC projeté de 2027 (≈ +13,8 %)"
+    leviers := [.smicCibleBrut 2134] },
   { id := "P-02", titre := "Âge légal de départ ramené à 62 ans"
     source := s!"{site}, chap. 1 « Pouvoir profiter de sa retraite » (avec 43 annuités et 10 critères de pénibilité, non modélisés) ; 62 ans dès l'entrée en vigueur : −9 mois en 2027, l'écart au calendrier légal atteint 24 mois en 2033"
     leviers := [.ageLegalCible 744 0] },

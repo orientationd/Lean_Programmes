@@ -399,6 +399,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     surfacesHorsZanMesuresHa := s.surfacesHorsZanMesuresHa.tail
     surfacesHorsZanHa := s.surfacesHorsZanHa + horsZan.totalEnaf
     consommationMesuresGwh := consoMesures
+    -- SMIC : revalorisé chaque année comme les prix à la consommation
+    -- (revalorisation légale : inflation des ménages modestes et moitié du
+    -- gain de pouvoir d'achat du salaire horaire des ouvriers et employés)
+    smicMensuel := s.smicMensuel + appliquerPb s.smicMensuel pc
     -- investissement public du levier `investissement`, reconduit comme la
     -- dépense de sa fonction (norme comprise)
     investissementPublicMesures := s.investissementPublicMesures.croitrePrimaires tauxDep

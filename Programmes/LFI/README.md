@@ -27,7 +27,7 @@ et du chap. 8 § 8) :
 | Mesure | Levier |
 |---|---|
 | L-10 Retraite à 60 ans après 40 annuités | −48 mois d'âge légal (coût selon l'hypothèse du scénario ; les 40 annuités ne sont pas modélisées) |
-| L-11 SMIC à 1 600 € net | +11,0 % (conversion net/brut, voir `source`) |
+| L-11 SMIC à 1 600 € net | cible de 2 021 € bruts (ratio net/brut de 2026), ≈ +7,8 % sur le SMIC projeté de 2027 |
 
 **Budget rectificatif 2027** (14 octobre 2026, [Public Sénat](https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027),
 [France Épargne](https://www.france-epargne.fr/news/melenchon-presente-un-contre-budget-2027-1064-milliards-de-recettes-25-milliards-pour-la-dette)) :
