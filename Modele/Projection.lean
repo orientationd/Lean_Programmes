@@ -130,8 +130,9 @@ d'IS des mesures. Chocs d'offre : recettes au prorata, sans effet d'Okun
 (comme le volume d'heures). -/
 def canalCapital (M : Moteur) (H : Scenario) (prix investissementAnnee : Int) (s : Etat) : Etat :=
   let E := H.eco
-  let k := s.capitalPublicMesures + appliquerPb s.capitalPublicMesures prix
-  let k := k - appliquerPm k E.depreciationCapitalPublicPm + investissementAnnee
+  let k := s.capitalPublicMesures - appliquerPm s.capitalPublicMesures E.depreciationCapitalPublicPm
+    + investissementAnnee
+  let k := k + appliquerPb k prix
   let publicPpm := if s.pib = 0 then 0
     else k * E.elasticitePibCapitalPublicPm * 1000000 / (E.stockCapitalPublicPibPm * s.pib)
   let ciblePrivePpm := -(s.ecartTauxISPb * E.effetPibLongTermePointISPpm / 100)
@@ -159,9 +160,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- entreprises) plutôt que par cet effet générique ; les surtaxes et les
   -- variations cycliques de l'IS y restent
   let poGeneriquePb (e : Etat) : Int :=
-    let tEff := H.eco.tauxISPb + e.ecartTauxISPb
-    let dIsTaux := if tEff = 0 then 0 else e.impots.impotSocietes * e.ecartTauxISPb / tEff
-    ratioPb (e.impots.total - appliquerPm dIsTaux M.canalCapitalPm) e.pib
+    ratioPb (e.impots.total - appliquerPm e.isTauxMeur M.canalCapitalPm) e.pib
   let volume := H.eco.croissanceVolumeA k
     - appliquerPm (poGeneriquePb s - poGeneriquePb ref) M.elasticiteCroissancePoPm
   let prix := H.eco.inflationA k
@@ -400,10 +399,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     surfacesHorsZanMesuresHa := s.surfacesHorsZanMesuresHa.tail
     surfacesHorsZanHa := s.surfacesHorsZanHa + horsZan.totalEnaf
     consommationMesuresGwh := consoMesures
-    -- investissement public des mesures reconduit (les échéanciers de
-    -- construction en changent ensuite le niveau)
-    investissementPublicMesures := s.investissementPublicMesures
-      + appliquerPb s.investissementPublicMesures croissance
+    -- investissement public du levier `investissement`, reconduit comme la
+    -- dépense de sa fonction (norme comprise)
+    investissementPublicMesures := s.investissementPublicMesures.croitrePrimaires tauxDep
+      s.robotisationPb s.moderationDepensesPb
+    -- recettes d'IS dues au taux des mesures : elles croissent comme l'IS
+    isTauxMeur := if s.impots.impotSocietes = 0 then 0
+      else s.isTauxMeur * impots.impotSocietes / s.impots.impotSocietes
     pib := pib
     impots := impots
     remunerationParEmploiEuros := remuneration
@@ -526,13 +528,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       -- qu'elle avait créés (intensité en emplois symétrique) ; une économie
       -- (niveau négatif) n'a pas de secteur
       let secteur := if e.niveau < 0 then none else (e.secteur <|> e.fonction.secteur)
-      -- un échéancier de construction est un investissement public : sa
-      -- variation change le flux qui accroît le capital public
-      let dInvestissement := if e.secteur = some .construction then d else 0
       effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) (poidsEcheance H e))
         { st with depensesF := st.depensesF.ajouter e.fonction d
-                  importations := st.importations + d * (1000 - e.partInterieurePm) / 1000
-                  investissementPublicMesures := st.investissementPublicMesures + dInvestissement })
+                  importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
     ({ s₂ with echeances := pasEcheances.map (·.1) } : Etat)
   -- recettes à échéancier : indexées sur le PIB nominal (comme les assiettes) ;
   -- un impôt a l'effet de demande d'un prélèvement, une recette non fiscale aucun
@@ -579,7 +577,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     indicePrix := s.indicePrix + appliquerPb s.indicePrix H.eco.inflationPb
     esperanceVieTendanceCentiemes := s.esperanceVieTendanceCentiemes + H.demo.gainEsperanceVieCentiemes
     dureeMoyenneCentiemes := s.dureeMoyenneCentiemes + H.reference.hausseDureeMoyenneCentiemes }
-  let s₇ := canalCapital M H prix s.investissementPublicMesures s₇
+  -- investissement public de l'année écoulée : levier `investissement` et
+  -- échéanciers de construction (niveaux de l'année)
+  let investissementAnnee := s.investissementPublicMesures.total
+    + (s.echeances.filter (·.secteur = some .construction)).foldl (fun a e => a + e.niveau) 0
+  let s₇ := canalCapital M H prix investissementAnnee s₇
   -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
   -- d'année (cycle, tendance et mesures de l'année)
   let s₈ := stabilisateurChomage M H s₇

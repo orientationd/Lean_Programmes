@@ -577,7 +577,8 @@ la base du FMI (Investment and Capital Stock Dataset, manuel 2021) ; 6,5 %
 implicites dans les comptes français, qui incluent les logiciels et la R&D
 (consommation de capital fixe des APU de 113,1 Md€ en 2025, INSEE, tableau
 1.112 ; calcul). À +1 point de PIB d'investissement public durable, le PIB
-potentiel gagne 1,6 % en dix ans et 4 % à très long terme (calcul) ; le FMI
+potentiel gagne ≈ 1,5 % en dix ans et ≈ 3,4 % à long terme pour une
+croissance réelle de 1 % (calcul) ; le FMI
 trouve +1,5 % après quatre ans (estimation empirique, demande comprise) et
 ≈ +2,5 % à long terme (modèle GIMF, avec éviction). Les modèles français
 Mésange et FR-BDF n'ont pas de canal d'offre du capital public (INSEE,

@@ -179,7 +179,7 @@ def O0 : Moteur := { O with canalCapitalPm := 0 }
 
 /-- Canal du capital public : un investissement public durable d'un point
 de PIB relève le PIB de 2035, au moteur d'offre, de 1,2 à 1,7 % de plus que
-sans le canal (calcul : 1,6 % avec une élasticité de 0,12, un stock de
+sans le canal (calcul : ≈ 1,5 % avec une élasticité de 0,12, un stock de
 59 % du PIB et 5 % de dépréciation ; FMI, WEO 2014 : +1,5 % après quatre
 ans, demande comprise) ; le moteur de demande n'a pas ce canal. -/
 theorem capital_public_offre :

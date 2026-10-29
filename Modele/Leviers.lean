@@ -100,7 +100,9 @@ inductive Levier where
   /-- Économie, M€/an, sur une fonction identifiée. -/
   | economieSur (fonction : Fonction) (montant : Int)
   /-- Investissement public (bâtiments, infrastructures), M€/an, imputé à une
-  fonction mais dont les emplois vont à la construction. -/
+  fonction mais dont les emplois vont à la construction. Aux moteurs qui ont
+  le canal du capital, il accroît le capital public, donc le PIB potentiel
+  (comme les échéanciers de construction). -/
   | investissement (fonction : Fonction) (montant : Int)
   /-- Durée du travail : variation des heures annuelles par emploi, pm
   (`-86` : 35 h → 32 h). Le PIB suit le volume d'heures à l'élasticité du
@@ -454,8 +456,7 @@ def effetCreationPostes (H : Scenario) (f : Fonction) (depense postes : Int) (s 
 construction, effet sur la demande de l'investissement. -/
 def appliquerInvestissement (H : Scenario) (f : Fonction) (montant : Int) (s : Etat) : Etat :=
   effetDemande H (some .construction) (appliquerPm montant H.eco.incidenceInvestissementPm)
-    { s with depensesF := s.depensesF.ajouter f montant
-             investissementPublicMesures := s.investissementPublicMesures + montant }
+    { s with depensesF := s.depensesF.ajouter f montant }
 
 /-- Poids de l'impulsion de demande d'une dépense à échéancier : celui de
 l'investissement si elle va à la construction, sinon celui de sa fonction. -/
@@ -637,7 +638,10 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .economie m, s => appliquerEconomie M H .nonVentile m s
   | .depenseSur f m, s => appliquerDepense H f.secteur f m s
   | .economieSur f m, s => appliquerEconomie M H f m s
-  | .investissement f m, s => appliquerInvestissement H f m s
+  -- canal du capital : le flux d'investissement public des mesures (les
+  -- échéanciers de construction sont lus sur leurs échéances)
+  | .investissement f m, s => appliquerInvestissement H f m
+      { s with investissementPublicMesures := s.investissementPublicMesures.ajouter f m }
   | .prelevement r, s => appliquerPrelevement M H .autres r s
   | .baissePrelevement c, s => appliquerPrelevement M H .autres (-c) s
   | .prestationParHabitant e, s =>
@@ -665,15 +669,22 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .impotSocietes taux, s =>
       let t0 := H.eco.tauxISPb
       let tEff := tauxISEffectif H taux
-      let statique := s.impots.impotSocietes * (tEff - t0) / t0
-      -- recettes après réponse de l'assiette : IS × tEff/t0 × (1 + ε × (t0 − tEff)/100)
-      let apres := s.impots.impotSocietes * tEff
-        * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tEff)) / (t0 * 100000)
+      -- taux effectif en vigueur (un levier précédent l'a peut-être changé) ;
+      -- la réponse de l'assiette se mesure depuis le taux du scénario
+      let tCour := t0 + s.ecartTauxISPb
+      let statique := if tCour = 0 then 0 else s.impots.impotSocietes * (tEff - tCour) / tCour
+      -- recettes après réponse de l'assiette : IS × tEff/tCour × (1 + ε (t0 − tEff)/100)
+      -- / (1 + ε (t0 − tCour)/100)
+      let den := tCour * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tCour))
+      let apres := if den = 0 then s.impots.impotSocietes
+        else s.impots.impotSocietes * tEff
+          * (100000 + H.eco.semiElasticiteAssietteISPm * (t0 - tEff)) / den
       -- canal du capital : le coût du capital suit l'écart du taux effectif au
       -- taux du scénario (effet sur le PIB potentiel dans la projection)
       effetDemande H none (-(appliquerPm statique (poidsPrelevement M H .impotSocietes)))
         { s with impots := s.impots.ajouter .impotSocietes (apres - s.impots.impotSocietes)
-                 ecartTauxISPb := tEff - t0 }
+                 ecartTauxISPb := tEff - t0
+                 isTauxMeur := s.isTauxMeur + (apres - s.impots.impotSocietes) }
   | .transition sec r c, s =>
       appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec (r * 1000))
   | .transitionKt sec kt c, s =>
@@ -816,11 +827,9 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let part := partInterieureOutreMer H
       let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
                             secteur := some .construction, partInterieurePm := part }
-      -- le capital est installé outre-mer, part importée comprise
       let s' : Etat := { s with echeances := s.echeances ++ [e]
                                 depensesF := s.depensesF.ajouter f n
-                                importations := s.importations + n * (1000 - part) / 1000
-                                investissementPublicMesures := s.investissementPublicMesures + n }
+                                importations := s.importations + n * (1000 - part) / 1000 }
       effetDemande H (some .construction) (appliquerPm (n * part / 1000) H.eco.incidenceInvestissementPm) s'
   | .remunerationPublique _ _ [], s => s
   | .remunerationPublique nat f (n :: reste), s =>
