@@ -86,8 +86,9 @@ def programme : Programme where
     Engagement.sous Moteurs.standard (central) Proprietes.emissions,
     -- (Un engagement « déficit sous le plafond dérogatoire avec croissance
     -- forte » figurait ici ; il ne tient plus depuis que la baisse de l'âge
-    -- légal et la hausse du SMIC réduisent le volume d'heures travaillées,
-    -- donc le PIB : 5,02 % contre 5 %. Retiré, comme la CI l'exige.)
+    -- légal et la hausse du SMIC (ancien levier, à élasticité jouet)
+    -- réduisaient le volume d'heures travaillées, donc le PIB : 5,02 % contre
+    -- 5 %. Retiré, comme la CI l'exige.)
     -- « Avec une croissance forte, le chômage ne dépasse pas le tendanciel. »
     Engagement.sous Moteurs.standard (scenario Demo.centrale Eco.croissanceHaute Droit.cadreActuel) Proprietes.chomage
   ]

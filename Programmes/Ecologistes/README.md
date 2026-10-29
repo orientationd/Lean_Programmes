@@ -14,7 +14,7 @@ La source ne publie pas de chiffrage global.
 
 | Mesure | Source | Levier |
 |---|---|---|
-| E-01 SMIC à 2 000 € brut dès 2027 | p. 55 | +9,9 % |
+| E-01 SMIC à 2 000 € brut dès 2027 | p. 55 | cible de 2 000 € bruts, ≈ +6,6 % sur le SMIC projeté de 2027 |
 | E-02 Âge légal à 62 ans (objectif 60) | p. 116 | −24 mois |
 | E-03 Plan d'adaptation au changement climatique | 7 Md€/an d'ici 2032 | +7 Md€, construction |
 | E-04 Loi intégrale contre les VSS | 3 Md€ | +3 Md€/an |

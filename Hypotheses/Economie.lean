@@ -10,7 +10,6 @@ de population active, 2023), soit ≈ 30 000 par mois.
 pour 24 mois selon les chiffres gouvernementaux de la réforme de 2023 (via
 IFRAP), soit 570 à 740 M€ par mois ; valeur centrale retenue (auparavant
 1 500 M€, valeur provisoire surestimée).
-`elasticiteChomageSmicPm` reste une valeur jouet, à sourcer.
 `elasticitePibHeuresPm` = 650 : part du travail dans la valeur ajoutée
 (INSEE, comptes nationaux, ≈ 65 %), prise comme élasticité du PIB au
 volume d'heures travaillées à capital donné. `tauxISPb` = 2 500 : taux
@@ -316,9 +315,15 @@ le taux de chômage ne dépend donc pas de la taille de la population active
 * `tauxEmploiMigrantsPm` = 876 : taux de chômage des immigrés de 12,4 % en
   2025, contre 7,7 % pour l'ensemble (INSEE, enquête Emploi).
 * `absorptionChomagePm` = 200 : 20 % de l'écart résorbé par an (demi-vie
-  ≈ 3 ans). Hypothèse, à sourcer : convergence du chômage des immigrés avec
-  l'ancienneté de résidence, retour au taux d'avant choc en 5 à 10 ans dans
-  la littérature sur les chocs migratoires.
+  ≈ 3 ans). Simulation par l'OFCE d'une hausse durable de 2 % de la
+  population active (modèle e-mod.fr, pour le HCFiPS ; COR, séance du
+  27 janvier 2022, document 13, tableau 9) : écart de chômage de +1,7 point
+  la première année, +0,7 la cinquième, nul la dixième, soit ≈ 20 % par an
+  sur les cinq premières années (calcul). Fourchette : 11 % par an pour les
+  chocs nationaux en Europe (Beyer et Smets, BCE, document de travail 1767,
+  tableau 3 ; calcul) à une absorption presque immédiate dans la littérature
+  sur l'immigration (Card, 1990 ; Hunt, 1992, pour les rapatriés d'Algérie)
+  et dans le modèle comptable de la DG Trésor (COR, 26 mars 2026).
 
 Incidence des prélèvements (`incidencePrelevementPm`). Le moteur fixe
 l'effet moyen d'un prélèvement sur la demande (moitié de celui d'une dépense
@@ -551,6 +556,53 @@ def intensiteEmploi2025 : ParSecteur :=
   { agriculture := 1455, industrie := 754, construction := 1174,
     tertiaireMarchand := 899, tertiaireNonMarchand := 1345 }
 
+/-- Revalorisation du SMIC, par point de hausse (référence des allègements
+généraux indexée sur le SMIC ; le décret n° 2026-509 l'a gelée à 12,02 €/h
+en juin 2026 : une hausse non suivie par la référence renchérirait bien
+davantage le travail au SMIC et réduirait les allègements).
+* Emplois, effet brut du coût du travail : −26 000 à terme (OFCE, Heyer et
+  Plane, Revue de l'OFCE, hors-série 2012, tableau 2, diffusion comprise).
+  Le modèle y ajoute les emplois que sauvent les allègements en plus
+  (élasticité de la première tranche : ≈ +21 600 pour 1 490 M€) et l'effet de
+  demande (≈ +1 600), soit ≈ −2 800 par point, proche du solde de l'OFCE
+  (−2 300, avec +12 200 par les allègements et +11 500 par la demande).
+  Variantes : −29 000 (Laroque et Salanié, Économie et Statistique n° 331,
+  2000 : −290 000 à long terme pour +10 %) et −19 800 (élasticité de 0,9 au
+  SMIC de la maquette MATIS de la DG Trésor, 2015, pour les 2,2 millions de
+  salariés concernés au 1er novembre 2024, DARES, sans diffusion : calcul).
+  La méta-analyse de la note du CAE n° 91 (2026) trouve une élasticité
+  médiane de 0,13 au salaire minimum, sans allègements automatiques.
+* Allègements : +1 490 M€ (Institut Montaigne, 2024 : 21,5 Md€ pour un SMIC à
+  1 600 € nets, soit +14,4 %, tassement des salaires compris, avec la
+  réduction générale actuelle ; calcul) ; 700 M€ pour l'OFCE en 2012 et
+  400 M€ pour le Groupe d'experts sur le SMIC en 2017, avant la bascule du
+  CICE en allègements.
+* Décomposition du Groupe d'experts sur le SMIC (rapport 2017, citée par
+  l'Institut Montaigne et la Fondation Jean-Jaurès), portée aux salaires de
+  2025 (SMIC de 1 480,27 € en 2017 et 1 801,80 € en 2025, × 1,217 : calcul) :
+  agents publics payés près du SMIC +260 M€ → 316 M€ (leurs retenues sont
+  calculées par le levier) ; cotisations salariales, CSG comprise, +240 M€,
+  et impôt sur le revenu +70 M€, pour l'ensemble des salariés, ramenés à la
+  part du privé (640 M€ du revenu disponible sur 840 : calcul) et répartis
+  entre cotisations (11,31 %) et CSG-CRDS (9,53 %) : cotisations +120 M€,
+  CSG +102 M€, impôt sur le revenu +64 M€ ; prestations sociales (dont prime
+  d'activité) −133 M€ ; revenu disponible des ménages du privé +640 M€. -/
+def facteurSalaires2017 : Int := 180180 * 1000 / 148027
+def prive (x : Int) : Int := x * facteurSalaires2017 / 1000 * 640 / 840
+def smicParPoint : SmicParPoint :=
+  { allegementsMeur := 1490, remunerationPubliqueMeur := 260 * facteurSalaires2017 / 1000,
+    cotisationsMeur := prive 240 * 1131 / 2084, csgMeur := prive 240 - prive 240 * 1131 / 2084,
+    impotRevenuMeur := prive 70, prestationsMeur := 110 * facteurSalaires2017 / 1000,
+    revenuDisponiblePriveMeur := 640 }
+def emploisParPointSmicCentral : Int := 26000
+def emploisParPointSmicLaroqueSalanie : Int := 290000 / 10
+def emploisParPointSmicMatis : Int := 2200000 * 900 / 1000 / 100
+
+theorem smic_valeurs : facteurSalaires2017 = 1217 ∧ smicParPoint.remunerationPubliqueMeur = 316 ∧
+    smicParPoint.cotisationsMeur = 120 ∧ smicParPoint.csgMeur = 102 ∧ smicParPoint.impotRevenuMeur = 64 ∧
+    smicParPoint.prestationsMeur = 133 ∧ emploisParPointSmicLaroqueSalanie = 29000 ∧
+    emploisParPointSmicMatis = 19800 := by decide
+
 /-- Canal du capital public (moteurs qui l'activent : `Moteur.canalCapitalPm`).
 Élasticité de la production au capital public : 0,12 à long terme pour le
 capital installé par l'État, 0,083 à court terme (Bom et Ligthart, Journal of
@@ -656,7 +708,8 @@ def centrale : Economie where
   coutParDepistageEuros := 70
   jeunesParGenerationMilliers := 800
   depenseParEtudiantEuros := 13300
-  elasticiteChomageSmicPm := 100
+  emploisParPointSmic := emploisParPointSmicCentral
+  smicParPoint := smicParPoint
   economieParMoisRetraite := 650
   tauxMarginalPb := 440
   partDetteCourtTermePm := partDetteCourtTerme
@@ -747,7 +800,8 @@ def croissanceBasse : Economie where
   coutParDepistageEuros := 70
   jeunesParGenerationMilliers := 800
   depenseParEtudiantEuros := 13300
-  elasticiteChomageSmicPm := 150
+  emploisParPointSmic := emploisParPointSmicLaroqueSalanie
+  smicParPoint := smicParPoint
   economieParMoisRetraite := 650
   tauxMarginalPb := 480
   partDetteCourtTermePm := partDetteCourtTerme
@@ -838,7 +892,8 @@ def croissanceHaute : Economie where
   coutParDepistageEuros := 70
   jeunesParGenerationMilliers := 800
   depenseParEtudiantEuros := 13300
-  elasticiteChomageSmicPm := 50
+  emploisParPointSmic := emploisParPointSmicMatis
+  smicParPoint := smicParPoint
   economieParMoisRetraite := 650
   tauxMarginalPb := 400
   partDetteCourtTermePm := partDetteCourtTerme

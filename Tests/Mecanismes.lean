@@ -202,4 +202,20 @@ theorem capital_entreprises_is :
       (a.pib - b.pib) * 1000000 / b.pib ≥ 2900 := by
   decide +kernel
 
+/-- SMIC : un point de hausse augmente les allègements de 1 490 M€ (Institut
+Montaigne, 2024) ; l'effet brut du coût du travail (−26 000 emplois, OFCE,
+2012), moins les ≈ 21 700 emplois que sauvent ces allègements (élasticité de
+la première tranche), rejoint progressivement l'emploi ; les prélèvements
+dus au SMIC sont suivis à part ; une cible en euros est atteinte exactement
+sur le SMIC de l'année (1 802 € au départ). -/
+theorem smic_un_point :
+    let s0 := etatDepart H
+    let a := depart (mesure (.revalorisationSmic 100))
+    let c := depart (mesure (.smicCibleBrut 1820))
+    a.allegementsTranche.bas - s0.allegementsTranche.bas = 1490 ∧
+      -4500 ≤ a.emploisCoutTravailRestants - s0.emploisCoutTravailRestants ∧
+      a.emploisCoutTravailRestants - s0.emploisCoutTravailRestants ≤ -4200 ∧
+      a.smicPrelevementsMeur < -1000 ∧ a.smicMensuel = 1820 ∧ c.smicMensuel = 1820 := by
+  decide +kernel
+
 end Tests.Mecanismes

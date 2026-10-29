@@ -434,6 +434,22 @@ structure Assiettes where
   elasticiteCarburantsPm : Int
   deriving Repr
 
+/-- Effets d'une hausse d'un point du SMIC (référence des allègements indexée
+sur le SMIC), M€ de l'année de départ, à ramener au PIB courant : hausse des
+allègements généraux, de la rémunération des agents publics payés près du
+SMIC, des prélèvements sur les salaires privés (cotisations, impôt sur le
+revenu), baisse des prestations (prime d'activité), revenu disponible des
+ménages du privé. -/
+structure SmicParPoint where
+  allegementsMeur : Int
+  remunerationPubliqueMeur : Int
+  cotisationsMeur : Int
+  csgMeur : Int
+  impotRevenuMeur : Int
+  prestationsMeur : Int
+  revenuDisponiblePriveMeur : Int
+  deriving Repr
+
 /-- Hypothèses macroéconomiques et de comportement. -/
 structure Economie where
   id : String
@@ -533,8 +549,12 @@ structure Economie where
   coutParDepistageEuros : Int := 0
   jeunesParGenerationMilliers : Int := 0
   depenseParEtudiantEuros : Int := 0
-  /-- Hausse du chômage (pb) par pb de hausse du SMIC, pm. -/
-  elasticiteChomageSmicPm : Int
+  /-- SMIC : emplois perdus à terme par point de hausse par l'effet brut du
+  coût du travail (diffusion comprise, avant la hausse automatique des
+  allègements et l'effet de demande, que le modèle calcule) ; effets
+  budgétaires par point. -/
+  emploisParPointSmic : Int
+  smicParPoint : SmicParPoint
   /-- Économie annuelle (M€) par mois de recul de l'âge légal. -/
   economieParMoisRetraite : Int
   /-- Taux d'intérêt marginal sur la dette nouvelle et refinancée, valeur de
@@ -781,7 +801,7 @@ abbrev ValideEco (H : Scenario) : Prop :=
   0 ≤ H.eco.okunPm ∧ H.eco.okunPm ≤ 2000 ∧
   0 ≤ H.eco.multiplicateurPm ∧ H.eco.multiplicateurPm ≤ 3000 ∧
   0 ≤ H.eco.fuiteFiscalePm ∧ H.eco.fuiteFiscalePm ≤ 1000 ∧
-  0 ≤ H.eco.elasticiteChomageSmicPm ∧ 0 ≤ H.eco.economieParMoisRetraite ∧
+  0 ≤ H.eco.economieParMoisRetraite ∧
   0 ≤ H.eco.tauxMarginalPb ∧ H.eco.tauxMarginalPb ≤ 1500 ∧
   0 ≤ H.eco.primeDeficitPb ∧ H.eco.primeDeficitPb ≤ 100 ∧
   -200 ≤ H.eco.excesPatrimoineParDecesPb ∧ H.eco.excesPatrimoineParDecesPb ≤ 300 ∧
@@ -935,12 +955,20 @@ abbrev ValideTravail (H : Scenario) : Prop :=
   0 ≤ H.eco.elasticitePrixTabacPm ∧ H.eco.elasticitePrixTabacPm ≤ 2000 ∧
   0 < H.reference.rnbParHabitantPpaDollars
 
+/-- Bornes sur les effets d'une hausse du SMIC. -/
+abbrev ValideSmic (H : Scenario) : Prop :=
+  0 ≤ H.eco.emploisParPointSmic ∧ H.eco.emploisParPointSmic ≤ 100000 ∧
+  0 ≤ H.eco.smicParPoint.allegementsMeur ∧ 0 ≤ H.eco.smicParPoint.remunerationPubliqueMeur ∧
+  0 ≤ H.eco.smicParPoint.cotisationsMeur ∧ 0 ≤ H.eco.smicParPoint.csgMeur ∧
+  0 ≤ H.eco.smicParPoint.impotRevenuMeur ∧
+  0 ≤ H.eco.smicParPoint.prestationsMeur ∧ 0 ≤ H.eco.smicParPoint.revenuDisponiblePriveMeur
+
 /-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
 *juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
   H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail ∧
-  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols ∧ H.ValidePac
+  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols ∧ H.ValidePac ∧ H.ValideSmic
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
@@ -953,6 +981,7 @@ instance (H : Scenario) : Decidable H.ValideTrajectoires := inferInstance
 instance (H : Scenario) : Decidable H.ValideAssiettes := inferInstance
 instance (H : Scenario) : Decidable H.ValideElectriciteSols := inferInstance
 instance (H : Scenario) : Decidable H.ValidePac := inferInstance
+instance (H : Scenario) : Decidable H.ValideSmic := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario

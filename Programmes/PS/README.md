@@ -13,7 +13,7 @@ le modèle commun représente directement, sont traduites en leviers.
 
 | Mesure | Source | Levier |
 |---|---|---|
-| P-01 SMIC à 1 690 € net | chap. 1 | +17,3 % (conversion net/brut, voir `source`) |
+| P-01 SMIC à 1 690 € net | chap. 1 | cible de 2 135 € bruts, ≈ +13,8 % sur le SMIC projeté de 2027 |
 | P-02 Âge légal à 62 ans | chap. 1 | −24 mois |
 | P-03 Revue des niches fiscales et sociales | chap. 16 | +11 Md€/an de recettes |
 | P-04 Impôt sur les grandes successions | chap. 16 | +25 Md€/an (400 Md€ sur 2025-2040) |

@@ -10,10 +10,11 @@ d'hypothèses partagées, avec une CI qui vérifie à chaque PR :
 * ce que devient **chaque propriété partagée**, pour **chaque programme**,
   sous **chaque scénario** (matrice d'évaluation, diff commenté sur la PR).
 
-> ⚠️ **État actuel : squelette.** Le modèle économique est un modèle jouet,
-> les données de départ sont des ordres de grandeur non sourcés et les deux
-> programmes sont fictifs. L'architecture est en place ; le contenu est à
-> construire.
+> ⚠️ **État actuel.** Le modèle économique est un modèle agrégé, en
+> entiers : chaque paramètre cite sa source ou est marqué « hypothèse », et
+> le rétro-test le confronte aux comptes de 2018 à 2025. Douze programmes y
+> sont transcrits, dont deux exemples fictifs. Ce n'est pas une
+> microsimulation : les barèmes et les ménages types n'y figurent pas.
 
 ## Principe
 
@@ -59,7 +60,12 @@ pas au moteur de demande. Le moteur fixe l'effet moyen
 d'un prélèvement sur la demande ; l'axe économique le répartit selon l'impôt
 (TVA, IR, CSG au-dessus de la moyenne ; IS, successions, patrimoine bien
 en dessous). Les allègements de cotisations patronales passent par le coût
-du travail, tranche de salaire par tranche de salaire. L'effet d'une
+du travail, tranche de salaire par tranche de salaire. Le SMIC est indexé
+sur les prix ; une hausse au-delà renchérit le travail à son voisinage
+(13 800 emplois de moins à terme par point, OFCE), accroît les allègements
+(≈ 1,5 Md€ par point avec la réduction générale actuelle), la rémunération
+des agents publics et les prélèvements sur les salaires du privé, et
+soutient la consommation. L'effet d'une
 dépense dépend de sa nature (transferts moins, investissement plus que la
 consommation publique). Les postes publics créés ou supprimés, quand un
 programme les chiffre en postes (leviers `creationPostes` et
@@ -407,9 +413,10 @@ ses propres mainteneurs. Voir [CONTRIBUTING.md](CONTRIBUTING.md) et les
   stockage, prix et effacements n'y figurent pas, et le thermique fossile
   garde son facteur de charge de 2025. Celui des sols ne connaît que les
   rythmes nationaux (pas de territorialisation des enveloppes).
-* Le modèle jouet doit être remplacé. Piste naturelle : une microsimulation
-  (OpenFisca) lancée en CI qui émet des agrégats, que Lean vérifie contre les
-  propriétés ; et Catala pour la sémantique juridique fine.
+* Le modèle agrégé ne connaît ni barèmes ni ménages types. Piste
+  naturelle : une microsimulation (OpenFisca) lancée en CI qui émet des
+  agrégats, que Lean vérifie contre les propriétés ; et Catala pour la
+  sémantique juridique fine.
 
 ## Licence
 

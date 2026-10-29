@@ -362,8 +362,8 @@ le modèle commun, la suppression creusait le déficit de 2035 de 0,08 point
 et accroissait le chômage de 0,10 point en 2030 : indemnisation et
 recettes perdues dépassaient l'économie) ; 10 000 d'entre eux, 2 500 par an
 de 2027 à 2030, renforcent l'accompagnement à France Travail (O-26b, en
-plus des 10 000 conseillers d'O-77), les autres les contrôles et l'accueil
-(effets non modélisés). Coût complet
+plus des 10 000 conseillers d'O-77), 1 500 le contrôle fiscal d'O-45, les
+autres les contrôles et l'accueil (effets non modélisés). Coût complet
 d'un poste de catégorie B ou C : `coutPosteControle` = 55 000 € par an
 (hypothèse : salaire net moyen de la fonction publique de l'État 3 018 €
 par mois en 2024, toutes catégories (DGAFP), plus bas en B et C, cotisations
@@ -1926,6 +1926,27 @@ proposition de R. Glucksmann, PP-04) ; 50 000 voitures par édition depuis
 def leasingSocialParAn : Int := 150000
 def leasingSocialAideEuros : Int := 6000
 
+/-- Recouvrements entre mesures (passe d'octobre 2026).
+* Niches fiscales : les rabots généraux (O-40 : −10 % ; O-57 : −2 % par an ;
+  O-62 : −1,5 Md€ par an sur 88,3 Md€ de dépenses fiscales en 2026, PLF 2026)
+  ne portent pas sur ce que O-69 (CIR recentré, 960 M€) et O-73
+  (défiscalisation des heures supplémentaires, moitié des 2 Md€ d'impôt sur
+  le revenu) suppriment déjà : chaque rabot est diminué de son taux
+  appliqué à ces montants.
+* Autonomie : la contribution d'O-84, affectée à l'autonomie, finance d'abord
+  le fonctionnement des places d'Ehpad publics (O-109b) et la revalorisation
+  des aides à domicile (O-120) ; seul le reste est une dépense nouvelle. -/
+def depensesFiscales2026 : Int := 88300
+def recouvrementNichesIr : Int := heuresSupIr * partDefiscalisationSupprimeePm / 1000
+def recouvrementNichesIs : Int := cirRecentre
+def autonomieDejaFinancee : List Int :=
+  (0 :: fonctionnementEhpad).map (· + revalorisationAidesDomicile)
+def depenseAutonomieNouvelle : List Int :=
+  autonomieDejaFinancee.map fun x => max 0 (contributionSolidariteAutonomie - x)
+
+theorem recouvrements_valeurs : recouvrementNichesIr = 1000 ∧ recouvrementNichesIs = 960 ∧
+    depenseAutonomieNouvelle = [2072, 1898, 1723, 1548, 1373, 1198] := by decide
+
 /-- Dirigeants d'institutions publiques (O-129) : −20 % de rémunération.
 Périmètre : 881 emplois de cadres dirigeants de l'État (directeurs
 d'administration centrale, préfets, ambassadeurs, recteurs… : observatoire
@@ -2226,8 +2247,10 @@ def mesures : List Mesure := [
 
   { id := "O-19"
     titre := "Ouverture de places pour tous les bacheliers sans affectation"
-    source := s!"Texte Orientation D, mesure 19 ; ≈ 10 000 bacheliers sans proposition par an (SIES, Parcoursup 2025) × 3 ans × 10 500 € : {placesSansFac} M€/an ; 2 000 postes d'enseignants-chercheurs annoncés"
-    leviers := [.depenseSur .enseignement placesSansFac, .annonceEmplois 2000] },
+    source := s!"Texte Orientation D, mesure 19 ; ≈ 10 000 bacheliers sans proposition par an (SIES, Parcoursup 2025) × 3 ans, soit 30 000 étudiants (≈ 0,55 point de scolarisation des 18-24 ans) : places comptées dans la hausse de la scolarisation d'O-81 (3 points), qui en porte le coût ({placesSansFac} M€/an à 10 500 €) ; 2 000 postes d'enseignants-chercheurs annoncés"
+    leviers := [.annonceEmplois 2000]
+    variantes := [{ nom := "places en plus de celles d'O-81 (version précédente)",
+                    leviers := [.depenseSur .enseignement placesSansFac, .annonceEmplois 2000] }] },
 
   { id := "O-20"
     titre := "Aide à l'apprentissage réservée aux niveaux infra-bac et aux PME"
@@ -2375,8 +2398,9 @@ def mesures : List Mesure := [
 
   { id := "O-40"
     titre := "Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes"
-    source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2)"
-    leviers := [.prelevementSur .ir 4000, .prelevementSur .impotSocietes 2000, .prelevementSur .tva 2000]
+    source := s!"Texte Orientation D, mesure 40 ; 465 niches, 88,3 Md€ en 2026 (PLF 2026) ; {nichesFiscales} M€ (IR 4, IS 2, TVA 2) ; diminué de son taux appliqué au CIR (O-69) et aux heures supplémentaires (O-73) déjà réduits (voir `recouvrementNichesIr`)"
+    leviers := [.prelevementSur .ir (4000 - recouvrementNichesIr / 10),
+                .prelevementSur .impotSocietes (2000 - recouvrementNichesIs / 10), .prelevementSur .tva 2000]
     debut := 0 },
 
   { id := "O-41"
@@ -2406,11 +2430,15 @@ def mesures : List Mesure := [
 
   { id := "O-45"
     titre := "Lutte contre la fraude fiscale : facturation électronique, renfort du contrôle fiscal"
-    source := s!"Texte Orientation D, mesure 45 ; écart de TVA 12,1 Md€ en 2023 (Commission européenne) ; facturation électronique : {fraudeFacturation} M€ de TVA par an à partir de 2028 (2 à 3 Md€ attendus par l'administration) ; {agentsControle} agents de contrôle à {coutAgentControle} €, {rendementControle} M€ d'encaissements par an (hypothèse)"
+    source := s!"Texte Orientation D, mesure 45 ; écart de TVA 12,1 Md€ en 2023 (Commission européenne) ; facturation électronique : {fraudeFacturation} M€ de TVA par an à partir de 2028 (2 à 3 Md€ attendus par l'administration) ; {agentsControle} agents de contrôle pris parmi les agents redéployés par l'automatisation (O-26), sans coût supplémentaire, {rendementControle} M€ d'encaissements par an (hypothèse)"
     leviers := [.prelevementSur .tva (fraudeFacturation + rendementControle / 3),
                 .prelevementSur .ir (rendementControle / 3),
-                .prelevementSur .impotSocietes (rendementControle - 2 * (rendementControle / 3)),
-                .depenseSur .fonctionnement (agentsControle * coutAgentControle / 1000000)]
+                .prelevementSur .impotSocietes (rendementControle - 2 * (rendementControle / 3))]
+    variantes := [{ nom := "agents de contrôle recrutés en plus des agents redéployés par O-26 (version précédente)",
+                    leviers := [.prelevementSur .tva (fraudeFacturation + rendementControle / 3),
+                                .prelevementSur .ir (rendementControle / 3),
+                                .prelevementSur .impotSocietes (rendementControle - 2 * (rendementControle / 3)),
+                                .depenseSur .fonctionnement (agentsControle * coutAgentControle / 1000000)] }]
     debut := 1 },
 
   { id := "O-46"
@@ -2489,8 +2517,9 @@ def mesures : List Mesure := [
 
   { id := "O-57"
     titre := "Niches fiscales : −2 % par an pendant cinq ans (en plus de O-40)"
-    source := s!"Texte Orientation D, mesure 57 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {rabotNiches} M€ de plus chaque année de 2027 à 2031 (IR, IS, TVA)"
-    leviers := [.prelevementSur .ir (rabotNiches / 2), .prelevementSur .impotSocietes (rabotNiches / 4),
+    source := s!"Texte Orientation D, mesure 57 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {rabotNiches} M€ de plus chaque année de 2027 à 2031 (IR, IS, TVA) ; diminué de son taux appliqué au CIR (O-69) et aux heures supplémentaires (O-73) déjà réduits (voir `recouvrementNichesIr`)"
+    leviers := [.prelevementSur .ir (rabotNiches / 2 - recouvrementNichesIr * 2 / 100),
+                .prelevementSur .impotSocietes (rabotNiches / 4 - recouvrementNichesIs * 2 / 100),
                 .prelevementSur .tva (rabotNiches / 4)]
     repetitions := 5 },
 
@@ -2520,8 +2549,10 @@ def mesures : List Mesure := [
 
   { id := "O-62"
     titre := "Niches fiscales : −1,5 Md€ de plus par an de 2029 à 2035"
-    source := s!"Texte Orientation D, mesure 62 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {nichesSecondeEtape} M€ de plus chaque année de 2029 à 2035 (IR, IS, TVA comme O-57)"
-    leviers := [.prelevementSur .ir (nichesSecondeEtape / 2), .prelevementSur .impotSocietes (nichesSecondeEtape / 4),
+    source := s!"Texte Orientation D, mesure 62 ; 88,3 Md€ de dépenses fiscales (PLF 2026) ; {nichesSecondeEtape} M€ de plus chaque année de 2029 à 2035 (IR, IS, TVA comme O-57) ; diminué de son taux appliqué au CIR (O-69) et aux heures supplémentaires (O-73) déjà réduits (voir `recouvrementNichesIr`)"
+    leviers := [.prelevementSur .ir (nichesSecondeEtape / 2 - recouvrementNichesIr * nichesSecondeEtape / depensesFiscales2026),
+                .prelevementSur .impotSocietes
+                  (nichesSecondeEtape / 4 - recouvrementNichesIs * nichesSecondeEtape / depensesFiscales2026),
                 .prelevementSur .tva (nichesSecondeEtape / 4)]
     debut := 2
     repetitions := 7 },
@@ -2666,9 +2697,12 @@ def mesures : List Mesure := [
 
   { id := "O-84"
     titre := "Deuxième journée de solidarité : sept heures de plus par an, contribution des employeurs affectée à l'autonomie"
-    source := s!"Contribution de solidarité par le travail votée par le Sénat le 20 novembre 2024 (PLFSS 2025, 216 voix contre 119) : ≈ 2,5 Md€ par an ; 7 heures sur 1 607 = +{heuresSolidaritePm} ‰ de durée du travail ; CSA de 0,3 % à 0,6 % : {contributionSolidariteAutonomie} M€ de cotisations, dépensés pour l'autonomie"
+    source := s!"Contribution de solidarité par le travail votée par le Sénat le 20 novembre 2024 (PLFSS 2025, 216 voix contre 119) : ≈ 2,5 Md€ par an ; 7 heures sur 1 607 = +{heuresSolidaritePm} ‰ de durée du travail ; CSA de 0,3 % à 0,6 % : {contributionSolidariteAutonomie} M€ de cotisations, affectés à l'autonomie : ils financent d'abord O-109b et O-120, le reste ({depenseAutonomieNouvelle.headD 0} M€ en 2027, {depenseAutonomieNouvelle.getLastD 0} M€ à partir de 2032) est une dépense nouvelle (voir `depenseAutonomieNouvelle`)"
     leviers := [.dureeTravail heuresSolidaritePm, .prelevementSur .cotisations contributionSolidariteAutonomie,
-                .depenseSur .sante contributionSolidariteAutonomie] },
+                .depenseEcheancier .sante depenseAutonomieNouvelle]
+    variantes := [{ nom := "contribution entièrement en dépense nouvelle (version précédente)",
+                    leviers := [.dureeTravail heuresSolidaritePm, .prelevementSur .cotisations contributionSolidariteAutonomie,
+                                .depenseSur .sante contributionSolidariteAutonomie] }] },
 
   { id := "O-85"
     titre := "Santé mentale : 100 M€ de moyens supplémentaires par an"
@@ -3045,7 +3079,7 @@ def mesures : List Mesure := [
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

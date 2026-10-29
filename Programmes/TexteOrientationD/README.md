@@ -9,9 +9,9 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 1,88 % |
-| Dette publique | 156,7 % du PIB | 124,6 % |
-| Chômage | 7,90 % | 9,00 % |
+| Déficit public | 9,27 % du PIB | 1,86 % |
+| Dette publique | 156,7 % du PIB | 124,5 % |
+| Chômage | 7,90 % | 9,02 % |
 | Indice de développement humain | 0,9392 | 0,9407 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 263 Mt CO₂e |
 
@@ -19,16 +19,16 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,01 | 4,58 | 4,23 | 3,83 | 3,39 | 3,05 | 2,66 | 2,28 | 1,88 |
-| Offre | 5,57 | 4,93 | 4,39 | 3,96 | 3,51 | 3,02 | 2,64 | 2,26 | 1,86 | 1,48 |
-| Équilibre | 5,58 | 4,97 | 4,49 | 4,10 | 3,67 | 3,20 | 2,84 | 2,46 | 2,04 | 1,65 |
+| Demande | 5,58 | 5,00 | 4,57 | 4,22 | 3,82 | 3,38 | 3,03 | 2,64 | 2,26 | 1,86 |
+| Offre | 5,57 | 4,92 | 4,38 | 3,95 | 3,50 | 3,00 | 2,61 | 2,23 | 1,83 | 1,45 |
+| Équilibre | 5,58 | 4,96 | 4,47 | 4,09 | 3,66 | 3,18 | 2,82 | 2,44 | 2,02 | 1,63 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs et passe sous 3 % en
 2033 (moteur de demande). 15 propriétés sur 25 sont tenues dans au
 moins 18 des 36 scénarios sous les trois moteurs (voir « Propriétés »).
 Propriétés non tenues au scénario central (moteur de demande) :
-SNBC-3 : budget carbone 2029-2033, déficit sous le plafond juridique (3,83 % en 2030 pour un plafond de 3 %), dette/PIB stabilisée en 2035, budget à l'équilibre en 2035, SNBC-3 : objectifs sectoriels 2030, UE : ajustement 0,5 pt/an, UE : climat 2030, UE : déficit sous 3 %, UE : dette −1 pt/an, UE : répartition de l'effort 2030.
+SNBC-3 : budget carbone 2029-2033, déficit sous le plafond juridique (3,82 % en 2030 pour un plafond de 3 %), dette/PIB stabilisée en 2035, budget à l'équilibre en 2035, SNBC-3 : objectifs sectoriels 2030, UE : ajustement 0,5 pt/an, UE : climat 2030, UE : déficit sous 3 %, UE : dette −1 pt/an, UE : répartition de l'effort 2030.
 
 Ces chiffres sont ceux du modèle commun actuel : chaque prélèvement y est
 calculé sur son assiette (masse salariale, consommation, bénéfice fiscal et
@@ -142,23 +142,27 @@ la marge de baisse annuelle tomberait à 0,01 point sous le moteur d'offre.
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
 |---|---|---|---|
 | **O-23** Lutte contre la fraude et le travail dissimulé (BTP, restauration, services à la personne) | −0,07 pt | −5 900 | −0,2 |
-| **O-40** Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes | −0,23 pt | −14 200 | −0,5 |
-| **O-45** Lutte contre la fraude fiscale : facturation électronique, renfort du contrôle fiscal | −0,10 pt | −7 000 | −0,2 |
-| **O-57** Niches fiscales : −2 % par an pendant cinq ans (en plus de O-40) | −0,23 pt | −16 900 | −0,6 |
-| **O-62** Niches fiscales : −1,5 Md€ de plus par an de 2029 à 2035 | −0,20 pt | −16 400 | −0,5 |
+| **O-40** Revue des niches fiscales : −10 % hors Pacte Dutreil et hors dispositifs pour les ménages modestes | −0,23 pt | −13 900 | −0,5 |
+| **O-45** Lutte contre la fraude fiscale : facturation électronique, renfort du contrôle fiscal | −0,10 pt | −7 400 | −0,2 |
+| **O-57** Niches fiscales : −2 % par an pendant cinq ans (en plus de O-40) | −0,23 pt | −16 600 | −0,6 |
+| **O-62** Niches fiscales : −1,5 Md€ de plus par an de 2029 à 2035 | −0,20 pt | −16 100 | −0,5 |
 
 | Mesure | Chiffrage |
 |---|---|
 | **O-23** Fraude et travail dissimulé (BTP, restauration, services à la personne) | +2 Md€ de cotisations et +1 Md€ de TVA par an à partir de la troisième année (HCFiPS 2024 : 6 à 8 Md€ éludés), nets de la fuite fiscale du modèle |
 | **O-40** Niches fiscales −10 % (hors Pacte Dutreil et dispositifs des ménages modestes) | 8 Md€ sur 88,3 Md€ de dépenses fiscales (PLF 2026) |
-| **O-45** Fraude fiscale : facturation électronique, 1 500 agents de contrôle | 2,5 Md€ de TVA dès 2028 (2 à 3 Md€ attendus par l'administration) ; 105 M€ pour 1,5 Md€ d'encaissements : 4 Md€ |
+| **O-45** Fraude fiscale : facturation électronique, 1 500 agents de contrôle redéployés par O-26 | 2,5 Md€ de TVA dès 2028 (2 à 3 Md€ attendus par l'administration) ; 1,5 Md€ d'encaissements sans recrutement (105 M€ par an de recrutements dans la version précédente, variante) : 4 Md€ |
 | **O-57** Niches fiscales : −2 % de plus chaque année pendant cinq ans | ≈ 2 Md€ par an, 10 Md€ en 2031 |
 | **O-62** Niches fiscales : −1,5 Md€ de plus chaque année de 2029 à 2035 | 10,5 Md€ en 2035 ; 28,5 Md€ sur 88,3 avec O-40 et O-57 |
 
 O-62 réduisait les niches de 1 Md€ par an dans la version précédente : à
 1,5 Md€, le déficit baisse chaque année sous les trois moteurs (option A de
 la version précédente). Les niches visées sont réparties comme celles
-d'O-57 : moitié IR, un quart IS, un quart TVA.
+d'O-57 : moitié IR, un quart IS, un quart TVA. Les rabots ne portent pas sur
+ce que O-69 (CIR recentré, 960 M€) et O-73 (heures supplémentaires, 1 Md€
+d'impôt sur le revenu) suppriment déjà : chaque rabot est diminué de son
+taux appliqué à ces montants, soit ≈ 0,6 Md€ de moins en 2035 (passe sur les
+doublons, octobre 2026).
 
 ### Dépense publique, État et dette
 
@@ -211,8 +215,9 @@ de 2035 de 0,08 point et ajoutait 0,10 point de chômage en 2030 :
 l'indemnisation des chômeurs et les recettes perdues dépassaient
 l'économie. 10 000 agents, 2 500 par an de 2027 à 2030, renforcent
 l'accompagnement à France Travail (O-26b, en plus des 10 000 conseillers
-d'O-77, sans coût supplémentaire) ; les autres vont aux contrôles et à
-l'accueil (effets non modélisés). Variante : la version précédente.
+d'O-77, sans coût supplémentaire), 1 500 aux contrôles fiscaux d'O-45 ; les
+autres vont aux contrôles et à l'accueil (effets non modélisés). Variante :
+la version précédente.
 
 La norme renforcée (O-55) est la mesure la plus lourde du programme pour
 le solde comme pour l'activité : elle pèse sur l'emploi (voir « Points à
@@ -929,7 +934,7 @@ naturels ; sous le ZAN, l'enveloppe reste consommée par les autres usages
 | **O-16** Reprise de la dette des universités et apurement de leurs déficits | +0,04 pt | +2 500 | +0,1 |
 | **O-17** Reconstruction aux normes des universités de Nanterre, Toulouse, Montpellier et Grenoble (démolition puis construction) | +0,04 pt | +2 700 | +0,1 |
 | **O-18** Parcoursup ouvert aux étudiants étrangers, à nombre d'admis constant | ≈ 0 | ≈ 0 | ≈ 0 |
-| **O-19** Ouverture de places pour tous les bacheliers sans affectation | +0,02 pt | +1 600 | ≈ 0 |
+| **O-19** Ouverture de places pour tous les bacheliers sans affectation | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-25** Rémunération des enseignants : +2 % par an | +0,27 pt | +14 000 | +0,5 |
 | **O-68** Dettes cachées : RIFSEEP pour les enseignants, primes alignées sur les autres agents de catégorie A | +0,27 pt | +11 100 | +0,4 |
 | **O-81** Scolarisation des 18-24 ans : +1 point par an pendant trois ans (places, bourses) | +0,08 pt | +10 800 | +21,4 |
@@ -950,9 +955,12 @@ naturels ; sous le ZAN, l'enveloppe reste consommée par les autres usages
 * **O-18** Parcoursup ouvert aux étudiants étrangers à nombre d'admis
   constant : sans effet budgétaire, pour mémoire.
 * **O-19** Places pour les bacheliers sans affectation : ≈ 10 000 par an,
-  trois années de licence, 10 500 € par étudiant : 315 M€/an et 2 000
-  postes d'enseignants-chercheurs annoncés (vérifiés par la propriété
-  « emplois annoncés réalisables »).
+  trois années de licence, soit 30 000 étudiants (≈ 0,55 point de
+  scolarisation des 18-24 ans) : ces places sont comptées dans la hausse de
+  la scolarisation d'O-81, qui en porte le coût (315 M€/an à 10 500 € par
+  étudiant dans la version précédente, variante) ; 2 000 postes
+  d'enseignants-chercheurs annoncés (vérifiés par la propriété « emplois
+  annoncés réalisables »).
 
 **O-25 — Enseignants : +2 % par an.** Masse salariale des enseignants hors CAS Pensions : 59,23 Md€ en 2026
 (852 752 enseignants, PLF 2026), soit ≈ 60,9 Md€ en 2027. Hausse de 2 % par
@@ -1374,7 +1382,7 @@ seuil de 1 Md€ de chiffre d'affaires ; dissuasion complète, sans recette.
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
 |---|---|---|---|
 | **O-83** Allocations familiales dès le premier enfant : 70 € par mois | +0,07 pt | +6 000 | +0,2 |
-| **O-84** Deuxième journée de solidarité : sept heures de plus par an, contribution des employeurs affectée à l'autonomie | −0,23 pt | +7 400 | +1,4 |
+| **O-84** Deuxième journée de solidarité : sept heures de plus par an, contribution des employeurs affectée à l'autonomie | −0,28 pt | +900 | +1,2 |
 
 **O-83 — Allocations familiales dès le premier enfant : 70 € par mois.**
 Proposition de loi adoptée en première lecture le 5 juin 2025 ; 2,8 Md€
@@ -1387,11 +1395,15 @@ modulés selon le revenu (LexImpact : 3,58 Md€ bruts).
 heures de travail non rémunérées de plus par an (+0,44 % de durée annuelle
 du travail sur 1 607 heures) et contribution de solidarité pour l'autonomie
 des employeurs portée de 0,3 % à 0,6 % de la masse salariale : ≈ 2,5 Md€
-par an, dépensés pour l'autonomie (dépense de santé dans la nomenclature du
-modèle). Reprend la contribution de solidarité par le travail votée par le
+par an, affectés à l'autonomie. Ils financent d'abord le fonctionnement des
+places d'Ehpad publics (O-109b) et la revalorisation des aides à domicile
+(O-120) ; le reste, 2,1 Md€ en 2027 et 1,2 Md€ à partir de 2032, est une
+dépense nouvelle (dépense de santé dans la nomenclature du modèle ;
+variante : toute la contribution en dépense nouvelle, version
+précédente). Reprend la contribution de solidarité par le travail votée par le
 Sénat le 20 novembre 2024 (PLFSS 2025, 216 voix contre 119 ; gouvernement
-défavorable « à ce stade »). Elle finance un domaine absent du programme,
-mais revient à du travail non rémunéré : point politique à trancher.
+défavorable « à ce stade »). Elle revient à du travail non rémunéré :
+point politique à trancher.
 L'effet sur le solde vient surtout du surcroît d'heures travaillées
 (activité, assiettes), la contribution étant dépensée.
 
@@ -1601,10 +1613,10 @@ au moins un moteur) :
 | Déficit sous le plafond juridique ⚠ | 15/36 | 17/36 | 15/36 |
 | Dette/PIB non dégradée | 36/36 | 36/36 | 36/36 |
 | Chômage non dégradé | 24/36 | 36/36 | 24/36 |
-| Émissions sous le plafond légal | 36/36 | 36/36 | 36/36 |
+| Émissions sous 300 Mt (SNBC-2) | 36/36 | 36/36 | 36/36 |
 | Déficit sous 3 % en 2035 | 18/36 | 20/36 | 20/36 |
 | Budget à l'équilibre en 2035 ⚠ | 4/36 | 6/36 | 6/36 |
-| Déficit en baisse chaque année | 28/36 | 28/36 | 30/36 |
+| Déficit en baisse chaque année | 30/36 | 28/36 | 30/36 |
 | Dette/PIB stabilisée en 2035 ⚠ | 6/36 | 10/36 | 10/36 |
 | Mortalité liée à l'air non dégradée | 36/36 | 36/36 | 36/36 |
 | Bornes suffisantes en 2035 | 36/36 | 36/36 | 36/36 |
@@ -1660,13 +1672,13 @@ supplémentaire qu'il faudrait dans le neuvième des dix-huit scénarios
 (moteur de demande ; entre parenthèses, au scénario central) :
 
 * *Déficit sous le plafond juridique* : ≈ −0,4 point de déficit en 2030
-  pour trois scénarios de plus ; au central, 3,83 % pour un plafond de 3 %.
-* *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,4
-  point de déficit en 2030, soit 4,35 % ramenés à 3 % (−0,8 point).
-* *Budget à l'équilibre en 2035* : ≈ −2,9 points en 2035 (−1,9 point).
+  pour trois scénarios de plus ; au central, 3,82 % pour un plafond de 3 %.
+* *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,3
+  point de déficit en 2030, soit 4,32 % ramenés à 3 % (−0,8 point).
+* *Budget à l'équilibre en 2035* : ≈ −2,8 points en 2035 (−1,9 point).
 * *Dette/PIB stabilisée en 2035* : ≈ −14 points de dette en 2035, soit
-  129,9 % du PIB ramenés à 115,7 %, le niveau de 2025 (−8,9 points) ;
-  règle européenne de −10 points : ≈ −24 points (−18,9 points).
+  129,7 % du PIB ramenés à 115,7 %, le niveau de 2025 (−8,8 points) ;
+  règle européenne de −10 points : ≈ −24 points (−18,8 points).
 * *Climat* : 300 Mt en 2030 contre 276 visés par la SNBC-3 et la loi
   européenne sur le climat, soit −24 Mt ; transports à 103,9 Mt et
   bâtiments à 46,9 Mt, contre 92 et 37 ; budget carbone 2029-2033 :
@@ -1684,17 +1696,17 @@ sur 25) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) | Propriétés à 18/36 | Propriétés visées perdues |
 |---|---|---|---|---|---|---|
-| Programme actuel | 1,88 % | 9,00 % | 0,9407 | oui / oui / oui | 15 | — |
-| IS à 15 % (texte initial d'O-08) | 2,26 % | 8,97 % | 0,9407 | oui / oui / oui | 14 | Déficit sous 3 % en 2035 |
-| Norme de 100 pb (version précédente d'O-55) | 3,09 % | 8,44 % | 0,9414 | oui / oui / oui | 13 | Déficit sous 3 % en 2035, Déficit en baisse chaque année |
-| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | 1,11 % | 9,02 % | 0,9407 | oui / oui / oui | 16 | — (regagnée : déficit sous le plafond juridique) |
-| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | 1,31 % | 8,90 % | 0,9407 | oui / oui / oui | 16 | — (regagnée : déficit sous le plafond juridique) |
-| O-26 avec suppressions de postes (version précédente) | 2,02 % | 9,22 % | 0,9407 | oui / oui / oui | 14 | Chômage non dégradé |
-| O-38 au prorata (version précédente) | 1,89 % | 9,05 % | 0,9407 | oui / oui / oui | 15 | — |
-| O-108 à 2 Mt par an (version précédente) | 1,88 % | 9,00 % | 0,9407 | oui / oui / oui | 14 | Émissions sous le plafond légal |
-| Sans O-127 (contrats aidés) | 2,18 % | 9,31 % | 0,9406 | oui / oui / oui | 13 | Chômage non dégradé, Déficit sous 3 % en 2035 |
-| IS maintenu à 25 % (variante d'O-08) | 1,56 % | 9,03 % | 0,9407 | oui / oui / oui | 15 | — |
-| Norme renforcée de 100 pb de plus (variante d'O-55) | 0,83 % | 9,51 % | 0,9401 | oui / oui / oui | 14 | Chômage non dégradé |
+| Programme actuel | 1,86 % | 9,02 % | 0,9407 | oui / oui / oui | 15 | — |
+| IS à 15 % (texte initial d'O-08) | 2,24 % | 8,99 % | 0,9407 | oui / oui / oui | 14 | Déficit sous 3 % en 2035 |
+| Norme de 100 pb (version précédente d'O-55) | 3,07 % | 8,46 % | 0,9414 | oui / oui / oui | 13 | Déficit sous 3 % en 2035, Déficit en baisse chaque année |
+| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | 1,09 % | 9,04 % | 0,9407 | oui / oui / oui | 16 | — (regagnée : déficit sous le plafond juridique) |
+| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | 1,29 % | 8,92 % | 0,9407 | oui / oui / oui | 16 | — (regagnée : déficit sous le plafond juridique) |
+| O-26 avec suppressions de postes (version précédente) | 2,00 % | 9,24 % | 0,9407 | oui / oui / oui | 14 | Chômage non dégradé |
+| O-38 au prorata (version précédente) | 1,87 % | 9,07 % | 0,9407 | oui / oui / oui | 15 | — |
+| O-108 à 2 Mt par an (version précédente) | 1,86 % | 9,02 % | 0,9407 | oui / oui / oui | 14 | Émissions sous 300 Mt (SNBC-2) |
+| Sans O-127 (contrats aidés) | 2,15 % | 9,32 % | 0,9406 | oui / oui / oui | 13 | Chômage non dégradé, Déficit sous 3 % en 2035 |
+| IS maintenu à 25 % (variante d'O-08) | 1,54 % | 9,05 % | 0,9407 | oui / oui / oui | 15 | — |
+| Norme renforcée de 100 pb de plus (variante d'O-55) | 0,81 % | 9,53 % | 0,9401 | oui / oui / oui | 14 | Chômage non dégradé |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -1716,9 +1728,9 @@ sur 25) :
    premier) et achats de mini-lanceurs ; O-134 ne paie que les lancements,
    et l'essentiel du second porte-avions tombe après 2035.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,34 point en 2032 (demande), 0,38 point en 2032 (offre), 0,36 point en 2032 (équilibre). Sans la deuxième journée de
-   solidarité (O-84), le déficit 2035 serait de 2,13 %.
-5. **Chômage.** 9,00 % en 2035 contre 7,90 % sans programme : la propriété
+   des marges minimales de 0,35 point en 2029 (demande), 0,38 point en 2033 (offre), 0,36 point en 2032 (équilibre). Sans la deuxième journée de
+   solidarité (O-84), le déficit 2035 serait de 2,14 %.
+5. **Chômage.** 9,02 % en 2035 contre 7,90 % sans programme : la propriété
    porte sur 2030, où le programme fait légèrement mieux que le tendanciel
    (contrats aidés O-127, postes publics, accompagnement O-26b et O-77).
    La norme de dépense et les réductions d'exonérations (O-56, O-61)
@@ -1761,15 +1773,15 @@ O-83 et O-121).
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,14 pt | −0,06 pt | +0,5 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,13 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,09 pt | +1,1 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,12 pt | −0,06 pt | +0,5 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,11 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,27 pt | −0,09 pt | +1,1 |
 | École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,09 pt | +0,8 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,03 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,18 pt | −0,07 pt | +0,7 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,04 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,17 pt | −0,07 pt | +0,7 |
 | Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,25 pt | −0,10 pt | +1,0 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | +0,00 pt | +0,1 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
 chiffrage s'y ajouterait sans le corriger de ce recouvrement. La
@@ -1789,6 +1801,37 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
   train de vie de l'État (O-39, 3,1 Md€).
+
+### Recouvrements entre mesures
+
+Corrigés (passe d'octobre 2026, versions précédentes en variantes) :
+
+* rabots de niches (O-40, O-57, O-62) et suppressions ciblées de niches
+  (O-69, CIR ; O-73, heures supplémentaires) : les rabots ne portent plus
+  sur les montants déjà supprimés ;
+* places des bacheliers sans affectation (O-19) : comptées dans la hausse
+  de la scolarisation des 18-24 ans (O-81) ;
+* agents de contrôle fiscal (O-45) : pris parmi les agents redéployés par
+  l'automatisation (O-26) ;
+* contribution autonomie (O-84) : elle finance d'abord O-109b et O-120.
+
+Assumés, et à garder en tête :
+
+* les économies identifiées sur les dépenses pilotables (O-15b, O-21,
+  O-22, O-39, O-49, O-53, O-129) s'ajoutent à la norme de dépense (O-42,
+  O-55) : le volume des dépenses pilotables baisse un peu plus que la norme
+  ne l'indique ;
+* la composante carbone (O-124) réduit les émissions par les élasticités-
+  prix, qui comprennent une part de passage à l'électrique et aux pompes à
+  chaleur, aussi aidé par O-05, O-90, O-107 et O-128 ;
+* la contribution kilométrique des poids lourds (O-71) et le fret
+  ferroviaire (O-117b) comptent tous deux du report modal ;
+* la prime à l'électrique (O-05) et le leasing social (O-128) sont supposés
+  non cumulables ; la majoration rurale de la rénovation (O-63) et les
+  pompes à chaleur gratuites (O-90) peuvent viser les mêmes logements ;
+* les 1 020 policiers des commissariats (O-130) pourraient venir de la
+  police de proximité (O-110) ; les 20 000 conseillers de France Travail
+  (O-77 et O-26b) ont un effet supposé linéaire.
 
 ### Données à compléter
 

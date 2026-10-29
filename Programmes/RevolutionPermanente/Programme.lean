@@ -27,10 +27,14 @@ open Modele
 def programme2027 : String :=
   "anasse2027.fr, « Notre programme — Présidentielle 2027 » (consulté le 28 octobre 2026)"
 
-/-- SMIC à 2 000 € net : la référence du modèle (1 820 € brut) vaut
-≈ 1 441 € net au ratio net/brut du SMIC (1 426,30 / 1 801,80 en novembre
-2024), d'où +38,8 % (calcul, en points de base). -/
-def hausseSmicPb : Int := 2000 * 10000 / 1441 - 10000
+/-- SMIC à 2 000 € net : 2 526 € bruts au ratio net/brut du SMIC
+(1 443,11 / 1 823,03 au 1er janvier 2026) ; la hausse se calcule sur le SMIC
+projeté de 2027 (≈ 1 876 € bruts), soit ≈ +34,6 % (calcul) ; les agents publics
+sont déjà augmentés de 500 € nets par RP-02 : composante publique du levier
+non comptée. -/
+def smicCibleBrutEuros : Int := 2000 * 10000 / 7916
+
+theorem smicCible_valeur : smicCibleBrutEuros = 2526 := by decide
 
 /-- +500 € net pour tous les salariés : seule la part des agents publics a
 un coût budgétaire direct. 500 € net valent 631 € brut au même ratio
@@ -61,13 +65,13 @@ mission « Pouvoirs publics », PLF 2026). -/
 def dotationsSupprimees : Int := (122564 + 353471) / 1000
 
 theorem valeurs :
-    hausseSmicPb = 3879 ∧ hausseBruteMensuelleEuros = 631 ∧ coutHausseAgents = 42403 ∧
+    hausseBruteMensuelleEuros = 631 ∧ coutHausseAgents = 42403 ∧
     coutEmbauches28h = 14418 ∧ coutRevenuEtudiant = 73190 ∧ dotationsSupprimees = 476 := by decide
 
 def mesures : List Mesure := [
   { id := "RP-01", titre := "SMIC à 2 000 € net"
-    source := s!"{programme2027} : « SMIC à 2000 € net », allocations revalorisées et indexées ; +{hausseSmicPb} points de base (voir `hausseSmicPb`)"
-    leviers := [.revalorisationSmic hausseSmicPb] },
+    source := s!"{programme2027} : « SMIC à 2000 € net », allocations revalorisées et indexées ; {smicCibleBrutEuros} € bruts (voir `smicCibleBrutEuros`)"
+    leviers := [.smicCibleBrut smicCibleBrutEuros false] },
   { id := "RP-02", titre := "+500 € net sur tous les salaires, indexés sur les prix : part des agents publics"
     source := s!"{programme2027} : « augmentation des salaires de 500 € » ; agents publics : {coutHausseAgents} M€ bruts par an (voir `hausseBruteMensuelleEuros`) ; hausse dans le privé non modélisée"
     leviers := [.remunerationPublique .traitement .fonctionnement [coutHausseAgents]] },
