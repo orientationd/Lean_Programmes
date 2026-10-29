@@ -1926,6 +1926,127 @@ proposition de R. Glucksmann, PP-04) ; 50 000 voitures par édition depuis
 def leasingSocialParAn : Int := 150000
 def leasingSocialAideEuros : Int := 6000
 
+/-- Dirigeants d'institutions publiques (O-129) : −20 % de rémunération.
+Périmètre : 881 emplois de cadres dirigeants de l'État (directeurs
+d'administration centrale, préfets, ambassadeurs, recteurs… : observatoire
+des cadres supérieurs de la Diese, novembre 2025), 431 opérateurs de l'État
+(Louvre, CNES, universités… : jaune « Opérateurs », PLF 2026) et
+24 autorités administratives et publiques indépendantes (jaune, PLF 2025).
+Rémunérations brutes annuelles : 166 000 € pour un cadre dirigeant
+(11 490 € nets par mois en moyenne pour les secrétaires généraux et
+directeurs d'administration centrale, DGAFP 2019, ratio net/brut de 0,83 :
+hypothèse) ; 135 000 € pour un dirigeant d'opérateur (part fonctionnelle de
+la directrice générale de l'EPA Euroméditerranée, 2023 : exemple, hypothèse) ;
+190 000 € pour un président d'autorité (Arcom 194 374 €, Autorité de la
+concurrence 220 398 € en 2023 : hypothèse). Coût complet × 1,5 (comme O-49).
+Les cadres dirigeants sont déjà dans l'encadrement d'O-49 (−5 %) : 15 points
+de plus pour eux, 20 pour les autres. Économie : ≈ 51,7 M€ (calcul). -/
+def cadresDirigeants : Int := 881
+def dirigeantsOperateurs : Int := 431
+def presidentsAutorites : Int := 24
+def remunerationCadreDirigeantEuros : Int := 166000
+def remunerationDirigeantOperateurEuros : Int := 135000
+def remunerationPresidentAutoriteEuros : Int := 190000
+def economieDirigeants : Int :=
+  (cadresDirigeants * remunerationCadreDirigeantEuros * 15 / 100
+    + (dirigeantsOperateurs * remunerationDirigeantOperateurEuros
+       + presidentsAutorites * remunerationPresidentAutoriteEuros) * 20 / 100) * 150 / 100 / 1000000
+
+theorem dirigeants_valeurs : economieDirigeants = 51 := by decide
+
+/-- Un commissariat dans chaque ville de plus de 30 000 habitants (O-130).
+287 communes de plus de 30 000 habitants (populations de référence 2023,
+INSEE) ; aucun recensement public de celles qui n'ont pas de commissariat.
+Deux cas documentés : (1) les communes en zone gendarmerie, toutes outre-mer
+— huit à La Réunion (Saint-Paul, Le Tampon, Saint-Louis, Saint-Joseph,
+Saint-Benoît, Sainte-Marie, La Possession, Saint-Leu : 433 243 habitants,
+réponse à la question orale n° 1267, 2021) et Saint-Laurent-du-Maroni
+(54 429) — passent en police d'État, au ratio d'un policier pour
+478 habitants des communes passées en zone police en 2003-2006 (Cour des
+comptes, 2011) : 1 020 policiers de plus (calcul), les gendarmes étant
+redéployés dans le reste de la zone gendarmerie (hypothèse) ; (2) les
+communes en zone police sans commissariat sur leur territoire (Six-Fours,
+Tremblay-en-France, Viry-Châtillon, Sevran, Puteaux, Liévin, Trappes… :
+huit cas documentés, « plusieurs dizaines » probables) : 30 (hypothèse),
+servies par les effectifs de leur circonscription. Coût d'un commissariat de
+60 à 100 agents : 10 M€ hors foncier (1 500 à 2 500 m² à 5 000 à 5 500 €/m² :
+Villeneuve-Saint-Georges 12,5 M€ pour 2 500 m², Aubagne 13 M€ ; hypothèse),
+bâtis de 2027 à 2030. Coût complet d'un policier : 78 848 €, pensions
+comprises (programme 176, PLF 2026 : 12 086,4 M€ pour 153 286 ETPT ;
+Assemblée nationale, rapport n° 1996). Recrutements en quatre ans. -/
+def habitantsZoneGendarmerie30000 : Int :=
+  108088 + 82579 + 54941 + 39207 + 38604 + 37093 + 36568 + 36163 + 54429
+def habitantsParPolicier : Int := 478
+def policiersCommissariats : Int := habitantsZoneGendarmerie30000 / habitantsParPolicier
+def communesZonePoliceSansCommissariat : Int := 30
+def communesZoneGendarmerie30000 : Int := 9
+def coutCommissariat : Int := 10
+def coutPolicierEuros : Int := 12086400000 / 153286
+def investissementCommissariats : Int :=
+  (communesZoneGendarmerie30000 + communesZonePoliceSansCommissariat) * coutCommissariat
+def postesCommissariats : List Int := [1, 2, 3, 4].map (policiersCommissariats * · / 4)
+
+theorem commissariats_valeurs : habitantsZoneGendarmerie30000 = 487672 ∧ policiersCommissariats = 1020 ∧
+    coutPolicierEuros = 78848 ∧ investissementCommissariats = 390 ∧
+    postesCommissariats = [255, 510, 765, 1020] := by decide
+
+/-- Indemnisation forfaitaire des personnes blessées lors d'une intervention
+de police ou de gendarmerie (O-131), sans attendre un jugement : 5 000 € pour
+une incapacité totale de travail d'au moins 8 jours (souffrances endurées de
+3 à 4 sur 7 : 3 619 à 7 201 € au référentiel de l'ONIAM, juillet 2025),
+1 000 € en deçà (hypothèse). Blessés recensés avec au moins 8 jours d'ITT :
+≈ 125 par an (IGPN : 79 en 2021, 66 en 2022 ; IGGN : 46 en 2025) ; blessés plus
+légers : aucun recensement, 3 000 par an (hypothèse à sourcer). Coût :
+≈ 3,6 M€ par an, arrondi à 4 (calcul), en partie déjà dû par l'État (responsabilité sans
+faute envers les tiers, CE 1949 Lecomte ; contentieux du programme 216 :
+126 M€ exécutés en 2025, tous motifs). -/
+def blessesGraves : Int := 125
+def blessesLegers : Int := 3000
+def forfaitBlesseGraveEuros : Int := 5000
+def forfaitBlesseLegerEuros : Int := 1000
+def indemnisationBlesses : Int :=
+  (blessesGraves * forfaitBlesseGraveEuros + blessesLegers * forfaitBlesseLegerEuros + 500000) / 1000000
+
+theorem blesses_valeurs : indemnisationBlesses = 4 := by decide
+
+/-- Second porte-avions (O-133) : coût de la réalisation du premier (PANG,
+10 251 M€ d'autorisations d'engagement en LFI 2025 : Assemblée nationale,
+avis n° 2048, 2025) diminué de 30 % d'effet de série (30 à 40 % selon le
+Sénat, rapport n° 559, 2020 ; le second porte-avions de 2008 n'en promettait
+aucun : Assemblée nationale, rapport n° 717) : 7 176 M€. La forme de
+Saint-Nazaire est occupée par le premier jusqu'en 2035 environ : études et
+commandes à long délai (chaufferies, ≈ 600 M€ comme en 2024 pour le
+premier) jusqu'en 2030, puis début de la réalisation ; profil du second
+porte-avions de 2008 pour les trois premières années (3 %, 7 %, puis
+600 M€), 460 M€ par an ensuite (hypothèse) : ≈ 3,6 Md€ d'ici 2035, le reste
+après l'horizon. Hors groupe aérien supplémentaire (≈ 1,2 Md€ pour
+10 Rafale de plus) et coût de possession (≈ 250 à 350 M€ par an) après la mise
+en service, vers 2042-2044. -/
+def coutPremierPorteAvions : Int := 10251
+def coutSecondPorteAvions : Int := coutPremierPorteAvions * 700 / 1000
+def echeancierPorteAvions : List Int :=
+  [0, coutSecondPorteAvions * 3 / 100, coutSecondPorteAvions * 7 / 100, 600, 460, 460, 460, 460, 460]
+
+theorem porteAvions_valeurs : coutSecondPorteAvions = 7175 ∧
+    echeancierPorteAvions.foldl (· + ·) 0 = 3617 := by decide
+
+/-- Lancements de satellites sur lanceurs européens (O-134) : deux Ariane 62
+(82,07 M€ payés par l'ESA pour Sentinel-1D en 2025) et un Vega-C (51,65 M€
+pour Sentinel-1C) de plus par an pour des satellites institutionnels
+français, et des achats d'ancrage de mini-lanceurs français (enveloppe
+France 2030 de ≈ 400 M€ pour MaiaSpace, Latitude, HyPrSpace et Sirius,
+reconduite sur cinq ans : 80 M€ par an, hypothèse). Prix via European
+Spaceflight (contrats de l'ESA, avril 2026). ≈ 296 M€ par an (calcul),
+lancement seul : les charges utiles relèvent des programmes du CNES et des
+armées. Accord de Séville (2023) : 4 Ariane 6 et 3 Vega-C institutionnels
+européens par an jusqu'en 2030. -/
+def prixAriane62 : Int := 8207
+def prixVegaC : Int := 5165
+def achatsMiniLanceurs : Int := 80
+def programmeLancements : Int := (2 * prixAriane62 + prixVegaC) / 100 + achatsMiniLanceurs
+
+theorem lancements_valeurs : programmeLancements = 295 := by decide
+
 def mesures : List Mesure := [
   { id := "O-01"
     titre := "Remplacement gratuit par l'État de 10 000 voitures parmi les plus polluantes chaque année"
@@ -2886,13 +3007,45 @@ def mesures : List Mesure := [
   { id := "O-128"
     titre := "Leasing social électrique : 150 000 voitures par an à 100 € par mois"
     source := s!"{leasingSocialParAn} voitures par an à {leasingSocialAideEuros} € d'aide (coût unitaire de PP-04) ; 50 000 voitures par édition depuis 2024 ; émissions évitées par le sous-modèle automobile (voir `leasingSocialParAn`)"
-    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros] }
+    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros] },
+
+  { id := "O-129"
+    titre := "Rémunération des dirigeants d'institutions publiques (Louvre, DGFiP, Haut-commissariat au plan…) : −20 %"
+    source := s!"Demande de l'auteur (octobre 2026) ; {cadresDirigeants} cadres dirigeants de l'État (Diese, 2025), {dirigeantsOperateurs} opérateurs (jaune, PLF 2026), {presidentsAutorites} autorités indépendantes ; 15 points de plus qu'O-49 pour les cadres dirigeants, 20 pour les autres ; coût complet × 1,5 : économie {economieDirigeants} M€ (voir `economieDirigeants`)"
+    leviers := [.remunerationPublique .traitement .fonctionnement [-economieDirigeants]] },
+
+  { id := "O-130"
+    titre := "Un commissariat dans chaque ville de plus de 30 000 habitants"
+    source := s!"Demande de l'auteur (octobre 2026) ; {communesZoneGendarmerie30000} villes en zone gendarmerie (La Réunion, Saint-Laurent-du-Maroni) passées en police d'État : {policiersCommissariats} policiers (un pour {habitantsParPolicier} habitants) à {coutPolicierEuros} € ; {communesZonePoliceSansCommissariat} villes en zone police sans commissariat (hypothèse), servies par leur circonscription ; {investissementCommissariats} M€ de construction de 2027 à 2030 (voir `policiersCommissariats`)"
+    leviers := [.creationPostes .securiteJustice postesCommissariats coutPolicierEuros,
+                .investissementEcheancier .securiteJustice
+                  ((List.replicate 4 (investissementCommissariats / 4)) ++ [0])] },
+
+  { id := "O-131"
+    titre := "Indemnisation forfaitaire des personnes blessées lors d'une intervention de police ou de gendarmerie"
+    source := s!"Demande de l'auteur (octobre 2026) ; {forfaitBlesseGraveEuros} € au-delà de 8 jours d'ITT ({blessesGraves} blessés par an, IGPN et IGGN), {forfaitBlesseLegerEuros} € en deçà ({blessesLegers}, hypothèse) : {indemnisationBlesses} M€ par an (voir `indemnisationBlesses`)"
+    leviers := [.depenseSur .famille indemnisationBlesses] },
+
+  { id := "O-132"
+    titre := "Escroquerie : la victime remboursée par l'escroc condamné, préjudice majoré de 100 %"
+    source := "Demande de l'auteur (octobre 2026) ; sans avance de l'État : aucun effet budgétaire direct. 448 300 victimes d'escroqueries et de fraudes aux moyens de paiement enregistrées en 2025 (réponse à la question écrite n° 16778, 2026) ; préjudice de 4,5 Md€ en 2023 (SSMSI, Interstats Analyse n° 68) ; 23 % des escroqueries élucidées à un an (Insee, 2021) ; recouvrement auprès des condamnés de 11 % en 2010 (SARVI). Dommages punitifs absents du droit français (réparation intégrale) : innovation législative"
+    leviers := [] },
+
+  { id := "O-133"
+    titre := "Second porte-avions de nouvelle génération"
+    source := s!"Demande de l'auteur (octobre 2026) ; premier PANG : {coutPremierPorteAvions} M€ (LFI 2025) ; second à −30 % d'effet de série : {coutSecondPorteAvions} M€, dont {echeancierPorteAvions.foldl (· + ·) 0} M€ d'ici 2035 (études, chaufferies, début de réalisation ; voir `echeancierPorteAvions`)"
+    leviers := [.depenseEcheancier .defense echeancierPorteAvions] },
+
+  { id := "O-134"
+    titre := "Programme de lancements de satellites sur lanceurs français et européens"
+    source := s!"Demande de l'auteur (octobre 2026) ; deux Ariane 62 et un Vega-C de plus par an (prix des contrats de l'ESA) et des achats d'ancrage de mini-lanceurs français : {programmeLancements} M€ par an, lancement seul (voir `programmeLancements`)"
+    leviers := [.depenseSur .enseignement programmeLancements] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

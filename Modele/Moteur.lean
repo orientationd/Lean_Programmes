@@ -30,11 +30,21 @@ structure Moteur where
   au-dessus de leur niveau de départ, en pm (`0` : aucun effet d'offre ;
   `100` : +1 point de PO retire 0,1 point de croissance chaque année). -/
   elasticiteCroissancePoPm : Int
+  /-- Part du canal du capital appliquée, pm (`0` : l'investissement public et
+  le taux d'IS n'agissent sur le PIB que par la demande ; `1000` : effet
+  entier sur le PIB potentiel, par le stock de capital public et par le coût
+  du capital des entreprises). Pour le taux d'IS fixé par les mesures, ce
+  canal remplace l'effet générique des prélèvements dans la même proportion :
+  `elasticiteCroissancePoPm` ne porte que sur la part `1000 − canalCapitalPm`
+  de la variation d'IS due au taux (surtaxes et cycle restent dans l'effet
+  générique). -/
+  canalCapitalPm : Int := 0
   deriving Repr
 
 abbrev Moteur.Valide (M : Moteur) : Prop :=
   0 ≤ M.multiplicateurEconomiesPm ∧ M.multiplicateurEconomiesPm ≤ 1000 ∧
   0 ≤ M.multiplicateurPrelevementsPm ∧ M.multiplicateurPrelevementsPm ≤ 1000 ∧
-  0 ≤ M.elasticiteCroissancePoPm ∧ M.elasticiteCroissancePoPm ≤ 1000
+  0 ≤ M.elasticiteCroissancePoPm ∧ M.elasticiteCroissancePoPm ≤ 1000 ∧
+  0 ≤ M.canalCapitalPm ∧ M.canalCapitalPm ≤ 1000
 
 end Modele
