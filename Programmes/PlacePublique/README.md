@@ -26,6 +26,12 @@ n'a été trouvé. À revoir dès la publication du programme.
 | PP-06 Service civique obligatoire de dix mois | livre de mai 2026 ; LCP, 26 mai 2026 ; Public Sénat, 24 août 2026 | jusqu'à +4,5 Md€/an en cinq ans (indemnité de 505 € et tutorat de 100 € par mois, Maire-info ; calcul) |
 | PP-07 Aide publique au développement à 0,7 % du RNB | Acte 1 | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
 
+## Ajouts du 30 octobre 2026
+
+| Mesure | Source | Levier |
+|---|---|---|
+| PP-08 Chèque énergie à 500 € pour six millions de familles, aide de 200 € pour dix millions de ménages des classes moyennes, taxe sur les superprofits | L'Opinion, 17 septembre 2026 ; [BFMTV](https://fr.news.yahoo.com/faut-l%C3%A9tat-intervienne-rapha%C3%ABl-glucksmann-211154348.html), 19 septembre 2026 ; plan de sortie de crise du 22 octobre 2026 | +4 Md€ par an de transferts (fonction famille) et +2 Md€ d'impôt sur les sociétés (chiffrage du candidat ; recoupement : 5,0 Md€ moins le chèque actuel, ≈ 4,2 Md€) ; variante : 2027 seulement, mesure de crise |
+
 Choix de transcription, à revoir avec le programme publié :
 
 * **PP-01** : le candidat ne dit pas si les 15 Md€ sont annuels ; la presse
@@ -90,22 +96,29 @@ les voitures aidées. Le déficit ne baisse pas chaque année.
   sur les très hauts patrimoines, impôt sur la fortune « à seuil élevé,
   sans exemption » (communiqué du 2 septembre 2025) ; prélèvement
   forfaitaire unique de 30 % à 34 % ; fin de l'effacement des plus-values
-  latentes ; taxe automatique sur les superprofits ; taxe sur le commerce
+  latentes ; taxe sur le commerce
   en ligne, hausse de la taxe sur les services numériques ; taxe sur les
   boissons sucrées ; taxe progressive sur les logements vacants ;
   annulation de la hausse de l'accise sur l'électricité de 2024.
 * **Travail** : SMIC à 1 600 € net « dans les deux ans » (Acte 1, p. 40,
   non repris dans la campagne de 2026, et qui recouperait la baisse de CSG
-  de PP-02) ; conférences salariales par branche ; point d'indice indexé
+  de PP-02) ; 1 700 € net dans le plan de sortie de crise du 22 octobre
+  2026, selon un site non officiel seulement (aucune source primaire ni
+  article de presse trouvés) ; stages payés 1 000 € par mois ;
+  régularisation de 300 000 travailleurs ; conférences salariales par branche ; point d'indice indexé
   sur l'inflation ; abrogation de la réforme de l'assurance chômage ;
   Territoires zéro chômeur généralisés.
 * **Retraites** : pénibilité et espérance de vie en bonne santé ; Haut
   Conseil du pilotage des retraites à majorité de partenaires sociaux.
 * **Écologie** : « 100 jours de la révolution écologique », à chiffrer
-  lors de leur présentation ; chèque énergie triplé ; MaPrimeRénov'
-  relancée ; plan rail ; nouveaux EPR.
+  lors de leur présentation ; MaPrimeRénov' relancée ; plan rail ;
+  nouveaux EPR ; baisse de 20 centimes à la pompe par l'encadrement des
+  marges.
 * **École, santé, logement** : loi de programmation pour l'école (moins
-  d'élèves par classe en primaire, bâti) ; fin de la tarification à l'acte
+  d'élèves par classe en primaire, bâti, plan « bâtisseurs » dit chiffré
+  « en milliards sur dix ans » sans montant publié) ; passeport « Colo pour
+  tous » (un séjour collectif par enfant pendant la scolarité, sans coût
+  annoncé) ; fin de la tarification à l'acte
   à l'hôpital, santé mentale des jeunes, statut des proches aidants ; fonds
   national pour le foncier, encadrement des loyers, régulation des meublés
   touristiques.

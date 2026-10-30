@@ -10,7 +10,7 @@ Transcription **partielle et non officielle** de melenchon2027.fr
 par J.-L. Mélenchon et É. Coquerel le 14 octobre 2026 (Public Sénat,
 France Épargne) : le plan d'investissement productif « Automobile »
 (L-01 à L-09), deux mesures phares de *L'Avenir en commun* 2025 (L-10
-retraite à 60 ans, L-11 SMIC à 1 600 € net) et les recettes et dépenses
+retraite à 60 ans, L-11 SMIC à 1 700 € net, chiffre du budget rectificatif) et les recettes et dépenses
 chiffrées du budget rectificatif (L-12 à L-25 : 83,5 Md€ de recettes et
 54,6 Md€ de dépenses détaillées, sur 106,4 et 81,7 annoncés). Les mesures
 automobiles reprennent chacune une ligne du tableau « Les investissements
@@ -111,12 +111,20 @@ def fonctionnementEhpad : List Int :=
 theorem ehpad_valeurs : coutPlaceEhpadEuros = 108181 ∧ investissementEhpad = 1081 ∧
     fonctionnementEhpad = [168, 336, 504, 672, 840] := by decide
 
+/-- SMIC net visé (L-11) : 1 700 € dans le budget rectificatif du
+14 octobre 2026 (AFP, LCP), 1 600 € dans *L'Avenir en commun* 2025
+(variante). Conversion au brut au ratio net/brut du SMIC au 1er janvier
+2026 (1 443,11 / 1 823,03, cotisations salariales de 20,84 %), calcul. -/
+def smicNetCible : Int := 1700
+def smicNetAec : Int := 1600
+def smicBrut (net : Int) : Int := net * 182303 / 144311
+
 /-- AAH au niveau du SMIC (AEC 2025) : 12,7 Md€ versés en 2023 à
 1 352 800 allocataires, montant maximal de 1 033,32 € au 1er avril 2025
-(DREES, minima sociaux, édition 2025) ; porté à 1 600 € (L-11), dépense
+(DREES, minima sociaux, édition 2025) ; porté au SMIC net de L-11, dépense
 relevée en proportion (calcul ; les nouveaux entrants dus au relèvement du
 plafond ne sont pas comptés). -/
-def hausseAAH : Int := 12700 * (160000 - 103332) / 103332
+def hausseAAH : Int := 12700 * (smicNetCible * 100 - 103332) / 103332
 
 /-- Minimum vieillesse au seuil de pauvreté (AEC 2025) : ASPA de 1 034,28 €,
 4,1 Md€ versés en 2023 à 723 000 allocataires (DREES) ; seuil de pauvreté
@@ -124,7 +132,8 @@ def hausseAAH : Int := 12700 * (160000 - 103332) / 103332
 (calcul). -/
 def hausseASPA : Int := 4100 * (133700 - 103428) / 103428
 
-theorem minima_valeurs : hausseAAH = 6964 ∧ hausseASPA = 1200 := by decide
+theorem minima_valeurs : smicBrut smicNetCible = 2147 ∧ smicBrut smicNetAec = 2021 ∧
+    hausseAAH = 8193 ∧ hausseASPA = 1200 := by decide
 
 /-- Coût moyen d'un enseignant, hors pensions : 59,23 Md€ de masse salariale
 hors CAS Pensions pour 852 752 enseignants en 2026 (PLF 2026, rapport du
@@ -138,6 +147,44 @@ def postesEsrEcheancier : List Int :=
 
 theorem esr_valeurs : coutEnseignantEuros = 69457 ∧
     postesEsrEcheancier = [555, 1111, 1666, 2222, 2778] := by decide
+
+/-- Contrats doctoraux (plan ESR, PDF sur melenchon2027.fr, octobre 2026) :
+« 8 000 contrats doctoraux supplémentaires par an », contrats de trois ans ;
+coût employeur de 132 012 € pour 36 mois (appel 2026 de la Fondation pour la
+recherche médicale, au salaire minimum de 2 300 € bruts du 1er janvier
+2026, MESR), soit 44 004 € par an (calcul). -/
+def coutDoctorantEuros : Int := 132012 / 3
+def doctorantsEcheancier : List Int := [8000, 16000, 24000]
+def coutDoctorants : List Int :=
+  ([1, 2, 3, 3, 3, 3] : List Int).map fun k => k * 8000 * coutDoctorantEuros / 1000000
+
+/-- Recherche publique (plan ESR) : R&D « à au moins 3 % du PIB, dont
+1,5 % pour le secteur public en 2032 ». Dépense intérieure de R&D des
+administrations : 0,75 % du PIB en 2024 ; DIRD de 64,1 Md€, 2,18 % du PIB
+(SIES, note flash n° 16, juillet 2026), d'où un PIB 2024 de ≈ 2 940 Md€
+(calcul). Écart de 0,75 point (euros de 2024, montant minoré), atteint en
+six paliers égaux de 2027 à 2032 (hypothèse), net des postes de L-44 et des
+contrats doctoraux de L-52, qui en font partie (calcul). -/
+def pib2024 : Int := 64100 * 10000 / 218
+def ecartRecherchePublique : Int := pib2024 * 75 / 10000
+def rechercheBrute : List Int :=
+  ([1, 2, 3, 4, 5, 6] : List Int).map fun k => k * ecartRecherchePublique / 6
+def rechercheNette : List Int :=
+  ((rechercheBrute.zip (postesEsrEcheancier ++ [postesEsrEcheancier.getLastD 0])).zip coutDoctorants).map
+    fun ((r, p), d) => r - p - d
+
+/-- Logements étudiants (plan ESR) : « à hauteur de 30 000 par an » ; 60 000 €
+par logement, chiffre de la présidente du Cnous repris par LFI (amendement
+II-CF1739 au PLF 2026, 3 novembre 2025), soit 1,8 Md€ par an (calcul). -/
+def logementsEtudiantsParAn : Int := 30000
+def coutLogementEtudiantEuros : Int := 60000
+def logementsEtudiants : Int := logementsEtudiantsParAn * coutLogementEtudiantEuros / 1000000
+
+theorem esr_ajouts_valeurs : coutDoctorantEuros = 44004 ∧
+    coutDoctorants = [352, 704, 1056, 1056, 1056, 1056] ∧
+    pib2024 = 2940366 ∧ ecartRecherchePublique = 22052 ∧
+    rechercheNette = [2768, 5535, 8304, 11423, 14542, 18218] ∧
+    logementsEtudiants = 1800 := by decide
 
 /-- Cotisation vieillesse relevée de 0,25 point par an pendant le
 quinquennat (AEC 2025, d'après Votons 2027) : 0,25 % des 1 157,2 Md€ de
@@ -194,10 +241,12 @@ def mesures : List Mesure := [
     leviers := [.depenseSecteur .tertiaireMarchand 20] },
   { id := "L-10", titre := "Retraite à 60 ans après 40 annuités"
     source := "L'Avenir en commun 2025, chap. 8 « Travailler tous, travailler moins, travailler mieux », § 8 (melenchon2027.fr/programme2025/livre/chapitre8/s8) ; âge légal fixé à 60 ans dès l'entrée en vigueur (−33 mois en 2027, puis l'écart au calendrier légal se creuse jusqu'à 48 mois en 2033), 40 annuités non modélisées ; le coût suit l'hypothèse économique du scénario"
-    leviers := [.ageLegalCible 720 0] },
-  { id := "L-11", titre := "SMIC porté à 1 600 € net"
-    source := "L'Avenir en commun 2025 (melenchon2027.fr, « SMIC à 1600 € net »). Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : 2 021 € bruts ; la hausse se calcule sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +7,7 % ; rémunération des agents publics déjà relevée par L-18 : composante publique non comptée"
-    leviers := [.smicCibleBrut 2021 false] },
+    leviers := [.ageLegalCible 720 0]
+    variantes := [{ nom := "budget rectificatif : 62 ans dès 2027 (9 Md€), 60 ans à une date non annoncée", leviers := [.ageLegalCible 744 0] }] },
+  { id := "L-11", titre := "SMIC porté à 1 700 € net"
+    source := s!"Budget rectificatif 2027 du 14 octobre 2026 (AFP, LCP) : 1 700 € net ({smicNetAec} € dans L'Avenir en commun 2025, variante). Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : {smicBrut smicNetCible} € bruts ; la hausse se calcule sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +14,5 % : au-delà d'une dizaine de points, l'effet est sans doute plus que proportionnel ; rémunération des agents publics déjà relevée par L-18 : composante publique non comptée"
+    leviers := [.smicCibleBrut (smicBrut smicNetCible) false]
+    variantes := [{ nom := "1 600 € net (L'Avenir en commun 2025)", leviers := [.smicCibleBrut (smicBrut smicNetAec) false] }] },
   { id := "L-12", titre := "ISF climatique"
     source := s!"{budget} : 10 Md€/an"
     leviers := [.prelevementSur .autres 10000] },
@@ -287,7 +336,7 @@ def mesures : List Mesure := [
                                                   investissementEhpad, investissementEhpad, 0],
                 .depenseEcheancier .sante fonctionnementEhpad] },
   { id := "L-40", titre := "AAH portée au niveau du SMIC"
-    source := s!"L'Avenir en commun 2025 ; non chiffré : 12,7 Md€ × (1 600 − 1 033,32) / 1 033,32 = {hausseAAH} M€ par an (DREES ; voir `hausseAAH`)"
+    source := s!"L'Avenir en commun 2025 ; non chiffré : 12,7 Md€ × ({smicNetCible} − 1 033,32) / 1 033,32 = {hausseAAH} M€ par an (DREES ; voir `hausseAAH`)"
     leviers := [.depenseSur .famille hausseAAH] },
   { id := "L-41", titre := "Minimum vieillesse au niveau du seuil de pauvreté"
     source := s!"L'Avenir en commun 2025 ; non chiffré : 4,1 Md€ × (1 337 − 1 034,28) / 1 034,28 = {hausseASPA} M€ par an (DREES, Insee ; voir `hausseASPA`) ; le volet « pensions au SMIC pour une carrière complète » n'est pas chiffré"
@@ -300,12 +349,12 @@ def mesures : List Mesure := [
     source := "L'Avenir en commun 2025 ; chiffrage du parti en 2022 : 7,9 Md€ cantine comprise, moins les 3,6 Md€ de la gratuité des cantines (L-22) : 4,3 Md€ (calcul ; 3,3 Md€ selon l'Institut Montaigne)"
     leviers := [.depenseSur .enseignement 4300] },
   { id := "L-44", titre := "Enseignement supérieur et recherche : 40 000 personnels statutaires en cinq ans"
-    source := s!"Plan ESR (melenchon2027.fr, 26 octobre 2026) ; non chiffré : 8 000 postes par an à {coutEnseignantEuros} € (hypothèse, voir `coutEnseignantEuros`), {postesEsrEcheancier.getLastD 0} M€ par an en 2031 ; les 8 000 contrats doctoraux de plus par an ne sont pas chiffrés"
+    source := s!"Plan ESR (melenchon2027.fr, 26 octobre 2026) ; non chiffré : 8 000 postes par an à {coutEnseignantEuros} € (hypothèse, voir `coutEnseignantEuros`), {postesEsrEcheancier.getLastD 0} M€ par an en 2031 ; les 8 000 contrats doctoraux de plus par an sont en L-52"
     leviers := [.creationPostes .enseignement [8000, 16000, 24000, 32000, 40000] coutEnseignantEuros,
                 .annonceEmplois 40000] },
   { id := "L-45", titre := "Gratuité de l'enseignement supérieur"
-    source := "L'Avenir en commun 2025 et plan ESR ; Institut Montaigne (2022) : droits d'inscription 342 M€ et contribution de vie étudiante 149 M€, moins 112 M€ de compensation des boursiers, soit 379 M€ par an (calcul) ; repas à 1 € au CROUS non chiffré"
-    leviers := [.depenseSur .enseignement 379] },
+    source := "L'Avenir en commun 2025 et plan ESR ; droits d'inscription 342 M€ et compensation des boursiers 112 M€ (Institut Montaigne, 2022), contribution de vie étudiante 194 M€ attendus en 2026 (amendement CF341 au PLF 2026), soit 424 M€ par an (calcul, années de référence différentes) ; le repas à 1 € au CROUS est déjà ouvert à tous les étudiants depuis mai 2026 (143 M€ au PLF 2027) : sans coût de plus"
+    leviers := [.depenseSur .enseignement 424] },
   { id := "L-46", titre := "Police de proximité rétablie, BAC et BRAV-M démantelées"
     source := "L'Avenir en commun 2025 ; chiffrage du parti en 2022 : 0,35 Md€ par an (0,83 Md€ net selon l'Institut Montaigne : 26 700 agents, économie de 0,41 Md€ sur les BAC)"
     leviers := [.depenseSur .securiteJustice 350] },
@@ -320,13 +369,22 @@ def mesures : List Mesure := [
     leviers := [.dureeTravail (-22)] },
   { id := "L-50", titre := "Aide publique au développement portée à 0,7 % du RNB"
     source := s!"L'Avenir en commun 2025 ; non chiffré : de 0,42 % à 0,7 % du RNB, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `apd2025`)"
-    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] },
+  { id := "L-51", titre := "Recherche publique portée à 1,5 % du PIB en 2032"
+    source := s!"Plan ESR (melenchon2027.fr, octobre 2026) : « 3 % du PIB, dont 1,5 % pour le secteur public en 2032 » ; non chiffré : 0,75 % du PIB en 2024 (SIES), écart de {ecartRecherchePublique} M€ atteint en six paliers, net de L-44 et L-52 : {rechercheNette} M€ (voir `rechercheNette`) ; recouvrement possible avec L-16 (crédit d'impôt recherche supprimé, non réaffecté)"
+    leviers := [.depenseEcheancier .enseignement rechercheNette] },
+  { id := "L-52", titre := "8 000 contrats doctoraux de plus par an"
+    source := s!"Plan ESR (melenchon2027.fr, octobre 2026) ; non chiffré : contrats de trois ans à {coutDoctorantEuros} € par an (coût employeur, FRM 2026 ; voir `coutDoctorantEuros`), 24 000 doctorants de plus à partir de 2029"
+    leviers := [.creationPostes .enseignement doctorantsEcheancier coutDoctorantEuros] },
+  { id := "L-53", titre := "30 000 logements étudiants par an"
+    source := s!"Plan ESR (melenchon2027.fr, octobre 2026) ; non chiffré : {coutLogementEtudiantEuros} € par logement (Cnous, repris par LFI au PLF 2026), {logementsEtudiants} M€ par an (calcul) ; recouvrement possible avec les 200 000 logements publics de L-34"
+    leviers := [.investissement .enseignement logementsEtudiants] }
 ]
 
 def programme : Programme where
   id := "LFI"
   nom := "La France insoumise — Mélenchon 2027 (extraits)"
-  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans et SMIC à 1 600 € net (L'Avenir en commun 2025), recettes (106,4 Md€, toutes transcrites) et dépenses (72,7 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026, université (250 000 places), fin des exonérations au-delà de 2 SMIC. Ajouts du 28 octobre 2026 (plans « BTP et logement » et ESR, L'Avenir en commun 2025, chiffrages de 2022) : 200 000 logements publics par an, rénovation, 100 % Sécu, conscription citoyenne, grand âge et Ehpad, AAH et minimum vieillesse, crèches, gratuité de l'école et du supérieur, police de proximité, IR à 14 tranches, cotisation vieillesse, sixième semaine de congés, aide au développement à 0,7 % du RNB."
+  description := "Transcription partielle et non officielle : plan « Automobile » (1,37 Md€/an), retraite à 60 ans (L'Avenir en commun 2025) et SMIC à 1 700 € net (budget rectificatif), recettes (106,4 Md€, toutes transcrites) et dépenses (72,7 sur 81,7) du budget rectificatif 2027 du 14 octobre 2026, université (250 000 places), fin des exonérations au-delà de 2 SMIC. Ajouts du 28 octobre 2026 (plans « BTP et logement » et ESR, L'Avenir en commun 2025, chiffrages de 2022) : 200 000 logements publics par an, rénovation, 100 % Sécu, conscription citoyenne, grand âge et Ehpad, AAH et minimum vieillesse, crèches, gratuité de l'école et du supérieur, police de proximité, IR à 14 tranches, cotisation vieillesse, sixième semaine de congés, aide au développement à 0,7 % du RNB. Ajouts du 30 octobre 2026 (plan ESR) : recherche publique à 1,5 % du PIB en 2032, contrats doctoraux, logements étudiants."
   mainteneurs := ["@orientationd"]
   source := "https://melenchon2027.fr/programme/plans-investissement/automobile/ (consulté le 21 octobre 2026)"
   mesures := mesures

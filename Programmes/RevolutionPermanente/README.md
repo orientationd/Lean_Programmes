@@ -45,6 +45,11 @@ ou repris de chiffrages indépendants de mesures comparables (détail dans
   expropriation des logements vides, régularisation de tous les
   sans-papiers, prêts à taux zéro : sans paramètre budgétaire dans le
   modèle.
-* Fiscalité (suppression de la TVA, IS d'au moins 50 %, ISF) : attribuée à
-  la campagne par un agrégateur, absente de la page officielle ; non
-  retenue.
+* Fiscalité (suppression de la TVA, IS d'au moins 50 %, revenus du
+  capital imposés jusqu'à 100 % au-delà de 260 000 €, ISF, allocation
+  universelle au niveau du SMIC) : ces mesures viennent du programme de
+  2022 (MonVote2027) et ne figurent pas sur la page 2027, relue le
+  30 octobre 2026 (« Le programme 2027 est en cours d'élaboration ») ; non
+  retenues. Le Haut-commissariat au Plan estime les aides à toutes les
+  entreprises entre 82 et 187 Md€ (juillet 2026), sans ventilation par
+  taille.

@@ -35,6 +35,23 @@ def pretEPR : Int := 72800 * 8 / 6 / 2 / 24
 
 theorem pretEPR_eq : pretEPR = 2022 := by decide
 
+/-- Impôts de production (LR-12), livret « Travail gagnant » (via Votons
+2027) : 14,3 Md€, dont C3S 5,3, CVAE 4,3, forfait social 2,8 et CFE
+industrielle 1,9. La CVAE est déjà supprimée en 2030 par la loi
+(n° 2025-127, art. 62) que la référence suit : la mesure n'en retire que le
+rendement restant, 3 400, 2 310 puis 1 090 M€ de 2027 à 2029
+(`Hypotheses/Reference.lean`) ; le forfait social est une contribution
+patronale (cotisations). -/
+def c3sEtCfe : Int := 5300 + 1900
+def forfaitSocial : Int := 2800
+def cvaeRestante : List Int := [3400, 2310, 1090, 0]
+
+/-- Enseignants (LR-22) : +135 € net par mois en début de carrière, +300 €
+en milieu de carrière, « près de 2 milliards d'euros » (B. Retailleau,
+31 août 2026 ; Parlons Politique, 1er septembre ; BFMTV), lus comme un
+montant brut (hypothèse). -/
+def enseignants : Int := 2000
+
 def mesures : List Mesure := [
   { id := "LR-01", titre := "Non-remplacement de 400 000 agents publics partant à la retraite"
     source := s!"{plan} : 25 Md€ (sur 5,9 millions d'agents), soit 62 500 € par poste (calcul) ; 80 000 départs non remplacés par an pendant le quinquennat, emplois publics retirés un pour un (levier `suppressionPostes`)"
@@ -60,8 +77,12 @@ def mesures : List Mesure := [
     source := s!"{plan} : 3 Md€"
     leviers := [.economieSur .culture 3000] },
   { id := "LR-08", titre := "Retraites : décote entre 63 et 65 ans et autres mesures"
-    source := s!"{plan} : « environ 42 Md€ d'amélioration, dont 12 Md€ pour la décote entre 63 et 65 ans » ; mécanisme non détaillé, transcrit comme économie forfaitaire (l'âge légal du modèle reste inchangé)"
-    leviers := [.economieSur .retraites 42000] },
+    source := s!"{plan} : « environ 42 Md€ d'amélioration, dont 12 Md€ pour la décote entre 63 et 65 ans » jusqu'en 2032 ; transcrit comme économie forfaitaire (l'âge légal du modèle reste inchangé). Paramètres (LCP, 23 septembre 2026, émission LCI du 22 septembre) : âge minimal de 63 ans, décote de 7 % par an avant 65 ans sans carrière complète de 43 ans, taux plein automatique à 65 ans ; le reste des 42 Md€ viendrait de la capitalisation, du placement des réserves, de la convergence Agirc-Arrco et des régimes spéciaux, qui ne sont pas tous des économies de pensions ; LCI : « 40 milliards d'euros d'économies cumulées sur cinq ans » (variantes)"
+    leviers := [.economieSur .retraites 42000]
+    variantes := [
+      { nom := "décote seule (12 Md€) et âge minimal de 63 ans", leviers := [.ageLegalCible 756 0, .economieSur .retraites 12000] },
+      { nom := "40 Md€ cumulés sur cinq ans (LCI, 22 septembre 2026)", leviers :=
+          [.depenseEcheancier .retraites [-2666, -5333, -8000, -10666, -13333]] }] },
   { id := "LR-09", titre := "Assurance chômage et prestations : plafond de 70 % du SMIC pour les aides non contributives"
     source := s!"{plan} : 30 Md€"
     leviers := [.economieSur .famille 30000] },
@@ -72,8 +93,10 @@ def mesures : List Mesure := [
     source := s!"{plan} : 10 Md€ sur 335 Md€ de dépenses, fonctionnement hors personnel et prestations"
     leviers := [.economieSur .fonctionnement 10000] },
   { id := "LR-12", titre := "Baisse des impôts de production"
-    source := s!"{plan} : 30 Md€ d'allègements pour les entreprises, dont 15 Md€ d'impôts de production (comparateur IFRAP 2027 ; les 15 Md€ de cotisations patronales sont en LR-14)"
-    leviers := [.prelevementSur .autres (-15000)] },
+    source := s!"{plan} : 30 Md€ d'allègements pour les entreprises, dont 15 Md€ d'impôts de production (comparateur IFRAP 2027 ; les 15 Md€ de cotisations patronales sont en LR-14) ; livret « Travail gagnant » : C3S et CFE industrielle {c3sEtCfe} M€, forfait social {forfaitSocial} M€ (cotisations), CVAE limitée à son rendement restant, la loi la supprimant déjà en 2030 (voir `cvaeRestante`)"
+    leviers := [.prelevementSur .autres (0 - c3sEtCfe), .prelevementSur .cotisations (0 - forfaitSocial),
+                .recetteEcheancier (some .autres) (cvaeRestante.map fun x => 0 - x)]
+    variantes := [{ nom := "15 Md€ d'autres impôts (avant correction de la CVAE)", leviers := [.prelevementSur .autres (-15000)] }] },
   { id := "LR-13", titre := "Exonération de cotisations sur les heures supplémentaires et autres allègements des ménages"
     source := s!"{plan} : 21 Md€, imputés aux cotisations sociales"
     leviers := [.prelevementSur .cotisations (-21000)] },
@@ -103,13 +126,16 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .affairesEconomiques 600] },
   { id := "LR-21", titre := "Nucléaire : huit EPR2 supplémentaires commandés en début de mandat"
     source := s!"republicains.fr (via Votons 2027) : commande « dès les deux premières années du mandat » si les six EPR2 en cours avancent bien, exploitation des réacteurs existants sur 80 ans ; prêt de l'État à EDF de {pretEPR} M€ par an (hypothèse de PC-08, voir `pretEPR`) ; 13 GW pour huit réacteurs (AFP, 18 juin 2025), en service après 2035"
-    leviers := [.pretEtat pretEPR] }
+    leviers := [.pretEtat pretEPR] },
+  { id := "LR-22", titre := "Enseignants : +135 € net par mois en début de carrière, +300 € en milieu de carrière"
+    source := s!"B. Retailleau, 31 août 2026, Boulogne-Billancourt (Parlons Politique, 1er septembre ; Sud Radio, 3 septembre) : « près de 2 milliards d'euros », financés selon lui par la baisse du nombre d'élèves (non modélisé) ; {enseignants} M€ par an de traitement (montant brut : hypothèse)"
+    leviers := [.remunerationPublique .traitement .enseignement [enseignants]] }
 ]
 
 def programme : Programme where
   id := "LR"
   nom := "Les Républicains — plan Retailleau 2027"
-  description := "Transcription partielle et non officielle du plan du 12 octobre 2026 : 197 Md€ d'économies (État, protection sociale, collectivités) et 51 Md€ d'allègements fiscaux, déficit sous 3 % en 2031 ; revenu familial, intérêts d'emprunt des familles, fin des 35 heures ; les 30 Md€ pour les entreprises répartis entre impôts de production et cotisations patronales. Ajouts du 28 octobre 2026 : doublons État-collectivités, fonds France Production, huit EPR2 de plus."
+  description := "Transcription partielle et non officielle du plan du 12 octobre 2026 : 197 Md€ d'économies (État, protection sociale, collectivités) et 51 Md€ d'allègements fiscaux, déficit sous 3 % en 2031 ; revenu familial, intérêts d'emprunt des familles, fin des 35 heures ; les 30 Md€ pour les entreprises répartis entre impôts de production et cotisations patronales. Ajouts du 28 octobre 2026 : doublons État-collectivités, fonds France Production, huit EPR2 de plus. Ajouts du 30 octobre 2026 : enseignants ; CVAE limitée à son rendement restant (déjà supprimée par la loi en 2030)."
   mainteneurs := ["@orientationd"]
   source := "Présentation du 12 octobre 2026 (Public Sénat, Europe 1, AFP, consultés le 21 octobre 2026)"
   mesures := mesures

@@ -105,13 +105,17 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .accisesEnergie (-baisseAccise)] },
   { id := "RQ-14", titre := "Fin des subventions aux associations « politisées »"
     source := s!"{knafo} : 1 à 2 Md€ (bas de la fourchette retenu)"
-    leviers := [.economieSur .fonctionnement 1000] }
+    leviers := [.economieSur .fonctionnement 1000] },
+  { id := "RQ-15", titre := "Retraites : réforme de 2023 maintenue, « 64 voire 65 ans »"
+    source := "É. Zemmour, BFMTV, 17 septembre 2026 (« 64 voire 65 ans ») ; contre l'abrogation de la réforme de 2023 (franceinfo, 30 septembre 2026), capitalisation progressive (via isoloir2027 et Selectra) ; 64 ans est le calendrier de la référence : sans levier ; variante : 65 ans, +3 mois par an (rythme de H-01) ; durée de cotisation et part de capitalisation non trouvées"
+    leviers := []
+    variantes := [{ nom := "65 ans, +3 mois par an", leviers := [.ageLegalCible 780 3] }] }
 ]
 
 def programme : Programme where
   id := "Reconquete"
   nom := "Reconquête — Éric Zemmour 2027"
-  description := "Transcription partielle et non officielle des propositions chiffrées de la campagne d'Éric Zemmour (programme 2027 non publié) : plan d'économies de Sarah Knafo (fonction publique, prestations réservées aux Français, aide au développement, contribution européenne, renouvelables, politique de la ville, agences, RSA, audiovisuel public), remigration, suppression des droits de succession, accise sur les carburants baissée d'un tiers. Objectif annoncé : au moins 100 Md€ de baisse des dépenses publiques par an."
+  description := "Transcription partielle et non officielle des propositions chiffrées de la campagne d'Éric Zemmour (programme 2027 non publié) : plan d'économies de Sarah Knafo (fonction publique, prestations réservées aux Français, aide au développement, contribution européenne, renouvelables, politique de la ville, agences, RSA, audiovisuel public), remigration, suppression des droits de succession, accise sur les carburants baissée d'un tiers. Ajout du 30 octobre 2026 : retraites (réforme de 2023 maintenue, 65 ans en variante). Objectif annoncé : au moins 100 Md€ de baisse des dépenses publiques par an."
   mainteneurs := ["@orientationd"]
   source := "Contre-budget de S. Knafo (octobre 2025), « Le Casse du siècle » (septembre 2026), Sud Radio (14 septembre 2026), BFMTV (17 septembre 2026), Europe 1 (19 mai 2026), consultés le 28 octobre 2026"
   mesures := mesures

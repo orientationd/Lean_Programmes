@@ -12,7 +12,7 @@ d'hypothèses partagées, avec une CI qui vérifie à chaque PR :
 
 > ⚠️ **État actuel.** Le modèle économique est un modèle agrégé, en
 > entiers : chaque paramètre cite sa source ou est marqué « hypothèse », et
-> le rétro-test le confronte aux comptes de 2018 à 2025. Douze programmes y
+> le rétro-test le confronte aux comptes de 2018 à 2025. Quinze programmes y
 > sont transcrits, dont deux exemples fictifs. Ce n'est pas une
 > microsimulation : les barèmes et les ménages types n'y figurent pas.
 

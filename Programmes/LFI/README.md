@@ -26,8 +26,8 @@ et du chap. 8 § 8) :
 
 | Mesure | Levier |
 |---|---|
-| L-10 Retraite à 60 ans après 40 annuités | −48 mois d'âge légal (coût selon l'hypothèse du scénario ; les 40 annuités ne sont pas modélisées) |
-| L-11 SMIC à 1 600 € net | cible de 2 021 € bruts (ratio net/brut de 2026), ≈ +7,7 % sur le SMIC projeté de 2027 (agents publics déjà relevés par L-18) |
+| L-10 Retraite à 60 ans après 40 annuités | −48 mois d'âge légal (coût selon l'hypothèse du scénario ; les 40 annuités ne sont pas modélisées) ; variante : 62 ans dès 2027, étape du budget rectificatif |
+| L-11 SMIC à 1 700 € net (budget rectificatif du 14 octobre 2026) | cible de 2 147 € bruts (ratio net/brut de 2026), ≈ +14,5 % sur le SMIC projeté de 2027 (agents publics déjà relevés par L-18) ; variante : 1 600 € net (*L'Avenir en commun* 2025), 2 021 € bruts |
 
 **Budget rectificatif 2027** (14 octobre 2026, [Public Sénat](https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027),
 [France Épargne](https://www.france-epargne.fr/news/melenchon-presente-un-contre-budget-2027-1064-milliards-de-recettes-25-milliards-pour-la-dette)) :
@@ -101,23 +101,37 @@ indépendant ou d'un calcul sur données officielles (détail dans
 | L-37 Conscription citoyenne de neuf mois au SMIC | +7,4 Md€/an (parti, 2022) ; variante 18,5 Md€ (Institut Montaigne) |
 | L-38 210 000 professionnels du grand âge | jusqu'à +8,0 Md€/an en cinq ans (37 931 € par ETP, Institut Montaigne) |
 | L-39 10 000 places par an en Ehpad publics | 1,08 Md€/an de construction pendant cinq ans, puis 0,84 Md€/an de soins et d'APA |
-| L-40 AAH au niveau du SMIC | +7,0 Md€/an (DREES, calcul) |
+| L-40 AAH au niveau du SMIC | +8,2 Md€/an (DREES, calcul au SMIC de 1 700 € net) |
 | L-41 Minimum vieillesse au seuil de pauvreté | +1,2 Md€/an (DREES, Insee, calcul) |
 | L-42 500 000 places en crèche | 3,5 Md€/an d'investissement pendant cinq ans, fonctionnement jusqu'à 9,5 Md€/an (parti, 2022) |
 | L-43 Gratuité réelle de l'école | +4,3 Md€/an (parti, 2022, hors cantines) |
 | L-44 40 000 personnels de l'ESR en cinq ans | jusqu'à +2,8 Md€/an (coût moyen d'un enseignant, hypothèse), emplois publics comptés un pour un |
-| L-45 Gratuité du supérieur | +0,38 Md€/an (Institut Montaigne) |
+| L-45 Gratuité du supérieur | +0,42 Md€/an (droits d'inscription, Institut Montaigne ; contribution de vie étudiante, PLF 2026) ; le repas à 1 € est déjà ouvert à tous depuis mai 2026 |
 | L-46 Police de proximité, BAC démantelées | +0,35 Md€/an (parti, 2022) |
 | L-47 IR à 14 tranches | −5 Md€/an d'IR (parti, 2022) |
 | L-48 Cotisation vieillesse +0,25 point par an | jusqu'à +14,5 Md€/an en 2031 (calcul sur les salaires bruts) |
 | L-49 Sixième semaine de congés payés | −2,2 % de durée du travail |
 | L-50 Aide au développement à 0,7 % du RNB | jusqu'à +8,6 Md€/an en cinq ans (0,42 % en 2025) |
 
-Non chiffrés, faute de montant ou de donnée de base : R&D publique à 1,5 %
-du PIB, culture à 1 % du PIB (périmètre non défini), garantie d'emploi,
-8 000 contrats doctoraux de plus par an, 32 heures dans les métiers
+Non chiffrés, faute de montant ou de donnée de base : culture à 1 % du
+PIB (périmètre non défini), garantie d'emploi, 32 heures dans les métiers
 pénibles, blocage des prix, pôle public bancaire (hors administrations
 publiques).
+
+## Ajouts du 30 octobre 2026 : plan ESR et budget rectificatif
+
+| Mesure | Levier |
+|---|---|
+| L-51 Recherche publique à 1,5 % du PIB en 2032 ([plan ESR](https://melenchon2027.fr/wp-content/uploads/2026/10/plan_ESR_lowres.pdf)) | de +2,8 à +18,2 Md€/an de 2027 à 2032 : écart de 0,75 point de PIB (SIES, 2024), net de L-44 et L-52 |
+| L-52 8 000 contrats doctoraux de plus par an | 44 004 € par contrat et par an (coût employeur, FRM 2026), jusqu'à +1,06 Md€/an pour 24 000 doctorants |
+| L-53 30 000 logements étudiants par an | +1,8 Md€/an d'investissement (60 000 € par logement, Cnous) |
+
+Le budget rectificatif retient un SMIC à 1 700 € net (L-11 corrigé) et
+62 ans en 2027 pour 9 Md€ (variante de L-10). Ses recettes (L-12 à L-17)
+et dépenses (L-18 à L-29) correspondent aux montants publiés : 72,7 Md€ de
+dépenses détaillées plus les 9 Md€ de la retraite à 62 ans font les
+81,7 Md€ annoncés. *L'Avenir en commun*, dans sa nouvelle édition, paraît
+le 6 novembre 2026 : à reprendre à sa parution.
 
 ## Ce qui ne l'est pas, faute de montant dans la source
 
@@ -132,6 +146,15 @@ publiques).
   remboursement en cas de non-respect.
 * Prix national de l'électricité ; réforme de la catégorie européenne M1E ;
   limitation de la taille et du poids des SUV.
+* Pôle public financier (AFP, 28 octobre 2026) : plafond du Livret A porté
+  de 23 000 à 30 000 € et taux à l'inflation, « livret B » bloqué,
+  investissements du pôle public de 100 à 200 Md€ par an (hors
+  administrations publiques ; l'exonération des 40 Md€ d'encours attendus
+  coûterait ≈ 0,2 Md€, calcul, non modélisé).
+* Plan ruralités (octobre 2026) : sans montant ; ses mesures chiffrables
+  recoupent L-35 (isolation) et L-43 (transports scolaires) ; DGF indexée,
+  fonds de soutien communal, garantie d'emploi, services itinérants.
+* Blocage du carburant à 1,70 € le litre (plan d'urgence de mars 2026).
 
 ## Objectifs déclarés (non vérifiés par le modèle)
 

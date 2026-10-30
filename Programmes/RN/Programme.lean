@@ -27,13 +27,37 @@ open Modele
 def dossier : String :=
   "RN, « Pour la Renaissance de la France », 6 octobre 2026, via la note IDEP (Institut de l'Entreprise)"
 
+/-- Impôts de production (RN-02) : la CVAE est déjà supprimée en 2030 par
+la loi (n° 2025-127, art. 62) que la référence suit (3 400, 2 310 puis
+1 090 M€ de 2027 à 2029, `Hypotheses/Reference.lean`). Les 17 Md€ du
+dossier ne sont pas ventilés : la part de la CVAE est supposée égale à son
+rendement de 2027 (hypothèse) ; la mesure ne retire que son rendement
+restant. -/
+def impotsProduction : Int := 17000
+def cvaeRestante : List Int := [3400, 2310, 1090, 0]
+
+/-- Collectivités (RN-07) : 8,2 / 12 / 14,5 / 16,9 / 18,4 Md€ de 2027 à
+2031 (dossier, p. 12, cité par Public Sénat le 14 octobre 2026), montant
+2031 retenu (règle du programme). Dont effectifs 3,75 Md€, 35 heures dans
+la fonction publique territoriale 1,3, compétences 2,1, intercommunalités
+1,25 (Acteurs publics). Les effectifs sont retirés : 116 000 des 201 000
+postes de RN-06 sont dans les collectivités (France Transactions, cité par
+Planète Grandes Écoles), déjà comptés par RN-06. -/
+def collectivites2031 : Int := 18400
+def effectifsCollectivites : Int := 3750
+def collectivitesHorsEffectifs : Int := collectivites2031 - effectifsCollectivites
+
+theorem collectivites_valeur : collectivitesHorsEffectifs = 14650 := by decide
+
 def mesures : List Mesure := [
   { id := "RN-01", titre := "TVA à 5,5 % sur les énergies"
     source := s!"{dossier} : −12,2 Md€/an (chiffrage du parti ; carburants inclus)"
     leviers := [.prelevementSur .tva (-12200)] },
   { id := "RN-02", titre := "Suppression de la CFE, de la CVAE et de la C3S"
-    source := s!"{dossier} : −17 Md€/an d'impôts de production (presse) ; l'agrégat « ensemble des entreprises » du dossier est de −11,1 Md€ en 2031, suramortissement et surcroît d'IS compris"
-    leviers := [.prelevementSur .autres (-17000)] },
+    source := s!"{dossier} : −17 Md€/an d'impôts de production (presse) ; l'agrégat « ensemble des entreprises » du dossier est de −11,1 Md€ en 2031, suramortissement et surcroît d'IS compris ; la CVAE, déjà supprimée par la loi en 2030, est limitée à son rendement restant (voir `cvaeRestante`)"
+    leviers := [.prelevementSur .autres (0 - (impotsProduction - cvaeRestante.headD 0)),
+                .recetteEcheancier (some .autres) (cvaeRestante.map fun x => 0 - x)]
+    variantes := [{ nom := "17 Md€ (avant correction de la CVAE)", leviers := [.prelevementSur .autres (-17000)] }] },
   { id := "RN-03", titre := "Fiscalité des grandes entreprises : rachats d'actions, IS sur le chiffre d'affaires, superdividendes"
     source := s!"{dossier} : +5,6 Md€ en 2031 (agrégat « grandes entreprises », dont IS sur le chiffre d'affaires 7,5), imputé à l'impôt sur les sociétés"
     leviers := [.prelevementSur .impotSocietes 5600] },
@@ -48,8 +72,9 @@ def mesures : List Mesure := [
     leviers := [.suppressionPostes .fonctionnement 40200 67164]
     repetitions := 5 },
   { id := "RN-07", titre := "Effort des collectivités territoriales"
-    source := s!"{dossier} : 8,2 Md€/an (presse)"
-    leviers := [.economieSur .fonctionnement 8200] },
+    source := s!"{dossier} : 8,2 Md€ en 2027, {collectivites2031} M€ en 2031 (Public Sénat, 6 et 14 octobre 2026), moins les effectifs ({effectifsCollectivites} M€), comptés dans RN-06 (voir `collectivitesHorsEffectifs`)"
+    leviers := [.economieSur .fonctionnement collectivitesHorsEffectifs]
+    variantes := [{ nom := "8,2 Md€ (montant de 2027)", leviers := [.economieSur .fonctionnement 8200] }] },
   { id := "RN-08", titre := "Priorité nationale : prestations de solidarité après cinq ans de résidence, prestations familiales"
     source := s!"{dossier} : 12,2 + 5,9 = 18,1 Md€ en 2031 (agrégat « immigration » : 29,0 avec l'AMU, la taxe sur les transferts et la taxe à l'embauche, non détaillées) ; suppose une révision constitutionnelle"
     leviers := [.economieSur .famille 18100] },

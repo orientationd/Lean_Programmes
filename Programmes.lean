@@ -12,6 +12,7 @@ import Programmes.Ecologistes.Programme
 import Programmes.PlacePublique.Programme
 import Programmes.RevolutionPermanente.Programme
 import Programmes.Reconquete.Programme
+import Programmes.NouvelleEnergie.Programme
 
 /-!
 # Registre des programmes
@@ -44,7 +45,8 @@ def tous : List Modele.Programme := [
   Ecologistes.programme,
   PlacePublique.programme,
   RevolutionPermanente.programme,
-  Reconquete.programme
+  Reconquete.programme,
+  NouvelleEnergie.programme
 ]
 
 end Programmes

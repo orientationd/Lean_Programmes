@@ -72,10 +72,24 @@ def hausseApd : Int := 12900 * 10000 / 42 * 28 / 10000
 def apdEcheancier : List Int :=
   ([1, 2, 3, 4, 5] : List Int).map fun k => k * hausseApd / 5
 
+/-- Chèque énergie porté à 500 € pour « six millions de familles » et aide
+de 200 € pour « dix millions de ménages » des classes moyennes
+(R. Glucksmann, L'Opinion, 17 septembre 2026 ; BFMTV, 19 septembre 2026),
+« évalué à quatre milliards d'euros », financé à hauteur de deux
+milliards par une taxation des superprofits (chiffrage du candidat, sans
+taux ni assiette). Recoupement (calcul) : 6 M × 500 € + 10 M × 200 €
+= 5,0 Md€, moins le chèque actuel (5,5 millions de chèques à 150 € en
+moyenne, ≈ 0,8 Md€ ; Sénat, préfecture Grand Est) : ≈ 4,2 Md€. -/
+def chequeEnergie : Int := 4000
+def superprofits : Int := 2000
+def chequeEnergieBrut : Int := (6000000 * 500 + 10000000 * 200) / 1000000
+def chequeEnergieActuel : Int := 5500000 * 150 / 1000000
+
 theorem ajouts_valeurs :
     generation = 822914 ∧ coutServiceCivique = 4543 ∧
     serviceCiviqueEcheancier = [908, 1817, 2725, 3634, 4543] ∧
-    apdEcheancier = [1719, 3439, 5159, 6879, 8599] := by decide
+    apdEcheancier = [1719, 3439, 5159, 6879, 8599] ∧
+    chequeEnergieBrut - chequeEnergieActuel = 4175 := by decide
 
 def mesures : List Mesure := [
   { id := "PP-01", titre := "Taxe sur les méga-héritages au-delà de 2 M€, Pacte Dutreil réformé"
@@ -100,13 +114,19 @@ def mesures : List Mesure := [
     leviers := [.depenseEcheancier .culture serviceCiviqueEcheancier] },
   { id := "PP-07", titre := "Aide publique au développement portée à 0,7 % du RNB"
     source := s!"Place publique, Acte 1 (juin 2025) : « 0,7 % du RNB dédié à l'aide publique au développement » ; non chiffré : de 0,42 % à 0,7 %, +{hausseApd} M€ par an atteints en cinq ans ; versements à l'étranger, sans effet sur la demande intérieure (recette non fiscale négative, comme O-114) (voir `hausseApd`)"
-    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] }
+    leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] },
+  { id := "PP-08", titre := "Chèque énergie à 500 €, aide de 200 € aux classes moyennes, taxe sur les superprofits"
+    source := s!"{campagne} (L'Opinion, 17 septembre 2026 ; BFMTV, 19 septembre 2026 ; « plan de sortie de crise » du 22 octobre 2026) : {chequeEnergie} M€ par an, dont {superprofits} M€ financés par la taxation des superprofits (chiffrage du candidat ; recoupement : ≈ 4,2 Md€, voir `chequeEnergie`) ; transfert aux ménages imputé à la fonction famille (comme E-11 et O-124), taxe imputée à l'impôt sur les sociétés"
+    leviers := [.depenseSur .famille chequeEnergie, .prelevementSur .impotSocietes superprofits]
+    variantes := [
+      { nom := "mesure de crise, 2027 seulement", leviers :=
+          [.depenseEcheancier .famille [chequeEnergie, 0], .recetteEcheancier (some .impotSocietes) [superprofits, 0]] }] }
 ]
 
 def programme : Programme where
   id := "PlacePublique"
   nom := "Place publique — Raphaël Glucksmann (campagne 2027)"
-  description := "Transcription partielle et non officielle des propositions chiffrées de la campagne de Raphaël Glucksmann (taxe sur les méga-héritages et baisse de la CSG sur les salaires, enseignants, leasing social, retraite à 62 ans, service civique obligatoire, aide au développement à 0,7 % du RNB), en l'absence de programme présidentiel publié au 26 octobre 2026."
+  description := "Transcription partielle et non officielle des propositions chiffrées de la campagne de Raphaël Glucksmann (taxe sur les méga-héritages et baisse de la CSG sur les salaires, enseignants, leasing social, retraite à 62 ans, service civique obligatoire, aide au développement à 0,7 % du RNB, chèque énergie à 500 € et taxe sur les superprofits), en l'absence de programme présidentiel publié au 26 octobre 2026."
   mainteneurs := ["@orientationd"]
   source := "Déclarations de campagne de R. Glucksmann (août-octobre 2026) ; Place publique, « Notre vision pour la France — Acte 1 » (23 juin 2025)"
   mesures := mesures

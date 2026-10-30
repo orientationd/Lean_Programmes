@@ -39,6 +39,15 @@ Les montants sont ceux du parti, sans contre-expertise publiée : plusieurs
 dépassent le périmètre usuel des dépenses visées (politique de la ville,
 Anah). RQ-02 suppose une révision constitutionnelle.
 
+## Ajout du 30 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| RQ-15 Retraites : « 64 voire 65 ans » (BFMTV, 17 septembre 2026), contre l'abrogation de la réforme de 2023 | sans levier : 64 ans est le calendrier de la référence ; variante : 65 ans, +3 mois par an |
+
+Aucune nouvelle baisse d'impôt ou de cotisation chiffrée en 2026 au-delà
+de RQ-12 et RQ-13.
+
 ## Non modélisé
 
 * Mesures de 2022 non réaffirmées depuis : retraite à 64 ans, défense à
