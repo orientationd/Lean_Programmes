@@ -2514,6 +2514,75 @@ def extinctionCogenerations : List Int :=
 theorem energie_originale_valeurs : coutTonneZniEuros = 264 ∧ coutZni = 198 ∧
     extinctionCogenerations = [-150, -300, -450, -600] := by decide
 
+/-- Pôles régionaux solaire, stockage hydraulique souterrain et chaleur
+(O-146 à O-146d), demande de l'auteur (octobre 2026) : « centrale solaire
+avec stockage hydraulique en silo ; bassines d'eau souterraines dans
+chaque région, utilisées aussi pour la géothermie et le stockage
+électrique ». Un pôle dans chacune des 13 régions de métropole :
+
+* photovoltaïque au sol : 300 MWc par pôle, 3,9 GW en trois ans
+  (1,3 GW par an de 2027 à 2029, hypothèse), en plus de la tendance ;
+  appels d'offres à 61,33 €/MWh en moyenne (photovoltaïque au sol, octobre
+  2026, Les Énergies renouvelables, 12 octobre 2026) ; 1,25 TWh par GW et
+  par an (CRE, 2019) ; le solaire capte un prix ≈ 32 % sous le prix en
+  base (CRE, note du 19 mars 2026), soit ≈ 45 €/MWh pour une base à
+  66 €/MWh (hypothèse) : soutien public de ≈ 16 €/MWh (calcul), 78 M€ par
+  an une fois les 3,9 GW en service ; emprise au sol calculée par le
+  modèle commun ;
+* stockage hydraulique souterrain (station de transfert d'énergie par
+  pompage entre un bassin de surface et un silo, un puits ou une ancienne
+  mine) : 100 MW et 6 heures par pôle, 1,3 GW et 7,8 GWh en tout ;
+  2 500 €/kW (hypothèse centrale ; 1 100 €/kW pour la STEP de surface de
+  Montézic 2, 1 900 à 3 000 €/kW pour les projets souterrains de Kidston,
+  Lieres et Prosper-Haniel), soit 3,25 Md€ ; sept ans de construction
+  (Prosper-Haniel : 7 à 10 ans ; Gombert et al., La Houille Blanche, 2020),
+  mise en service en 2034 ; rendement de 75 % (68 à 80 %, Menéndez et al.,
+  Journal of Energy Storage, 2020), un cycle par jour pendant 300 jours
+  (hypothèse) ; la restitution remplace des centrales au gaz à 0,36 t de
+  CO₂ par MWh (cycle combiné, calcul) ; financée par un prêt de l'État à
+  un opérateur public (actif commercial, comme les EPR2 de PC-08), sans
+  effet sur le déficit ; levier `stockageElectrique`. Aucune STEP dans une
+  mine fermée ne produit encore dans le monde (Prosper-Haniel abandonné en
+  2018, Pyhäsalmi sans décision d'investissement en 2026) : risque élevé.
+  Une batterie de même capacité coûterait 65 à 150 M€ par pôle et serait
+  prête en un à deux ans ;
+* chaleur : fosse d'eau enterrée de 200 000 m³ et 70 000 m² de capteurs
+  solaires (modèle de Vojens, Danemark, 2015 : 28 GWh par an, part
+  solaire de 45 à 50 %) et un doublet de géothermie (≈ 25 GWh par an, 10 à
+  13 M€, BRGM) par pôle, sur un réseau de chaleur : 53 GWh par pôle, 0,69
+  TWh en tout, à 0,22 t de CO₂ évitée par MWh (Fonds chaleur 2025 : 777 kt
+  pour 3,5 TWh, calcul) ; ≈ 42 M€ par pôle (fosse à 24 à 48 €/m³ et
+  capteurs : 20 à 40 M€ ; doublet : 11,5 M€), aidés à 65 % par le Fonds
+  chaleur (plafond ADEME), sur 2027-2028 ; en service en 2029 ; les réseaux
+  de chaleur relèvent du secteur de l'énergie dans l'inventaire.
+
+Les « bassines » ne sont pas comptées comme réserve d'eau : l'eau d'une
+STEP circule et celle d'un stockage de chaleur monte à 90 °C ; une citerne
+enterrée coûte ≈ 1 800 €/m³ (bassin d'Austerlitz) contre ≈ 12 €/m³ pour
+une réserve à ciel ouvert (Deux-Sèvres). -/
+def polesRegionaux : Int := 13
+def solaireParPoleMw : Int := 300
+def solaireParAnMw : Int := polesRegionaux * solaireParPoleMw / 3
+def soutienSolaireEurosMWh : Int := (6133 - 66 * (100 - 32)) / 100
+def productionSolaireGwhParGw : Int := 1250
+def soutienSolaire : List Int :=
+  ([0, 50, 150, 250, 300] : List Int).map fun pm =>
+    polesRegionaux * solaireParPoleMw * pm / 300 * productionSolaireGwhParGw / 1000 * soutienSolaireEurosMWh / 1000
+def stepParPoleMw : Int := 100
+def stepHeures : Int := 6
+def stepEurosParKw : Int := 2500
+def stepInvestissement : Int := polesRegionaux * stepParPoleMw * stepEurosParKw / 1000
+def anneesConstructionStep : Nat := 7
+def stepPretParAn : Int := stepInvestissement / anneesConstructionStep
+def chaleurParPoleGwh : Int := 28 + 25
+def chaleurEviteeKt : Int := polesRegionaux * chaleurParPoleGwh * 220 / 1000
+def chaleurInvestissementPole : Int := 42
+def chaleurAide : Int := polesRegionaux * chaleurInvestissementPole * 650 / 1000
+
+theorem poles_valeurs : solaireParAnMw = 1300 ∧ soutienSolaireEurosMWh = 16 ∧
+    soutienSolaire = [0, 12, 38, 64, 78] ∧ stepInvestissement = 3250 ∧ stepPretParAn = 464 ∧
+    chaleurEviteeKt = 151 ∧ chaleurAide = 354 := by decide
+
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
@@ -3623,13 +3692,36 @@ def mesures : List Mesure := [
   { id := "O-145"
     titre := "Fin du soutien public aux cogénérations au gaz à l'échéance des contrats"
     source := s!"Mesure originale (octobre 2026) ; 600,7 M€ de charges de service public pour la cogénération et les autres thermiques en 2027 (CRE, délibération 2026-149), éteints en quatre ans (hypothèse) : {extinctionCogenerations} M€ ; effet sur les émissions non compté"
-    leviers := [.depenseEcheancier .affairesEconomiques extinctionCogenerations] }
+    leviers := [.depenseEcheancier .affairesEconomiques extinctionCogenerations] },
+  { id := "O-146"
+    titre := "Pôles régionaux solaire, stockage hydraulique souterrain et chaleur : construction (13 pôles)"
+    source := s!"Demande de l'auteur (octobre 2026) ; {solaireParAnMw} MW de photovoltaïque au sol par an de 2027 à 2029 (300 MWc par pôle), soutien de {soutienSolaireEurosMWh} €/MWh ({soutienSolaire} M€) ; stockage hydraulique souterrain de 1,3 GW et 7,8 GWh à 2 500 €/kW ({stepInvestissement} M€ en sept ans, prêt de l'État de {stepPretParAn} M€ par an à un opérateur public) ; chaleur : fosses enterrées, capteurs solaires et géothermie, {chaleurAide} M€ d'aide du Fonds chaleur en 2027-2028 (voir `polesRegionaux`)"
+    leviers := [.capaciteElectrique .solaire solaireParAnMw,
+                .depenseEcheancier .affairesEconomiques soutienSolaire,
+                .pretEtat stepPretParAn,
+                .investissementEcheancier .logementEnvironnement [chaleurAide / 2, chaleurAide - chaleurAide / 2, 0]] },
+  { id := "O-146b"
+    titre := "Pôles régionaux : réseaux de chaleur solaires et géothermiques en service"
+    source := s!"Fosses de 200 000 m³ et 70 000 m² de capteurs (Vojens : 28 GWh par an) et un doublet de géothermie (≈ 25 GWh) par pôle : {polesRegionaux * chaleurParPoleGwh} GWh à la place du gaz des réseaux de chaleur, {chaleurEviteeKt} kt de CO₂ évitées (0,22 t par MWh, Fonds chaleur 2025) à partir de 2029"
+    leviers := [.transitionKt .energie chaleurEviteeKt 0]
+    debut := 2 },
+  { id := "O-146c"
+    titre := "Pôles régionaux : fin du programme solaire (3,9 GW installés)"
+    source := s!"Trois années d'installation (2027 à 2029) : {polesRegionaux * solaireParPoleMw} MW en tout"
+    leviers := [.capaciteElectrique .solaire (0 - solaireParAnMw)]
+    debut := 3 },
+  { id := "O-146d"
+    titre := "Pôles régionaux : stockage hydraulique souterrain en service (1,3 GW, 6 heures)"
+    source := s!"Mise en service en 2034 après sept ans de construction ; 1,3 GW × 6 h, un cycle par jour pendant 300 jours, rendement de 75 % : ≈ 1,75 TWh restitués à la place du gaz (0,36 t par MWh) ; fin du prêt de construction"
+    leviers := [.stockageElectrique (polesRegionaux * stepParPoleMw) stepHeures 300 750 360,
+                .pretEtat (0 - stepPretParAn)]
+    debut := anneesConstructionStep }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
