@@ -791,12 +791,14 @@ def barres_beneficiaires(D: Donnees):
     """Charge d'intérêts de la dernière année, empilée par bénéficiaire : une
     barre par ligne (tendanciel puis programmes)."""
     bens = beneficiaires_meta(D)
-    lignes = D.lignes()
+    # première ligne : l'année de départ (commune à toutes les trajectoires)
+    lignes = [(None, f"Départ ({D.annees[0]})", D.traj("central", None)[0])] + \
+        [(pid, nom, D.fin("central", pid)) for pid, nom in D.lignes()]
     n = len(lignes)
     fig, ax = figure(0.2 * n + 1.25)
     totaux = []
-    for k, (pid, _nom) in enumerate(lignes):
-        r = D.fin("central", pid)["interetsBeneficiaires"]
+    for k, (_pid, _nom, e) in enumerate(lignes):
+        r = e["interetsBeneficiaires"]
         gauche = 0.0
         for j, b in enumerate(bens):
             v = r[b["id"]] / 1000
@@ -805,17 +807,25 @@ def barres_beneficiaires(D: Donnees):
                     label=b["nom"] if k == 0 else None)
             gauche += v
         totaux.append(gauche)
+    # une barre très au-dessus des autres est coupée, son total écrit au bord
+    tri = sorted(totaux, reverse=True)
+    limite = tri[1] * 1.3 if len(tri) > 1 and tri[0] > 2 * tri[1] else tri[0] * 1.08
     for k, t in enumerate(totaux):
-        ax.annotate(nombre(t, 0), (t, k), xytext=(3, 0), textcoords="offset points",
-                    va="center", fontsize=6.8, color=INK2)
-    ax.set_yticks(range(n), [court_nom(nom, 30) for _pid, nom in lignes])
+        if t > limite:
+            ax.annotate(f"{nombre(t, 0)} ▸", (limite, k), xytext=(-3, 0), textcoords="offset points",
+                        va="center", ha="right", fontsize=6.8, color="white", fontweight="bold",
+                        zorder=5)
+        else:
+            ax.annotate(nombre(t, 0), (t, k), xytext=(3, 0), textcoords="offset points",
+                        va="center", fontsize=6.8, color=INK2)
+    ax.set_yticks(range(n), [court_nom(nom, 30) for _pid, nom, _e in lignes])
     ax.set_ylim(n - 0.5, -0.5)
     ax.tick_params(axis="y", labelcolor=INK2, labelsize=6.8)
     ax.grid(axis="y", visible=False)
     ax.grid(axis="x", visible=True)
-    ax.set_xlim(0, max(totaux) * 1.08)
+    ax.set_xlim(0, limite)
     ax.xaxis.set_major_formatter(fmt_axe(0, ""))
-    ax.set_title(f"Charge d'intérêts {D.annees[-1]} par bénéficiaire (Md€), scénario central")
+    ax.set_title(f"Charge d'intérêts par bénéficiaire, {D.annees[0]} et {D.annees[-1]} (Md€ courants)")
     legende(fig, ncol=3)
     return fig
 
@@ -858,16 +868,19 @@ def section_beneficiaires(D: Donnees) -> list:
         r = e["interetsBeneficiaires"]
         rows.append([nom, md(e["chargeInterets"], 1)] + [md(r[b["id"]], 1) for b in bens]
                     + [pct_pb(r["nonResidents"] * 10000 // e["pib"], 2)])
-    courts = {"nonResidents": "Non-rési­dents", "banqueDeFrance": "Banque de France",
-              "banques": "Banques", "assurances": "Assu­rances", "opc": "Fonds (OPC)",
-              "autres": "Autres rési­dents"}
+    courts = {"nonResidents": "Non-<br/>résidents", "banqueDeFrance": "Banque<br/>de France",
+              "banques": "Banques", "assurances": "Assu-<br/>rances", "opc": "Fonds<br/>(OPC)",
+              "autres": "Autres<br/>résidents"}
+    entetes = [f"Scénario central, {a1}", "Total"] + \
+        [P(courts.get(b["id"], echap(b["nom"])), "cellgd") for b in bens] + \
+        [P("À l'étranger<br/>(% du PIB)", "cellgd")]
     out.append(Spacer(1, 3))
-    out.append(tableau([f"Scénario central, {a1}", "Total"] + [courts.get(b["id"], b["nom"]) for b in bens]
-                       + ["Versés à l'étranger (% PIB)"], rows,
-                       [0.25, 0.08] + [0.083] * len(bens) + [0.172], surligner_premiere=True))
+    out.append(tableau(entetes, rows, [0.25, 0.08] + [0.09] * len(bens) + [0.13],
+                       surligner_premiere=True))
     out.append(P(
         "Tableau en Md€ courants. « Non-résidents » comprend les titres détenus en propre par la BCE "
-        "(≈ 1 à 2 points de la dette) ; « Versés à l'étranger » rapporte leurs intérêts au PIB. Les intérêts "
+        "(≈ 1 à 2 points de la dette) ; « À l'étranger » rapporte leurs intérêts au PIB. Une barre très "
+        "au-dessus des autres est coupée au bord du graphique, son total écrit en blanc. Les intérêts "
         "reçus par la Banque de France ne restent pas chez elle : elle rémunère les réserves des banques "
         "(2,26 % en moyenne en 2025, marge nette de ses portefeuilles APP et PEPP de −12,6 Md€) et ne verse "
         "plus de dividende à l'État depuis l'exercice 2021 (impôt sur les sociétés de 1,5 Md€ en 2025). "
