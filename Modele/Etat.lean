@@ -1141,6 +1141,8 @@ structure Etat where
   ≈ 4 700 Md€ sautant de ≈ 470 M€ par pb d'arrondi ; 0 = à reprendre de
   `tauxApparentPb` (situation de départ, rétro-test). -/
   tauxApparentPpm : Int := 0
+  /-- Taux d'émission de l'année, ppm ; 0 = à reprendre de `tauxEmissionPb`. -/
+  tauxEmissionPpm : Int := 0
   /-- Écart de l'année entre variation de la dette et déficit qui ne relève
   pas des opérations financières suivies (trésorerie, primes d'émission…),
   M€ : observé pour l'année de départ, nul ensuite. -/

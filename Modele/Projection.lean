@@ -214,9 +214,14 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- d'émission de l'année (nominale au taux marginal, indexée au taux réel).
   -- Prime de risque : le taux marginal monte (baisse) de `primeDeficitPb` par
   -- point de déficit au-dessus (au-dessous) du déficit de départ.
-  let tauxCible := max 0 (H.eco.tauxMarginalA k
-    + H.eco.primeDeficitPb * (s.deficitPb - ref.deficitPb) / 100)
-  let emission := tauxCible - appliquerPm H.eco.inflationPb H.eco.partDetteIndexeePm
+  -- en ppm (1 pb = 100 ppm), sur le déficit exact (non arrondi au pb) :
+  -- 0,25 pb de taux par pb de déficit
+  let deficitPpm (e : Etat) : Int := if e.pib = 0 then 0 else e.deficit * 1000000 / e.pib
+  let tauxCiblePpm := max 0 (H.eco.tauxMarginalA k * 100
+    + H.eco.primeDeficitPb * (deficitPpm s - deficitPpm ref) / 100)
+  let emissionPpm := tauxCiblePpm - H.eco.inflationPb * H.eco.partDetteIndexeePm / 10
+  let tauxCible := tauxCiblePpm / 100
+  let emission := emissionPpm / 100
   let dette := s.dette
   -- dette à court terme : renouvelée dans l'année au taux court ; dette à
   -- moyen et long terme : taux du stock, puis refinancement d'une part
@@ -226,9 +231,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- taux en ppm (1 pb = 100 ppm) : un arrondi au pb sur le stock ferait
   -- sauter la charge d'intérêts de ≈ 470 M€
   let tauxPrecedentPpm := if s.tauxApparentPpm = 0 then s.tauxApparentPb * 100 else s.tauxApparentPpm
+  let emissionPrecedentePpm := if s.tauxEmissionPpm = 0 then s.tauxEmissionPb * 100 else s.tauxEmissionPpm
   let tauxStockPpm := if long = 0 then tauxPrecedentPpm
-    else (longDebut * tauxPrecedentPpm + (long - longDebut) * (s.tauxEmissionPb * 100)) / long
-  let tauxPpm := tauxStockPpm + (emission * 100 - tauxStockPpm) * H.eco.renouvellementDettePm / 1000
+    else (longDebut * tauxPrecedentPpm + (long - longDebut) * emissionPrecedentePpm) / long
+  let tauxPpm := tauxStockPpm + (emissionPpm - tauxStockPpm) * H.eco.renouvellementDettePm / 1000
   let taux := tauxPpm / 100
   -- indexation du capital des titres indexés sur l'inflation de l'année,
   -- enregistrée en intérêts (comptabilité nationale)
@@ -471,6 +477,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     depensesF := depensesF
     tauxApparentPb := taux
     tauxApparentPpm := tauxPpm
+    tauxEmissionPpm := emissionPpm
     tauxMarginalCourantPb := tauxCible
     tauxEmissionPb := emission
     chargeIndexationMeur := indexation

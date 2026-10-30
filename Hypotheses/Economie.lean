@@ -139,7 +139,8 @@ une hausse d'un point du déficit/PIB anticipé relève les taux longs
 d'environ 25 pb, une hausse d'un point de dette/PIB de 3 à 4 pb (Laubach,
 « New Evidence on the Interest Rate Effects of Budget Deficits and Debt »,
 JEEA, 2009). Appliquée à l'écart entre le déficit de l'année précédente et
-celui de départ (5,1 %) : un déficit ramené à 3 % abaisse le taux marginal
+celui de départ (5,1 %), calculé exactement (non arrondi au pb), les taux
+étant portés en ppm dans la projection : un déficit ramené à 3 % abaisse le taux marginal
 de ≈ 50 pb, un déficit de 8 % le relève de ≈ 75 pb. Rétro-test 2019-2025
 de la charge d'intérêts : erreur moyenne de 2,2 Md€ (voir
 `Modele/Retro.lean`), contre 4,6 Md€ avec la convergence à 20 pb par an de
