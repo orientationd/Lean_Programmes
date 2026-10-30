@@ -1009,12 +1009,28 @@ abbrev ValideSmic (H : Scenario) : Prop :=
   0 ≤ H.eco.smicParPoint.impotRevenuMeur ∧
   0 ≤ H.eco.smicParPoint.prestationsMeur ∧ 0 ≤ H.eco.smicParPoint.revenuDisponiblePriveMeur
 
+/-- Bornes des lois d'émissions et de l'aubaine des aides à l'électrique.
+Des élasticités à l'activité non nulles exigent une croissance de calage. -/
+abbrev ValideEmissions (H : Scenario) : Prop :=
+  SecteurGes.tous.all (fun g => decide (0 ≤ H.eco.elasticitesEmissionsActivitePm.get g
+    ∧ H.eco.elasticitesEmissionsActivitePm.get g ≤ 2000)) = true ∧
+  (SecteurGes.tous.all (fun g => decide (H.eco.elasticitesEmissionsActivitePm.get g = 0)) = true
+    ∨ 0 < H.eco.croissanceCalageEmissionsPb) ∧
+  0 ≤ H.energie.elasticitePrixCarburantsBrentPm ∧ H.energie.elasticitePrixCarburantsBrentPm ≤ 1000 ∧
+  0 ≤ H.energie.elasticitePrixFioulBrentPm ∧ H.energie.elasticitePrixFioulBrentPm ≤ 1000 ∧
+  0 ≤ H.energie.partTransportsVoituresPm ∧ H.energie.partTransportsVoituresPm ≤ 1000 ∧
+  0 ≤ H.energie.partBatimentsFioulPm ∧ H.energie.partBatimentsFioulPm ≤ 1000 ∧
+  0 ≤ H.energie.ajustementPrixEmissionsPm ∧ H.energie.ajustementPrixEmissionsPm ≤ 1000 ∧
+  0 ≤ H.energie.sensibiliteAideGeneralePmParKeur ∧ H.energie.sensibiliteAideGeneralePmParKeur ≤ 1000 ∧
+  0 ≤ H.energie.sensibiliteAideModestesPmParKeur ∧ H.energie.sensibiliteAideModestesPmParKeur ≤ 1000
+
 /-- Bornes de plausibilité. Elles ne disent pas qu'une hypothèse est
 *juste*, seulement qu'elle n'est pas absurde. Les resserrer est une
 décision du modèle commun. -/
 abbrev Valide (H : Scenario) : Prop :=
   H.ValideReference ∧ H.ValideEco ∧ H.ValideAxes ∧ H.ValideClimat ∧ H.ValideTravail ∧
-  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols ∧ H.ValidePac ∧ H.ValideSmic
+  H.ValideTrajectoires ∧ H.ValideAssiettes ∧ H.ValideElectriciteSols ∧ H.ValidePac ∧ H.ValideSmic ∧
+  H.ValideEmissions
 
 -- Instances nommées : la conjonction complète dépasse la profondeur de
 -- recherche d'instances si on la laisse se décomposer atome par atome.
@@ -1028,6 +1044,7 @@ instance (H : Scenario) : Decidable H.ValideAssiettes := inferInstance
 instance (H : Scenario) : Decidable H.ValideElectriciteSols := inferInstance
 instance (H : Scenario) : Decidable H.ValidePac := inferInstance
 instance (H : Scenario) : Decidable H.ValideSmic := inferInstance
+instance (H : Scenario) : Decidable H.ValideEmissions := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario

@@ -23,7 +23,8 @@ Sa révision n'est pas adoptée : la Commission a proposé 90 % en décembre
 applique le droit en vigueur. Ventes de voitures électriques neuves : 331 200 en
 2025 (19,9 % de 1 665 000 immatriculations, PFA / AAA Data), portées
 linéairement à la totalité des ventes neuves en 2035 : +133 000 par an. Les
-mesures (primes) s'ajoutent dans la limite des ventes neuves.
+voitures que les aides rendent électriques (voir « Aubaine ») et celles des
+obligations s'ajoutent dans la limite des ventes neuves.
 
 Chaque voiture thermique remplacée retire de l'assiette fiscale (É. Pichet,
 Kedge, Connaissance des Énergies, 5 septembre 2026 : 16 Md€ d'accises et 8 Md€ de TVA sur les carburants des 38,6 M de
@@ -128,9 +129,9 @@ légers et celles du fioul des bâtiments, selon les élasticités-prix
 ci-dessus :
 * élasticité du prix TTC au Brent, structure des prix de 2024 (DGEC, « Prix
   des produits pétroliers en 2024 » : brut ≈ 46,5 c€/L ; gazole 169 c€/L
-  TTC, SP95-E10 178, fioul 120 ; calcul) : gazole 0,35, SP95-E10 0,27,
-  retenu 0,33 pour les carburants (gazole majoritaire, pondéré aux trois
-  quarts : hypothèse), fioul 0,47 ; le prix du gaz ne suit plus le pétrole
+  TTC, SP95-E10 178, fioul 120 ; TVA de 20 % comprise ; calcul) : gazole
+  0,33, SP95-E10 0,31, retenu 0,33 pour les carburants (gazole
+  majoritaire : hypothèse), fioul 0,47 ; le prix du gaz ne suit plus le pétrole
   (82 % des prix européens formés sur les marchés gaziers, IGU, 2025) et
   n'est pas indexé ;
 * part des émissions des transports due aux voitures et utilitaires légers :
@@ -148,14 +149,19 @@ ci-dessus :
   Marcus, 2009 ; ≈ 0,3 / 0,65, Calvet et Marical, 2011 ; 0,23 / 0,72,
   Labandeira et al., 2017 ; calcul).
 Au Brent de 100 $ (référence 63 $), l'effet de long terme vaut ≈ −8 % des
-émissions des transports ; à 50 $, ≈ +3 %. L'effet de la croissance sur les
+émissions des transports ; à 50 $, ≈ +3 %. Seules les émissions suivent :
+l'assiette des accises, la TVA sur les carburants et la facture importée ne
+sont pas corrigées de ces volumes (elles le sont des seules voitures
+électriques). L'effet de la croissance sur les
 émissions est dans `Hypotheses.Eco` (`elasticitesEmissionsActivitePm`).
 
 ## Aubaine des aides à l'achat de voitures électriques (octobre 2026)
 
-Une aide de `A` k€ rend électriques `1 − e^(−β A)` des achats qui ne
-l'auraient pas été (modèle de choix discret) ; la part des ventes déjà
-électrique (trajectoire tendancielle) est ôtée chaque année. Sensibilités :
+Forme réduite calée sur les études françaises : une aide de `A` k€ rend
+électriques `1 − e^(−β A)` des achats qui ne l'auraient pas été, la part
+des ventes déjà électrique (trajectoire tendancielle et obligations des
+mesures) étant ôtée chaque année ; la dépense paie toutes les voitures
+aidées. Sensibilités :
 * aide générale, β = 55 pm par k€ : 0,045 par k€ (IPP, Perspectives
   budgétaires 2026, chapitre 4 : 81 % d'aubaine pour le bonus de 6 000 € de
   2022) et ≈ 0,07 (France Stratégie, rapport France Relance, 2024 : +3,3

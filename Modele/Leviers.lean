@@ -448,8 +448,8 @@ def stabilisateurChomage (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     { s with depensesF := s.depensesF.ajouter .famille d, chomeursComptes := chomeurs }
 
 /-- Part des achats non électriques qu'une aide de `aideEuros` rend
-électriques, pm : `1 − e^(−β A)`, β en pm par k€ (modèle de choix
-discret). L'exponentielle est approchée par l'inverse du développement de
+électriques, pm : `1 − e^(−β A)`, β en pm par k€ (forme réduite calée,
+voir `Hypotheses/Energie.lean`). L'exponentielle est approchée par l'inverse du développement de
 `e^x` à l'ordre 4 (écart < 2 % jusqu'à `x = 1,5`). -/
 def fractionReponsePm (betaPmParKeur aideEuros : Int) : Int :=
   let x := max 0 (betaPmParKeur * aideEuros / 1000)

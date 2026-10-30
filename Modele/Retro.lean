@@ -199,6 +199,12 @@ def etatObserve (H : Scenario) (base : Etat) (p o : AnneeObservee) : Etat :=
     moderationDepensesPb := 0
     electrificationTendanceMilliers := 0
     electrificationAnnuelleMilliers := 0
+    electrificationAideePondereeMilliers := 0
+    -- taux observés : la précision en ppm repart de leur valeur en pb
+    tauxApparentPpm := 0
+    tauxEmissionPpm := 0
+    effetPrixTransportsPpm := 0
+    effetPrixBatimentsPpm := 0
     -- champs que `etatDepart` initialise à partir du scénario
     decesMilliers := H.demo.decesMilliers
     robotisationPb := H.eco.robotisationTendanciellePb
@@ -211,12 +217,13 @@ def scenarioRetro (H : Scenario) (e : Etat) (o s : AnneeObservee) : Scenario :=
   { H with
     reference := { H.reference with etat := e, annee := o.annee }
     -- électrification du parc : celle d'aujourd'hui ne vaut pas pour le passé
-    energie := { H.energie with electrificationTendancielleMilliers := 0, hausseElectrificationMilliers := 0 }
+    energie := { H.energie with electrificationTendancielleMilliers := 0, hausseElectrificationMilliers := 0,
+                                ajustementPrixEmissionsPm := 0 }
     eco := { H.eco with
       -- le PIB est observé : il contient déjà les effets de demande
       multiplicateurPm := 0
-      -- émissions : la baisse tendancielle de l'axe central ne vaut pas pour
-      -- le passé ; pas d'écart d'activité
+      -- émissions (non comparées au passé) : ni écart d'activité ni effet du
+      -- prix du pétrole
       elasticitesEmissionsActivitePm :=
         { transports := 0, batiments := 0, agriculture := 0, industrie := 0, energie := 0, dechets := 0 }
       croissancePotentielleAnneesPb := [s.croissancePotentiellePb]

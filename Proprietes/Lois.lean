@@ -8,9 +8,12 @@ les modifier :
 * loi de programmation militaire 2024-2030 actualisée (loi n° 2026-791 du
   16 août 2026, art. 3) : crédits de la mission Défense hors pensions de
   57,1, 63,3, 69,5, 72,6 et 75,7 Md€ de 2026 à 2030. Le tendanciel les
-  contient (échéancier de `Hypotheses.Reference`) : la propriété vérifie que
-  la dépense de défense du programme ne passe sous celle du tendanciel
-  aucune année de l'entrée en vigueur à 2030 ;
+  contient (échéancier de `Hypotheses.Reference`, en euros 2025 indexés sur
+  le déflateur du scénario ; niveaux nominaux du scénario central vérifiés
+  par `Tests.Mecanismes.lpm_tendanciel`) : la propriété vérifie que la
+  dépense de défense du programme ne passe sous celle du tendanciel aucune
+  année de l'entrée en vigueur à 2030 (comparaison relative : avec une
+  autre inflation, la trajectoire suit le déflateur du scénario) ;
 * programmation pluriannuelle de l'énergie n° 3 (décret n° 2026-76 du
   12 février 2026, annexe, Hexagone continental) : capacités installées en
   2030 de 48 000 MW de photovoltaïque, 31 000 MW d'éolien terrestre,

@@ -244,13 +244,21 @@ bâtiments −2,1 %, agriculture −1,3 %, industrie −5,2 % et −3,6 % en
 2023-2024, déchets −2,2 % ; énergie très variable). Identique dans les trois
 variantes ; la baisse est supposée calée sur la croissance du scénario
 central (`croissanceCalageEmissions`, hypothèse : l'AME 2024 ne publie pas
-de variante de croissance).
+de variante de croissance) et sur le prix de référence du pétrole du modèle
+(63 $ le baril, hypothèse : le prix retenu par l'AME n'a pas été retrouvé) ;
+les baisses de 2023-2025 contiennent aussi la réponse retardée au choc
+d'énergie de 2022 et la faiblesse de l'activité.
 
 Émissions selon l'activité (`elasticitesEmissionsActivitePm`, loi
 économique d'octobre 2026) : chaque année, les émissions d'un secteur
 s'écartent de leur baisse tendancielle de `élasticité × écart de croissance
-du PIB en volume au scénario central` ; l'écart se cumule, comme celui du
-PIB. Élasticités (pm) :
+du PIB en volume du scénario au scénario central` (hors effets des mesures
+et du moteur) ; l'écart se cumule, comme celui du PIB. Entre les variantes,
+cet écart est surtout un écart de croissance potentielle, alors que les
+sources mesurent surtout des élasticités de court terme (et, pour
+l'industrie, à la production de la branche plutôt qu'au PIB) : les
+valeurs retenues sont des hypothèses, probablement hautes, l'élasticité de
+tendance de la France étant proche de zéro. Élasticités (pm) :
 * industrie 800 : 0,79 dans l'année pour l'industrie manufacturière (Burke,
   Shahiduzzaman et Stern, Global Environmental Change, 2015) ; 0,46 à 1,47
   selon les branches par rapport à leur production (DG Trésor, Trésor-Éco
@@ -268,7 +276,7 @@ PIB. Élasticités (pm) :
 * production d'énergie 500 : hypothèse (0 à 1,5 ; dominée par le nucléaire
   et le prix du gaz) ;
 * déchets 100 : hypothèse (0 à 0,2).
-Contrôle : moyenne pondérée par les émissions de 2030 ≈ 0,44, sous les
+Contrôle : moyenne pondérée par les émissions de 2030 ≈ 0,46, sous les
 élasticités cycliques agrégées de 0,5 à 0,8 (FMI, document de travail
 18/56, 2018 : 0,6 pour les pays avancés ; Cohen, Jalles, Loungani et
 Pizzuto, Journal of Macroeconomics, 2022 : 0,78 pour la France sur

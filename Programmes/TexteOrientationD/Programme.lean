@@ -561,7 +561,7 @@ def pacteDutreil : Int := 1950
 
 /-- Défense (O-43) : −1 Md€ par an sur le budget de la défense (53 Md€ en
 2025, COFOG), hors norme de dépense, par rapport à la trajectoire de la LPM
-actualisée (loi n° 2026-791, 76,3 Md€ en 2030) que la référence applique. -/
+actualisée (loi n° 2026-791, 75,7 Md€ en 2030) que la référence applique. -/
 def economieDefense : Int := 1000
 
 /-- Durée de cotisation (O-44) : 174 trimestres au lieu de 172, soit six mois
