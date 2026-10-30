@@ -49,6 +49,18 @@ formés d'ici 2030 ; baisse des émissions portée à 5 % par an, fossiles
 sous 30 % en 2035 (objectifs sans moyens chiffrés) ; enveloppe de 120 à
 150 Md€ d'économies, non ventilée.
 
+## Ajouts du 30 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| RE-10 Enseignants : +200 € net par mois, jusqu'à +500 € en milieu de carrière ([AFP via La Gazette France](https://www.lagazettefrance.fr/article/presidentielle-attal-et-philippe-tentent-de-seduire-les-enseignants), 25 août 2026) | +2,5 Md€/an de traitement (chiffrage de l'entourage, lu comme brut ; borne basse : le seul socle coûte ≈ 2,05 Md€ net, ≈ 2,6 Md€ brut) |
+| RE-11 Un mois d'engagement civique obligatoire avant 25 ans ([attalpresident.fr](https://attalpresident.fr/actualites/gabriel-attal-presente-ses-mesures-pour-la-jeunesse-et-l-avenir-de-la-france), 11 octobre 2026) | jusqu'à +0,45 Md€/an en cinq ans (méthode de PP-06 sur un mois) |
+
+Les « 15 à 20 Md€ dès le début » correspondent au frein d'urgence de RE-06.
+RE-07 : l'amendement sur les pensions alimentaires a été adopté en
+première lecture du budget 2027 le 15 octobre 2026 ; s'il est voté, il
+entre dans la référence et RE-07 sera ramené à 2 Md€.
+
 ## Non modélisé, faute de montant dans les sources
 
 * Retraite universelle par points (« un euro cotisé ouvre les mêmes
@@ -60,7 +72,11 @@ sous 30 % en 2035 (objectifs sans moyens chiffrés) ; enveloppe de 120 à
   Parlement ; formation de 20 millions de salariés à l'IA ; « Choc des
   savoirs », moins de 20 élèves par classe ; règle d'or constitutionnelle sans hausse d'impôts des ménages.
 * Énergie : part des fossiles sous 30 % en 2035, baisse des émissions
-  portée à 5 %/an d'ici 2030 : objectifs sans montant public.
+  portée à 5 %/an d'ici 2030 : objectifs sans montant public ;
+  « 14 nouveaux réacteurs » (LyonMag, 10 octobre 2026), dont on ne sait
+  s'ils comprennent les six EPR2 engagés.
+* Fermeture de 100 collèges ; plan IA de 200 Md€ (moitié État, durée et
+  instruments non publiés).
 
 Dès qu'un chiffrage est publié, ces propositions pourront être ajoutées
 par PR.

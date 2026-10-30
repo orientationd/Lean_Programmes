@@ -18,12 +18,12 @@ et une règle d'or soumise à référendum.
 | Mesure | Levier |
 |---|---|
 | RN-01 TVA à 5,5 % sur les énergies | −12,2 Md€ de TVA |
-| RN-02 Suppression CFE, CVAE, C3S | −17 Md€ d'autres impôts |
+| RN-02 Suppression CFE, CVAE, C3S | −17 Md€ d'autres impôts en 2027 ; la CVAE, déjà supprimée par la loi en 2030, ne compte que pour son rendement restant (−13,4 Md€ à partir de 2030) |
 | RN-03 Fiscalité des grandes entreprises | +5,6 Md€ d'IS |
 | RN-04 Autres baisses d'impôts des ménages | −9,9 Md€ d'autres impôts (agrégat moins RN-01) |
 | RN-05 Retraite à 62 ans, 42 annuités | −24 mois d'âge légal (coût selon l'hypothèse du scénario ; le parti chiffre 9 Md€) |
 | RN-06 201 000 postes publics non renouvelés | −13,5 Md€ (67 164 € par poste), 40 200 par an de 2027 à 2031, emplois publics retirés un pour un |
-| RN-07 Effort des collectivités | −8,2 Md€ |
+| RN-07 Effort des collectivités | −14,65 Md€ : 18,4 Md€ en 2031 (dossier, p. 12), moins les effectifs (3,75 Md€) déjà comptés par RN-06 ; variante : 8,2 Md€ (2027) |
 | RN-08 Priorité nationale (prestations) | −18,1 Md€ |
 | RN-09 Contribution à l'UE | −13,1 Md€ |
 | RN-10 TVA à la source, cartels de marchés publics | +23,8 Md€ de TVA |
@@ -84,6 +84,19 @@ mesure, dont le champ `source` donne le calcul.
 | RN-32 Privatisation de l'audiovisuel public | jusqu'à −2 Md€/an en quatre ans (Institut Montaigne, 2024) |
 | RN-33 Frais de scolarité des étudiants étrangers | +1,1 Md€ de recettes non fiscales |
 
+## Corrections du 30 octobre 2026
+
+* **RN-07** prenait le montant de 2027 (8,2 Md€) au lieu de celui de 2031
+  que suit le programme : la trajectoire du dossier est 8,2, 12, 14,5,
+  16,9 et 18,4 Md€ ([Public Sénat, 14 octobre 2026](https://www.publicsenat.fr/actualites/politique/jai-bien-peur-du-cauchemar-sebastien-lecornu-pointe-le-contre-budget-du-rn-et-denonce-leffort-de-184-milliards-deuros-en-203)).
+  Les effectifs des collectivités (3,75 Md€, [Acteurs publics](https://acteurspublics.fr/articles/la-reforme-de-letat-et-des-collectivites-au-coeur-des-economies-programmees-par-le-rn/))
+  en sont retirés : 116 000 des 201 000 postes de RN-06 sont dans les
+  collectivités. Les 85 000 autres relèvent sans doute des agences de RN-11
+  (recouvrement possible, non vérifié dans le dossier).
+* **RN-02** comptait deux fois la CVAE, que la loi supprime déjà en 2030.
+* RN-09 garde le montant 2031 de l'IDEP (13,1 Md€) ; J. Bardella a cité
+  9 Md€ le 6 octobre, l'amendement rejeté du 14 octobre −11 Md€ en 2027.
+
 ## Non modélisé
 
 * Indemnisation des sociétés d'autoroutes (≈ 40 Md€ une fois, Institut
@@ -95,3 +108,9 @@ mesure, dont le champ `source` donne le calcul.
 * Mesures du PLF 2027 conservées (3,6 Md€).
 * Trajectoire 2027-2032 et règle d'or : le modèle n'a ni montée en charge
   ni règle budgétaire.
+* APL réservées aux Français (Hénin-Beaumont, 13 septembre 2026) : sans
+  montant, sans doute comprises dans RN-08. Fusion de l'Urssaf et de la
+  DGFiP (1,72 Md€ en 2031 selon Acteurs publics) : peut-être comprise dans
+  RN-11, non ajoutée. Taxe sur les bureaux vacants (« envisagée »), vente
+  de HLM (organismes hors administrations publiques), abrogation de la loi
+  SRU (transfert neutre).

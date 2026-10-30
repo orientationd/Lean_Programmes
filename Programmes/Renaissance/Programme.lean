@@ -36,6 +36,19 @@ def economieParlement : List Int :=
 theorem parlement_valeurs : economieAssemblee = 239 ∧ economieSenat = 150 ∧
     economieParlement = [-239, -239, -314, -314, -314, -389] := by decide
 
+/-- Un mois d'engagement civique obligatoire avant 25 ans
+(attalpresident.fr, 11 octobre 2026 ; LyonMag, 10 octobre 2026), sans coût
+publié. Méthode de PP-06 ramenée à un mois : génération de 822 914 jeunes
+moins les 72 000 missions de service civique déjà financées, × 605 €
+(indemnité de 505 € et tutorat de 100 €, Maire-info), montée en charge en
+cinq ans (hypothèse). -/
+def coutEngagement : Int := (822914 - 72000) * 605 / 1000000
+def engagementEcheancier : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => k * coutEngagement / 5
+
+theorem engagement_valeurs : coutEngagement = 454 ∧
+    engagementEcheancier = [90, 181, 272, 363, 454] := by decide
+
 def mesures : List Mesure := [
   { id := "RE-01", titre := "« Droit au brut » : baisse des cotisations salariales, jusqu'à 250 € net par mois au salaire médian"
     source := "G. Attal, RMC, 6 octobre 2026 : coût estimé 40 Md€/an, financement non précisé ; imputé aux cotisations sociales"
@@ -65,13 +78,19 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .famille 660] },
   { id := "RE-09", titre := "350 députés et 200 sénateurs"
     source := s!"attalpresident.fr/programme (via Votons 2027) : « ramener le nombre de députés à 350 et celui des sénateurs à 200 » ; non chiffré : jusqu'à {economieAssemblee + economieSenat} M€ par an (voir `economieAssemblee`)"
-    leviers := [.depenseEcheancier .fonctionnement economieParlement] }
+    leviers := [.depenseEcheancier .fonctionnement economieParlement] },
+  { id := "RE-10", titre := "Enseignants : +200 € net par mois pour tous, jusqu'à +500 € en milieu de carrière"
+    source := "G. Attal, Le Monde, 25 août 2026 (AFP, via La Gazette France) : revalorisation « immédiate », 2,5 Md€ par an « selon son entourage », lus comme un montant brut (hypothèse) ; contrôle : 852 752 enseignants × 200 € × 12 ≈ 2,05 Md€ net pour le seul socle (calcul), ≈ 2,6 Md€ brut : le chiffrage est une borne basse"
+    leviers := [.remunerationPublique .traitement .enseignement [2500]] },
+  { id := "RE-11", titre := "Un mois d'engagement civique obligatoire avant 25 ans"
+    source := s!"attalpresident.fr, 11 octobre 2026 ; non chiffré : méthode de PP-06 sur un mois, {coutEngagement} M€ par an atteints en cinq ans (voir `coutEngagement`)"
+    leviers := [.depenseEcheancier .culture engagementEcheancier] }
 ]
 
 def programme : Programme where
   id := "Renaissance"
   nom := "Renaissance — Gabriel Attal 2027"
-  description := "Transcription partielle et non officielle : « droit au brut » (−40 Md€ de cotisations), année blanche 2028 sur les prestations, 100 000 postes de fonctionnaires, taxe sur les rachats d'actions, objectif de 100 000 emplois par la réforme du chômage, « frein d'urgence » sur les dépenses sociales, impôt des classes moyennes, 1 000 € d'épargne retraite par naissance. Ajout du 28 octobre 2026 : 350 députés et 200 sénateurs. Retraite universelle par points, quotas d'immigration : sans montant publié. Objectif annoncé : 120 à 150 Md€ d'économies et déficit sous 3 % avant 2032."
+  description := "Transcription partielle et non officielle : « droit au brut » (−40 Md€ de cotisations), année blanche 2028 sur les prestations, 100 000 postes de fonctionnaires, taxe sur les rachats d'actions, objectif de 100 000 emplois par la réforme du chômage, « frein d'urgence » sur les dépenses sociales, impôt des classes moyennes, 1 000 € d'épargne retraite par naissance. Ajout du 28 octobre 2026 : 350 députés et 200 sénateurs. Ajouts du 30 octobre 2026 : enseignants, un mois d'engagement civique. Retraite universelle par points, quotas d'immigration : sans montant publié. Objectif annoncé : 120 à 150 Md€ d'économies et déficit sous 3 % avant 2032."
   mainteneurs := ["@orientationd"]
   source := "attalpresident.fr/programme et presse (RMC 6 octobre 2026, Le Parisien 23 mai 2026, CNews 30 avril 2026), consultés le 22 octobre 2026"
   mesures := mesures

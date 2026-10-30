@@ -24,11 +24,11 @@ déficit sous 3 % du PIB en 2031 et de 2,2 % en fin de quinquennat.
 | LR-05 Immigration | −10 Md€ (dont 4,5 sous condition constitutionnelle) |
 | LR-06 Fraude fiscale et sociale | +5 Md€ de recettes |
 | LR-07 Subventions aux associations | −3 Md€ |
-| LR-08 Retraites (décote 63-65 ans et autres) | −42 Md€ forfaitaires, âge légal inchangé |
+| LR-08 Retraites (décote 63-65 ans et autres) | −42 Md€ forfaitaires, âge légal inchangé ; variantes : décote seule (12 Md€) avec âge minimal de 63 ans ; 40 Md€ cumulés sur cinq ans (LCI) |
 | LR-09 Chômage et prestations plafonnées à 70 % du SMIC | −30 Md€ |
 | LR-10 Jour de carence d'ordre public | −4 Md€ |
 | LR-11 Collectivités de plus de 10 M€ de budget | −10 Md€ |
-| LR-12 Impôts de production | −15 Md€ d'autres impôts (voir ci-dessous) |
+| LR-12 Impôts de production | −7,2 Md€ d'autres impôts, −2,8 Md€ de cotisations (forfait social) et la CVAE restante (voir « Ajouts du 30 octobre 2026 ») |
 | LR-13 Heures supplémentaires et allègements des ménages | −21 Md€ de cotisations |
 
 Les montants sont lus comme des économies annuelles en régime de
@@ -40,7 +40,7 @@ différence n'est pas détaillée dans les sources.
 
 | Mesure | Levier |
 |---|---|
-| LR-12 (corrigée) Impôts de production | −15 Md€ : les 30 Md€ pour les entreprises se répartissent entre impôts de production et cotisations patronales (comparateur IFRAP) |
+| LR-12 (corrigée) Impôts de production | les 30 Md€ pour les entreprises se répartissent entre impôts de production (15 Md€, comparateur IFRAP) et cotisations patronales ; détail du livret appliqué le 30 octobre 2026 |
 | LR-14 Cotisations patronales | +15 Md€ d'allègements, au prorata des tranches |
 | LR-15 Revenu familial dès le premier enfant ; congé de naissance de six mois | −1,4 Md€ nets (calcul : 40,3 Md€ financés par 41 Md€ d'aides et 0,7 Md€ de gestion) ; +0,7 Md€ |
 | LR-16 Réduction d'impôt sur les intérêts d'emprunt des familles | −0,27 Md€ par génération de prêts, cumulés (hypothèse) |
@@ -73,12 +73,40 @@ livret) et revenu d'incitation à l'activité (2 Md€) dans LR-09, arrêts
 maladie dans LR-10, immigration hors révision constitutionnelle dans LR-05,
 délégation au privé dans LR-03, volet des retraites hors décote dans LR-08.
 Non chiffrés : taux plein à 65 ans « quelles que soient les annuités »
-(LCI, 22 octobre 2026), exonération des seniors avant l'âge légal,
+(LCI, 22 septembre 2026), exonération des seniors avant l'âge légal,
 transmission d'entreprises payée à la cession, défense, prisons.
+
+## Ajouts du 30 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| LR-22 Enseignants : +135 € net par mois en début de carrière, +300 € en milieu ([Parlons Politique](https://www.parlons-politique.fr/economie-societe/salaires-des-enseignants-le-projet-de-retailleau-promet-plus-de-revenus-mais-mise-aussi-sur-une-ecole-plus-selective_26084/), 1er septembre 2026) | +2 Md€/an de traitement (« près de 2 milliards », lus comme brut) |
+
+Correction : **LR-12** comptait deux fois la CVAE, que la loi supprime déjà
+en 2030 et que la référence retire. D'après le livret « Travail gagnant »
+(14,3 Md€ : C3S 5,3, CVAE 4,3, forfait social 2,8, CFE industrielle 1,9),
+la mesure retire désormais 7,2 Md€ d'autres impôts, 2,8 Md€ de cotisations
+(forfait social) et le seul rendement restant de la CVAE (3,6, 2,5 puis
+1,2 Md€ en euros 2027, de 2027 à 2029). L'ancienne traduction (15 Md€) reste une variante.
+
+**LR-08** : le plan dit « environ 42 Md€ jusqu'en 2032 », LCI « 40
+milliards d'économies cumulées sur cinq ans » ; les deux lectures diffèrent
+de plus de trois fois en 2031. Seuls 12 Md€ (la décote) sont des économies
+de pensions identifiées ; le reste mêle capitalisation, réserves,
+Agirc-Arrco et régimes spéciaux. La transcription garde le chiffre du plan
+et évalue les deux autres lectures en variantes.
 
 ## Non modélisé
 
-* Mécanisme des 42 Md€ de retraites (âge, durée, décote) : non détaillé.
+* Mécanisme des 42 Md€ de retraites au-delà de la décote : capitalisation
+  (25 à 30 % de la retraite des jeunes entrants), placement des réserves,
+  convergence Agirc-Arrco, régimes spéciaux ; âge du taux plein indexé sur
+  l'espérance de vie (modalités non définies).
+* Certificats d'économies d'énergie sur les carburants supprimés (16
+  septembre 2026) : dispositif hors des comptes publics.
+* PTZ étendu à tout le territoire, interdictions de louer liées au DPE
+  levées, 9 000 € de TVA rendus aux communes par logement neuf (transfert
+  interne aux administrations) : sans montant ou sans effet sur le solde.
 * Référendum sur la règle d'or (projet de loi de 2011) et révision
   constitutionnelle : hors modèle.
 * Dépenses de santé (280 Md€) : aucun engagement chiffré dans la source.

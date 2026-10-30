@@ -31,6 +31,39 @@ def apdEcheancier : List Int :=
 
 theorem apd_valeurs : apdEcheancier = [1719, 3439, 5159, 6879, 8599] := by decide
 
+/-- Plan d'adaptation (E-03) : « 7 milliards d'euros par an d'ici 2032 »
+(programme) ; montée linéaire de 2027 à 2032 (hypothèse). -/
+def adaptationCible : Int := 7000
+def adaptationEcheancier : List Int :=
+  ([1, 2, 3, 4, 5, 6] : List Int).map fun k => k * adaptationCible / 6
+
+/-- Parc social d'un million de voitures électriques (E-21) : proposition
+de loi n° 3375 (C. Arrighi, P. Amirshahi et 35 députés écologistes,
+20 octobre 2026) : au moins un million de voitures achetées par la Caisse
+des dépôts du 1er janvier 2028 au 31 décembre 2035, louées 150 € par mois
+aux ménages des cinq premiers déciles, subvention annuelle d'équilibre de
+l'État de 350 M€ (montant de référence) ; 125 000 voitures par an (calcul :
+un million sur huit ans), soit 2 800 € de coût public par voiture
+(calcul), retenus comme l'aide (même convention que PP-04 et O-128). L'encours
+de la Caisse des dépôts (plafonné à 8,5 Md€) n'est pas compté : la Caisse
+est classée hors des administrations publiques (hypothèse non vérifiée). -/
+def voituresParcSocial : Int := 1000000
+def anneesParcSocial : Int := 8
+def subventionParcSocial : Int := 350
+def voituresParcSocialParAn : Int := voituresParcSocial / anneesParcSocial
+def aideParcSocialEuros : Int := subventionParcSocial * 1000000 / voituresParcSocialParAn
+
+/-- Rénovation du bâti scolaire (E-22) : proposition de loi n° 3358
+(A. Bonnet et groupe Écologiste et Social, 20 octobre 2026) : 5 200 M€ par
+an de 2027 à 2036, « objectifs minimaux », en soutien des collectivités.
+Variante : 4 Md€ par an sur dix ans, à parts égales entre l'État et les
+collectivités (conférence de presse du 26 août 2026, L'Info Durable). -/
+def batiScolaire (montant : Int) : List Int := List.replicate 10 montant ++ [0]
+
+theorem ajouts_valeurs :
+    adaptationEcheancier = [1166, 2333, 3500, 4666, 5833, 7000] ∧
+    voituresParcSocialParAn = 125000 ∧ aideParcSocialEuros = 2800 := by decide
+
 def mesures : List Mesure := [
   { id := "E-01", titre := "SMIC porté à 2 000 € brut dès 2027"
     source := s!"{projet}, p. 55 ; hausse calculée sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +6,6 %"
@@ -39,8 +72,9 @@ def mesures : List Mesure := [
     source := s!"{projet}, p. 116 ; 62 ans dès l'entrée en vigueur, écart au calendrier légal de 9 mois en 2027 et 24 mois en 2033 (l'objectif de 60 ans n'est pas modélisé)"
     leviers := [.ageLegalCible 744 0] },
   { id := "E-03", titre := "Plan national d'adaptation au changement climatique"
-    source := s!"{projet} : « 7 milliards d'euros par an d'ici 2032 » ; emplois dans la construction"
-    leviers := [.depenseSur .logementEnvironnement 7000] },
+    source := s!"{projet} : « 7 milliards d'euros par an d'ici 2032 », montée linéaire de 2027 à 2032 (hypothèse, voir `adaptationEcheancier`) ; le contre-budget du 30 septembre 2026 cite un plan climat « de l'ordre de dix milliards d'euros » sans ventilation (AFP), non ajouté pour ne pas doubler E-03, E-22 et E-23"
+    leviers := [.depenseEcheancier .logementEnvironnement adaptationEcheancier]
+    variantes := [{ nom := "7 Md€ dès 2027", leviers := [.depenseSur .logementEnvironnement 7000] }] },
   { id := "E-04", titre := "Loi intégrale contre les violences sexistes et sexuelles"
     source := s!"{projet} : « dotée de 3 milliards d'euros » (traités comme dépense annuelle nouvelle)"
     leviers := [.depenseSur .securiteJustice 3000] },
@@ -93,13 +127,25 @@ def mesures : List Mesure := [
     leviers := [.recetteEcheancier none (apdEcheancier.map (fun x => -x))] },
   { id := "E-20", titre := "Congé climatique de cinq jours par an"
     source := s!"{projet} (via Votons 2027 et MonVote2027) ; conversion : 35 heures sur 1 607 heures annuelles, −2,2 % de durée du travail (calcul)"
-    leviers := [.dureeTravail (-22)] }
+    leviers := [.dureeTravail (-22)] },
+  { id := "E-21", titre := "Parc social d'un million de voitures électriques louées 150 € par mois"
+    source := s!"Proposition de loi n° 3375 du groupe écologiste (20 octobre 2026) : un million de voitures de 2028 à 2035, ménages des cinq premiers déciles, subvention d'équilibre de l'État de {subventionParcSocial} M€ par an ; {voituresParcSocialParAn} voitures par an à {aideParcSocialEuros} € de coût public chacune (calcul), aide réservée aux ménages modestes (voir `aideParcSocialEuros`)"
+    leviers := [.aideAchatElectrique voituresParcSocialParAn aideParcSocialEuros .modestes]
+    debut := 1 },
+  { id := "E-22", titre := "Plan décennal de rénovation du bâti scolaire"
+    source := "Proposition de loi n° 3358 du groupe Écologiste et Social (20 octobre 2026) : 5,2 Md€ par an de 2027 à 2036 en soutien des collectivités ; variante : 4 Md€ par an (conférence de presse du 26 août 2026) ; le Fonds vert (E-23) finance aussi des bâtiments publics"
+    leviers := [.investissementEcheancier .enseignement (batiScolaire 5200)]
+    variantes := [{ nom := "4 Md€ par an (26 août 2026)", leviers :=
+      [.investissementEcheancier .enseignement (batiScolaire 4000)] }] },
+  { id := "E-23", titre := "Fonds vert rétabli et MaPrimeRénov' relevée"
+    source := "Conférence de presse des Écologistes, 26 août 2026 (L'Info Durable, La Gazette France) : « rétablissement du fonds vert (+1,9 md d'euros) », MaPrimeRénov' augmentée « à hauteur de 1,4 milliard d'euros » (chiffrage du parti) ; le Fonds vert est un investissement des collectivités aidé, MaPrimeRénov' une aide aux ménages (montant par rénovation non publié : les économies d'énergie et l'aubaine du levier `bonusRenovation` ne sont pas comptées)"
+    leviers := [.investissement .logementEnvironnement 1900, .depenseSur .logementEnvironnement 1400] }
 ]
 
 def programme : Programme where
   id := "Ecologistes"
   nom := "Les Écologistes — Prospérité écologique 2027"
-  description := "Transcription partielle et non officielle du programme du 13 juillet 2026 : SMIC à 2 000 € brut, retraite à 62 ans, adaptation climatique 7 Md€/an, loi VSS, taxe Zucman, justice, salaires enseignants et chercheurs, AAH. Ajouts : contribution sur les grosses successions (contre-budget 2027), taxe pétro-gazière et chèque carburant, classes à 19 élèves, garantie d'autonomie et APL (hypothèses chiffrées), taxe numérique à 5 %. 500 000 rénovations par an, ISF climatique, TVA verte et sortie du nucléaire : sans montant publié. Ajouts du 28 octobre 2026 : ISF, fin des exonérations au-delà de 1,6 SMIC, 100 % Sécu, aide au développement à 0,7 %, congé climatique."
+  description := "Transcription partielle et non officielle du programme du 13 juillet 2026 : SMIC à 2 000 € brut, retraite à 62 ans, adaptation climatique (7 Md€/an en 2032), loi VSS, taxe Zucman, justice, salaires enseignants et chercheurs, AAH. Ajouts : contribution sur les grosses successions (contre-budget 2027), taxe pétro-gazière et chèque carburant, classes à 19 élèves, garantie d'autonomie et APL (hypothèses chiffrées), taxe numérique à 5 %. 500 000 rénovations par an, ISF climatique, TVA verte et sortie du nucléaire : sans montant publié. Ajouts du 28 octobre 2026 : ISF, fin des exonérations au-delà de 1,6 SMIC, 100 % Sécu, aide au développement à 0,7 %, congé climatique. Ajouts du 30 octobre 2026 : parc social d'un million de voitures électriques (proposition de loi), rénovation du bâti scolaire, Fonds vert et MaPrimeRénov' ; plan d'adaptation en montée jusqu'en 2032."
   mainteneurs := ["@orientationd"]
   source := "lesecologistes.fr, Projet 2027 « Pour une prospérité écologique » (via MonVote2027 et Votons 2027, consultés le 22 octobre 2026)"
   mesures := mesures

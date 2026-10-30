@@ -38,7 +38,7 @@ modélisée.
 | PC-11 Allocations familiales dès le premier enfant | +2,8 Md€ bruts (direction de la Sécurité sociale, proposition de loi adoptée en première lecture en 2025) |
 | PC-12 90 000 enseignants et personnels scolaires | ≈ 3,4 Md€ (hypothèse : 150 M€ pour 4 000 postes), emplois publics comptés un pour un |
 | PC-13 5 Md€ pour la jeunesse et le bâti scolaire | +5 Md€ |
-| PC-14 Refus de la hausse du budget militaire du PLF 2027 | −7 Md€ sur la défense |
+| PC-14 Refus de la hausse du budget militaire du PLF 2027 | −6,4 Md€ sur la défense (hausse inscrite au PLF 2027 ; variante : 7 Md€, pcf.fr) |
 | PC-15 ISF rétabli et triplé | ≈ +10 Md€ d'impôts sur le patrimoine (hypothèse : ISF de 2017 × 3, moins l'IFI) |
 
 ## Ajouts du 28 octobre 2026
@@ -65,12 +65,32 @@ reprise récente ou de chiffrage à jour : 100 000 recrutements à l'hôpital et
 financières et fin des exonérations (chiffrages de 2020, taux et
 dispositifs modifiés depuis), baisse de 30 % des tarifs de l'énergie.
 
+## Ajout du 30 octobre 2026
+
+| Mesure | Levier |
+|---|---|
+| PC-23 TVA sur les carburants de 20 % à 5,5 % (F. Roussel, [AFP, 11 septembre 2026](https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911)) | −5,8 Md€ de TVA (8 Md€ sur les carburants des voitures en 2024 × 14,5/20) ; variante : −12 Md€ (bas de la fourchette du gouvernement) ; la directive TVA ne l'autorise pas ; ni la hausse de consommation ni le recouvrement avec l'érosion de TVA par les voitures électriques de PC-10 (quelques centaines de M€ en 2030) ne sont modélisés |
+
 ## Non modélisé
 
 * **Parc social** (PC-05) : « jusqu'à 8 Md€/an », financeur non précisé.
 * **Nationalisation de BNP Paribas et de TotalEnergies** (PC-09) : prise de
   participation sans montant ; une valeur de marché serait une opération
-  financière (dette sans déficit) très variable.
+  financière (dette sans déficit) très variable. La Société Générale est
+  citée par une tribune du bulletin *CommunisteS* n° 1104 (14 octobre
+  2026), pas par le candidat.
+* **Carburants** (tract de septembre 2026) : blocage du prix à 1,60 € le
+  litre (coût selon qui paie la différence, non chiffrable) ; suppression
+  des certificats d'économies d'énergie sur les carburants (dispositif hors
+  budget ; seul effet budgétaire : la TVA sur leur coût).
+* **Bulletin *CommunisteS* n° 1104** (tribunes, pas des engagements du
+  candidat) : fonds d'avances de 500 Md€ sur cinq ans par le pôle public
+  bancaire (hors administrations publiques) ; un million de petites
+  voitures électriques par an à 10 000 € (montant de l'aide non publié).
+* **Plan jeunesse 2027-2032** : présenté sans chiffre (recoupe PC-13).
+* **CSG** : l'amendement AS460 au PLFSS 2027 (revenus du capital à 19,6 %,
+  4,6 % sur les bas revenus d'activité) est une proposition de députés,
+  rejetée, sans coût sourcé pour le volet des revenus d'activité.
 * **Pôle public bancaire et financier**, prêts à taux zéro garantis par
   l'État, gratuité des transports en commun, prime à la conversion jusqu'à
   10 000 € : sans montant public annuel dans les sources lues.

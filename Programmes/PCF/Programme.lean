@@ -38,6 +38,25 @@ même schéma de financement pour les 20 EPR2 du plan, prêt versé de 2027
 pas chiffrés. -/
 def pretEPR : Int := 5055
 
+/-- TVA sur les carburants de 20 % à 5,5 % (F. Roussel, AFP des 11 et
+19 septembre 2026 : « 30 centimes en moins » par litre ; non chiffré par le
+parti). TVA sur les carburants des voitures particulières : 8 Md€ en 2024
+(É. Pichet, Connaissance des Énergies, 5 septembre 2026, déjà utilisé par
+l'axe énergie), × 14,5 / 20 (calcul) : voitures seulement (les
+entreprises récupèrent la TVA), prix de 2024. Ordre de grandeur : le
+modèle retire déjà 155 € de TVA par voiture électrique de plus (érosion de
+l'assiette au taux plein), où le taux réduit n'en retirerait que ≈ 43 € ;
+avec les voitures électriques de PC-10, le recouvrement atteint quelques
+centaines de M€ en 2030, non corrigé. Variante : 12 Md€,
+bas de la fourchette du gouvernement (12 à 15 Md€, AFP, 22 septembre 2026).
+La directive TVA n'autorise pas de taux réduit sur les carburants (Public
+Sénat, 26 mars 2026). La hausse de consommation due à la baisse du prix
+(≈ −12 % TTC) n'est pas modélisée. -/
+def tvaCarburantsVoitures : Int := 8000
+def baisseTvaCarburants : Int := tvaCarburantsVoitures * (200 - 55) / 200
+
+theorem tva_carburants_valeur : baisseTvaCarburants = 5800 := by decide
+
 def mesures : List Mesure := [
   { id := "PC-01", titre := "Investissement ferroviaire supplémentaire"
     source := s!"{plan}, B.1 Transports, p. 15 : « 10 milliards d'euros par an » ; trafic voyageurs × 2,6, part du rail en longue distance de 10 à 40 % d'ici 2045"
@@ -68,7 +87,7 @@ def mesures : List Mesure := [
     source := s!"{plan}, B.1 Transports, p. 17-18 et B.3, p. 29 : parc entièrement électrifié en 2048, capacité de 2,5 millions de voitures par an d'ici 2035 ; conversion : +500 000 électriques par an au-delà de la tendance, sans prime (interdiction), coût public nul ; bornes correspondantes non chiffrées par la source"
     leviers := [.aideAchatElectrique 500000 0 .obligation] },
   { id := "PC-09", titre := "Nationalisation de BNP Paribas et de TotalEnergies"
-    source := "Discours de présentation du plan (6 novembre 2023) et presse ; prise de participation sans montant dans la source : non imputée"
+    source := "Discours de présentation du plan (6 novembre 2023) et presse ; TotalEnergies réaffirmée dans le tract carburant de septembre 2026 ; la Société Générale est ajoutée par une tribune du bulletin CommunisteS n° 1104 (14 octobre 2026), pas par le candidat ; achat ponctuel sans montant dans la source : non imputé (le levier de prise de participation est un flux annuel)"
     leviers := [] },
   { id := "PC-11", titre := "Allocations familiales dès le premier enfant"
     source := "Proposition de loi d'É. Bénard (groupe GDR), adoptée en première lecture le 5 juin 2025 ; coût 2,8 Md€ bruts pour 70 € par mois (direction de la Sécurité sociale ; 1,8 Md€ nets ; 3,58 Md€ pour 75 € selon LexImpact), rapport AN n° 1473"
@@ -80,8 +99,9 @@ def mesures : List Mesure := [
     source := "pcf.fr, 14 octobre 2026 : 5 Md€ « immédiatement »"
     leviers := [.depenseSur .enseignement 5000] },
   { id := "PC-14", titre := "Refus de la hausse du budget militaire prévue au PLF 2027"
-    source := "pcf.fr, 14 octobre 2026 : −7 Md€ par rapport au PLF 2027, appliqués à la loi de programmation militaire que la référence suit"
-    leviers := [.economieSur .defense 7000] },
+    source := "Hausse de 6,4 Md€ des crédits des Armées au PLF 2027 (Acteurs publics, 16 juillet 2026 ; bulletin du PCF CommunisteS n° 1104, 14 octobre 2026, p. 2, pour un budget de 63,4 Md€), appliquée à la loi de programmation militaire que la référence suit ; variante : 7 Md€ (page pcf.fr du 14 octobre 2026 telle que lue le 21 octobre)"
+    leviers := [.economieSur .defense 6400]
+    variantes := [{ nom := "7 Md€ (pcf.fr)", leviers := [.economieSur .defense 7000] }] },
   { id := "PC-15", titre := "ISF rétabli et triplé"
     source := "Comparateur IFRAP 2027 ; discours de F. Roussel, 15 septembre 2026 ; non chiffré : l'ISF rapportait 4,1 Md€ en 2017, triplé ≈ 12,3 Md€ statiques, moins l'IFI supprimé (2,3 Md€), soit ≈ 10 Md€ (calcul, hypothèse)"
     leviers := [.prelevementSur .patrimoine 10000] },
@@ -105,13 +125,17 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .sante 17100] },
   { id := "PC-22", titre := "Impôt sur les sociétés rétabli à 33 %"
     source := "20 mesures des parlementaires communistes (29 janvier 2025) : « rétablissement de l'impôt sur les sociétés à 33 % » ; taux normal porté de 25 % à 33,33 %, rendement calculé par le modèle (pilier 2, réponse de l'assiette)"
-    leviers := [.impotSocietes 3333] }
+    leviers := [.impotSocietes 3333] },
+  { id := "PC-23", titre := "TVA sur les carburants ramenée de 20 % à 5,5 %"
+    source := s!"F. Roussel, AFP des 11 et 19 septembre 2026 (« 30 centimes en moins ») ; non chiffré par le parti : 8 Md€ de TVA sur les carburants des voitures en 2024 (Pichet) × 14,5/20 = {baisseTvaCarburants} M€ (calcul, voir `baisseTvaCarburants`) ; contraire à la directive TVA ; hausse de consommation et recouvrement avec l'érosion de TVA par les voitures électriques non modélisés"
+    leviers := [.prelevementSur .tva (0 - baisseTvaCarburants)]
+    variantes := [{ nom := "12 Md€ (bas de la fourchette du gouvernement)", leviers := [.prelevementSur .tva (-12000)] }] }
 ]
 
 def programme : Programme where
   id := "PCF"
   nom := "Parti communiste français — Empreinte 2050"
-  description := "Transcription partielle et non officielle du plan climat « Empreinte 2050 » : 28 Md€/an de dépenses publiques chiffrées (ferroviaire, vélo, rénovation), réductions d'émissions annoncées pour 2030, programme de 20 EPR2 financé par prêt de l'État. La source annonce 186 Md€/an d'investissement total, public et privé. Propositions de 2026 (F. Roussel candidat, pas de programme 2027 chiffré) : allocations familiales dès le premier enfant, 90 000 enseignants, 5 Md€ pour la jeunesse, refus de la hausse du budget militaire, ISF triplé. Ajouts du 28 octobre 2026 (propositions des parlementaires communistes et de F. Roussel) : SMIC à 1 600 € net, retraite à 60 ans, cotisation sur les revenus financiers, point d'indice +10 %, 15 Md€ d'aides à la pierre, 100 % Sécu, IS à 33 %."
+  description := "Transcription partielle et non officielle du plan climat « Empreinte 2050 » : 28 Md€/an de dépenses publiques chiffrées (ferroviaire, vélo, rénovation), réductions d'émissions annoncées pour 2030, programme de 20 EPR2 financé par prêt de l'État. La source annonce 186 Md€/an d'investissement total, public et privé. Propositions de 2026 (F. Roussel candidat, pas de programme 2027 chiffré) : allocations familiales dès le premier enfant, 90 000 enseignants, 5 Md€ pour la jeunesse, refus de la hausse du budget militaire, ISF triplé. Ajouts du 28 octobre 2026 (propositions des parlementaires communistes et de F. Roussel) : SMIC à 1 600 € net, retraite à 60 ans, cotisation sur les revenus financiers, point d'indice +10 %, 15 Md€ d'aides à la pierre, 100 % Sécu, IS à 33 %. Ajout du 30 octobre 2026 : TVA sur les carburants à 5,5 % ; refus de la hausse militaire ramené à 6,4 Md€ (PLF 2027)."
   mainteneurs := ["@orientationd"]
   source := "https://ecologie.pcf.fr/plan-climat/ et document « Empreinte 2050 » (consultés le 21 octobre 2026)"
   mesures := mesures
