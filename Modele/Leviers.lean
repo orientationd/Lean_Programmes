@@ -310,6 +310,31 @@ inductive Levier where
   nouvelle, longueur × emprise par km, répartie sur les années de
   travaux). Sous le ZAN, elles s'imputent sur l'enveloppe. -/
   | artificialisation (d : Destination) (haParAnnee : List Int)
+  /-- Surfaces consommées hors de l'enveloppe du ZAN, par une exemption
+  légale que crée la mesure (zones industrielles…), destination `d`, ha,
+  année par année à partir de l'année suivante : elles s'ajoutent à la
+  consommation d'espaces sans évincer d'autres usages et sortent du décompte
+  de l'enveloppe. -/
+  | artificialisationHorsZan (d : Destination) (haParAnnee : List Int)
+  /-- Pompes à chaleur installées gratuitement, `nombreParAn` chaque année,
+  à `coutEuros` € l'une, à la place de chaudières au fioul ou au gaz du
+  territoire `cible` (paramètres : `Energie.pac`). Hors effet d'aubaine :
+  fioul et gaz économisés (importations, accises, TVA, CO₂, comme les
+  rénovations), électricité consommée (accise, TVA), logements qui quittent
+  le gaz (coûts de réseau évités, reversés au financement de la mesure). Les
+  travaux sont adressés à la construction ; le coût des PAC qui auraient été
+  installées sans la mesure est un transfert aux ménages. -/
+  | pompesAChaleur (cible : Territoire) (nombreParAn : Int) (coutEuros : Int)
+  /-- Emplois aidés : `contrats` contrats en cours en permanence dans le
+  `secteur`, aide de `aideEuros` € par contrat et par an (dépense des
+  affaires économiques) ; emplois nets de l'effet d'aubaine `aubainePm`,
+  qui produisent (PIB par le volume d'heures). -/
+  | emploisAides (secteur : Secteur) (contrats : Int) (aideEuros : Int) (aubainePm : Int)
+  /-- Emplois privés attirés dans le `secteur` par la mesure (implantations
+  industrielles), hypothèse du programme à sourcer : ils produisent (PIB par
+  le volume d'heures), et leur production est exportée ou remplace des
+  importations. -/
+  | implantations (secteur : Secteur) (emplois : Int)
   deriving Repr, DecidableEq
 
 /-- Ajoute `d` emplois (personnes, signé) au secteur `cible`, ou au prorata
@@ -817,5 +842,31 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .regimeZan e, s => { s with ecartZanPm := max s.ecartZanPm e }
   | .artificialisation d hs, s =>
       { s with surfacesMesuresHa := fusionnerSurfaces s.surfacesMesuresHa (hs.map fun h => ({} : ParDestination).ajouter d h) }
+  | .artificialisationHorsZan d hs, s =>
+      { s with surfacesHorsZanMesuresHa :=
+          fusionnerSurfaces s.surfacesHorsZanMesuresHa (hs.map fun h => ({} : ParDestination).ajouter d h) }
+  | .pompesAChaleur cible n cout, s =>
+      let P := H.energie.pac
+      let nets := n * (1000 - P.aubainePm) / 1000
+      let fossileMWh := if P.rendementChaudierePm = 0 then 0 else nets * P.besoinChaleurKWh / P.rendementChaudierePm
+      let fioulPm := P.partFioul cible
+      let elecGwh := if P.scopCentiemes = 0 then 0 else nets * P.besoinChaleurKWh * 100 / (P.scopCentiemes * 1000000)
+      let travaux := nets * cout / 1000000
+      let transfert := (n - nets) * cout / 1000000
+      let s₁ : Etat := { s with
+        depensesF := s.depensesF.ajouter .logementEnvironnement (travaux + transfert)
+        economiesFioulMWhAnnuelles := s.economiesFioulMWhAnnuelles + fossileMWh * fioulPm / 1000
+        economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + fossileMWh * (1000 - fioulPm) / 1000
+        consommationPacHausseGwh := s.consommationPacHausseGwh + elecGwh
+        deraccordementsGazParAn := s.deraccordementsGazParAn + nets * (1000 - fioulPm) / 1000 }
+      effetDemande H (some .construction) travaux
+        (effetDemande H none (appliquerPm transfert M.multiplicateurPrelevementsPm) s₁)
+  | .emploisAides sec n aide aubaine, s =>
+      let nets := n * (1000 - aubaine) / 1000
+      chocEmploi H nets (chocDemandeTravail H (some sec) nets
+        { s with depensesF := s.depensesF.ajouter .affairesEconomiques (n * aide / 1000000) })
+  | .implantations sec e, s =>
+      let s₁ := chocEmploi H e (chocDemandeTravail H (some sec) e s)
+      { s₁ with exportations := s₁.exportations + (s₁.pib - s.pib) }
 
 end Modele

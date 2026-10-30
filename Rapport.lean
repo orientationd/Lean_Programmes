@@ -167,6 +167,7 @@ def etatJson (s : Etat) : Json :=
     ("surfacesHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesHa.get d))),
     ("surfacesAnneeHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesAnneeHa.get d))),
     ("ecartZanPm", toJson s.ecartZanPm),
+    ("surfacesHorsZanHa", toJson s.surfacesHorsZanHa),
     ("populationMilliers", toJson s.populationMilliers),
     ("actifs", toJson s.actifs),
     ("emploiTotal", toJson s.emploiTotal),

@@ -1192,6 +1192,19 @@ structure Etat where
   prochaine année projetée) ; sous le ZAN, elles s'imputent sur
   l'enveloppe. -/
   surfacesMesuresHa : List ParDestination := []
+  /-- Surfaces que les mesures consommeront hors de l'enveloppe du ZAN
+  (exemption légale), ha, année par année (élément 0 : prochaine année). -/
+  surfacesHorsZanMesuresHa : List ParDestination := []
+  /-- Espaces naturels, agricoles et forestiers consommés hors enveloppe
+  depuis 2021, ha (compris dans `surfacesHa`, exclus du décompte du ZAN). -/
+  surfacesHorsZanHa : Int := 0
+  /-- Hausse annuelle de la consommation d'électricité due aux pompes à
+  chaleur des mesures, GWh (flux porté : chaque année l'ajoute à
+  `consommationMesuresGwh`). -/
+  consommationPacHausseGwh : Int := 0
+  /-- Logements qui quittent le gaz chaque année grâce aux mesures (flux
+  porté). -/
+  deraccordementsGazParAn : Int := 0
   /-- Écart au régime de zéro artificialisation nette choisi par les
   mesures, pm : 0 = ZAN en vigueur, 1000 = abrogé (consommation d'espaces de
   la décennie précédant la loi). -/
