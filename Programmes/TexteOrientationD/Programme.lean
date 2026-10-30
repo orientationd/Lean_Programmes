@@ -2400,6 +2400,74 @@ def contributionReserves : List Int :=
 theorem recettes_originales_valeurs : partVenduePm = 687 ∧ plusValueEurosParHa = 223407 ∧
     captationPlusValues = 820 ∧ contributionReserves = [3840, 2592, 1730, 1344] := by decide
 
+/-- Biokérosène et frein automatique (O-142, O-143).
+
+* O-142 : biokérosène (carburant aviation durable issu d'huiles et de
+  graisses, HEFA) porté à 20 % du kérosène des vols intérieurs en 2030,
+  contre 6 % imposés par ReFuelEU (règlement (UE) 2023/2405, annexe I),
+  soit 3,5 points de plus chaque année de 2027 à 2030 ; le surcoût est payé
+  par l'État (le prix du billet n'est pas touché). Aviation domestique :
+  4,2 Mt CO₂e en 2024 (Citepa, Secten 2026), liaisons avec les outre-mer
+  comprises, soit 1,33 Mt de kérosène à 3,15 t CO₂ par tonne (facteur par
+  défaut du GIEC ; calcul). Surcoût du HEFA : 1 285 € par tonne en 2025
+  (prix de référence de l'EASA, SAF Investor, 4 mars 2026). Le CO₂ des
+  biocarburants est compté à zéro dans l'inventaire (Citepa). Hypothèse : le
+  biokérosène acheté pour les vols intérieurs leur est affecté ; la DGAC
+  répartit le biokérosène au prorata des ventes de chaque aéroport, et
+  l'inventaire n'en compterait alors que ≈ 20 % (variante). Production
+  française : 210 à 285 kt par an à Grandpuits (Argus, 20 mars 2025),
+  pour ≈ 190 kt nécessaires en 2030.
+* O-143 : frein automatique au déficit, sur le modèle du frein à
+  l'endettement suisse (art. 126 de la Constitution fédérale, 2003) et
+  allemand (art. 115 de la Loi fondamentale) : toute année où le déficit
+  dépasse 5,5 % du PIB, la norme de dépense des fonctions pilotables est
+  durcie de 5 points l'année suivante (levier `freinDeficit`). Seuil et
+  intensité calés pour ne jouer que dans les scénarios défavorables
+  (hypothèse) : au scénario central, le déficit du programme ne dépasse pas
+  5,04 % (2027) et le frein ne joue pas. -/
+def kerosineDomestiqueKt : Int := 4200 * 100 / 315
+def pointsBiokerosenePm : Int := 35
+def biokeroseneAnnuelKt : Int := kerosineDomestiqueKt * pointsBiokerosenePm / 1000
+def surcoutBiokeroseneEurosParT : Int := 1285
+def biokeroseneEviteKt : Int := biokeroseneAnnuelKt * 315 / 100
+def biokeroseneCout : Int := biokeroseneAnnuelKt * surcoutBiokeroseneEurosParT / 1000
+def biokeroseneProrataKt : Int := biokeroseneEviteKt * 200 / 1000
+def anneesBiokerosene : Nat := 4
+def freinSeuilPb : Int := 550
+def freinNormePb : Int := 500
+
+theorem biokerosene_valeurs : kerosineDomestiqueKt = 1333 ∧ biokeroseneAnnuelKt = 46 ∧
+    biokeroseneEviteKt = 144 ∧ biokeroseneCout = 59 ∧ biokeroseneProrataKt = 28 := by decide
+
+/-- Énergie (O-144, O-145).
+
+* O-144 : conversion des centrales au fioul des outre-mer (Pointe Jarry en
+  Guadeloupe, Bellefontaine en Martinique, Mayotte) au bioliquide de colza
+  en 2027 et 2028, au lieu de 2033 (plan « Émeraude » d'EDF : ≈ 2,5 Mt de
+  CO₂ évitées par an après conversion de toutes ses îles, AFP, 4 octobre
+  2023). Déjà engagés, donc dans la tendance : Port Est (La Réunion,
+  ≈ 280 kt par an), Larivot (Guyane, février 2027), Ricanto (Corse). Reste
+  ≈ 1,5 Mt par an (1,4 à 1,6), en deux étapes de 750 kt (hypothèse).
+  Surcoût au ratio de Port Est : 74 M€ par an de charges de service public
+  pour ≈ 280 kt (CRE, délibération 2022-274, 3 novembre 2022), soit 264 € par
+  tonne (calcul). Les émissions des outre-mer de l'Union sont dans
+  l'inventaire (Citepa, Secten 2026) ; leur électricité n'est pas dans la
+  production de métropole du modèle (sans effet sur la part renouvelable).
+* O-145 : fin du soutien public aux cogénérations au gaz à l'échéance des
+  contrats : charges « cogénération et autres thermiques » de 600,7 M€ en
+  2027 (CRE, délibération 2026-149, annexe 1, 15 juillet 2026), éteintes en
+  quatre ans (hypothèse). L'effet sur les émissions, faible et incertain (la
+  chaleur serait produite autrement), n'est pas compté. -/
+def emissionsZniEviteesKt : Int := 750
+def coutTonneZniEuros : Int := 74000000 / 280000
+def coutZni : Int := emissionsZniEviteesKt * coutTonneZniEuros / 1000
+def soutienCogenerations : Int := 600
+def extinctionCogenerations : List Int :=
+  ([1, 2, 3, 4] : List Int).map fun k => 0 - k * soutienCogenerations / 4
+
+theorem energie_originale_valeurs : coutTonneZniEuros = 264 ∧ coutZni = 198 ∧
+    extinctionCogenerations = [-150, -300, -450, -600] := by decide
+
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
@@ -3475,13 +3543,34 @@ def mesures : List Mesure := [
   { id := "O-141"
     titre := "Contribution de 50 % sur la rémunération des réserves excédentaires des banques"
     source := s!"Mesure originale (octobre 2026) ; ≈ 21 % de la liquidité excédentaire de la zone euro (Banque de France, BCE), en baisse avec la réduction des portefeuilles de politique monétaire (enquête de la BCE, septembre 2026), au taux de la facilité de dépôt, érosion de 20 % : {contributionReserves} M€ de 2027 à 2030 (voir `contributionReserves`) ; risque juridique élevé (compétence de la BCE)"
-    leviers := [.recetteEcheancier (some .impotSocietes) contributionReserves] }
+    leviers := [.recetteEcheancier (some .impotSocietes) contributionReserves] },
+  { id := "O-142"
+    titre := "Biokérosène porté à 20 % du kérosène des vols intérieurs en 2030, surcoût payé par l'État"
+    source := s!"Demande de l'auteur (octobre 2026) ; 3,5 points de plus par an de 2027 à 2030 au-delà de ReFuelEU (6 % en 2030) : {biokeroseneAnnuelKt} kt de plus chaque année (1,33 Mt de kérosène domestique, Citepa 2024, calcul), {biokeroseneEviteKt} kt de CO₂ évitées (3,15 t par t) pour {biokeroseneCout} M€ (surcoût du HEFA de 1 285 €/t, EASA 2025) ; biokérosène affecté aux vols intérieurs (hypothèse ; variante : répartition au prorata, DGAC) (voir `biokeroseneAnnuelKt`)"
+    leviers := [.transitionKt .transports biokeroseneEviteKt biokeroseneCout]
+    repetitions := anneesBiokerosene
+    variantes := [{ nom := "répartition au prorata des ventes (DGAC) : ≈ 20 % de l'effet compté", leviers :=
+      [.transitionKt .transports biokeroseneProrataKt biokeroseneCout] }] },
+  { id := "O-143"
+    titre := "Frein automatique au déficit : au-delà de 5,5 % du PIB, norme de dépense durcie de 5 points l'année suivante"
+    source := s!"Mesure originale (octobre 2026), sur le modèle des freins à l'endettement suisse et allemand ; seuil de {freinSeuilPb} pb, durcissement de {freinNormePb} pb de la norme des fonctions pilotables (santé, affaires économiques, sécurité et justice, logement et environnement, culture, services généraux) l'année qui suit un déficit au-dessus du seuil ; calé pour ne jouer que dans les scénarios défavorables (hypothèse)"
+    leviers := [.freinDeficit freinSeuilPb freinNormePb]
+    variantes := [{ nom := "seuil de 5 %, durcissement de 2 points", leviers := [.freinDeficit 500 200] }] },
+  { id := "O-144"
+    titre := "Centrales au fioul des outre-mer converties au bioliquide dès 2027-2028"
+    source := s!"Mesure originale (octobre 2026) : avance de cinq ans le plan « Émeraude » d'EDF (≈ 2,5 Mt par an en 2033) pour Pointe Jarry, Bellefontaine et Mayotte ; {emissionsZniEviteesKt} kt évitées par an en 2027 et en 2028 (1,5 Mt hors Port Est, Larivot et Ricanto, déjà engagés) ; {coutZni} M€ de charges de service public par étape ({coutTonneZniEuros} €/t, ratio de Port Est, CRE 2022) (voir `coutZni`)"
+    leviers := [.transitionKt .energie emissionsZniEviteesKt coutZni]
+    repetitions := 2 },
+  { id := "O-145"
+    titre := "Fin du soutien public aux cogénérations au gaz à l'échéance des contrats"
+    source := s!"Mesure originale (octobre 2026) ; 600,7 M€ de charges de service public pour la cogénération et les autres thermiques en 2027 (CRE, délibération 2026-149), éteints en quatre ans (hypothèse) : {extinctionCogenerations} M€ ; effet sur les émissions non compté"
+    leviers := [.depenseEcheancier .affairesEconomiques extinctionCogenerations] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

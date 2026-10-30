@@ -296,4 +296,17 @@ theorem retrofit_parc :
     800 ≤ t.emissionsKt.transports - r.emissionsKt.transports := by
   decide +kernel
 
+/-- Frein automatique au déficit : un seuil jamais atteint (100 % du PIB)
+laisse la trajectoire inchangée ; un seuil nul (déficit toujours au-dessus)
+durcit la norme chaque année et réduit la dépense de l'année 5 de plus de
+1 % (100 pb de norme sur les fonctions pilotables, environ la moitié de la
+dépense, pendant cinq ans). -/
+theorem frein_deficit :
+    let t := tendancielAn D H 5
+    let jamais := (mesure (.freinDeficit 10000 100)).resultatA D H 5
+    let toujours := (mesure (.freinDeficit 0 100)).resultatA D H 5
+    jamais.depensesF.total = t.depensesF.total ∧
+    100 * (t.depensesF.total - toujours.depensesF.total) ≥ t.depensesF.total := by
+  decide +kernel
+
 end Tests.Mecanismes

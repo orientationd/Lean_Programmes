@@ -1129,6 +1129,13 @@ structure Etat where
   /-- Norme de dépense : moindre croissance annuelle des fonctions pilotables
 (`Fonction.pilotable`), pb. -/
   moderationDepensesPb : Int := 0
+  /-- Frein automatique au déficit (levier `freinDeficit`) : seuil de déficit,
+  pb du PIB, au-delà duquel la norme de dépense est durcie l'année suivante
+  (0 : pas de frein). -/
+  freinDeficitSeuilPb : Int := 0
+  /-- Durcissement de la norme de dépense, pb, l'année qui suit un déficit
+  au-dessus du seuil. -/
+  freinDeficitPb : Int := 0
   /-- Taux marginal de l'année (taux du scénario corrigé de la prime de risque
   liée au déficit), pb (suivi). -/
   tauxMarginalCourantPb : Int := 0

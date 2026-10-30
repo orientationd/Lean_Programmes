@@ -207,6 +207,14 @@ inductive Levier where
   tendance. L'économie de l'année passe par le multiplicateur, pondérée par
   le moteur (dans la projection). -/
   | normeDepense (moderationPb : Int)
+  /-- Frein automatique au déficit : toute année dont le déficit dépasse
+  `seuilPb` (pb du PIB), la norme de dépense des fonctions pilotables est
+  durcie de `moderationPb` l'année suivante (moindre croissance, comme
+  `normeDepense`, mais pour cette seule année : le niveau de dépense reste
+  plus bas). Le frein ne joue que dans les scénarios où le déficit dépasse
+  le seuil ; l'économie passe par le multiplicateur, pondérée par le
+  moteur. -/
+  | freinDeficit (seuilPb : Int) (moderationPb : Int)
   /-- Recette à échéancier : impôt (`some i`, avec effet de demande pondéré
   comme un prélèvement) ou recette non fiscale (`none`, sans effet de
   demande : péages, redevances déjà acquittés par les usagers). Niveaux
@@ -871,6 +879,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       if n < 0 then appliquerEconomie M H f (-n) s' else appliquerDepense H f.secteur f n s'
   | .importationsNiveau d, s => { s with importations := s.importations + d }
   | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
+  | .freinDeficit seuil m, s =>
+      { s with freinDeficitSeuilPb := seuil, freinDeficitPb := s.freinDeficitPb + m }
   | .recetteEcheancier _ [], s => s
   | .recetteEcheancier i (n :: reste), s =>
       let e : EcheanceRecette := { impot := i, restants := reste, niveau := n, indice := 10000 }
