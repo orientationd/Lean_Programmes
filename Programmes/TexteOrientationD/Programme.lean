@@ -623,7 +623,9 @@ def participationsStrategiques : Int := 100
 /-- Concessions autoroutières (O-48) : pas de renouvellement à l'échéance,
 exploitation publique, péages maintenus. Échéances (Arafer, 2018) : Sanef
 31/12/2031, Escota 29/02/2032, SAPN 31/08/2033, APRR 30/11/2035, ASF
-30/04/2036, AREA 30/09/2036, Cofiroute 31/12/2086.
+30/04/2036, AREA 30/09/2036, Cofiroute 31/12/2034 (réseau interurbain ; le
+tunnel A86 Duplex court jusqu'en 2086, part négligeable : VINCI, document
+d'enregistrement universel 2024).
 
 Secteur en 2023 (Autorité de régulation des transports) : EBITDA 9,1 Md€,
 dont ≈ 8,5 Md€ pour les sociétés historiques (93 % du réseau) ;
@@ -646,7 +648,7 @@ def indice2023a2027 : Int := 11255
 /-- (société, part en ‰, première année pleine après l'échéance, comptée depuis 2027). -/
 def concessions : List (String × Int × Nat) :=
   [("Sanef", 118, 5), ("Escota", 76, 6), ("SAPN", 39, 7), ("APRR", 197, 9),
-   ("ASF", 347, 10), ("AREA", 56, 10), ("Cofiroute", 167, 60)]
+   ("ASF", 347, 10), ("AREA", 56, 10), ("Cofiroute", 167, 8)]
 /-- Part du réseau historique revenue à l'État l'année `k` (comptée depuis 2027), ‰. -/
 def partReprise (k : Nat) : Int :=
   concessions.foldl (fun acc (_, pm, an) => if an ≤ k then acc + pm else acc) 0
@@ -2661,6 +2663,143 @@ theorem metro_valeurs : stationsATraiterParis = 290 ∧ coutAccessibiliteMarseil
     travauxRealistesParAn = 572 ∧
     metroAccessibleRealiste = [99, 99, 606, 606, 572, 572, 572, 572, 572, 0] := by decide
 
+/-- Électricité renouvelable à 40 % en 2030 (O-148), mesure originale
+(octobre 2026) : retenir les projets déjà candidats aux appels d'offres
+au lieu d'en écarter les neuf dixièmes, renouveler les vieux parcs éoliens
+et économiser l'électricité.
+
+* Solaire au sol : 4 500 MW par an de plus que la tendance de 2027 à 2030.
+  L'appel d'offres d'octobre 2026 a reçu 8,34 GW de candidatures pour
+  0,925 GW retenus, à 61,33 €/MWh en moyenne (Les Énergies renouvelables,
+  12 octobre 2026) ; soutien de 16 €/MWh comme pour O-146
+  (`soutienSolaireEurosMWh`).
+* Toitures, ombrières de parkings et serres : 3 750 MW par an. La 12e
+  période de l'appel d'offres « bâtiments » a reçu 1 559 MWc pour 300
+  appelés, à 82,98 €/MWh en moyenne (CRE, délibération 2026-120 du 11 juin
+  2026) ; l'obligation d'ombrières de la loi APER sur les grands parkings
+  est appliquée sans report. Soutien : 82,98 €/MWh moins le prix capté par
+  le solaire (≈ 45 €/MWh, comme pour O-146), soit 38 €/MWh (calcul).
+  Production : 1,25 TWh par GW et par an (CRE, 2019 ; majorant du coût pour
+  les toitures).
+* Éolien terrestre : 400 MW par an renouvelés ou ajoutés au-delà de la
+  programmation (1,6 GW en quatre ans ; 883 MW raccordés en 2025), ≈ 0,1 Md€
+  par an de soutien (estimation).
+* Sobriété électrique : −1,5 TWh par an de 2027 à 2030, soit −6 TWh en 2030
+  (éclairage public à LED et extinction nocturne, ≈ −2 TWh ; pompes à
+  chaleur air-air à la place des convecteurs dans un million de logements,
+  ≈ −4 TWh), 0,45 Md€ par an d'investissement (estimation). Dans le modèle,
+  chaque TWh consommé en moins réduit d'autant le nucléaire modulé.
+
+Le rythme total (≈ 14 GW de solaire par an avec la tendance, soit 33 GW de plus en 2030) est plus du
+double du record de 2025 (5,9 GW) : risque élevé, d'abord sur le
+raccordement (≈ 10 % du territoire saturé, délais de plus de cinq ans,
+Connaissance des énergies, juillet 2026). Le solaire en plus remplace du
+nucléaire dans le modèle, pas du gaz : pas d'effet sur les émissions. -/
+def solaireSolParAnMw : Int := 4500
+def solaireToitParAnMw : Int := 3750
+def soutienToitEurosMWh : Int := (8298 - 66 * (100 - 32)) / 100
+def eolienRenouveleParAnMw : Int := 400
+def soutienEolien : Int := 100
+def sobrieteParAnGwh : Int := 1500
+def investissementSobriete : Int := 450
+/-- Soutien public, M€ : capacité moyenne de l'année (la moitié de l'ajout
+de l'année), production, soutien. -/
+def soutienRenouvelables : List Int :=
+  ([1, 3, 5, 7, 8] : List Int).map fun demiAnnees =>
+    (solaireSolParAnMw * soutienSolaireEurosMWh + solaireToitParAnMw * soutienToitEurosMWh)
+      * demiAnnees / 2 * productionSolaireGwhParGw / 1000000 + soutienEolien
+
+theorem renouvelables_valeurs : soutienToitEurosMWh = 38 ∧
+    soutienRenouvelables = [234, 502, 770, 1038, 1172] := by decide
+
+/-- Vente des deux tiers de l'or de la Banque de France (O-149), mesure
+originale (octobre 2026). Stock : 2 436,8 t, soit 78,35 millions d'onces
+(Banque de France, gestion de l'or) ; cours ≈ 4 000 $ l'once (4 038 $ le
+26 octobre 2026) pour 1,12 $ par euro (hypothèse) : ≈ 280 Md€. Deux tiers
+(≈ 1 625 t) vendus de 2027 à 2032 : ≈ 186 Md€, dont la plus-value réalisée
+(coût d'entrée dans l'Eurosystème : 246,37 € l'once au 1er janvier 1999)
+est versée à l'État par une distribution exceptionnelle, ≈ 29 Md€ par an.
+Comptabilité nationale : le versement à l'État du produit de la vente
+d'actifs de réserve est une opération financière, sans effet sur le
+déficit (décisions d'Eurostat du 3 février 1997) : la dette baisse, et les
+intérêts avec elle. Précédents : Suisse, 1 300 t vendues de 2000 à 2005,
+produit versé aux cantons et à l'AVS ; France, ≈ 587 t de 2004 à 2009, produit
+resté au bilan de la Banque de France ; l'accord des banques centrales sur
+l'or n'est plus en vigueur depuis 2019. **Risque juridique élevé** : la BCE
+doit être consultée sur la loi (articles 123, 127 et 130 du traité,
+article 31 des statuts du SEBC) et s'est opposée en 2009 et en 2025 à des
+projets italiens sur l'or ; on perd la hausse future du cours. -/
+def onceOrMillions : Int := 7835
+def coursOrDollars : Int := 4000
+def dollarsParEuroCentiemes : Int := 112
+def coutEntreeOrCentiemes : Int := 24637
+def anneesVenteOr : Nat := 6
+def valeurOr : Int := onceOrMillions * coursOrDollars * 100 / dollarsParEuroCentiemes / 100
+def plusValueOrParAn : Int :=
+  valeurOr * 2 / 3 * (coursOrDollars * 100 * 100 / dollarsParEuroCentiemes - coutEntreeOrCentiemes)
+    / (coursOrDollars * 100 * 100 / dollarsParEuroCentiemes) / anneesVenteOr
+
+theorem or_valeurs : valeurOr = 279821 ∧ plusValueOrParAn = 28946 := by decide
+
+/-- Consolidation des réserves de trois fonds publics en titres de l'État
+(O-150), mesure originale (octobre 2026). Fonds de réserve pour les
+retraites : 20,8 Md€ fin 2025 (Sénat, comptes de la sécurité sociale) ;
+Retraite additionnelle de la fonction publique (RAFP) : plus de 57 Md€
+(ERAFP, 2026) ; Ircantec : 18,6 Md€ fin 2025. Les trois appartiennent aux
+administrations publiques : les OAT qu'ils détiennent sont retirées de la
+dette de Maastricht (consolidation, règlement (CE) 479/2009). Un quart est
+supposé déjà placé en titres publics français (hypothèse) : ≈ 72 Md€
+convertis en 2027-2028. Contrepartie : les dividendes et coupons des
+autres placements (≈ 2,5 % par an, hypothèse) sont perdus, recettes des
+administrations publiques en moins ; moins de diversification, et un même
+choc de taux frappe l'État et les fonds. -/
+def reservesFonds : Int := 20800 + 57000 + 18600
+def reservesConverties : Int := reservesFonds * 3 / 4
+def rendementPerduPm : Int := 25
+def revenusPerdus : Int := reservesConverties * rendementPerduPm / 1000
+
+theorem fonds_valeurs : reservesConverties = 72300 ∧ revenusPerdus = 1807 := by decide
+
+/-- Contribution nationale sur la valeur du sol (O-151), mesure originale
+(octobre 2026), sur le modèle de l'impôt foncier danois (« grundskyld » :
+23,2 Md DKK en 2024, ≈ 0,8 % du PIB, Danmarks Statistik) et des théories de
+Henry George : impôt sur la seule valeur des terrains, pas sur les
+constructions. Assiette : terrains bâtis hors administrations publiques,
+5 826 Md€ fin 2024 (6 729 Md€ en tout, Insee Première n° 2081) ; abattement
+de 50 000 € de terrain sur la résidence principale de ≈ 17,7 millions de
+propriétaires occupants (30,6 millions de résidences principales, 58 %
+occupées par leur propriétaire, Insee ; calcul) ; taux de 0,5 %. Loi en
+2027, évaluation de masse en 2028 à partir des ventes (DVF), demi-taux en
+2029, plein taux en 2030 ; report de paiement possible jusqu'à la
+succession pour les retraités modestes. Le moins distorsif des impôts : il
+ne frappe ni le travail ni la construction, et pénalise la rétention
+foncière (comme O-140) ; les prix des terrains baisseraient une fois pour
+toutes. Acceptabilité très faible ; s'ajoute à la taxe foncière. -/
+def valeurSolHorsApu : Int := 5826000
+def proprietairesOccupantsMilliers : Int := 30600 * 58 / 100
+def abattementSolEuros : Int := 50000
+def tauxSolPdm : Int := 50
+def contributionSol : Int :=
+  (valeurSolHorsApu - proprietairesOccupantsMilliers * abattementSolEuros / 1000) * tauxSolPdm / 10000
+
+theorem sol_valeurs : contributionSol = 24693 := by decide
+
+/-- Fin de l'effacement des plus-values latentes au décès (O-152), mesure
+originale en France (octobre 2026) : à la transmission, les plus-values
+latentes des titres et des biens sont imposées comme si elles étaient
+réalisées (modèle canadien de la « disposition réputée » au décès), avec
+un abattement. ≈ 2 Md€ par an en régime de croisière (Terra Nova, « Mettons
+fin à l'effacement des plus-values au moment de la transmission »,
+février 2022). -/
+def plusValuesDeces : Int := 2000
+
+/-- Trésorerie de l'État réduite de 25 Md€ en 2027 (O-153) : l'écart
+entre dette brute et dette nette atteint 215 Md€ fin 2025 (Insee), dont
+une trésorerie de précaution élevée depuis 2020 ; la dette brute (celle de
+Maastricht) baisse d'autant, la dette nette ne change pas. Risque : moins
+de marge de liquidité en cas de tension sur les marchés. -/
+def reductionTresorerie : Int := 25000
+
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
@@ -3053,7 +3192,7 @@ def mesures : List Mesure := [
 
   { id := "O-48"
     titre := "Non-renouvellement des concessions autoroutières : exploitation publique à l'échéance (2031-2036)"
-    source := s!"Texte Orientation D, mesure 48 ; échéances Sanef 2031, Escota 2032, SAPN 2033, APRR 2035, ASF et AREA 2036 (Cofiroute 2086) ; EBITDA des historiques ≈ {ebitdaHistoriques} M€, renouvellement {investissementsHistoriques} M€, IS ≈ {isHistoriques} M€ (ART 2023, estimations) ; part reprise en 2035 : {partReprise 8} ‰, en 2037 : {partReprise 10} ‰"
+    source := s!"Texte Orientation D, mesure 48 ; échéances Sanef 2031, Escota 2032, SAPN 2033, Cofiroute 2034, APRR 2035, ASF et AREA 2036 ; EBITDA des historiques ≈ {ebitdaHistoriques} M€, renouvellement {investissementsHistoriques} M€, IS ≈ {isHistoriques} M€ (ART 2023, estimations) ; part reprise en 2035 : {partReprise 8} ‰, en 2037 : {partReprise 10} ‰"
     leviers := [.recetteEcheancier none (echeancierReprise (ebitdaHistoriques - investissementsHistoriques)),
                 .recetteEcheancier (some .impotSocietes) (echeancierReprise (-isHistoriques))]
     debut := 0
@@ -3799,13 +3938,69 @@ def mesures : List Mesure := [
     source := s!"Demande de l'auteur (octobre 2026) ; {stationsATraiterParis} stations parisiennes à rendre accessibles (320, dont ≈ 30 accessibles) pour {coutAccessibiliteParis} M€ (Région Île-de-France, 2024 : « 20 Md€ sur environ 20 ans ») et {stationsATraiterMarseille} à Marseille ({coutAccessibiliteMarseille} M€) ; études en 2027, puis {travauxAccessibiliteParAn} M€ par an de 2028 à 2035, ≈ {stationsAccessiblesParAn} stations par an, quatre fois le meilleur rythme observé dans le monde : faisabilité très faible (voir `stationsMetroParis`)"
     leviers := [.investissementEcheancier .affairesEconomiques metroAccessible]
     variantes := [{ nom := "variante réaliste : ligne 6 et 50 stations de correspondance en 2035 (≈ 34 % des stations parisiennes), le reste vers 2045-2050", leviers :=
-      [.investissementEcheancier .affairesEconomiques metroAccessibleRealiste] }] }
+      [.investissementEcheancier .affairesEconomiques metroAccessibleRealiste] }] },
+  { id := "O-148"
+    titre := "Électricité renouvelable à 40 % en 2030 : projets solaires déjà candidats retenus, ombrières, éolien renouvelé"
+    source := s!"Mesure originale (octobre 2026) ; {solaireSolParAnMw} MW de solaire au sol et {solaireToitParAnMw} MW sur toitures et ombrières par an de 2027 à 2030 en plus de la tendance (appels d'offres d'octobre 2026 : 8,34 GW candidats pour 0,925 GW retenus ; bâtiments, juin 2026 : 1 559 MWc pour 300), {eolienRenouveleParAnMw} MW d'éolien terrestre par an ; soutien {soutienRenouvelables} M€ ; rythme total ≈ 14 GW de solaire par an, plus du double du record : risque élevé (raccordement) (voir `solaireSolParAnMw`)"
+    leviers := [.capaciteElectrique .solaire solaireSolParAnMw, .solaireToiture solaireToitParAnMw,
+                .capaciteElectrique .eolienTerrestre eolienRenouveleParAnMw,
+                .depenseEcheancier .affairesEconomiques soutienRenouvelables] },
+  { id := "O-148b"
+    titre := "Électricité renouvelable : fin du rattrapage (33 GW de solaire et 1,6 GW d'éolien installés)"
+    source := "Quatre années d'installation (2027 à 2030)"
+    leviers := [.capaciteElectrique .solaire (0 - solaireSolParAnMw), .solaireToiture (0 - solaireToitParAnMw),
+                .capaciteElectrique .eolienTerrestre (0 - eolienRenouveleParAnMw)]
+    debut := 4 },
+  { id := "O-148c"
+    titre := "Sobriété électrique : éclairage public à LED et éteint la nuit, pompes à chaleur air-air à la place des convecteurs"
+    source := s!"−{sobrieteParAnGwh} GWh par an de 2027 à 2030 (−6 TWh en 2030 : ≈ −2 TWh d'éclairage public, ≈ −4 TWh pour un million de logements) ; {investissementSobriete} M€ par an (estimations)"
+    leviers := [.consommationElectrique (0 - sobrieteParAnGwh),
+                .investissementEcheancier .logementEnvironnement [investissementSobriete, 0]]
+    repetitions := 4 },
+  { id := "O-149"
+    titre := "Vente des deux tiers de l'or de la Banque de France (2027-2032), plus-value versée à l'État pour réduire la dette"
+    source := s!"Mesure originale (octobre 2026) ; 2 436,8 t (≈ {valeurOr} M€ à 4 000 $ l'once) ; deux tiers vendus en six ans, plus-value (coût d'entrée de 246,37 € l'once, 1999) de {plusValueOrParAn} M€ par an versée à l'État ; opération financière (Eurostat, 1997) : la dette baisse, pas le déficit ; risque juridique élevé (BCE) (voir `onceOrMillions`)"
+    leviers := [.pretEtat (0 - plusValueOrParAn)] },
+  { id := "O-149b"
+    titre := "Vente d'or : fin des versements (2033)"
+    source := "Six années de vente (2027 à 2032)"
+    leviers := [.pretEtat plusValueOrParAn]
+    debut := anneesVenteOr },
+  { id := "O-150"
+    titre := "Réserves du FRR, du RAFP et de l'Ircantec placées en titres de l'État (consolidation de la dette publique)"
+    source := s!"Mesure originale (octobre 2026) ; {reservesFonds} M€ de réserves (FRR 20,8 Md€, RAFP 57 Md€, Ircantec 18,6 Md€), dont {reservesConverties} M€ convertis en OAT en 2027-2028 (un quart supposé déjà en titres publics) ; revenus perdus ≈ {revenusPerdus} M€ par an (2,5 %, hypothèse) (voir `reservesFonds`)"
+    leviers := [.pretEtat (0 - reservesConverties / 2),
+                .recetteEcheancier none [0 - revenusPerdus / 2, 0 - revenusPerdus]] },
+  { id := "O-150b"
+    titre := "Consolidation des réserves : conversion achevée (2029)"
+    source := "Deux années de conversion (2027 et 2028)"
+    leviers := [.pretEtat (reservesConverties / 2)]
+    debut := 2 },
+  { id := "O-151"
+    titre := "Contribution nationale de 0,5 % sur la valeur du sol (modèle danois), abattement de 50 000 € sur la résidence principale"
+    source := s!"Mesure originale (octobre 2026) ; terrains bâtis hors administrations : 5 826 Md€ fin 2024 (Insee), abattement de 50 000 € pour ≈ {proprietairesOccupantsMilliers} milliers de propriétaires occupants ; {contributionSol} M€ à plein taux (2030), demi-taux en 2029 ; Danemark : ≈ 0,8 % du PIB (voir `valeurSolHorsApu`)"
+    leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSol / 2, contributionSol]]
+    variantes := [{ nom := "taux de 0,25 %", leviers :=
+      [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSol / 4, contributionSol / 2]] }] },
+  { id := "O-152"
+    titre := "Fin de l'effacement des plus-values latentes au décès (modèle canadien)"
+    source := s!"Mesure originale en France (octobre 2026) ; ≈ {plusValuesDeces} M€ par an (Terra Nova, 2022) (voir `plusValuesDeces`)"
+    leviers := [.recetteEcheancier (some .patrimoine) [plusValuesDeces]] },
+  { id := "O-153"
+    titre := "Trésorerie de précaution de l'État réduite de 25 Md€ (dette brute en baisse, dette nette inchangée)"
+    source := s!"Mesure originale (octobre 2026) ; écart dette brute − dette nette de 215 Md€ fin 2025 (Insee) ; {reductionTresorerie} M€ de dette en moins en 2027 (voir `reductionTresorerie`)"
+    leviers := [.pretEtat (0 - reductionTresorerie)] },
+  { id := "O-153b"
+    titre := "Trésorerie de l'État : réduction achevée"
+    source := "Une seule année (2027)"
+    leviers := [.pretEtat reductionTresorerie]
+    debut := 1 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, électricité renouvelable à 40 %, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
