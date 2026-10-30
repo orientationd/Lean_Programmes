@@ -2349,6 +2349,57 @@ theorem originales_valeurs : aideRetrofitEuros = 14500 ∧
     coutDronesParAn = 450 ∧ coutSystemeAntiDroneKEuros = 5500 ∧
     defenseOriginale = [1110, 890, 615, 560, 450] := by decide
 
+/-- Recettes originales d'octobre 2026 (O-140, O-141).
+
+* O-140 : captation de la plus-value d'urbanisme. Quand un terrain devient
+  constructible par décision publique, la moitié de la plus-value est
+  prélevée à la première vente (au moins 20 % en Suisse, art. 5 de la loi
+  sur l'aménagement du territoire ; 20 à 40 % selon les cantons,
+  EspaceSuisse, janvier 2026 ; 30 à 50 % en Colombie, loi 388 de 1997).
+  Marché de l'urbanisation 2024 : 10 400 ha vendus pour 2,39 Md€ (Safer,
+  Pleinchamp, 4 juin 2025), soit 229 800 € par ha ; terres et prés libres :
+  6 400 € par ha (Safer 2024) ; plus-value de 223 400 € par ha (calcul).
+  Espaces consommés : 15 119 ha en 2024 (Cerema, 1er juillet 2026), 12 000
+  ha par an retenus sous le ZAN (hypothèse), dont 69 % vendus (10 400 /
+  15 119, calcul). Les taxes existantes (articles 1529 et 1605 nonies du
+  CGI, ≈ 100 M€ en 2022, exposé des motifs de l'amendement I-637 au PLF
+  2025) sont remplacées. Impôt sur une rente : imputé aux impôts sur le
+  patrimoine (incidence faible sur l'activité).
+* O-141 : contribution de 50 % sur la rémunération des réserves
+  excédentaires des banques à la Banque de France (taux de la facilité de
+  dépôt, toutes les réserves excédentaires depuis la décision ECB/2026/10).
+  Dépôts des banques à la Banque de France : 506,6 Md€ en juin 2026, pour
+  2 177 Md€ de liquidité excédentaire de la zone euro (BCE, Bulletin
+  économique 6/2026), soit ≈ 21 % (calcul, réserves obligatoires de ≈ 40 Md€
+  déduites, hypothèse). Liquidité excédentaire : 2 201 Md€ mi-2026, moins
+  la baisse des portefeuilles de politique monétaire (3 458 Md€ mi-2026 ;
+  3 088, 2 631, 2 240 et 1 884 Md€ en fin d'année de 2027 à 2030, enquête de
+  la BCE auprès des analystes monétaires, septembre 2026), plus
+  ≈ 120 Md€ de refinancement : 1 830, 1 375, 985 et 750 Md€ (calcul),
+  800 Md€ retenus en 2030 ; taux de la facilité de dépôt : 2,50 %, 2,25 %,
+  2,10 % et 2,00 % (même enquête, moyennes annuelles arrondies, calcul).
+  Érosion de l'assiette de 20 % (déplacement des réserves, hypothèse).
+  Risque juridique élevé : la rémunération des réserves relève de la BCE,
+  qui juge défavorablement les taxes bancaires nationales (avis CON/2023/9,
+  CON/2023/26). Imputée à l'impôt sur les sociétés ; 2030 reconduit. -/
+def surfacesConsommeesHa : Int := 12000
+def partVenduePm : Int := 10400 * 1000 / 15119
+def plusValueEurosParHa : Int := 2390000000 / 10400 - 6400
+def tauxCaptationPm : Int := 500
+def taxesExistantesUrbanisme : Int := 100
+def captationPlusValues : Int :=
+  surfacesConsommeesHa * partVenduePm / 1000 * plusValueEurosParHa / 1000000 * tauxCaptationPm / 1000
+    - taxesExistantesUrbanisme
+def partFranceReservesPm : Int := 210
+def liquiditeExcedentaireMdEuros : List Int := [1830, 1375, 985, 800]
+def tauxDepotPb : List Int := [250, 225, 210, 200]
+def contributionReserves : List Int :=
+  (liquiditeExcedentaireMdEuros.zip tauxDepotPb).map fun (l, t) =>
+    l * partFranceReservesPm / 1000 * t / 10 * 500 / 1000 * 800 / 1000
+
+theorem recettes_originales_valeurs : partVenduePm = 687 ∧ plusValueEurosParHa = 223407 ∧
+    captationPlusValues = 820 ∧ contributionReserves = [3840, 2592, 1730, 1344] := by decide
+
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
@@ -3416,13 +3467,21 @@ def mesures : List Mesure := [
   { id := "O-139"
     titre := "Drones de masse et bouclier anti-drones des points d'importance vitale"
     source := s!"Mesure originale (octobre 2026), en plus de la loi n° 2026-791 ; drones : {coutDronesParAn} M€ par an (3 000 munitions téléopérées longue portée à 110 000 €, 25 000 FPV à 4 000 €, 20 000 micro-drones à 1 000 €) ; anti-drones : {systemesAntiDrones} systèmes de type PARADE à 5,5 M€ de 2027 à 2030 ; {defenseOriginale} M€ (voir `defenseOriginale`)"
-    leviers := [.depenseEcheancier .defense defenseOriginale] }
+    leviers := [.depenseEcheancier .defense defenseOriginale] },
+  { id := "O-140"
+    titre := "Captation de la moitié de la plus-value des terrains rendus constructibles"
+    source := s!"Mesure originale (octobre 2026), sur le modèle suisse (au moins 20 %, loi sur l'aménagement du territoire) ; 12 000 ha consommés par an (hypothèse, 15 119 en 2024, Cerema), dont 69 % vendus, 223 400 € de plus-value par ha (Safer 2024, calcul), taux de 50 %, moins les taxes existantes (≈ 100 M€) : {captationPlusValues} M€ (voir `captationPlusValues`)"
+    leviers := [.prelevementSur .patrimoine captationPlusValues] },
+  { id := "O-141"
+    titre := "Contribution de 50 % sur la rémunération des réserves excédentaires des banques"
+    source := s!"Mesure originale (octobre 2026) ; ≈ 21 % de la liquidité excédentaire de la zone euro (Banque de France, BCE), en baisse avec la réduction des portefeuilles de politique monétaire (enquête de la BCE, septembre 2026), au taux de la facilité de dépôt, érosion de 20 % : {contributionReserves} M€ de 2027 à 2030 (voir `contributionReserves`) ; risque juridique élevé (compétence de la BCE)"
+    leviers := [.recetteEcheancier (some .impotSocietes) contributionReserves] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
