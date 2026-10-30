@@ -53,32 +53,36 @@ pour tous les programmes.
 
 | | Sans programme | Place publique |
 |---|---|---|
-| Déficit public (moteur de demande) | 9,27 % du PIB | 11,81 % |
-| Déficit public (offre / équilibre) | 9,31 % / 9,27 % | 11,91 % / 11,84 % |
-| Dette publique | 156,7 % du PIB | 170,6 % |
-| Chômage | 7,90 % | 7,59 % |
+| Déficit public (moteur de demande) | 9,38 % du PIB | 11,89 % |
+| Déficit public (offre / équilibre) | 9,41 % / 9,38 % | 11,98 % / 11,93 % |
+| Dette publique | 157,2 % du PIB | 171,1 % |
+| Chômage | 7,91 % | 7,60 % |
 | Indice de développement humain | 0,9392 | 0,9387 |
 
 Effet de chaque mesure prise isolément (moteur de demande) :
 
 | Mesure | Déficit 2035 | Chômage 2035 | Emplois 2035 |
 |---|---|---|---|
-| PP-01 Taxe sur les méga-héritages | −0,74 pt | +0,02 pt | −5 500 |
-| PP-02 Baisse de la CSG sur les salaires | +0,49 pt | −0,08 pt | +30 400 |
-| PP-03 Enseignants | +0,18 pt | −0,02 pt | +7 100 |
-| PP-04 Leasing social | +0,08 pt | −0,01 pt | +4 400 |
-| PP-05 Retraite à 62 ans | +2,01 pt | −0,14 pt | −609 600 |
-| PP-06 Service civique obligatoire | +0,14 pt | −0,06 pt | +22 500 |
-| PP-07 Aide au développement à 0,7 % | +0,47 pt | ≈ 0 | ≈ 0 (versements à l'étranger, sans effet sur la demande intérieure) |
+| PP-01 Taxe sur les méga-héritages | −0,75 pt | +0,01 pt | −5 500 |
+| PP-02 Baisse de la CSG sur les salaires | +0,48 pt | −0,09 pt | +30 400 |
+| PP-03 Enseignants | +0,16 pt | −0,02 pt | +7 100 |
+| PP-04 Leasing social | +0,04 pt | −0,01 pt | +4 400 |
+| PP-05 Retraite à 62 ans | +2,01 pt | −0,15 pt | −609 600 |
+| PP-06 Service civique obligatoire | +0,12 pt | −0,06 pt | +22 500 |
+| PP-07 Aide au développement à 0,7 % | +0,44 pt | ≈ 0 | ≈ 0 (versements à l'étranger, sans effet sur la demande intérieure) |
 
 Le retour à 62 ans fait l'essentiel du coût : il réduit la population
 active (d'où moins d'emplois mais un chômage plus faible) et accroît les
 pensions. L'échange entre la taxe sur les héritages et la baisse de CSG
-réduit le déficit à terme (−0,25 point en 2035) : les droits de succession
+réduit le déficit à terme (−0,27 point en 2035) : les droits de succession
 suivent le flux successoral, qui croît plus vite que les salaires
 (hausse des décès, barème non indexé), et pèsent moins sur l'activité que
 la CSG. La variante du leasing social à un million de voitures par an
-ajoute 0,22 point de déficit. Le déficit ne baisse pas chaque année.
+ajoute 0,18 point de déficit. Depuis octobre 2026, le modèle commun compte
+l'aubaine des aides à l'électrique : une aide de 6 000 € réservée aux
+ménages modestes rend électriques ≈ 50 % des achats qui ne l'auraient pas
+été, moins la part des ventes déjà électrique ; la dépense porte sur toutes
+les voitures aidées. Le déficit ne baisse pas chaque année.
 
 ## Non modélisé (sans montant ni paramètre)
 
