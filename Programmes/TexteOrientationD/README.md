@@ -9,19 +9,19 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 3,85 % |
-| Dette publique | 156,7 % du PIB | 132,3 % |
-| Chômage | 7,90 % | 9,42 % |
+| Déficit public | 9,27 % du PIB | 3,91 % |
+| Dette publique | 156,7 % du PIB | 132,6 % |
+| Chômage | 7,90 % | 9,38 % |
 | Indice de développement humain | 0,9392 | 0,9412 |
-| Émissions de gaz à effet de serre | 296 Mt CO₂e | 284 Mt CO₂e |
+| Émissions de gaz à effet de serre | 296 Mt CO₂e | 282 Mt CO₂e |
 
 Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,25 | 5,01 | 4,82 | 4,59 | 4,39 | 4,28 | 4,11 | 4,03 | 3,85 |
-| Offre | 5,57 | 5,16 | 4,88 | 4,67 | 4,43 | 4,25 | 4,18 | 4,04 | 4,01 | 3,88 |
-| Équilibre | 5,58 | 5,21 | 4,94 | 4,73 | 4,49 | 4,30 | 4,21 | 4,05 | 3,99 | 3,84 |
+| Demande | 5,58 | 5,29 | 5,05 | 4,87 | 4,64 | 4,44 | 4,34 | 4,17 | 4,09 | 3,91 |
+| Offre | 5,57 | 5,20 | 4,92 | 4,71 | 4,47 | 4,29 | 4,22 | 4,08 | 4,05 | 3,93 |
+| Équilibre | 5,58 | 5,25 | 4,99 | 4,77 | 4,54 | 4,35 | 4,26 | 4,11 | 4,05 | 3,90 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-89 mesures, en quatorze catégories. Effet de chaque mesure prise isolément en
+94 mesures, en quatorze catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -256,6 +256,7 @@ milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 | **O-61** Aides aux entreprises, deuxième étape : exonérations de cotisations réduites de 1,5 Md€ de plus par an de 2029 à 2034 | −0,19 pt | −79 900 | −0,7 |
 | **O-76** Allègements recentrés : sortie à 2 SMIC au lieu de 3, économie reversée aux salaires de 1 à 1,6 SMIC, à coût constant | −0,04 pt | +43 700 | +0,1 |
 | **O-77** Accompagnement renforcé des demandeurs d'emploi : 10 000 conseillers de plus à France Travail | −0,06 pt | +43 700 | +0,5 |
+| **O-94** Emplois aidés ciblés sur l'industrie : 20 000 contrats initiative emploi | ≈ 0 | +3 200 | ≈ 0 |
 
 **O-09 — Démission indemnisée.** Six mois d'indemnités, une fois tous les cinq ans. Coût estimé 3 Md€/an
 (recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois) ;
@@ -379,6 +380,13 @@ redressement) ; dégressivité et plafonnement des allocations chômage
 les mesures déjà prises par le programme (heures supplémentaires,
 apprentissage, fraude).
 
+**O-94 — Emplois aidés dans l'industrie.** 20 000 contrats initiative
+emploi en cours dans l'industrie (hypothèse), aidés à 47 % du SMIC brut
+(plafond du CIE) : 10 160 € par contrat et par an, 203 M€. La Dares
+estime à 0,16 l'emploi net créé par CIE (aubaine et substitution : 84 %) :
+≈ 3 200 emplois, soit ≈ 63 000 € par emploi net. Variante : 0,25 emploi
+net par contrat (emplois d'avenir du secteur marchand).
+
 ### Retraites
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -387,6 +395,7 @@ apprentissage, fraude).
 | **O-28** Désindexation des très hautes retraites : revalorisation limitée à la part sous 5 150 € par mois | −0,01 pt | −1 400 | ≈ 0 |
 | **O-44** Durée de cotisation portée de 172 à 174 trimestres | −0,44 pt | +125 600 | +1,4 |
 | **O-58** Durée de cotisation : +1 trimestre tous les trois ans à partir de 2028 | −0,39 pt | +155 900 | +1,5 |
+| **O-93** Minimum de pension des retraités agricoles porté à 100 % du SMIC net | +0,05 pt | +1 800 | +0,1 |
 
 **O-07 — Retraite à la durée cotisée, sans âge légal.** La notion d'âge légal disparaît : on part dès que la durée cotisée atteint
 le seuil actuel (172 trimestres), réduit selon la pénibilité. Le modèle
@@ -414,6 +423,18 @@ pension juste au-dessus finit sous une pension juste en dessous). Les
 pensions sont aussi une assiette de la CSG et de l'IR : les mesures sur les
 retraites changent ces recettes.
 
+**O-93 — Minimum de pension agricole.** La garantie des chefs
+d'exploitation à carrière complète passe de 85 % (loi Chassaigne de 2020 :
+1 214,40 € par mois en 2026) à 100 % du SMIC net agricole, soit 214,30 €
+de plus au plancher. Pour les 224 681 bénéficiaires du complément
+différentiel (MSA, fin 2025) : 577 M€ par an (calcul ; trop haut pour les
+carrières incomplètes, dont la garantie est proratisée, trop bas faute des
+nouveaux bénéficiaires entre 85 % et 100 %). Variante : 425 M€, en
+extrapolant le coût de la loi de 2020 (283 M€ pour 10 points). Le nombre
+de retraités agricoles baisse de 3 % par an, ce que le modèle ne retient
+pas. Les conjoints et aides familiaux (proposition de loi Brugerolles,
+≈ 1 Md€ par an selon la MSA) ne sont pas concernés.
+
 ### Énergie, climat et transports
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -427,6 +448,8 @@ retraites changent ces recettes.
 | **O-34** TER 24 h sur 24 entre métropoles et villes moyennes (Orléans…), agents de sécurité à bord, en gare et aux parkings | ≈ 0 | +400 | ≈ 0 |
 | **O-71** Contribution kilométrique des poids lourds sur le réseau national non concédé | −0,03 pt | −1 900 | −0,1 |
 | **O-72** Accise sur le kérosène des vols intérieurs métropolitains | −0,01 pt | −600 | ≈ 0 |
+| **O-90** Pompes à chaleur gratuites dans les zones rurales, 100 000 par an, financées en partie par les coûts de réseau de gaz évités | +0,07 pt | +4 500 | +0,1 |
+| **O-91** Zones d'électrification industrielle : tarif d'électricité négocié, hors ZAN | −0,01 pt | +7 400 | +0,1 |
 
 **O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année.** 10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
 2035, soit 250 M€ par an et 90 000 voitures, prises parmi les 1,2 million
@@ -509,13 +532,17 @@ Emprise : 4 800 ha pour Bordeaux-Toulouse et Bordeaux-Dax (projet GPSO),
 dix ans (l'accès au Lyon-Turin, sans chiffre officiel, n'est pas compté).
 Le ZAN étant maintenu, ces surfaces s'imputent sur l'enveloppe : elles
 évincent d'autant les autres usages (avec les prisons d'O-75 : logement
-−3 617 ha, activités −1 455 ha de 2026 à 2035), le total ne bougeant pas
-(51 167 ha contre 51 150, arrondis).
+−3 617 ha, activités −1 455 ha de 2026 à 2035), le total décompté ne
+bougeant pas (51 167 ha contre 51 150, arrondis) ; les 645 ha des zones
+industrielles d'O-91, exemptés, s'y ajoutent (51 812 ha consommés).
 
 **Électricité et sols.** Le programme garde la trajectoire de la PPE3 et
-le ZAN. En 2035, 69,7 GW moyens produits pour 57,3 GW consommés (69,3 et
-56,8 sans programme) : les voitures électriques des primes (O-05) relèvent
-la consommation ; les EPR2 (O-04) n'entrent en service qu'après 2035.
+le ZAN, dont il exempte les zones industrielles d'O-91. En 2035, 70,9 GW
+moyens produits pour 58,5 GW consommés (69,3 et 56,8 sans programme) : les
+voitures électriques des primes (O-05), les pompes à chaleur (O-90) et les
+zones industrielles (O-91) relèvent la consommation, et le nucléaire module
+moins (4,7 GW moyens au lieu de 6,4) ; les EPR2 (O-04) n'entrent en service
+qu'après 2035.
 
 | Mesure | Chiffrage |
 |---|---|
@@ -533,6 +560,52 @@ le volume selon une élasticité-prix du modèle commun (0,9 pour l'aérien
 intérieur, 0,5 pour les poids lourds) ; les émissions et l'assiette baissent
 d'autant. Les accises sur l'énergie, fixées en euros par litre, ne suivent
 pas les prix : l'électrification du parc les érode chaque année.
+
+**O-90 et O-91 — Utiliser le surplus d'électricité.** Sans programme, le
+modèle retire 6,4 GW moyens au nucléaire en 2035, faute de débouchés :
+les capacités de la PPE3 croissent plus vite que la consommation
+(trajectoire « décarbonation lente » de RTE) et les interconnexions
+plafonnent le solde exportateur vers 100 TWh. Avec les voitures
+électriques d'O-05, O-90 et O-91 en consomment une partie : la modulation
+tombe à 4,7 GW moyens en 2035.
+
+**O-90 — Pompes à chaleur gratuites en zone rurale.** 100 000 par an
+(hypothèse : un million de maisons en dix ans, sur plus de 1,56 million de
+résidences principales rurales chauffées au fioul), à 14 700 €, coût moyen
+d'une PAC air/eau : 1,47 Md€ par an. Chaque PAC fournit 12 MWh de chaleur
+(1 500 L de fioul à 80 % de rendement) avec 4,1 MWh d'électricité
+(coefficient de performance de 2,9 mesuré par l'ADEME). En zone rurale,
+75 % des chaudières remplacées sont au fioul ou au GPL et 25 % au gaz de
+réseau (SDES). La moitié des PAC auraient été posées sans la mesure (effet
+d'aubaine des aides à la rénovation) : leur coût est un transfert aux
+ménages. Recettes : accise (30,62 €/MWh) et TVA sur l'électricité, moins
+les accises et la TVA du fioul et du gaz économisés. Gain sur les réseaux
+de gaz : un logement qui quitte le gaz évite au gestionnaire du réseau
+≈ 67 € par an de charges d'exploitation (149 € par client, dont 45 %
+évitables d'après le scénario de la CRE où 60 % des usagers partent),
+reversés au financement de la mesure. Ce gain reste faible : la CRE
+relève que les coûts du réseau baissent moins vite que le nombre de
+clients, et l'abandon des conduites (≈ 200 € le mètre) pèse sur le tarif
+de réseau. En 2035 : 1,6 TWh d'électricité consommée en plus, −2 Mt de
+CO₂, +4 500 emplois, +0,07 point de déficit. Variantes : 50 000 ou
+200 000 PAC par an.
+
+**O-91 — Zones d'électrification industrielle.** Tarif d'électricité
+négocié avec EDF (contrats de long terme ; cible de 70 €/MWh en moyenne de
+l'accord État-EDF de 2023) et foncier hors de l'enveloppe du ZAN. La
+mesure porte la consommation de l'industrie de la trajectoire « lente » à
+la trajectoire « rapide » de RTE : 9 TWh de plus en cinq ans, soit
+2,6 GW de projets à 40 % de facteur de charge. Emplois : 7 473, au ratio
+des projets annoncés à Dunkerque (4 700 emplois pour 1 615 MW de
+raccordements signés) ; foncier : 646 ha, au ratio des sites industriels
+clés en main (35 000 emplois sur 3 026 ha), comptés en « hors ZAN » dans
+la synthèse. L'électricité vendue est celle que le nucléaire module : pas
+de coût budgétaire ; le gain d'EDF n'est pas compté, ni le coût des
+raccordements (payé par le tarif d'utilisation des réseaux). Les emplois
+sont une hypothèse du programme (implantations attirées par le tarif et le
+foncier) : ils produisent pour l'exportation ou à la place d'importations.
+En 2035 : +7 400 emplois, −0,01 point de déficit. Variante : foncier dans
+l'enveloppe du ZAN, où il évince d'autres usages.
 
 ### Logement et urbanisme
 
@@ -692,6 +765,7 @@ scolaires.
 | **O-79** Prix du tabac +20 % par les accises (paquet ≈ 15 €) | −0,04 pt | −2 100 | +1,9 |
 | **O-80** Dépistage organisé du cancer colorectal : 65 % de participation | +0,02 pt | +1 300 | +2,9 |
 | **O-85** Santé mentale : 100 M€ de moyens supplémentaires par an | ≈ 0 | +500 | ≈ 0 |
+| **O-92** Déserts médicaux : 50 000 € à l'installation en zone prioritaire, puis 5 000 € par an pendant cinq ans | ≈ 0 | +300 | ≈ 0 |
 
 **O-22 — Médicaments et dispositifs.** −2 Md€ par an (génériques,
 biosimilaires, prix, pertinence ; Assurance maladie 2025) ; création d'une
@@ -752,6 +826,17 @@ renouvellement des générations.
 l'Assurance maladie pour les troubles psychiques et les maladies
 psychiatriques, son premier poste de dépenses ; la santé mentale est grande
 cause nationale 2025. L'effet sur la santé n'est pas chiffré.
+
+**O-92 — Déserts médicaux.** Aide à la première installation d'un
+généraliste en zone d'intervention prioritaire (36,7 % de la population)
+portée de 10 000 € (convention médicale, depuis le 1er janvier 2026) à
+50 000 €, le montant de l'ancien contrat d'aide à l'installation (CAIM) ;
+puis 5 000 € par an pendant cinq ans, comme l'ancien contrat de
+stabilisation (COSCOM). Sur les 891 premières installations en zone
+prioritaire de 2025 : 36 M€ par an, puis jusqu'à 22 M€ de primes. La Cour
+des comptes (novembre 2025) juge ces aides coûteuses et peu efficaces hors
+exercice coordonné (maisons de santé) : l'effet sur l'accès aux soins
+n'est pas chiffré. Variante : 100 000 € à l'installation.
 
 ### Justice, sécurité et égalité
 
@@ -918,28 +1003,28 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 3,85 % | 9,42 % | 0,9412 | oui / oui / oui |
-| Sans O-84 (deuxième journée de solidarité) | 4,08 % | 9,44 % | 0,9410 | oui / oui / oui |
-| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,78 % | 9,24 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 3,89 % | 9,40 % | 0,9424 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,69 % | 9,43 % | 0,9411 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 3,10 % | 9,48 % | 0,9411 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,64 % | 9,98 % | 0,9405 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,45 % | 10,51 % | 0,9398 | oui / oui / oui |
+| Programme actuel | 3,91 % | 9,38 % | 0,9412 | oui / oui / oui |
+| Sans O-84 (deuxième journée de solidarité) | 4,14 % | 9,40 % | 0,9410 | oui / oui / oui |
+| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,84 % | 9,20 % | 0,9412 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 3,96 % | 9,35 % | 0,9424 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,74 % | 9,39 % | 0,9412 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 3,16 % | 9,43 % | 0,9411 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,67 % | 9,93 % | 0,9405 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,50 % | 10,46 % | 0,9399 | oui / oui / oui |
 
 1. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
    des marges minimales de 0,08 point en 2034 (demande), 0,03 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
    (niches réduites de 1,5 Md€ de plus par an de 2029 à 2035) et à O-84
    (deuxième journée de solidarité, −0,23 point en 2035) ; sans O-84,
-   le déficit 2035 serait de 4,08 %. Toute dépense nouvelle non financée
+   le déficit 2035 serait de 4,14 %. Toute dépense nouvelle non financée
    réduit ces marges : chaque piste de dépense est à apparier à une recette
    ou à une économie.
-2. **Chômage.** 9,42 % en 2035 contre 7,90 % sans programme. Premières
+2. **Chômage.** 9,38 % en 2035 contre 7,90 % sans programme. Premières
    causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000 emplois)
    et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
    +20 000), O-76 et O-77 (+44 000 et +44 000) et O-84 (+7 000)
    compensent en partie. Au-delà de 9 %, le complément de fin de droits de
-   l'assurance chômage se déclenche. L'option B le réduit (9,24 %) ;
+   l'assurance chômage se déclenche. L'option B le réduit (9,20 %) ;
    passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit
    plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
@@ -959,12 +1044,12 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
 | Secteur | Programme 2030 | Objectif SNBC-3 | Écart |
 |---|---|---|---|
 | Transports | 109,6 | 92 | +17,6 |
-| Bâtiments | 49,4 | 37 | +12,4 |
+| Bâtiments | 48,7 | 37 | +11,7 |
 | Industrie | 50,2 | 42 | +8,2 |
 | Production d'énergie | 28,4 | 25 | +3,4 |
 | Déchets | 13,7 | 12 | +1,7 |
 | Agriculture | 68,9 | 68 | +0,9 |
-| **Total** | **320** | **276** | **+44** |
+| **Total** | **319** | **276** | **+43** |
 
    Le modèle commun ne relie aux émissions que des leviers précis
    (véhicules remplacés ou aidés, bornes, rénovation aidée, conversion
@@ -988,14 +1073,14 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,15 pt | −0,06 pt | +0,6 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,13 pt | −0,04 pt | +0,5 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,07 pt | +0,6 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,11 pt | −0,05 pt | +0,5 |
 | Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,24 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,09 pt | +0,8 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,10 pt | +0,8 |
 | École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,11 pt | −0,03 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,18 pt | −0,08 pt | +0,8 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,03 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,16 pt | −0,08 pt | +0,8 |
 | Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,23 pt | −0,11 pt | +1,1 |
 | Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
 
@@ -1013,7 +1098,7 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 
 ### Chiffrages à documenter
 
-* 32 mesures sur 89 reposent au moins en partie sur une hypothèse ; les plus
+* 34 mesures sur 94 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
