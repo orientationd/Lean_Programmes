@@ -9,26 +9,26 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,38 % du PIB | 1,91 % |
+| Déficit public | 9,38 % du PIB | 1,88 % |
 | Dette publique | 157,2 % du PIB | 124,8 % |
-| Chômage | 7,91 % | 9,02 % |
+| Chômage | 7,91 % | 9,03 % |
 | Indice de développement humain | 0,9392 | 0,9407 |
-| Émissions de gaz à effet de serre | 296 Mt CO₂e | 264 Mt CO₂e |
+| Émissions de gaz à effet de serre | 296 Mt CO₂e | 263 Mt CO₂e |
 
 Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,59 | 5,04 | 4,63 | 4,26 | 3,86 | 3,41 | 3,07 | 2,68 | 2,30 | 1,91 |
-| Offre | 5,58 | 4,95 | 4,44 | 3,99 | 3,53 | 3,04 | 2,66 | 2,28 | 1,88 | 1,51 |
-| Équilibre | 5,59 | 4,99 | 4,53 | 4,12 | 3,69 | 3,21 | 2,85 | 2,47 | 2,06 | 1,67 |
+| Demande | 5,59 | 4,99 | 4,61 | 4,25 | 3,87 | 3,39 | 3,05 | 2,66 | 2,27 | 1,88 |
+| Offre | 5,58 | 4,90 | 4,41 | 3,99 | 3,55 | 3,03 | 2,65 | 2,26 | 1,87 | 1,49 |
+| Équilibre | 5,59 | 4,94 | 4,51 | 4,11 | 3,70 | 3,19 | 2,82 | 2,43 | 2,03 | 1,64 |
 | Sans programme (demande) | 5,59 | 6,49 | 6,82 | 7,13 | 7,45 | 7,81 | 8,15 | 8,39 | 8,98 | 9,38 |
 
 Le déficit baisse chaque année sous les trois moteurs et passe sous 3 % en
-2033 (moteur de demande). 15 propriétés sur 28 sont tenues dans au
+2033 (moteur de demande). 18 propriétés sur 28 sont tenues dans au
 moins 18 des 36 scénarios sous les trois moteurs (voir « Propriétés »).
 Propriétés non tenues au scénario central (moteur de demande) :
-SNBC-3 : budget carbone 2029-2033, déficit sous le plafond juridique (3,86 % en 2030 pour un plafond de 3 %), dette/PIB stabilisée en 2035, code de l'énergie : 40 % d'électricité renouvelable en 2030, budget à l'équilibre en 2035, LPM 2024-2030 : crédits de défense, SNBC-3 : 15 % de voitures électriques en 2030, SNBC-3 : objectifs sectoriels 2030, UE : ajustement 0,5 pt/an, UE : climat 2030, UE : déficit sous 3 %, UE : dette −1 pt/an, UE : répartition de l'effort 2030.
+SNBC-3 : budget carbone 2029-2033, déficit sous le plafond juridique (3,87 % en 2030 pour un plafond de 3 %), dette/PIB stabilisée en 2035, code de l'énergie : 40 % d'électricité renouvelable en 2030, budget à l'équilibre en 2035, SNBC-3 : objectifs sectoriels 2030, UE : ajustement 0,5 pt/an, UE : climat 2030, UE : déficit sous 3 %, UE : dette −1 pt/an, UE : répartition de l'effort 2030.
 
 Ces chiffres sont ceux du modèle commun actuel : chaque prélèvement y est
 calculé sur son assiette (masse salariale, consommation, bénéfice fiscal et
@@ -42,7 +42,7 @@ PIB potentiel.
 
 ## Mesures par catégorie
 
-143 mesures, en seize catégories. Effet de chaque mesure prise isolément en
+157 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -60,6 +60,7 @@ tableau de chaque catégorie.
 | **O-59** Maintien de la CVAE au taux de 0,28 % | −0,15 pt | −5 300 | −0,2 |
 | **O-60** Pérennisation de la contribution exceptionnelle sur les bénéfices des grandes entreprises | −0,31 pt | −6 300 | −0,2 |
 | **O-69** Crédit d'impôt recherche recentré : plafond de 50 M€ par groupe, fin du taux de 5 % | −0,04 pt | −1 000 | ≈ 0 |
+| **O-141** Contribution de 50 % sur la rémunération des réserves excédentaires des banques | −0,06 pt | −900 | ≈ 0 |
 
 **O-08 — Impôt sur les sociétés à 20 %.** Amendée en octobre 2026 : le
 texte visait 15 %, le taux minimal du pilier 2 (directive (UE) 2022/2523),
@@ -90,6 +91,22 @@ les autres) : une baisse de taux ou de bénéfice ne se lit pas tout entière
 l'année même. Avec l'IS maintenu à 25 %, O-60 rapporterait 7,7 Md€ au lieu
 de 4,6 ; la variante ne le recalcule pas.
 
+**O-141 — Contribution sur la rémunération des réserves bancaires.**
+Mesure originale (octobre 2026) : 50 % des intérêts que la Banque de France
+verse aux banques sur leurs réserves excédentaires, au taux de la facilité
+de dépôt (2,50 % en octobre 2026). Les banques françaises détiennent
+≈ 21 % des réserves excédentaires de la zone euro (506,6 Md€ en juin 2026),
+qui fondent avec la réduction des portefeuilles de politique monétaire
+(1 884 Md€ fin 2030 selon l'enquête de la BCE auprès des analystes ;
+liquidité excédentaire de 1 807, 1 350, 959 puis 603 Md€, calcul) :
+3,8 Md€ en 2027, 2,5 en 2028, 1,6 en 2029 et 0,9 Md€ à partir de 2030
+(euros 2027, 20 % d'érosion de l'assiette). Pour mémoire, la Banque de France
+ne verse plus de dividende à l'État depuis l'exercice 2021. **Risque
+juridique élevé** : la rémunération des réserves relève de la BCE, qui
+rend des avis défavorables aux taxes bancaires nationales (Lituanie,
+Italie, Belgique) ; aucune taxe ne vise aujourd'hui explicitement cette
+rémunération.
+
 ### Fiscalité des ménages et du patrimoine
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -104,6 +121,7 @@ de 4,6 ; la variante ne le recalcule pas.
 | **O-70** Assurance-vie au barème des successions au-delà de 250 000 € par bénéficiaire | −0,03 pt | −200 | ≈ 0 |
 | **O-73** Défiscalisation des heures supplémentaires réduite de moitié (impôt sur le revenu et cotisations salariales) | −0,07 pt | −4 300 | −0,1 |
 | **O-122** Pouvoir d'achat : cotisations salariales réduites d'un demi-point pour tous les salariés | +0,19 pt | +11 200 | +0,4 |
+| **O-140** Captation de la moitié de la plus-value des terrains rendus constructibles | −0,04 pt | −200 | ≈ 0 |
 
 | Mesure | Chiffrage |
 |---|---|
@@ -136,6 +154,23 @@ au pouvoir d'achat de tous les salariés, du public comme du privé : 0,5 % des
 par an au salaire moyen. Elle porte le déficit de 2035 de 3,77 % à 3,94 %.
 Variante : un point entier (11,6 Md€) ; le déficit 2035 serait de 4,08 % et
 la marge de baisse annuelle tomberait à 0,01 point sous le moteur d'offre.
+
+**O-140 — Captation de la plus-value d'urbanisme.** Mesure originale
+(octobre 2026). Quand un terrain devient constructible par décision
+publique, la moitié de la plus-value est prélevée à la première vente :
+au moins 20 % en Suisse (loi sur l'aménagement du territoire, art. 5 ; 20
+à 40 % selon les cantons), 30 à 50 % en Colombie. Marché de
+l'urbanisation 2024 : 10 400 ha vendus pour 2,39 Md€ (Safer), soit
+229 800 € par hectare, contre 6 400 € pour les terres et prés libres :
+223 400 € de plus-value par hectare (calcul). 12 000 ha consommés par an
+sous le ZAN (hypothèse ; 15 119 en 2024, Cerema), dont 69 % vendus, 20 %
+de rétention foncière (hypothèse) : 0,74 Md€, moins les taxes existantes
+qu'elle remplace (articles 1529 et 1605 nonies du CGI, ≈ 100 M€) :
+0,27 Md€ la première année, puis 0,64 Md€ par an. Périmètre : première
+vente de tout terrain devenu constructible, y compris avant la réforme
+(hypothèse) ; une partie des acheteurs sont des personnes publiques (non
+déduite). Imputée aux impôts sur le patrimoine (impôt sur une rente,
+faible effet sur l'activité).
 
 ### Niches fiscales et fraude
 
@@ -179,6 +214,7 @@ doublons, octobre 2026).
 | **O-43** Budget de la défense : −1 Md€ par an | −0,03 pt | −4 200 | −0,1 |
 | **O-133** Second porte-avions de nouvelle génération | +0,01 pt | +1 900 | +0,1 |
 | **O-134** Programme de lancements de satellites sur lanceurs français et européens | +0,01 pt | +1 500 | ≈ 0 |
+| **O-139** Drones de masse et bouclier anti-drones des points d'importance vitale | +0,02 pt | +1 900 | +0,1 |
 | **O-47** Investissements de l'État dans les entreprises stratégiques : 100 M€ par an | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-48** Non-renouvellement des concessions autoroutières : exploitation publique à l'échéance (2031-2036) | −0,06 pt | +400 | ≈ 0 |
 | **O-49** Rémunération des hauts fonctionnaires : −5 % | ≈ 0 | −200 | ≈ 0 |
@@ -186,6 +222,7 @@ doublons, octobre 2026).
 | **O-50** Revenus des élus plafonnés à 10 000 € par mois tous mandats confondus (limiter le cumul) | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-53** Dépenses de cabinets de conseil divisées par deux | −0,01 pt | −1 500 | −0,1 |
 | **O-55** Norme de dépense renforcée : dépenses pilotables à −1,5 % par an en volume (avec O-42) | −2,65 pt | −428 000 | −14,2 |
+| **O-143** Frein automatique au déficit : au-delà de 5,5 % du PIB, norme de dépense durcie de 5 points l'année suivante | ≈ 0 | ≈ 0 | ≈ 0 |
 
 **O-15 — Logiciel libre dans l'État.** Migration de tous les logiciels et postes de l'État vers le libre :
 900 M€ de migration (comptés en une fois) puis 400 M€/an d'économies de
@@ -315,6 +352,43 @@ programmes du CNES et des armées. L'accord de Séville (2023) garantit déjà
 quatre Ariane 6 et trois Vega-C institutionnels européens par an jusqu'en
 2030 ; la Commission estime à 62 les lancements européens nécessaires d'ici
 2034.
+
+**O-139 — Drones de masse et bouclier anti-drones.** Mesure originale
+(octobre 2026), en plus des 2 Md€ de drones et 1,6 Md€ de lutte
+anti-drones ajoutés par la loi n° 2026-791 (LCP, 20 avril 2026). Chaque
+année : 3 000 munitions téléopérées longue portée de type Chorus à
+110 000 € (DGA, audition à l'Assemblée du 15 avril 2026 ; capacité de 600
+par mois au Mans), 25 000 drones FPV à 4 000 € (3 000 à 5 000 €) et 20 000
+micro-drones d'observation à 1 000 €, soit 450 M€. Anti-drones : 250
+systèmes de type PARADE à 5,5 M€ l'un (33 M€ pour la tranche ferme de six
+systèmes, 2022 ; calcul), 120 en 2027, 80 en 2028, 30 en 2029 et 20 en
+2030, sur les 1 369 points d'importance vitale (SGDSN) ; fonctionnement
+non compté. 1,1 Md€ en 2027, 0,9 en 2028, 0,6 en 2029 et 2030, puis
+0,45 Md€ par an. Avec elle, la dépense de défense ne passe sous la
+trajectoire de la loi de programmation militaire aucune année jusqu'en
+2030, malgré les −1 Md€ d'O-43.
+
+**O-143 — Frein automatique au déficit.** Mesure originale (octobre 2026),
+sur le modèle des freins à l'endettement suisse (article 126 de la
+Constitution fédérale, 2003 : la dette publique est passée de 53,4 % du
+PIB en 2003 à 35 % en 2011, IFRAP) et allemand (article 115 de la Loi
+fondamentale). Toute année où le déficit dépasse 5,5 % du PIB, la norme de
+dépense des fonctions pilotables (santé, affaires économiques, sécurité et
+justice, logement et environnement, culture, services généraux) est durcie
+de 5 points l'année suivante. Nouveau levier du modèle commun,
+`freinDeficit`. Le seuil et l'intensité sont calés pour ne jouer que dans
+les scénarios défavorables : au scénario central, le déficit du programme
+ne dépasse pas 4,99 % et le frein ne joue jamais. Il joue dans 12
+scénarios sur 36, 6 des 18 scénarios démographiques et économiques
+(pétrole à 100 $ ou croissance basse) : la dépense de 2030 y est
+inférieure de 41 à 43 Md€ (≈ 1,2 à 1,3 point de PIB), le déficit de 2030
+de 0,7 à 1 point, et le chômage plus haut de 0,2 à 0,4 point : « chômage
+non dégradé » y passe de 24 à 20 scénarios sur 36. À la différence des
+freins suisse et allemand, qui portent sur un solde corrigé du cycle,
+corrigent progressivement et ont une clause d'urgence, celui-ci est
+pro-cyclique : il durcit la dépense quand la conjoncture est mauvaise. Un
+seuil plus bas fait perdre « chômage non dégradé » (variante à 4,5 % et 2
+points : voir « Points à arbitrer »).
 
 ### Travail, emploi et entreprises
 
@@ -591,6 +665,14 @@ pas. Les conjoints et aides familiaux (proposition de loi Brugerolles,
 | **O-136** Plan azote et effluents : fosses à lisier couvertes avec torchère dans 5 000 élevages de 2027 à 2030, aidées à 60 % | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-136b** Plan azote et effluents : fosses couvertes, 300 000 ha de légumineuses et additif anti-méthane pour 300 000 vaches laitières en 2030, émissions évitées (montée en quatre ans) | ≈ 0 | +200 | ≈ 0 |
 | **O-137** Déchetteries publiques gratuites pour tous, artisans compris et sans quota, contre les dépôts sauvages | ≈ 0 | +100 | ≈ 0 |
+| **O-138** Rétrofit électrique massif : 540 000 voitures thermiques converties de 2027 à 2030 | +0,03 pt | ≈ 0 | ≈ 0 |
+| **O-142** Biokérosène porté à 20 % du kérosène des vols intérieurs en 2030, surcoût payé par l'État | +0,01 pt | +700 | ≈ 0 |
+| **O-142b** Biokérosène : ReFuelEU impose 20 % en 2035, l'écart de la mesure disparaît | −0,01 pt | −600 | ≈ 0 |
+| **O-145** Fin du soutien public aux cogénérations au gaz à l'échéance des contrats | −0,02 pt | −1 900 | −0,1 |
+| **O-146** Pôles régionaux solaire, stockage hydraulique souterrain et chaleur : construction (13 pôles) | +0,01 pt | +200 | ≈ 0 |
+| **O-146b** Pôles régionaux : réseaux de chaleur solaires et géothermiques en service | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-146c** Pôles régionaux : fin du programme solaire (3,9 GW installés) | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-146d** Pôles régionaux : stockage hydraulique souterrain en service (1,3 GW, 6 heures) | ≈ 0 | ≈ 0 | ≈ 0 |
 
 **O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année.** 10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
 2035, soit 250 M€ par an et 90 000 voitures, prises parmi les 1,2 million
@@ -916,6 +998,111 @@ publiques fin 2024) ; sa refondation, en discussion pour 2027, supprimerait
 cette reprise pour les petits volumes : l'État paierait alors en plus ce
 que paie aujourd'hui la filière pour ces volumes (coût conditionnel, non
 chiffré).
+
+**O-138 — Rétrofit électrique massif.** Mesure originale (octobre 2026).
+Il manque ≈ 520 000 voitures électriques au parc de 2030 pour en compter
+15 %. Les ventes neuves y sont électriques à 63 % ; une aide en achète peu
+(l'aubaine absorbe l'essentiel, O-05 et O-128), alors qu'une conversion de
+voiture thermique du parc (arrêté du 13 mars 2020) ajoute une voiture
+électrique sans passer par les ventes neuves. 135 000 conversions par an de 2027 à 2030, soit
+540 000, l'ordre de grandeur du scénario haut de l'ADEME (510 600 voitures
+rétrofitées fin 2028 ; étude de mai 2021, d'après le Journal de
+l'Automobile). Aide de 14 500 € par conversion : 17 500 € de coût « tout
+compris » (hypothèse de l'ADEME reprise par Forum Vies Mobiles, 2024 ;
+15 000 à 20 000 € selon le ministère de la Transition écologique) moins
+3 000 € de consentement à payer (Forum Vies Mobiles), soit ≈ 2 Md€ par an
+pendant quatre ans ; 60 % de la valeur du kit importée (hypothèse :
+cellules de batterie), soit 35 % de la conversion. Nouveau levier du modèle commun,
+`retrofitElectrique` : chaque conversion est une voiture électrique de
+plus, sans aubaine ni limite des ventes neuves, avec le CO₂, le carburant
+importé, les accises et la TVA du sous-modèle automobile. **Risque
+d'exécution très élevé** : ≈ 740 conversions aidées par an en 2025 (552
+primes sur neuf mois, amendement n° 1192 au PLF 2026), 42 kits homologués,
+faillites de Lormauto et de Tolv en 2025 ; la filière annonçait en 2023
+109 000 conversions pour 2027 et n'a réalisé que 3 à 4 % de ses
+prévisions. **Variante bien moins chère** : obliger les flottes
+d'entreprises et de location à acheter électrique (100 000 voitures de
+plus chaque année, 400 000 en 2030, hypothèse) ajoute ≈ 1,1 million de
+voitures électriques au parc de 2030, sans coût public (le surcoût est
+porté par les entreprises) ; elle tient aussi la propriété (voir « Points
+à arbitrer »).
+
+**O-142 — Biokérosène pour les vols intérieurs.** Demande de l'auteur
+(octobre 2026). Le biokérosène (carburant aviation durable issu d'huiles et
+de graisses, HEFA) passe à 20 % du kérosène des vols intérieurs en 2030,
+contre 6 % imposés par ReFuelEU, avec 3,5 points de plus chaque année de
+2027 à 2030 ; le surcoût est payé par l'État, le prix du billet n'est pas
+touché. Aviation domestique, liaisons avec les outre-mer comprises :
+4,2 Mt CO₂e en 2024 (Citepa), soit 1,33 Mt de kérosène (calcul) ; surcoût
+du HEFA : 1 285 € par tonne en 2025 (prix de référence de l'EASA). Le CO₂
+des biocarburants est compté à zéro dans l'inventaire : 0,58 Mt évitées en
+2030 pour 0,24 Md€ par an. Hypothèse : le biokérosène acheté pour les vols
+intérieurs leur est affecté ; la DGAC répartit au prorata des ventes de
+chaque aéroport, et l'inventaire n'en compterait alors que ≈ 20 %
+(variante). Production française : 210 à 285 kt par an à Grandpuits,
+absorbés par les 6 % de ReFuelEU sur tout l'avitaillement en France : les
+≈ 190 kt de plus seraient importés. ReFuelEU impose 20 % en 2035 : l'écart
+de la mesure disparaît cette année-là (O-142b). Autres biocarburants étudiés, non retenus :
+HVO pour les poids lourds (≈ 3 Mt pour 1,2 à 1,6 Md€ par an, matière
+première surtout importée), biofioul F30 (≈ 0,85 Mt pour 0,18 Md€),
+biométhane au-delà des 44 TWh de la PPE3 (potentiel faible d'ici 2030).
+
+**O-145 — Fin du soutien aux cogénérations au gaz.** Mesure originale
+(octobre 2026) : les contrats de soutien aux cogénérations au gaz ne sont
+pas renouvelés à leur échéance. Charges « cogénération et autres
+thermiques » : 600,7 M€ en 2027 (CRE, délibération 2026-149), éteintes en
+quatre ans (hypothèse), en supposant qu'à la tendance les contrats échus
+seraient renouvelés et que la ligne est surtout faite de cogénérations au
+gaz. L'effet sur les émissions, faible et incertain (la chaleur serait
+produite autrement), n'est pas compté.
+
+**O-146 — Pôles régionaux solaire, stockage hydraulique souterrain et
+chaleur.** Demande de l'auteur (octobre 2026) : « centrale solaire avec
+stockage hydraulique en silo ; bassines d'eau souterraines dans chaque
+région, utilisées aussi pour la géothermie et le stockage électrique ». Un
+pôle dans chacune des 13 régions de métropole, trois équipements :
+
+* *photovoltaïque au sol* : 300 MWc par pôle, 3,9 GW installés de 2027 à
+  2029 en plus de la tendance (O-146c arrête l'ajout) ; prix moyen des
+  appels d'offres au sol de 61,33 €/MWh (octobre 2026), moins le prix
+  capté par le solaire (≈ 32 % sous un prix de base de 66 €/MWh, CRE,
+  mars 2026 ; hypothèse) : ≈ 16 €/MWh de soutien, 78 M€ par an une fois
+  les 3,9 GW en service ;
+* *stockage hydraulique souterrain* (pompage entre un bassin de surface et
+  un silo, un puits ou une ancienne mine) : 100 MW et 6 heures par pôle,
+  1,3 GW et 7,8 GWh en tout ; 2 500 €/kW (1 100 €/kW pour la STEP de
+  surface de Montézic 2 ; 1 900 à 3 000 €/kW pour les projets souterrains
+  de Kidston, Lieres et Prosper-Haniel), soit 3,25 Md€ prêtés par l'État à
+  un opérateur public sur sept ans (sans effet sur le déficit, comme les
+  EPR2 de PC-08) ; mise en service en 2034 (O-146d), rendement de 75 %, un
+  cycle par jour pendant 300 jours : ≈ 1,75 TWh restitués à la place des
+  centrales au gaz (0,36 t de CO₂ par MWh). Nouveau levier du modèle commun,
+  `stockageElectrique` : la restitution réduit la production thermique, les
+  pertes de rendement s'ajoutent à la consommation ;
+* *chaleur* : par pôle, une fosse d'eau enterrée de 200 000 m³ chauffée par
+  70 000 m² de capteurs solaires (modèle de Vojens, Danemark : 28 GWh par
+  an) et un doublet de géothermie (≈ 25 GWh par an, BRGM) sur un réseau de
+  chaleur : 0,69 TWh en tout à la place du gaz, 151 kt de CO₂ évitées à
+  partir de 2029 (O-146b) ; ≈ 42 M€ par pôle, aidés à 65 % par le Fonds
+  chaleur (0,35 Md€ en 2027-2028).
+
+Effets au scénario central (moteur de demande) : 3,9 TWh de solaire de
+plus en 2030 ; dans le modèle commun, la production thermique est fixée
+par les capacités et la production en plus réduit d'abord la modulation du
+nucléaire : la part renouvelable passe de 34,6 à 35,2 %, loin des 40 %,
+sans baisse des émissions du gaz. Émissions de la production d'énergie :
+−0,15 Mt à partir de 2029 (chaleur), ≈ −0,6 Mt de plus en 2034 et 2035
+(stockage) ; aucune propriété de plus. Le modèle commun compte ≈ 1 TWh par
+GW de solaire (moyenne du parc) ; le soutien est calculé sur 1,25 TWh par
+GW au sol (CRE) : majorant du coût. **Risque élevé sur le stockage** :
+aucune STEP en mine fermée ne produit encore dans le monde (Prosper-Haniel
+abandonné en 2018, Pyhäsalmi sans décision d'investissement en 2026) ; une
+batterie de même capacité coûterait 65 à 150 M€ par pôle et serait prête
+en un à deux ans. Les « bassines » ne sont pas comptées comme réserve
+d'eau pour l'agriculture : l'eau d'une STEP circule en boucle et celle
+d'un stockage de chaleur monte à 90 °C ; une citerne enterrée coûte ≈ 1
+800 €/m³ (bassin d'Austerlitz) contre ≈ 12 €/m³ pour une réserve à ciel
+ouvert (Deux-Sèvres).
 
 ### Logement et urbanisme
 
@@ -1628,6 +1815,8 @@ Madagascar 1947, guerre au Cameroun) : sans coût budgétaire.
 | **O-89** Fin de l'octroi de mer, compensée aux collectivités par l'État | +0,07 pt | +2 800 | +0,1 |
 | **O-97** Prime de 100 000 € à l'installation des médecins à Mayotte et en Guyane | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-102** Cotisations salariales réduites de 3 points dans les départements d'outre-mer | +0,01 pt | +900 | ≈ 0 |
+| **O-144** Centrales au fioul des outre-mer converties au bioliquide dès 2027-2028 | +0,01 pt | +1 200 | ≈ 0 |
+| **O-144b** Centrales des outre-mer : en 2033, la conversion aurait eu lieu sans la mesure | −0,01 pt | −1 100 | ≈ 0 |
 
 | Mesure | Chiffrage |
 |---|---|
@@ -1690,6 +1879,21 @@ de ≈ 16,1 Md€, coût de 482 M€ par an (calcul, un peu majoré par le temps
 partiel). Les exonérations patronales existantes (LODEOM) ne changent
 pas. Variante : −1,5 point (241 M€).
 
+**O-144 — Centrales des outre-mer au bioliquide.** Mesure originale
+(octobre 2026) : avance de cinq ans le plan « Émeraude » d'EDF (≈ 2,5 Mt
+de CO₂ évitées par an après conversion de toutes ses îles, en 2033) pour
+les centrales au fioul d'EDF encore à convertir (notamment Pointe Jarry en
+Guadeloupe et Bellefontaine en Martinique), en 2027 et 2028 ; Mayotte,
+desservie par Électricité de Mayotte, n'en fait pas partie. En 2033, la
+conversion aurait eu lieu sans la mesure : ses effets sortent (O-144b). Déjà engagés, donc
+dans la tendance : Port Est (La Réunion), Larivot (Guyane, février 2027),
+Ricanto (Corse). 1,5 Mt évitées par an, pour 0,4 Md€ de charges de service
+public (264 € par tonne, ratio de Port Est : CRE, délibération 2022-274).
+Les émissions des outre-mer de l'Union sont dans l'inventaire ; leur
+électricité n'est pas dans la production de métropole du modèle, qui fait
+la part renouvelable. Limites : colza importé, bénéfice de −67 % en cycle
+de vie, opposition locale.
+
 ## Propriétés : au moins 18 scénarios sur 36
 
 Demande d'octobre 2026 : tenir les propriétés non tenues au scénario
@@ -1710,12 +1914,12 @@ au moins un moteur) :
 
 | Propriété | Demande | Offre | Équilibre |
 |---|---|---|---|
-| Déficit sous le plafond juridique ⚠ | 15/36 | 17/36 | 15/36 |
+| Déficit sous le plafond juridique | 19/36 | 19/36 | 18/36 |
 | Dette/PIB non dégradée | 36/36 | 36/36 | 36/36 |
-| Chômage non dégradé | 24/36 | 36/36 | 24/36 |
-| Émissions sous 300 Mt (SNBC-2) | 24/36 | 24/36 | 24/36 |
-| Déficit sous 3 % en 2035 | 18/36 | 20/36 | 20/36 |
-| Budget à l'équilibre en 2035 ⚠ | 4/36 | 6/36 | 4/36 |
+| Chômage non dégradé | 20/36 | 34/36 | 20/36 |
+| Émissions sous 300 Mt (SNBC-2) | 36/36 | 36/36 | 36/36 |
+| Déficit sous 3 % en 2035 | 18/36 | 22/36 | 20/36 |
+| Budget à l'équilibre en 2035 ⚠ | 4/36 | 6/36 | 6/36 |
 | Déficit en baisse chaque année | 30/36 | 28/36 | 28/36 |
 | Dette/PIB stabilisée en 2035 ⚠ | 6/36 | 10/36 | 10/36 |
 | Mortalité liée à l'air non dégradée | 36/36 | 36/36 | 36/36 |
@@ -1725,10 +1929,10 @@ au moins un moteur) :
 | Accidents du travail à la norme UE | 36/36 | 36/36 | 36/36 |
 | SNBC-3 : objectifs sectoriels 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | SNBC-3 : budget carbone 2029-2033 ⚠ | 0/36 | 0/36 | 0/36 |
-| SNBC-3 : 15 % de voitures électriques en 2030 ⚠ | 0/36 | 0/36 | 0/36 |
+| SNBC-3 : 15 % de voitures électriques en 2030 | 36/36 | 36/36 | 36/36 |
 | ZAN : enveloppe 2021-2031 respectée | 36/36 | 36/36 | 36/36 |
 | IDH non dégradé | 36/36 | 36/36 | 36/36 |
-| LPM 2024-2030 : crédits de défense ⚠ | 0/36 | 0/36 | 0/36 |
+| LPM 2024-2030 : crédits de défense | 36/36 | 36/36 | 36/36 |
 | PPE3 : capacités renouvelables 2030 | 36/36 | 36/36 | 36/36 |
 | Code de l'énergie : 40 % d'électricité renouvelable en 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | UE : déficit sous 3 % ⚠ | 4/36 | 6/36 | 4/36 |
@@ -1739,7 +1943,7 @@ au moins un moteur) :
 | UE : recharge (AFIR) 2030 | 36/36 | 36/36 | 36/36 |
 | UE : solde courant > −4 % | 36/36 | 36/36 | 36/36 |
 
-15 propriétés sur 28 sont tenues dans au moins 18 scénarios sous les
+18 propriétés sur 28 sont tenues dans au moins 18 scénarios sous les
 trois moteurs, contre 11 avant cette révision. Le plafond juridique de
 2030 ne l'est plus depuis le retrait de la taxe Zucman : ajoutée dans un
 premier temps (O-126, 20 Md€ par an), elle a été retirée à la demande de
@@ -1796,42 +2000,75 @@ Lois du modèle commun d'octobre 2026 :
   (≈ +0,1 point pour tous les programmes ; 9,38 % au tendanciel au lieu de
   9,27 %).
 
+Mesures originales d'octobre 2026 (O-138 à O-146), à la demande de
+l'auteur (« des mesures totalement originales, quitte à modéliser de
+nouvelles choses », sans toucher au prix du carburant) : de 15 à 18
+propriétés tenues dans au moins 18 scénarios sous les trois moteurs.
+
+* *15 % de voitures électriques en 2030* : tenu (36/36) par le rétrofit
+  massif (O-138, nouveau levier `retrofitElectrique`), qui ajoute des
+  voitures électriques au parc sans passer par les ventes neuves ; risque
+  d'exécution très élevé. Une obligation sur les flottes d'entreprises et
+  de location (variante) le tient aussi, sans coût public.
+* *LPM 2024-2030* : tenue (36/36) par les drones de masse et le bouclier
+  anti-drones (O-139), qui compensent O-43 chaque année jusqu'en 2030.
+* *Déficit sous le plafond juridique* : tenu (19, 19 et 18 scénarios sur 36)
+  par le frein automatique au déficit (O-143, nouveau levier
+  `freinDeficit`), qui ne joue que dans les scénarios défavorables. Les
+  recettes originales (captation des plus-values d'urbanisme, O-140 ;
+  contribution sur les réserves bancaires, O-141) rapportent 1,6 Md€ en 2030
+  (4,1 Md€ en 2027) et financent une partie du rétrofit, pas davantage :
+  trois pistes étudiées rapportaient ensemble 2 à 3 Md€, loin des ≈ 20 Md€
+  qu'il aurait fallu.
+* Le biokérosène (O-142), la conversion des centrales des outre-mer (O-144)
+  et la fin du soutien aux cogénérations au gaz (O-145) réduisent les
+  émissions de 2030 de 2,1 Mt et tiennent le plafond de 300 Mt dans les
+  36 scénarios, sans faire tenir d'objectif climatique de plus.
+* Les pôles régionaux (O-146, demande de l'auteur : solaire, stockage
+  hydraulique souterrain, fosses de chaleur et géothermie) portent la part
+  renouvelable de 2030 de 34,6 à 35,2 % et réduisent les émissions de
+  0,15 Mt en 2030 et de ≈ 0,75 Mt en 2034 et 2035, sans propriété de plus.
+
 Propriétés que ces mesures ne suffisent pas à tenir, et effort
 supplémentaire qu'il faudrait dans le neuvième des dix-huit scénarios
 (moteur de demande ; entre parenthèses, au scénario central) :
 
-* *Déficit sous le plafond juridique* : ≈ −0,4 point de déficit en 2030
-  pour trois scénarios de plus ; au central, 3,86 % pour un plafond de 3 %.
 * *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,35
-  point de déficit en 2030, soit 4,35 % ramenés à 3 % (−0,9 point).
-* *Budget à l'équilibre en 2035* : ≈ −2,9 points en 2035 (−1,9 point).
-* *Dette/PIB stabilisée en 2035* : ≈ −14 points de dette en 2035, soit
-  130,1 % du PIB ramenés à 115,7 %, le niveau de 2025 (−9,1 points) ;
-  règle européenne de −10 points : ≈ −24 points (−19,1 points).
-* *LPM 2024-2030* : +1 Md€ de défense par an (renoncer à O-43).
-* *15 % de voitures électriques en 2030* : ≈ 520 000 voitures de plus dans
-  le parc de 2030.
-* *40 % d'électricité renouvelable en 2030* : ≈ 31 TWh de renouvelables de
-  plus en 2030 (34,7 % au central).
-* *Climat* : 298,5 Mt en 2030 au central (288 à 303 Mt selon la croissance
-  et le prix du pétrole) contre 276 visés par la SNBC-3 et la loi
-  européenne sur le climat. Par secteur, l'agriculture (67,8 Mt),
-  l'industrie (37,7) et les déchets (11,9) tiennent leur objectif (68, 42
-  et 12) ; les transports (105,8 Mt contre 92), les bâtiments (46,9 contre
-  37) et la production d'énergie (28,4 contre 25) non. Budget carbone
-  2029-2033 : 292,4 Mt par an en moyenne contre 262 ; répartition de
-  l'effort : 247,6 Mt contre 210,5. Les aides (prime à l'électrique,
-  rénovations, pompes à chaleur) font peu bouger les émissions dans le
-  modèle commun ; la composante carbone, beaucoup. Avec la variante d'O-124
-  à ≈ 488 €/t en 2030 au lieu de 100 (SP95-E10 ≈ +1,2 € par litre TTC par
-  rapport à 2026, calcul d'après O-124), le budget carbone, la loi
-  européenne et la répartition de l'effort sont tenus dans au moins
-  18 scénarios, et le déficit 2035 baisse à 1,64 % ; il manque alors 3,4 Mt
-  dans la production d'énergie pour les objectifs sectoriels (essai : une
-  baisse de 3,8 Mt sans coût tient les quatre propriétés). France
-  Stratégie (rapport Pisani-Ferry et Mahfouz, mai 2023) chiffre la dépense
-  publique supplémentaire nécessaire à 34 Md€ par an en 2030, l'I4CE
-  (juillet 2024) à 39 à 71 Md€.
+  point de déficit en 2030, soit 4,34 % ramenés à 3 % (−0,9 point). Un frein
+  à 3 % et 4 points les tiendrait, mais ferait perdre « chômage non
+  dégradé » (essai).
+* *Budget à l'équilibre en 2035* : ≈ −2 points en 2035 (−1,9 point).
+* *Dette/PIB stabilisée en 2035* : ≈ −12 points de dette en 2035 ; règle
+  européenne de −10 points : ≈ −22 points. Pistes étudiées, sans effet sur
+  le déficit : rachat sous le pair des OAT longues à petit coupon (≈ −77 Md€
+  de dette pour +1,8 Md€ d'intérêts par an, gain d'affichage comptable),
+  placement en titres publics des réserves de l'Agirc-Arrco (91 Md€),
+  cessions de participations (contraires à O-47).
+* *40 % d'électricité renouvelable en 2030* : ≈ 27,5 TWh de renouvelables
+  de plus en 2030 (35,2 % au central, avec les pôles régionaux d'O-146).
+  Essai : retenir tous les projets conformes des appels d'offres
+  « toitures » (1 559 MWc proposés pour 300 appelés, CRE, juin 2026) et
+  appliquer la loi APER aux parkings, soit 6,5 GW de solaire de plus par an
+  de 2027 à 2030, ne porterait la part qu'à ≈ 38,5 % ; il faudrait ≈ 9,3 GW
+  de plus par an en plus d'O-146, ≈ 14 GW par an au total, plus du double
+  du record de 2025 (6,1 GW).
+* *Climat* : 295,5 Mt en 2030 contre 276 visés par la SNBC-3 et la loi
+  européenne sur le climat. Par secteur, l'agriculture (67,7 Mt),
+  l'industrie (37,7) et les déchets (11,8) tiennent leur objectif ; les
+  transports (104,4 Mt contre 92), les bâtiments (46,9 contre 37) et la
+  production d'énergie (26,8 contre 25) non. Budget carbone 2029-2033 :
+  289,9 Mt par an en moyenne contre 262 ; répartition de l'effort :
+  245,8 Mt contre 210,5. Sans signal-prix sur le carburant (l'auteur refuse
+  de « toucher au litre ») ni carte carbone, ces propriétés ne tiennent pas
+  dans les scénarios de forte croissance ou de pétrole bas : même −14 Mt
+  dans les transports et −10 Mt dans les bâtiments dès 2027 ne tiennent les
+  objectifs sectoriels que dans 4 scénarios sur 36 (essai). Les
+  biocarburants payés par l'État (HVO, biofioul, biométhane, biokérosène)
+  apporteraient 3 à 5 Mt en 2030. Le Fonds chaleur doublé (+1 Md€ par an,
+  ≈ 2 Mt dans les réseaux de chaleur ; ADEME, 51,5 € d'aide par tonne en
+  2025) tiendrait l'objectif de la production d'énergie, non retenu pour
+  son coût. Avec la variante d'O-124 à ≈ 488 €/t en 2030, le budget
+  carbone, la loi européenne et la répartition de l'effort sont tenus.
 
 ## Points à arbitrer
 
@@ -1841,19 +2078,25 @@ sur 28) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) | Propriétés à 18/36 | Propriétés visées perdues |
 |---|---|---|---|---|---|---|
-| Programme actuel | 1,91 % | 9,02 % | 0,9407 | oui / oui / oui | 15 | — |
-| IS à 15 % (texte initial d'O-08) | 2,29 % | 8,99 % | 0,9407 | oui / oui / oui | 14 | Déficit sous 3 % en 2035 |
-| Norme de 100 pb (version précédente d'O-55) | 3,11 % | 8,46 % | 0,9414 | oui / oui / oui | 13 | Déficit sous 3 % en 2035, Déficit en baisse chaque année |
-| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | 1,15 % | 9,04 % | 0,9407 | oui / oui / oui | 16 | — (regagnée : déficit sous le plafond juridique) |
-| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | 1,33 % | 8,92 % | 0,9407 | oui / oui / oui | 16 | — (regagnée : déficit sous le plafond juridique) |
-| O-26 avec suppressions de postes (version précédente) | 2,04 % | 9,24 % | 0,9407 | oui / oui / oui | 14 | Chômage non dégradé |
-| O-38 au prorata (version précédente) | 1,92 % | 9,07 % | 0,9407 | oui / oui / oui | 15 | — |
-| O-108 à 2 Mt par an (version précédente) | 1,90 % | 9,02 % | 0,9407 | oui / oui / oui | 14 | Émissions sous 300 Mt (SNBC-2) |
-| Sans O-127 (contrats aidés) | 2,21 % | 9,33 % | 0,9406 | oui / oui / oui | 13 | Chômage non dégradé, Déficit sous 3 % en 2035 |
-| IS maintenu à 25 % (variante d'O-08) | 1,58 % | 9,05 % | 0,9407 | oui / oui / oui | 15 | — |
-| Norme renforcée de 100 pb de plus (variante d'O-55) | 0,85 % | 9,53 % | 0,9401 | oui / oui / oui | 14 | Chômage non dégradé |
-| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 1,89 % | 9,03 % | 0,9407 | oui / oui / oui | 14 | Émissions sous 300 Mt (SNBC-2) |
-| Composante carbone à ≈ 488 €/t en 2030 (variante d'O-124) | 1,64 % | 9,02 % | 0,9407 | oui / oui / oui | 18 | — |
+| Programme actuel | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
+| IS à 15 % (texte initial d'O-08) | 2,26 % | 9,00 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
+| Norme de 100 pb (version précédente d'O-55) | 3,08 % | 8,47 % | 0,9414 | oui / oui / oui | 15 | Déficit sous le plafond juridique, Déficit sous 3 % en 2035, Déficit en baisse chaque année |
+| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | 1,12 % | 9,05 % | 0,9407 | oui / oui / oui | 18 | — |
+| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | 1,30 % | 8,92 % | 0,9407 | oui / oui / oui | 18 | — |
+| O-26 avec suppressions de postes (version précédente) | 2,01 % | 9,25 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
+| O-38 au prorata (version précédente) | 1,89 % | 9,07 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
+| O-108 à 2 Mt par an (version précédente) | 1,87 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans O-127 (contrats aidés) | 2,18 % | 9,33 % | 0,9406 | oui / oui / oui | 17 | Chômage non dégradé |
+| IS maintenu à 25 % (variante d'O-08) | 1,55 % | 9,05 % | 0,9407 | oui / oui / oui | 17 | Déficit sous le plafond juridique |
+| Norme renforcée de 100 pb de plus (variante d'O-55) | 0,82 % | 9,53 % | 0,9401 | oui / oui / oui | 17 | Chômage non dégradé |
+| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 1,86 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans le rétrofit électrique (O-138) | 1,85 % | 9,02 % | 0,9407 | oui / oui / oui | 17 | SNBC-3 : 15 % de voitures électriques en 2030 |
+| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 1,92 % | 9,02 % | 0,9407 | oui / oui / oui | 18 | — |
+| Biokérosène compté au prorata des ventes (variante d'O-142) | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans le frein automatique (O-143) | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 17 | Déficit sous le plafond juridique |
+| Frein à 4,5 % et 2 points (variante d'O-143) | 1,51 % | 9,16 % | 0,9405 | oui / oui / oui | 17 | Chômage non dégradé |
+| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 1,88 % | 9,02 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans les pôles régionaux (O-146 à O-146d) | 1,87 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -1881,9 +2124,9 @@ sur 28) :
    (variantes). Pour les déchetteries : recettes perdues sur les
    professionnels et dépôts sauvages évités, faute de données nationales.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,34 point en 2032 (demande), 0,37 point en 2035 (offre), 0,36 point en 2032 (équilibre). Sans la deuxième journée de
-   solidarité (O-84), le déficit 2035 serait de 2,19 %.
-5. **Chômage.** 9,02 % en 2035 contre 7,91 % sans programme : la propriété
+   des marges minimales de 0,34 point en 2032 (demande), 0,38 point en 2032 (offre), 0,37 point en 2032 (équilibre). Sans la deuxième journée de
+   solidarité (O-84), le déficit 2035 serait de 2,15 %.
+5. **Chômage.** 9,03 % en 2035 contre 7,91 % sans programme : la propriété
    porte sur 2030, où le programme fait légèrement mieux que le tendanciel
    (contrats aidés O-127, postes publics, accompagnement O-26b et O-77).
    La norme de dépense et les réductions d'exonérations (O-56, O-61)
@@ -1913,14 +2156,32 @@ sur 28) :
    établissements de prostitution. L'effet du cannabis sur le déficit 2035
    (−0,03 point pour les taxes, −0,03 pour les emplois de la
    filière) dépend de la part du marché qui passe dans le circuit légal.
-10. **Loi de programmation militaire (O-43).** O-43 réduit la défense de
-    1 Md€ par an sous la trajectoire de la loi actualisée (loi n° 2026-791) :
-    le programme doit modifier la loi, ou renoncer à O-43 (≈ +0,03 point de
-    déficit).
-11. **Voitures électriques (O-05, O-128).** Avec l'aubaine, la prime de
-    4 000 € (1,2 Md€ par an) rend électriques ≈ 13 % des voitures aidées en
-    2027 et ≈ 8 % en 2030, le leasing social ≈ 32 % puis ≈ 20 % : « 15 % de
-    voitures électriques en 2030 » n'est plus tenu.
+10. **Loi de programmation militaire (O-43, O-139).** O-43 réduit la défense
+    de 1 Md€ par an sous la trajectoire de la loi actualisée (loi
+    n° 2026-791) ; les drones et le bouclier anti-drones (O-139) la
+    remettent au-dessus de la trajectoire jusqu'en 2030.
+11. **Voitures électriques (O-05, O-128, O-138).** Avec l'aubaine, la prime
+    de 4 000 € (1,2 Md€ par an) rend électriques ≈ 13 % des voitures aidées
+    en 2027 et ≈ 8 % en 2030, le leasing social ≈ 32 % puis ≈ 20 % ; « 15 %
+    de voitures électriques en 2030 » ne tient que par le rétrofit (O-138),
+    dont l'exécution est très incertaine (≈ 740 conversions par an en 2025).
+12. **Frein automatique (O-143).** Dans les scénarios où il joue, la dépense
+    de 2030 baisse de ≈ 42 Md€ : c'est une austérité automatique en période
+    défavorable. Le seuil de 5,5 % et les 5 points sont un calage, à
+    trancher par l'auteur.
+13. **Contribution sur les réserves bancaires (O-141).** Risque juridique
+    élevé (compétence de la BCE) ; sans elle, les 18 propriétés tiennent
+    toujours (déficit 2035 : 1,92 %).
+14. **Rétrofit ou obligation sur les flottes (O-138).** Le rétrofit coûte
+    ≈ 2 Md€ par an de 2027 à 2030 et suppose une filière qui n'existe pas
+    encore ; l'obligation faite aux flottes d'entreprises et de location
+    (variante) tient la même propriété sans coût public, en reportant le
+    surcoût sur les entreprises.
+15. **Stockage des pôles régionaux (O-146d).** Le stockage hydraulique
+    souterrain demandé par l'auteur coûte ≈ 3,25 Md€ prêtés par l'État et
+    n'entre en service qu'en 2034, avec une technologie qui ne produit
+    encore nulle part en mine ; des batteries de même capacité coûteraient
+    ≈ 0,85 à 2 Md€ et seraient prêtes en un à deux ans.
 
 ## Pistes pour compléter
 
@@ -1938,15 +2199,15 @@ O-83 et O-121).
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,06 pt | +0,5 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,12 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,09 pt | +0,8 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,03 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,17 pt | −0,07 pt | +0,7 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,25 pt | −0,10 pt | +1,0 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | +0,00 pt | +0,1 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,07 pt | +0,5 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,12 pt | −0,05 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,10 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,10 pt | +0,9 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,03 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,16 pt | −0,09 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,24 pt | −0,11 pt | +1,0 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
 chiffrage s'y ajouterait sans le corriger de ce recouvrement. La
@@ -1961,7 +2222,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 53 mesures sur 143 reposent au moins en partie sur une hypothèse ; les plus
+* 58 mesures sur 157 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,47 point, O-44 : −0,46 point, O-58 : −0,43 point, O-07 : +0,36 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),

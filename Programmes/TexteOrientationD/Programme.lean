@@ -2455,7 +2455,7 @@ theorem recettes_originales_valeurs : partVenduePm = 687 ∧ plusValueEurosParHa
   durcie de 5 points l'année suivante (levier `freinDeficit`). Seuil et
   intensité calés pour ne jouer que dans les scénarios défavorables
   (hypothèse) : au scénario central, le déficit du programme ne dépasse pas
-  4,98 % (2027) et le frein ne joue pas. Il joue dans 12 scénarios sur 36
+  4,99 % (2027) et le frein ne joue pas. Il joue dans 12 scénarios sur 36
   (pétrole à 100 $ ou croissance basse) : la dépense de 2030 y baisse de
   41 à 43 Md€ (≈ 1,2 à 1,3 point de PIB) et le chômage monte de 0,2 à
   0,4 point ; « chômage non dégradé » y passe de 24 à 20 scénarios sur 36.
