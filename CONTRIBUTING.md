@@ -49,11 +49,14 @@ participation de l'État (EDF, nationalisation) est un `pretEtat` : il
 pèse sur la dette, pas sur le déficit. Une mesure qui n'entre en vigueur
 qu'après l'année de départ porte `debut := n` (années) : montée en charge
 ou décaissements différés. Les mesures automobiles ont leurs leviers :
-`aideAchatElectrique véhiculesParAn primeEuros` (parc électrique, décès
-évités, carburant importé évité, accises et TVA perdues ; au-delà des
-ventes neuves, que le règlement (UE) 2023/851 électrifie entièrement en
-2035, la prime n'achète plus rien) et `deploiementBornes bornesParAn
-coûtParBorne`.
+`aideAchatElectrique véhiculesParAn primeEuros public` (parc électrique,
+décès évités, carburant importé évité, accises et TVA perdues ; `public` :
+`.general` par défaut, `.modestes` pour une aide réservée aux ménages
+modestes comme le leasing social, `.obligation` pour une interdiction ou un
+quota, sans prime ; une aide ne rend électrique qu'une part des voitures
+aidées, l'aubaine étant calculée par le modèle ; au-delà des ventes neuves,
+que le règlement (UE) 2023/851 électrifie entièrement en 2035, la prime
+n'achète plus rien) et `deploiementBornes bornesParAn coûtParBorne`.
 
 Préférer `depenseSur fonction montant` et `economieSur fonction montant`
 (nomenclature COFOG agrégée : retraites, santé, famille, enseignement,

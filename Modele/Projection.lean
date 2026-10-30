@@ -119,6 +119,47 @@ def Assiettes.taux (A : Assiettes) (eAutres : Int) (c : CroissanceAssiettes) : P
     droitsMutation := c.pibNominal, mutationsOnereuses := c.immobilier, patrimoine := c.pibNominal
     autres := c.pibNominal + (eAutres - 1000) * c.cycle / 1000 }
 
+/-- Effet de long terme du prix du pétrole sur les émissions d'un usage, ppm
+du niveau du secteur : élasticité-prix de long terme × élasticité du prix
+TTC au Brent × écart du Brent au prix de référence × part de l'usage dans
+les émissions du secteur (négatif quand le Brent est plus cher). -/
+def effetPrixCiblePpm (E : Energie) (elasticitePrix elasticiteBrent part : Int) : Int :=
+  if E.prixReferenceDollars = 0 then 0 else
+  let ecartBrentPm := (E.prixBrentDollars - E.prixReferenceDollars) * 1000 / E.prixReferenceDollars
+  -- borné à −90 % (relation linéaire, Brent extrême)
+  max (-900000) (0 - elasticitePrix * elasticiteBrent * ecartBrentPm * part / 1000000)
+
+/-- Émissions de l'année suivante avant les mesures, et effets du prix du
+pétrole appliqués aux transports et aux bâtiments (ppm) :
+* baisse tendancielle de chaque secteur (`baisseEmissionsSecteurPm`) ;
+* écart d'activité : `élasticité × (croissance en volume du scénario −
+  croissance de calage)` (`elasticitesEmissionsActivitePm`), nul au
+  scénario central et indépendant des mesures et du moteur ;
+* prix du pétrole : l'effet sur les carburants des voitures et utilitaires
+  légers et sur le fioul des bâtiments rejoint chaque année une part
+  (`ajustementPrixEmissionsPm`) de son niveau de long terme
+  (`effetPrixCiblePpm`), nul au prix de référence. -/
+def emissionsSuivantes (H : Scenario) (k : Nat) (s : Etat) :
+    ParSecteurGes × Int × Int :=
+  let E := H.energie
+  let el := H.eco.elasticitesEmissionsActivitePm
+  -- croissance du scénario, hors effets des mesures et du moteur
+  let ecart := H.eco.croissanceVolumeA k - H.eco.croissanceCalageEmissionsA k
+  let activite : ParSecteurGes :=
+    { transports := el.transports * ecart / 10, batiments := el.batiments * ecart / 10
+      agriculture := el.agriculture * ecart / 10, industrie := el.industrie * ecart / 10
+      energie := el.energie * ecart / 10, dechets := el.dechets * ecart / 10 }
+  let e := (s.emissionsKt.baisser H.eco.baisseEmissionsSecteurPm).ajusterPpm activite
+  let cibleT := effetPrixCiblePpm E E.elasticitesPrix.carburantsRoutiers
+    E.elasticitePrixCarburantsBrentPm E.partTransportsVoituresPm
+  let cibleB := effetPrixCiblePpm E E.elasticitesPrix.chauffageFossile
+    E.elasticitePrixFioulBrentPm E.partBatimentsFioulPm
+  let nT := s.effetPrixTransportsPpm + (cibleT - s.effetPrixTransportsPpm) * E.ajustementPrixEmissionsPm / 1000
+  let nB := s.effetPrixBatimentsPpm + (cibleB - s.effetPrixBatimentsPpm) * E.ajustementPrixEmissionsPm / 1000
+  ({ e with
+      transports := e.transports * (1000000 + nT) / (1000000 + s.effetPrixTransportsPpm)
+      batiments := e.batiments * (1000000 + nB) / (1000000 + s.effetPrixBatimentsPpm) }, nT, nB)
+
 /-- Canal du capital, une année (moteurs où `canalCapitalPm` > 0 ; sans
 effet sinon). L'investissement public de l'année écoulée s'ajoute au capital
 public des mesures (`investissementAnnee`, M€), réévalué aux prix (`prix`,
@@ -176,18 +217,28 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- d'émission de l'année (nominale au taux marginal, indexée au taux réel).
   -- Prime de risque : le taux marginal monte (baisse) de `primeDeficitPb` par
   -- point de déficit au-dessus (au-dessous) du déficit de départ.
-  let tauxCible := max 0 (H.eco.tauxMarginalA k
-    + H.eco.primeDeficitPb * (s.deficitPb - ref.deficitPb) / 100)
-  let emission := tauxCible - appliquerPm H.eco.inflationPb H.eco.partDetteIndexeePm
+  -- en ppm (1 pb = 100 ppm), sur le déficit exact (non arrondi au pb) :
+  -- 0,25 pb de taux par pb de déficit
+  let deficitPpm (e : Etat) : Int := if e.pib = 0 then 0 else e.deficit * 1000000 / e.pib
+  let tauxCiblePpm := max 0 (H.eco.tauxMarginalA k * 100
+    + H.eco.primeDeficitPb * (deficitPpm s - deficitPpm ref) / 100)
+  let emissionPpm := tauxCiblePpm - H.eco.inflationPb * H.eco.partDetteIndexeePm / 10
+  let tauxCible := tauxCiblePpm / 100
+  let emission := emissionPpm / 100
   let dette := s.dette
   -- dette à court terme : renouvelée dans l'année au taux court ; dette à
   -- moyen et long terme : taux du stock, puis refinancement d'une part
   let court := dette * H.eco.partDetteCourtTermePm / 1000
   let long := dette - court
   let longDebut := s.detteDebut - s.detteDebut * H.eco.partDetteCourtTermePm / 1000
-  let tauxStock := if long = 0 then s.tauxApparentPb
-    else (longDebut * s.tauxApparentPb + (long - longDebut) * s.tauxEmissionPb) / long
-  let taux := tauxStock + (emission - tauxStock) * H.eco.renouvellementDettePm / 1000
+  -- taux en ppm (1 pb = 100 ppm) : un arrondi au pb sur le stock ferait
+  -- sauter la charge d'intérêts de ≈ 470 M€
+  let tauxPrecedentPpm := if s.tauxApparentPpm = 0 then s.tauxApparentPb * 100 else s.tauxApparentPpm
+  let emissionPrecedentePpm := if s.tauxEmissionPpm = 0 then s.tauxEmissionPb * 100 else s.tauxEmissionPpm
+  let tauxStockPpm := if long = 0 then tauxPrecedentPpm
+    else (longDebut * tauxPrecedentPpm + (long - longDebut) * emissionPrecedentePpm) / long
+  let tauxPpm := tauxStockPpm + (emissionPpm - tauxStockPpm) * H.eco.renouvellementDettePm / 1000
+  let taux := tauxPpm / 100
   -- indexation du capital des titres indexés sur l'inflation de l'année,
   -- enregistrée en intérêts (comptabilité nationale)
   let indexation := dette * H.eco.partDetteIndexeePm * H.eco.inflationIndexationA k / 10000000
@@ -195,11 +246,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- apparent diminué de la décote ; ses intérêts, pour la part défiscalisée,
   -- échappent au PFU (perte de recettes de l'année)
   let tranche := dette * s.partDetteNumeriquePm / 1000
-  let economieNum := tranche * taux * s.decoteDetteNumeriquePm / 10000000
-  let interetsTranche := tranche * taux / 10000 - economieNum
+  let economieNum := tranche * tauxPpm * s.decoteDetteNumeriquePm / 1000000000
+  let interetsTranche := tranche * tauxPpm / 1000000 - economieNum
   let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
   let pertePfu := interetsTranche * s.partDefiscaliseePm * tPfu / 1000000
-  let interets := long * taux / 10000 + court * H.eco.tauxCourtA k / 10000 + indexation - economieNum
+  let interets := long * tauxPpm / 1000000 + court * H.eco.tauxCourtA k / 10000 + indexation - economieNum
   -- la perte de PFU de l'an dernier est déjà dans l'assiette et croît avec
   -- elle : on n'ajoute que l'écart, réparti selon l'affectation du PFU
   let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
@@ -210,7 +261,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- les mesures s'y ajoutent dans la même limite
   let ventes := H.energie.ventesNeuvesMilliers
   let elecTendance := min ventes (s.electrificationTendanceMilliers + H.energie.hausseElectrificationMilliers)
-  let dParc := max elecTendance (min ventes (elecTendance + s.electrificationAnnuelleMilliers))
+  -- aides : seule la part des ventes qui n'est pas déjà électrique peut
+  -- basculer (aubaine) ; obligations : chaque voiture visée
+  let aideesAdditionnelles := if ventes = 0 then 0
+    else s.electrificationAideePondereeMilliers
+      * max 0 (ventes - elecTendance - s.electrificationAnnuelleMilliers) / ventes
+  let dParc := max elecTendance
+    (min ventes (elecTendance + s.electrificationAnnuelleMilliers + aideesAdditionnelles))
   -- chaque voiture thermique remplacée retire son carburant de l'assiette des
   -- accises et de la TVA (nets des taxes sur l'électricité consommée)
   -- rénovations des mesures : les économies de fioul et de gaz acquises
@@ -387,6 +444,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let horsZan := s.surfacesHorsZanMesuresHa.headD {}
   let surfacesAnnee := ((H.sols.surfacesAnnee s.ecartZanPm (s.surfacesMesuresHa.headD {})).plus horsZan).ajouter
     .energie haEnergie
+  let emissions := emissionsSuivantes H k s
   let s' : Etat := { s with
     capacitesMw := capacites
     productionGwh := potentiel.ajouter .nucleaire (-modulation)
@@ -423,6 +481,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     autresRecettes := autresRecettes
     depensesF := depensesF
     tauxApparentPb := taux
+    tauxApparentPpm := tauxPpm
+    tauxEmissionPpm := emissionPpm
     tauxMarginalCourantPb := tauxCible
     tauxEmissionPb := emission
     chargeIndexationMeur := indexation
@@ -445,7 +505,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     ajustementDetteAnnee := 0
     participationsEtat := participations
     dividendesEtat := dividendes
-    emissionsKt := s.emissionsKt.baisser H.eco.baisseEmissionsSecteurPm
+    emissionsKt := emissions.1
+    effetPrixTransportsPpm := emissions.2.1
+    effetPrixBatimentsPpm := emissions.2.2
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - deces + solde
     decesMilliers := deces

@@ -599,7 +599,8 @@ PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee":
                "snbc-secteurs-2030": "SNBC : secteurs 2030", "budget-carbone-2029-2033": "Budget carbone 4",
                "parc-electrique-2030": "15 % d'électriques 2030", "zan-enveloppe-2031": "ZAN 2021-2031",
                "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant",
-               "idh-non-degrade": "IDH non dégradé"}
+               "idh-non-degrade": "IDH non dégradé", "lpm-2024-2030": "LPM 2024-2030",
+               "ppe3-capacites-2030": "PPE3 : capacités 2030", "electricite-renouvelable-2030": "40 % d'électricité renouvelable"}
 
 
 def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool = False) -> Table:

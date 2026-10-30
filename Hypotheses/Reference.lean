@@ -27,9 +27,12 @@ effets ne sont pas proportionnels au PIB :
   suspension coûte donc 3 mois de départs (≈ 1,9 Md€) de 2027 à 2032,
   conformément au chiffrage du Gouvernement (1,9 Md€ en 2027 ; ≈ 1,8 Md€
   par an selon le COR).
-* **Loi de programmation militaire actualisée** (loi n° 2026-791) : crédits
-  de la mission Défense hors pensions de 57,1, 63,3, 68,3, 72,8 et 76,3 Md€
-  de 2026 à 2030, contre 50,5 Md€ en 2025. Échéancier de dépense :
+* **Loi de programmation militaire actualisée** (loi n° 2026-791 du
+  16 août 2026, art. 3, réécrivant l'art. 4 de la loi n° 2023-703) : crédits
+  de la mission Défense hors pensions de 57,1, 63,3, 69,5, 72,6 et 75,7 Md€
+  de 2026 à 2030 (435,7 Md€ sur 2024-2030), contre 50,5 Md€ en 2025 ; le
+  projet de loi prévoyait 68,3, 72,8 et 76,3 Md€ de 2028 à 2030, profil
+  modifié en commission mixte paritaire (copie du JO du 18 août 2026). Échéancier de dépense :
   écart à la reconduction tendancielle (la défense suit les prix, déflateur
   de l'axe économique central), en euros 2025 (voir `echeancesDepart`) ;
   le niveau de 2030 est ensuite reconduit.
@@ -275,7 +278,7 @@ def echeancesDepart : List Echeance := [
   { fonction := .affairesEconomiques, niveau := 6500, indice := 10000,
     restants := [6700, 6000, 5000, 3800, 2400, 1000, 0] },       -- France 2030
   { fonction := .defense, niveau := 0, indice := 10000,
-    restants := [5867, 10943, 14752, 18091, 20396] },            -- LPM actualisée (2026-2030)
+    restants := [5867, 10943, 15899, 17903, 19839] },            -- LPM actualisée (2026-2030)
   { fonction := .logementEnvironnement, niveau := 0, indice := 10000,
     restants := [0, 0, 2975] },                                  -- ETS2 : moitié redistribuée dès 2028
   { fonction := .fonctionnement, niveau := 0, indice := 10000,

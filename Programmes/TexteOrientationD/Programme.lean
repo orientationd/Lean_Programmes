@@ -561,7 +561,7 @@ def pacteDutreil : Int := 1950
 
 /-- Défense (O-43) : −1 Md€ par an sur le budget de la défense (53 Md€ en
 2025, COFOG), hors norme de dépense, par rapport à la trajectoire de la LPM
-actualisée (loi n° 2026-791, 76,3 Md€ en 2030) que la référence applique. -/
+actualisée (loi n° 2026-791, 75,7 Md€ en 2030) que la référence applique. -/
 def economieDefense : Int := 1000
 
 /-- Durée de cotisation (O-44) : 174 trimestres au lieu de 172, soit six mois
@@ -3277,7 +3277,7 @@ def mesures : List Mesure := [
   { id := "O-128"
     titre := "Leasing social électrique : 150 000 voitures par an à 100 € par mois"
     source := s!"{leasingSocialParAn} voitures par an à {leasingSocialAideEuros} € d'aide (coût unitaire de PP-04) ; 50 000 voitures par édition depuis 2024 ; émissions évitées par le sous-modèle automobile (voir `leasingSocialParAn`)"
-    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros] },
+    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros .modestes] },
 
   { id := "O-129"
     titre := "Rémunération des dirigeants d'institutions publiques (Louvre, DGFiP, Haut-commissariat au plan…) : −20 %"

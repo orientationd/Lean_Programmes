@@ -89,9 +89,9 @@ def mesures : List Mesure := [
     leviers := [.remunerationPublique .traitement .enseignement [enseignants]] },
   { id := "PP-04", titre := "Leasing social : un million de voitures électriques à 100 € par mois"
     source := s!"{campagne} (AFP, 2 octobre 2026) : 6 Md€ pour un million de voitures, sans période ; retenu sur cinq ans : {leasingVoituresParAn} voitures par an à {leasingAideEuros} € d'aide"
-    leviers := [.aideAchatElectrique leasingVoituresParAn leasingAideEuros]
+    leviers := [.aideAchatElectrique leasingVoituresParAn leasingAideEuros .modestes]
     variantes := [
-      { nom := "un million de voitures et 6 Md€ par an", leviers := [.aideAchatElectrique 1000000 leasingAideEuros] }] },
+      { nom := "un million de voitures et 6 Md€ par an", leviers := [.aideAchatElectrique 1000000 leasingAideEuros .modestes] }] },
   { id := "PP-05", titre := "Retraites : abrogation de la réforme de 2023, âge légal à 62 ans"
     source := s!"{campagne} (débat BFMTV, 4 octobre 2026 : « ce sera 62 ans » ; LCP, 9 octobre) ; Place publique, Acte 1 (juin 2025), p. 43 : « Abroger la réforme Macron de 2023 ». 62 ans dès l'entrée en vigueur : −9 mois en 2027, l'écart au calendrier légal atteint 24 mois en 2033"
     leviers := [.ageLegalCible 744 0] },

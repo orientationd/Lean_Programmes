@@ -98,11 +98,14 @@ inductive Levier where
   prudent), pas plus que les remboursements au-delà de l'horizon. -/
   | pretEtat (montantAnnuel : Int)
   /-- Aide à l'achat de voitures électriques : `vehiculesParAn` véhicules
-  aidés par an à `primeEuros` chacun. Dépense annuelle ; le flux
-  d'électrification croît d'autant, dans la limite des ventes neuves (au-delà,
-  la prime ne paie que des achats que le règlement (UE) 2023/851 impose déjà :
-  effet d'aubaine). -/
-  | aideAchatElectrique (vehiculesParAn : Int) (primeEuros : Int)
+  aidés par an à `primeEuros` chacun, pour un public (`PublicAide`). Dépense
+  annuelle pour tous les véhicules aidés ; seule une part est une voiture
+  électrique de plus : `1 − e^(−β A)` des achats non électriques
+  (`fractionReponsePm`), la part des ventes déjà électrique étant ôtée
+  chaque année par la projection (aubaine), dans la limite des ventes
+  neuves. Une obligation (`.obligation`, prime nulle) ajoute chaque voiture
+  visée. -/
+  | aideAchatElectrique (vehiculesParAn : Int) (primeEuros : Int) (cible : PublicAide := .general)
   /-- Déploiement de points de recharge publics : `bornesParAn` par an à
   `coutParBorne` € (dépense annuelle, emplois dans la construction). -/
   | deploiementBornes (bornesParAn : Int) (coutParBorne : Int)
@@ -443,6 +446,19 @@ def stabilisateurChomage (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       / (H.reference.etat.pib * 1000000)
   effetDemande H none (appliquerPm d M.multiplicateurPrelevementsPm)
     { s with depensesF := s.depensesF.ajouter .famille d, chomeursComptes := chomeurs }
+
+/-- Part des achats non électriques qu'une aide de `aideEuros` rend
+électriques, pm : `1 − e^(−β A)`, β en pm par k€ (forme réduite calée,
+voir `Hypotheses/Energie.lean`). L'exponentielle est approchée par l'inverse du développement de
+`e^x` à l'ordre 4 (écart < 2 % jusqu'à `x = 1,5`). -/
+def fractionReponsePm (betaPmParKeur aideEuros : Int) : Int :=
+  let x := max 0 (betaPmParKeur * aideEuros / 1000)
+  let ex := 1000 + x + x * x / 2000 + x * x * x / 6000000 + x * x * x * x / 24000000000
+  1000 - 1000000 / ex
+
+theorem fractionReponse_valeurs :
+    fractionReponsePm 55 4000 = 197 ∧ fractionReponsePm 115 6000 = 498 ∧ fractionReponsePm 55 0 = 0 := by
+  decide
 
 /-- Dépense nouvelle sur une fonction (partagée par plusieurs leviers). -/
 def appliquerDepense (H : Scenario) (cible : Option Secteur) (f : Fonction) (montant : Int)
@@ -836,9 +852,15 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .prisesDeParticipation m, s =>
       { s with investissementsParticipations := s.investissementsParticipations + m }
   | .annonceEmplois n, s => { s with emploisAnnonces := s.emploisAnnonces + n }
-  | .aideAchatElectrique n prime, s =>
-      appliquerDepense H none .logementEnvironnement (n * prime / 1000000)
-        { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }
+  | .aideAchatElectrique n prime pub, s =>
+      let E := H.energie
+      let s' : Etat := match pub with
+        | .obligation => { s with electrificationAnnuelleMilliers := s.electrificationAnnuelleMilliers + n / 1000 }
+        | .general => { s with electrificationAideePondereeMilliers := s.electrificationAideePondereeMilliers
+            + n * fractionReponsePm E.sensibiliteAideGeneralePmParKeur prime / 1000000 }
+        | .modestes => { s with electrificationAideePondereeMilliers := s.electrificationAideePondereeMilliers
+            + n * fractionReponsePm E.sensibiliteAideModestesPmParKeur prime / 1000000 }
+      appliquerDepense H none .logementEnvironnement (n * prime / 1000000) s'
   -- rénovation : rénovations déjà aidées dans la cible, rénovations suscitées
   -- par le bonus (demande linéaire en l'aide), coût annuel, économies
   -- d'énergie portées par la projection

@@ -218,4 +218,64 @@ theorem smic_un_point :
       a.smicPrelevementsMeur < -1000 ∧ a.smicMensuel = 1820 ∧ c.smicMensuel = 1820 := by
   decide +kernel
 
+/-! ## Émissions selon le scénario, aubaine, loi de programmation militaire (octobre 2026) -/
+
+/-- Tendanciel à `n` ans sous un moteur et un scénario. -/
+def tendancielAn (M : Moteur) (S : Scenario) (n : Nat) : Etat :=
+  (trajectoire M S n (etatDepart S)).getD n (etatDepart S)
+
+/-- Émissions selon l'activité : la croissance basse (0,6 % de long terme,
+−0,4 point en 2029 et en 2030) fait baisser les émissions de l'industrie de
+≈ 0,64 % en 2030 par rapport au central (élasticité 0,8) ; la croissance
+haute (+0,5 point) les fait monter de ≈ 0,8 %. -/
+theorem emissions_activite :
+    let c := (tendancielAn D H 5).emissionsKt.industrie
+    let b := (tendancielAn D { H with eco := Hypotheses.Eco.croissanceBasse } 5).emissionsKt.industrie
+    let h := (tendancielAn D { H with eco := Hypotheses.Eco.croissanceHaute } 5).emissionsKt.industrie
+    b < c ∧ c < h ∧ 50 ≤ (c - b) * 10000 / c ∧ (c - b) * 10000 / c ≤ 80 := by
+  decide +kernel
+
+/-- Au scénario central, les émissions ne dépendent pas du moteur (l'écart
+d'activité porte sur la croissance du scénario, pas sur les effets des
+prélèvements que le moteur d'offre ajoute). -/
+theorem emissions_independantes_du_moteur :
+    (tendancielAn D H 5).emissionsKt = (tendancielAn O H 5).emissionsKt := by
+  decide +kernel
+
+/-- Prix du pétrole : au Brent de 100 $ (référence 63 $), l'effet de long
+terme sur les émissions des transports vaut ≈ −8 % (élasticité-prix 0,6,
+prix TTC au Brent 0,33, voitures et utilitaires 68,6 % des émissions) ; cinq
+ans après, 92 % en est atteint (40 % de l'écart comblé chaque année). Les
+émissions des bâtiments baissent aussi (fioul). -/
+theorem emissions_petrole :
+    let c := tendancielAn D H 5
+    let h := tendancielAn D { H with energie := Hypotheses.Energie.haut } 5
+    let dPb := (c.emissionsKt.transports - h.emissionsKt.transports) * 10000 / c.emissionsKt.transports
+    680 ≤ dPb ∧ dPb ≤ 780 ∧ h.emissionsKt.batiments < c.emissionsKt.batiments := by
+  decide +kernel
+
+/-- Aubaine : 300 000 primes de 4 000 € par an ajoutent ≈ 163 000 voitures
+électriques au parc en cinq ans (19,7 % des achats non électriques, moins
+la part des ventes déjà électrique, de 28 à 60 %), contre 1 500 000 pour
+une obligation portant sur le même nombre de voitures. -/
+theorem aubaine_aide_electrique :
+    let t := (tendancielAn D H 5).parcElectriqueMilliers
+    let a := ((mesure (.aideAchatElectrique 300000 4000)).resultatA D H 5).parcElectriqueMilliers
+    let o := ((mesure (.aideAchatElectrique 300000 0 .obligation)).resultatA D H 5).parcElectriqueMilliers
+    150 ≤ a - t ∧ a - t ≤ 180 ∧ o - t = 1500 := by
+  decide +kernel
+
+/-- Loi de programmation militaire : au scénario central (échéanciers
+compris), la dépense de défense du tendanciel dépasse les crédits de la
+mission Défense hors pensions de la loi n° 2026-791 (57,1, 63,3, 69,5, 72,6
+et 75,7 Md€ de 2026 à 2030) de l'écart de périmètre de 2025 (53,0 Md€
+contre 50,5), indexé : entre 2,45 et 2,75 Md€ chaque année. -/
+theorem lpm_tendanciel :
+    let C := Hypotheses.central
+    let lpm : List Int := [57100, 63300, 69500, 72600, 75700]
+    (List.range 5).all (fun i =>
+      let d := (tendancielAn D C (i + 1)).depensesF.defense - lpm.getD i 0
+      decide (2450 ≤ d ∧ d ≤ 2750)) = true := by
+  decide +kernel
+
 end Tests.Mecanismes
