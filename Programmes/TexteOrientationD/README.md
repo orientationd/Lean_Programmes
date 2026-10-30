@@ -9,9 +9,9 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 3,93 % |
-| Dette publique | 156,7 % du PIB | 132,7 % |
-| Chômage | 7,90 % | 9,37 % |
+| Déficit public | 9,27 % du PIB | 3,96 % |
+| Dette publique | 156,7 % du PIB | 133,0 % |
+| Chômage | 7,90 % | 9,36 % |
 | Indice de développement humain | 0,9392 | 0,9412 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 282 Mt CO₂e |
 
@@ -19,9 +19,9 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,29 | 5,06 | 4,88 | 4,65 | 4,45 | 4,35 | 4,18 | 4,10 | 3,93 |
-| Offre | 5,57 | 5,21 | 4,93 | 4,72 | 4,48 | 4,30 | 4,23 | 4,10 | 4,06 | 3,94 |
-| Équilibre | 5,58 | 5,25 | 4,99 | 4,78 | 4,55 | 4,36 | 4,27 | 4,12 | 4,06 | 3,91 |
+| Demande | 5,58 | 5,32 | 5,08 | 4,90 | 4,67 | 4,48 | 4,37 | 4,22 | 4,14 | 3,96 |
+| Offre | 5,57 | 5,23 | 4,96 | 4,74 | 4,51 | 4,33 | 4,25 | 4,13 | 4,10 | 3,98 |
+| Équilibre | 5,58 | 5,28 | 5,02 | 4,82 | 4,59 | 4,40 | 4,31 | 4,15 | 4,09 | 3,94 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-99 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
+105 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -258,6 +258,8 @@ milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 | **O-77** Accompagnement renforcé des demandeurs d'emploi : 10 000 conseillers de plus à France Travail | −0,06 pt | +43 700 | +0,5 |
 | **O-94** Emplois aidés ciblés sur l'industrie : 20 000 contrats initiative emploi | ≈ 0 | +3 200 | ≈ 0 |
 | **O-96** Revenu minimum au niveau du SMIC net pendant les cinq premières années d'exploitation agricole | +0,05 pt | +1 700 | +0,1 |
+| **O-104** Coopérative d'État d'engrais azotés bas carbone : deux usines de 500 000 t, apport en capital de 2,6 Md€ de 2027 à 2035 | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-104b** Production de la coopérative d'engrais : première usine en service en 2031 | ≈ 0 | +200 | ≈ 0 |
 
 **O-09 — Démission indemnisée.** Six mois d'indemnités, une fois tous les cinq ans. Coût estimé 3 Md€/an
 (recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois) ;
@@ -403,6 +405,21 @@ que jusqu'au SMIC : l'écart réel reste à documenter avec la MSA. L'effet
 sur le nombre d'installations (12 661 en 2024, −7 % sur un an) n'est pas
 chiffré. Variante : écart de 2024 (883 M€).
 
+**O-104 et O-104b — Coopérative d'État d'engrais azotés bas carbone.** Deux
+usines sur le modèle du projet FertigHy de Languevoisin (Somme) :
+500 000 t d'ammonitrate CAN27 par an chacune, 15 % de la consommation
+française, ≈ 1,3 Md€ d'investissement et ≈ 250 emplois directs, avec de
+l'hydrogène produit par électrolyse (AFP, mai 2024). L'État apporte le
+capital, 2,6 Md€ de 2027 à 2035 (288 M€ par an) : une opération
+financière, qui accroît la dette sans creuser le déficit. La première
+usine produit à partir de 2031 (O-104b) : 250 emplois et ≈ 164 000 t
+d'ammoniac par an, soit ≈ 2 TWh d'électricité à 12,12 MWh par tonne au
+minimum (AFT, fiche ALTERFI « Ammoniac »), pris sur le surplus du parc
+nucléaire (la modulation baisse d'autant) ; la seconde produit après
+2035. Les importations d'engrais remplacées et la valeur ajoutée, plus
+forte par emploi que la moyenne, ne sont comptées qu'à travers les
+emplois.
+
 ### Retraites
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -466,6 +483,7 @@ pas. Les conjoints et aides familiaux (proposition de loi Brugerolles,
 | **O-72** Accise sur le kérosène des vols intérieurs métropolitains | −0,01 pt | −600 | ≈ 0 |
 | **O-90** Pompes à chaleur gratuites dans les zones rurales, 100 000 par an, financées en partie par les coûts de réseau de gaz évités | +0,07 pt | +4 500 | +0,1 |
 | **O-91** Zones d'électrification industrielle : tarif d'électricité négocié, hors ZAN | −0,01 pt | +7 400 | +0,1 |
+| **O-103** Aide de 30 centimes par litre sur le GNR agricole, dégressive au rythme de l'électrification des exploitations | +0,04 pt | +300 | ≈ 0 |
 
 **O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année.** 10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
 2035, soit 250 M€ par an et 90 000 voitures, prises parmi les 1,2 million
@@ -622,6 +640,16 @@ sont une hypothèse du programme (implantations attirées par le tarif et le
 foncier) : ils produisent pour l'exportation ou à la place d'importations.
 En 2035 : +7 400 emplois, −0,01 point de déficit. Variante : foncier dans
 l'enveloppe du ZAN, où il évince d'autres usages.
+
+**O-103 — Aide au GNR agricole, dégressive.** 30 centimes par litre de
+gazole non routier agricole, la demande de la FNSEA (septembre 2026), au
+lieu de l'aide de crise de 15 centimes versée de mai à décembre 2026
+(≈ 55 M€ par mois). Sur ≈ 3,7 Md de litres (agriculture et pêche, voir
+O-31) : 1,11 Md€ par an moins la part des exploitations déjà converties à
+l'électrique, soit 999 M€ en 2027, puis 111 M€ de moins chaque année au
+rythme d'O-31, et plus rien en 2036, au terme de la conversion. Le tarif
+réduit d'accise du GNR agricole (≈ 1,13 Md€ de dépense fiscale en 2024,
+Cour des comptes) est maintenu. Variante : 15 centimes (499 M€ en 2027).
 
 ### Logement et urbanisme
 
@@ -782,6 +810,7 @@ scolaires.
 | **O-80** Dépistage organisé du cancer colorectal : 65 % de participation | +0,02 pt | +1 300 | +2,9 |
 | **O-85** Santé mentale : 100 M€ de moyens supplémentaires par an | ≈ 0 | +500 | ≈ 0 |
 | **O-92** Déserts médicaux : 50 000 € à l'installation en zone prioritaire, puis 5 000 € par an pendant cinq ans | ≈ 0 | +300 | ≈ 0 |
+| **O-101** Liberté d'installation des médecins ; aides aux déserts médicaux financées par une contribution des médecins des zones bien dotées | ≈ 0 | −100 | ≈ 0 |
 
 **O-22 — Médicaments et dispositifs.** −2 Md€ par an (génériques,
 biosimilaires, prix, pertinence ; Assurance maladie 2025) ; création d'une
@@ -854,6 +883,21 @@ des comptes (novembre 2025) juge ces aides coûteuses et peu efficaces hors
 exercice coordonné (maisons de santé) : l'effet sur l'accès aux soins
 n'est pas chiffré. Variante : 100 000 € à l'installation.
 
+**O-101 — Liberté d'installation, aides financées par les zones bien
+dotées.** Pas de régulation de l'installation des médecins. Les aides aux
+déserts médicaux (O-92 en zone prioritaire, O-97 à Mayotte et en Guyane)
+sont financées par une contribution annuelle des généralistes libéraux
+installés dans les zones les mieux dotées, au montant exact de ces aides :
+41 M€ la première année, 68 M€ quand les primes d'exercice sont au
+complet. Le coût net des trois mesures pour les finances publiques est
+nul. Il n'existe pas de zonage « surdoté » pour les médecins (il en
+existe pour les infirmiers, kinésithérapeutes, sages-femmes et
+dentistes) : les ARS devront le définir. Près de 52 500 généralistes
+libéraux sont en activité (Cnam, juin 2026) ; si un quart d'entre eux
+exercent en zone surdotée (hypothèse), la contribution est de ≈ 5 200 €
+par an et par médecin, ≈ 1 300 € si elle portait sur tous. Son effet sur
+les installations hors zone prioritaire n'est pas chiffré.
+
 ### Justice, sécurité et égalité
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -862,6 +906,7 @@ n'est pas chiffré. Variante : 100 000 € à l'installation.
 | **O-67** Dettes cachées : paiement immédiat des heures supplémentaires non payées des policiers | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-75** 100 000 places de prison en cellule individuelle : construction, surveillants et fonctionnement | +0,06 pt | +8 100 | +0,2 |
 | **O-82** Loi intégrale contre les violences sexistes et sexuelles : 2,6 Md€ par an | +0,08 pt | +11 900 | +0,3 |
+| **O-100** 2 000 douaniers de plus et contrôle renforcé des produits agricoles et industriels importés | ≈ 0 | +500 | ≈ 0 |
 
 **O-10 — Moyens pour la justice.** +300 M€ par an (prud'hommes en
 priorité) ; les délais de justice ne sont pas modélisés.
@@ -910,6 +955,16 @@ violences faites aux femmes ? ») ; crédits dédiés de moins de 200 M€, dont
 bas de la fourchette moins les crédits existants, 2,4 Md€ de dépense
 nouvelle (justice, police, hébergement et accompagnement des victimes).
 Variante : haut de la fourchette (5,4 Md€).
+
+**O-100 — Douaniers et contrôle des importations.** 2 000 douaniers de
+plus, recrutés en trois ans : 1 220 pour revenir aux effectifs de 2019
+(amendement II-CF2611 du rapporteur Legavre au PLF 2026) et 780 affectés
+au contrôle de la conformité des produits agricoles et industriels
+importés (normes sanitaires et techniques, ajustement carbone aux
+frontières). La douane compte 16 500 agents et contrôle 0,1 % des
+marchandises importées. Coût : 52 000 € par emploi (coût moyen du
+programme 302), 104 M€ par an. Les droits, taxes et amendes recouvrés
+grâce aux contrôles ne sont pas comptés.
 
 ### Cybersécurité
 
@@ -1023,6 +1078,7 @@ dématérialisés ; scrutins couplés aux élections, sans coût propre.
 | **O-66** Électrification des outre-mer : électricité des foyers raccordés (péréquation tarifaire) | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-89** Fin de l'octroi de mer, compensée aux collectivités par l'État | +0,08 pt | +2 800 | +0,1 |
 | **O-97** Prime de 100 000 € à l'installation des médecins à Mayotte et en Guyane | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-102** Cotisations salariales réduites de 3 points dans les départements d'outre-mer | +0,04 pt | +900 | ≈ 0 |
 
 | Mesure | Chiffrage |
 |---|---|
@@ -1073,34 +1129,46 @@ jusqu'à 11 M€ par an. La Guadeloupe, la Martinique et La Réunion sont à
 la densité nationale et n'y sont pas éligibles. Variante : prime de
 50 000 €.
 
+**O-102 — Cotisations salariales réduites outre-mer.** −3 points de
+cotisations salariales sur les salaires du privé des cinq départements
+d'outre-mer : ≈ 90 € nets de plus par mois au salaire moyen. 448 330
+salariés du privé fin 2024 (Insee : La Réunion 201 300, Mayotte 24 300 ;
+Martinique, Guadeloupe et Guyane estimées à partir de l'emploi salarié
+total et de la part du privé en Martinique, 66 %), pour un salaire net
+moyen en équivalent temps plein de 2 330 € (de 2 159 € à Mayotte à
+2 470 € en Guyane ; Insee, 2024), soit ≈ 2 990 € bruts : masse salariale
+de ≈ 16,1 Md€, coût de 482 M€ par an (calcul, un peu majoré par le temps
+partiel). Les exonérations patronales existantes (LODEOM) ne changent
+pas. Variante : −1,5 point (241 M€).
+
 ## Points à arbitrer
 
 Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 3,93 % | 9,37 % | 0,9412 | oui / oui / oui |
-| Sans O-84 (deuxième journée de solidarité) | 4,15 % | 9,39 % | 0,9411 | oui / oui / oui |
-| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,86 % | 9,19 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 3,97 % | 9,35 % | 0,9424 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,76 % | 9,38 % | 0,9412 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 3,18 % | 9,43 % | 0,9411 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,68 % | 9,93 % | 0,9405 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,51 % | 10,45 % | 0,9399 | oui / oui / oui |
+| Programme actuel | 3,96 % | 9,36 % | 0,9412 | oui / oui / oui |
+| Sans O-84 (deuxième journée de solidarité) | 4,17 % | 9,39 % | 0,9411 | oui / oui / oui |
+| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,89 % | 9,18 % | 0,9412 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 4,00 % | 9,34 % | 0,9424 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,79 % | 9,38 % | 0,9412 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 3,22 % | 9,42 % | 0,9411 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,71 % | 9,92 % | 0,9405 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,55 % | 10,45 % | 0,9399 | oui / oui / oui |
 
 1. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,08 point en 2034 (demande), 0,04 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
+   des marges minimales de 0,08 point en 2034 (demande), 0,03 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
    (niches réduites de 1,5 Md€ de plus par an de 2029 à 2035) et à O-84
    (deuxième journée de solidarité, −0,23 point en 2035) ; sans O-84,
-   le déficit 2035 serait de 4,15 %. Toute dépense nouvelle non financée
+   le déficit 2035 serait de 4,17 %. Toute dépense nouvelle non financée
    réduit ces marges : chaque piste de dépense est à apparier à une recette
    ou à une économie.
-2. **Chômage.** 9,37 % en 2035 contre 7,90 % sans programme. Premières
+2. **Chômage.** 9,36 % en 2035 contre 7,90 % sans programme. Premières
    causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000 emplois)
    et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
    +20 000), O-76 et O-77 (+44 000 et +44 000) et O-84 (+7 000)
    compensent en partie. Au-delà de 9 %, le complément de fin de droits de
-   l'assurance chômage se déclenche. L'option B le réduit (9,19 %) ;
+   l'assurance chômage se déclenche. L'option B le réduit (9,18 %) ;
    passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit
    plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
@@ -1133,6 +1201,13 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
    par secteur pour un coût donné). Une dépense « climat » générique n'y
    change rien : chaque mesure climatique doit sourcer ses tonnes évitées et
    son coût.
+7. **Mesures sectorielles à préciser.** La contribution des médecins des
+   zones les mieux dotées (O-101) suppose un zonage « surdoté » des
+   médecins, qui n'existe pas encore ; l'aide au GNR (O-103) baisse le prix
+   du gazole pendant la conversion électrique des exploitations (O-31), et
+   son effet sur la vitesse de la conversion n'est pas modélisé ; la
+   rentabilité de la coopérative d'engrais (O-104) dépend du prix de
+   l'électricité et de celui de l'ammoniac importé.
 
 ## Pistes pour compléter
 
@@ -1149,16 +1224,16 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,12 pt | −0,06 pt | +0,6 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,11 pt | −0,06 pt | +0,6 |
 | Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,10 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,23 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,15 pt | −0,10 pt | +0,8 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,08 pt | −0,05 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,08 pt | −0,04 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,15 pt | −0,08 pt | +0,8 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,23 pt | −0,11 pt | +1,1 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | −0,01 pt | +0,1 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,24 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,14 pt | −0,09 pt | +0,8 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,07 pt | −0,04 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,08 pt | −0,03 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,04 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,14 pt | −0,07 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,22 pt | −0,11 pt | +1,1 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | +0,00 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant), et PC-12
 recoupe O-88 (médecins scolaires) : leur chiffrage s'y ajouterait sans le
@@ -1174,7 +1249,7 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 
 ### Chiffrages à documenter
 
-* 37 mesures sur 99 reposent au moins en partie sur une hypothèse ; les plus
+* 38 mesures sur 105 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),

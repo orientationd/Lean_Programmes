@@ -981,6 +981,101 @@ def amendesFuitesSupplementaires : Int := fuitesAutomatiques * caMedianFuitesMeu
 
 theorem amendesFuites_eq : amendesFuitesSupplementaires = 190 := by decide
 
+/-- Douaniers et contrôles des produits importés (O-100) : 2 000 douaniers
+de plus en trois ans, dont 1 220 pour revenir aux effectifs de 2019 (la
+douane compte 16 500 agents ; 0,1 % des marchandises importées sont
+contrôlées) et 780 affectés au contrôle de la conformité des produits
+agricoles et industriels importés (normes, ajustement carbone aux
+frontières) ; 52 000 € par emploi, coût moyen du programme 302 (amendement II-CF2611 du rapporteur Legavre, PLF 2026,
+7 novembre 2025). Les droits et amendes recouvrés grâce aux contrôles ne
+sont pas comptés. -/
+def douaniersSupplementaires : Int := 1220 + 780
+def coutDouanierEuros : Int := 52000
+def coutDouaniers : Int := douaniersSupplementaires * coutDouanierEuros / 1000000
+
+theorem coutDouaniers_eq : coutDouaniers = 104 := by decide
+
+/-- Liberté d'installation des médecins et financement du fonds d'aide aux
+déserts médicaux (O-101) : pas de régulation de l'installation ; les aides
+d'O-92 (installation en zone prioritaire, primes d'exercice) et d'O-97
+(Mayotte, Guyane) sont financées par une contribution annuelle des
+médecins généralistes libéraux installés dans les zones les mieux dotées,
+au montant exact de ces aides (41 M€ la première année, 68 M€ au
+complet). Il n'existe pas de zonage « surdoté » pour les médecins (il en
+existe pour les infirmiers, kinésithérapeutes, sages-femmes et dentistes) :
+la zone est à définir par les ARS. Près de 52 500 généralistes libéraux
+en activité fin 2025, hors médecins à expertise particulière (Cnam,
+11 juin 2026) ; si un quart d'entre eux exercent en zone surdotée
+(hypothèse), la contribution est de ≈ 5 200 € par an et par médecin au
+complet (calcul), ≈ 1 300 € si elle portait sur tous. -/
+def fondsDesertsMedicaux : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k =>
+    installationsZip * aideInstallationZip / 1000000 + installationsZip * primeExerciceZip * k / 1000000
+      + installationsOutreMer * 20000 * k / 1000000
+def generalistesLiberaux2025 : Int := 52500
+def generalistesZonesSurdotees : Int := generalistesLiberaux2025 / 4
+def contributionMedecinEuros : Int := fondsDesertsMedicaux.getLastD 0 * 1000000 / generalistesZonesSurdotees
+
+theorem fondsDeserts_valeurs :
+    fondsDesertsMedicaux = [41, 47, 54, 61, 68] ∧ generalistesZonesSurdotees = 13125 ∧
+    contributionMedecinEuros = 5180 := by decide
+
+/-- Cotisations salariales réduites outre-mer (O-102) : −3 points sur les
+salaires du secteur privé des cinq départements d'outre-mer, soit ≈ 90 €
+nets de plus par mois au salaire moyen. Salariés du privé fin 2024 :
+La Réunion 201 300, Mayotte 24 300 (Insee) ; Martinique 87 550 (131 850
+salariés, dont ≈ 44 300 dans le public, d'après la baisse de 310 emplois,
+−0,7 %) ; Guadeloupe (128 720) et Guyane (74 860) avec la même part du
+privé que la Martinique (66,4 %) : 85 470 et 49 710 (calculs) ; 448 330 au
+total. Salaire net moyen en équivalent temps plein, 2024 : 2 237 à 2 470 €
+selon le département (Insee), 2 330 € en moyenne pondérée, soit ≈ 2 990 €
+bruts (rapport net/brut de 0,78, ordre de grandeur, hypothèse) : masse
+salariale de ≈ 16,1 Md€ (calcul, majorée par le temps partiel). Coût :
+482 M€ par an. Les exonérations patronales existantes (LODEOM) ne changent
+pas. -/
+def salariesPrivesOutreMer : Int := 201300 + 24300 + 87550 + 85470 + 49710
+def salaireBrutOutreMerEuros : Int := 2330 * 100 / 78
+def masseSalarialeOutreMer : Int := salariesPrivesOutreMer * salaireBrutOutreMerEuros * 12 / 1000000
+def baisseCotisationsOutreMer : Int := masseSalarialeOutreMer * 3 / 100
+
+theorem cotisationsOutreMer_valeurs :
+    salariesPrivesOutreMer = 448330 ∧ salaireBrutOutreMerEuros = 2987 ∧ baisseCotisationsOutreMer = 482 := by decide
+
+/-- Aide au gazole non routier agricole (O-103) : 30 centimes par litre,
+déduits sur la facture, la demande de la FNSEA (22 septembre 2026 ; aide de
+crise de 15 centimes de mai à décembre 2026, ≈ 55 M€ par mois, hors
+tendance), sur les ≈ 3,7 Md de litres de produits pétroliers de
+l'agriculture et de la pêche (voir `exploitationsAgricoles`) : 1,11 Md€
+par an, réduits de 10 % chaque année au rythme de la conversion électrique
+des exploitations (O-31), à zéro au terme du plan. Le tarif réduit
+d'accise du GNR agricole (≈ 1,13 Md€ en 2024, Cour des comptes) est
+inchangé. -/
+def litresGnrAgricoles : Int := 3700
+def aideGnr (centimes : Int) : List Int :=
+  ([9, 8, 7, 6, 5, 4, 3, 2, 1, 0] : List Int).map fun k => litresGnrAgricoles * centimes / 100 * k / 10
+
+theorem aideGnr_debut : aideGnr 30 = [999, 888, 777, 666, 555, 444, 333, 222, 111, 0] := by decide
+
+/-- Coopérative d'État d'engrais azotés bas carbone (O-104, O-104b) :
+deux usines sur le modèle du projet FertigHy (Languevoisin, Somme :
+500 000 t d'ammonitrate CAN27 par an, 15 % de la consommation française,
+1,3 Md€, ≈ 250 emplois directs, hydrogène par électrolyse ; AFP, 12 mai
+2024), construites l'une après l'autre de 2027 à 2035 : apport en capital
+de l'État de 2,6 Md€ réparti sur ces neuf années, 288 M€ par an
+(opération financière : dette sans déficit ; le flux s'arrête après
+l'horizon du modèle). La première produit à partir de 2031 : 500 000 t de
+CAN27 contiennent 135 000 t d'azote, soit ≈ 164 000 t d'ammoniac, à
+12,12 MWh par tonne au minimum (AFT, fiche ALTERFI « Ammoniac ») : ≈ 2 TWh
+d'électricité par an (calcul), pris sur le surplus du parc nucléaire. La seconde usine produit
+après 2035. Les importations d'engrais remplacées et la valeur ajoutée,
+plus forte par emploi que la moyenne, ne sont comptées qu'à travers les
+emplois. -/
+def capitalEngrais : Int := 2 * 1300 / 9
+def ammoniacParUsineKt : Int := 500 * 27 / 100 * 17 / 14
+def electriciteEngraisGwh : Int := ammoniacParUsineKt * 1212 / 100
+
+theorem engrais_valeurs : capitalEngrais = 288 ∧ ammoniacParUsineKt = 163 ∧ electriciteEngraisGwh = 1975 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -2026,13 +2121,50 @@ def mesures : List Mesure := [
     variantes := [
       { nom := "seuil relevé à 1 Md€ de chiffre d'affaires (5 fuites par an, 3 Md€ de chiffre d'affaires médian)",
         leviers := [.recetteEcheancier none [5 * 3000 * 2 / 100 * 95 / 100]] },
-      { nom := "dissuasion complète : plus aucune fuite de cette ampleur", leviers := [] }] }
+      { nom := "dissuasion complète : plus aucune fuite de cette ampleur", leviers := [] }] },
+
+  { id := "O-100"
+    titre := "2 000 douaniers de plus et contrôle renforcé des produits agricoles et industriels importés"
+    source := s!"Texte Orientation D, mesure 100 ; {douaniersSupplementaires} douaniers (1 220 pour revenir aux plafonds de 2019, 780 pour les contrôles de conformité des importations) à {coutDouanierEuros} € (coût moyen du programme 302, PLF 2026) : {coutDouaniers} M€ par an, recrutés en trois ans ; recettes des contrôles non comptées (voir `douaniersSupplementaires`)"
+    leviers := [.depenseEcheancier .securiteJustice [coutDouaniers / 3, 2 * coutDouaniers / 3, coutDouaniers],
+                .annonceEmplois douaniersSupplementaires] },
+
+  { id := "O-101"
+    titre := "Liberté d'installation des médecins ; aides aux déserts médicaux financées par une contribution des médecins des zones bien dotées"
+    source := s!"Texte Orientation D, mesure 101 ; pas de régulation de l'installation ; contribution des généralistes libéraux des zones surdotées (un quart des {generalistesLiberaux2025}, hypothèse) égale au coût des aides d'O-92 et O-97 : {fondsDesertsMedicaux.getLastD 0} M€ par an au complet, {contributionMedecinEuros} € par médecin (voir `fondsDesertsMedicaux`)"
+    leviers := [.recetteEcheancier (some .autres) fondsDesertsMedicaux] },
+
+  { id := "O-102"
+    titre := "Cotisations salariales réduites de 3 points dans les départements d'outre-mer"
+    source := s!"Texte Orientation D, mesure 102 ; {salariesPrivesOutreMer} salariés du privé (Insee, fin 2024, en partie calculés) à {salaireBrutOutreMerEuros} € bruts par mois : masse salariale de {masseSalarialeOutreMer} M€ ; −3 points : {baisseCotisationsOutreMer} M€ par an (voir `baisseCotisationsOutreMer`)"
+    leviers := [.prelevementSur .cotisations (-baisseCotisationsOutreMer)]
+    variantes := [
+      { nom := "−1,5 point", leviers := [.prelevementSur .cotisations (-(baisseCotisationsOutreMer / 2))] }] },
+
+  { id := "O-103"
+    titre := "Aide de 30 centimes par litre sur le GNR agricole, dégressive au rythme de l'électrification des exploitations"
+    source := s!"Texte Orientation D, mesure 103 ; demande de la FNSEA (22 septembre 2026) ; {litresGnrAgricoles} millions de litres ; 1,11 Md€ par an, −10 % par an au rythme d'O-31, à zéro au terme du plan (voir `aideGnr`)"
+    leviers := [.depenseEcheancier .affairesEconomiques (aideGnr 30)]
+    variantes := [
+      { nom := "15 centimes par litre (prolongement de l'aide de crise de 2026)",
+        leviers := [.depenseEcheancier .affairesEconomiques (aideGnr 15)] }] },
+
+  { id := "O-104"
+    titre := "Coopérative d'État d'engrais azotés bas carbone : deux usines de 500 000 t, apport en capital de 2,6 Md€ de 2027 à 2035"
+    source := s!"Texte Orientation D, mesure 104 ; usines sur le modèle de FertigHy (1,3 Md€ chacune, 500 000 t de CAN27, 15 % de la consommation française ; AFP, mai 2024) ; apport de {capitalEngrais} M€ par an pendant neuf ans (dette sans déficit) (voir `capitalEngrais`)"
+    leviers := [.prisesDeParticipation capitalEngrais] },
+
+  { id := "O-104b"
+    titre := "Production de la coopérative d'engrais : première usine en service en 2031"
+    source := s!"Texte Orientation D, mesure 104 ; 250 emplois directs (FertigHy) ; {ammoniacParUsineKt} 000 t d'ammoniac à 12,12 MWh par tonne (AFT, ALTERFI) : {electriciteEngraisGwh} GWh d'électricité par an (voir `electriciteEngraisGwh`)"
+    leviers := [.implantations .industrie 250, .annonceEmplois 250, .consommationElectrique electriciteEngraisGwh]
+    debut := 4 }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
