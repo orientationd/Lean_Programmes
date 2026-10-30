@@ -67,6 +67,31 @@ Points de vigilance :
 * **NE-12** : les économies d'un recul de l'âge recouvriraient en partie
   l'enveloppe NE-01 ; la variante les ajoute.
 
+## Résultats (scénario central, 2035)
+
+| | Sans programme | Nouvelle Énergie |
+|---|---|---|
+| Déficit public (demande / offre / équilibre) | 9,38 / 9,41 / 9,38 % du PIB | 13,45 / 8,93 / 11,01 % |
+| Dette publique (moteur de demande) | 157,2 % du PIB | 180,8 % |
+| Chômage (moteur de demande) | 7,91 % | 9,58 % |
+| Propriétés tenues dans au moins 18 scénarios sur 36 | | 8 sur 28 |
+
+Effet de chaque mesure prise isolément sur le déficit 2035 (demande /
+offre) : NE-01 −3,30 / −5,05 pt ; NE-02 −0,53 / −0,84 ; NE-03 −0,21 /
+−0,31 ; NE-05 +4,25 / +2,76 ; NE-06 +1,50 / +1,03 ; NE-09 +1,14 / +1,14 ;
+NE-10 +0,83 / +0,58 ; NE-08 +0,29 / +0,34 ; les autres moins de 0,1 pt.
+
+Le verdict dépend du moteur. Au moteur de demande, les économies
+réduisent l'activité, donc les recettes, plus que les baisses de
+prélèvements ne la soutiennent : les 160 Md€ de baisses coûtent davantage
+que les 200 Md€ d'économies ne rapportent. Au moteur d'offre, les baisses
+de cotisations et d'impôts de production soutiennent l'emploi et le
+déficit finit un demi-point sous le tendanciel, loin des 40 Md€ de
+désendettement annoncés. La baisse du solde migratoire (NE-09) réduit la
+population active et pèse sur le déficit dans les deux moteurs ; la
+suppression des droits de succession (NE-10) n'est pas financée par
+l'enveloppe.
+
 ## Non modélisé
 
 * **Capitalisation** : deux tiers en répartition, un tiers en

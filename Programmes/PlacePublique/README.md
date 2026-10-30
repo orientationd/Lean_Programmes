@@ -59,10 +59,10 @@ pour tous les programmes.
 
 | | Sans programme | Place publique |
 |---|---|---|
-| Déficit public (moteur de demande) | 9,38 % du PIB | 11,89 % |
-| Déficit public (offre / équilibre) | 9,41 % / 9,38 % | 11,98 % / 11,93 % |
-| Dette publique | 157,2 % du PIB | 171,1 % |
-| Chômage | 7,91 % | 7,60 % |
+| Déficit public (moteur de demande) | 9,38 % du PIB | 11,94 % |
+| Déficit public (offre / équilibre) | 9,41 % / 9,38 % | 12,05 % / 11,98 % |
+| Dette publique | 157,2 % du PIB | 171,3 % |
+| Chômage | 7,91 % | 7,57 % |
 | Indice de développement humain | 0,9392 | 0,9387 |
 
 Effet de chaque mesure prise isolément (moteur de demande) :
@@ -76,6 +76,7 @@ Effet de chaque mesure prise isolément (moteur de demande) :
 | PP-05 Retraite à 62 ans | +2,01 pt | −0,15 pt | −609 600 |
 | PP-06 Service civique obligatoire | +0,12 pt | −0,06 pt | +22 500 |
 | PP-07 Aide au développement à 0,7 % | +0,44 pt | ≈ 0 | ≈ 0 (versements à l'étranger, sans effet sur la demande intérieure) |
+| PP-08 Chèque énergie à 500 €, taxe sur les superprofits | +0,04 pt | −0,03 pt | +11 200 |
 
 Le retour à 62 ans fait l'essentiel du coût : il réduit la population
 active (d'où moins d'emplois mais un chômage plus faible) et accroît les
