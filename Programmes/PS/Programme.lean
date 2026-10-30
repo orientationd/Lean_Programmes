@@ -72,10 +72,11 @@ def allegementsHauts : Int := 1200
 def exonerationsSupprimees : Int := allegementsIntermediaires * partAuDela2SmicPm / 1000 + allegementsHauts
 
 /-- Enseignants (chap. 11) : salaires des enseignants expérimentés « 16 % en
-dessous de la moyenne OCDE », rattrapage appliqué à toute la masse
-salariale (majorant), 59,23 Md€ hors CAS Pensions (PLF 2026), en cinq
-hausses égales (hypothèse). -/
-def ecartOcdePm : Int := 160
+dessous de la moyenne OCDE » : le rattrapage demande +16/84 ≈ +19 %
+(calcul), appliqué à toute la masse salariale, 59,23 Md€ hors CAS Pensions
+(PLF 2026), cotisations patronales hors pensions comprises (majorant), en
+cinq hausses égales (hypothèse). -/
+def ecartOcdePm : Int := 160 * 1000 / (1000 - 160)
 def rattrapageEnseignants : List Int :=
   ([1, 2, 3, 4, 5] : List Int).map fun k => k * (59230 * ecartOcdePm / 1000) / 5
 
@@ -87,11 +88,15 @@ def hausseAAH : Int := 12700 * (133700 - 104159) / 104159
 
 /-- Recherche publique à 1 % du PIB d'ici 2030 (chap. 5) : dépense de R&D
 des administrations de 20,9 Md€ en 2023, 0,74 % du PIB (SIES, note 25.12),
-écart de 0,26 point (euros de 2023), atteint en quatre paliers (hypothèse). -/
+écart de 0,26 point (euros de 2023), atteint en quatre paliers (hypothèse),
+net des postes de l'enseignement supérieur de P-20, qui en font partie
+(calcul, comme L-51). -/
 def rechercheAdministrations2023 : Int := 20900
 def ecartRecherche : Int := rechercheAdministrations2023 * (100 - 74) / 74
 def rechercheEcheancier : List Int :=
-  ([1, 2, 3, 4] : List Int).map fun k => k * ecartRecherche / 4
+  ([1, 2, 3, 4, 4, 4, 4, 4, 4, 4] : List Int).map fun k => k * ecartRecherche / 4
+def rechercheNette : List Int :=
+  (rechercheEcheancier.zip postesSuperieur).map fun (r, p) => r - p
 
 /-- Prévention (chap. 6) : portée « de 4 à 8 % » des dépenses de santé, lue
 comme un doublement (hypothèse). La DREES mesure 8,73 Md€ de dépenses de
@@ -126,14 +131,15 @@ pas déduites (majorant). -/
 def coutJourAccueilEuros : Int := 21
 def placesAsile : Int := 30000
 def accueillisParAn : Int := 10000 + 20000 / 5
+def soldeAccueilMilliers : Int := accueillisParAn / 1000
 def coutPlacesAsile : Int := placesAsile * coutJourAccueilEuros * 365 / 1000000
 def coutAccueil : Int := accueillisParAn * coutJourAccueilEuros * 365 / 1000000
 
 theorem ajouts_valeurs :
     exonerationsSupprimees = 4235 ∧
-    rattrapageEnseignants = [1895, 3790, 5685, 7580, 9476] ∧
+    ecartOcdePm = 190 ∧ rattrapageEnseignants = [2250, 4501, 6751, 9002, 11253] ∧
     hausseAAH = 3601 ∧ ecartRecherche = 7343 ∧
-    rechercheEcheancier = [1835, 3671, 5507, 7343] ∧
+    rechercheNette = [1697, 3394, 5091, 6788, 6649, 6510, 6371, 6232, 6093, 5954] ∧
     preventionEcheancier = [1746, 3492, 5238, 6984, 8730] ∧
     coutReconversion = 2922 ∧ hausseSport = 3977 ∧
     coutPlacesAsile = 229 ∧ accueillisParAn = 14000 ∧ coutAccueil = 107 := by decide
@@ -225,14 +231,14 @@ def mesures : List Mesure := [
     source := s!"{partie "vivre-libres"}, chap. 2 : « avantage en nature sous-taxé », « subvention implicite d'environ 4 milliards d'euros par an aux véhicules fossiles » ; correction totale (hypothèse) ; partage entre cotisations et impôt sur le revenu non publié : imputé aux autres impôts ; recouvrement possible avec P-23"
     leviers := [.prelevement 4000] },
   { id := "P-25", titre := "Salaires des enseignants au niveau de la moyenne de l'OCDE"
-    source := s!"{partie "sepanouir-a-egalite"}, chap. 11 : salaires « 16 % en dessous de la moyenne OCDE » ; non chiffré : 16 % de 59,23 Md€ (PLF 2026) en cinq ans, majorant (l'écart porte sur les enseignants expérimentés) (voir `rattrapageEnseignants`)"
+    source := s!"{partie "sepanouir-a-egalite"}, chap. 11 : salaires « 16 % en dessous de la moyenne OCDE » ; non chiffré : rattrapage de +19 % (16/84) de 59,23 Md€ (PLF 2026) en cinq ans, majorant (l'écart porte sur les enseignants expérimentés, la masse comprend des cotisations patronales) (voir `rattrapageEnseignants`)"
     leviers := [.remunerationPublique .traitement .enseignement rattrapageEnseignants] },
   { id := "P-26", titre := "AAH au niveau du seuil de pauvreté"
-    source := s!"{partie "sepanouir-a-egalite"}, chap. 12 ; non chiffré : 12,7 Md€ × (1 337 − 1 041,59) / 1 041,59 = {hausseAAH} M€ par an (DREES, Insee ; voir `hausseAAH`)"
+    source := s!"{partie "sepanouir-a-egalite"}, chap. 12 ; non chiffré : 12,7 Md€ × (1 337 − 1 041,59) / 1 041,59 = {hausseAAH} M€ par an (DREES, Insee ; voir `hausseAAH` ; dépense de 2023, AAH de 2026 : sous-estimation d'≈ 7 %)"
     leviers := [.depenseSur .famille hausseAAH] },
   { id := "P-27", titre := "Recherche publique portée à 1 % du PIB d'ici 2030"
-    source := s!"{partie "vivre-libres"}, chap. 5 ; non chiffré : 0,74 % du PIB en 2023 (SIES), écart de {ecartRecherche} M€ atteint en 2030 (voir `ecartRecherche`) ; recouvrement partiel avec P-20"
-    leviers := [.depenseEcheancier .enseignement rechercheEcheancier] },
+    source := s!"{partie "vivre-libres"}, chap. 5 ; non chiffré : 0,74 % du PIB en 2023 (SIES), écart de {ecartRecherche} M€ atteint en 2030, net des postes de P-20 : {rechercheNette} M€ (voir `rechercheNette`)"
+    leviers := [.depenseEcheancier .enseignement rechercheNette] },
   { id := "P-28", titre := "Prévention doublée dans les dépenses de santé"
     source := s!"{partie "etre-en-securites"}, chap. 6 : de 4 à 8 % des dépenses de santé ; lu comme un doublement des 8,73 Md€ de prévention de 2024 (DREES), atteint en cinq ans (hypothèse ; +13,3 ou +17,9 Md€ selon d'autres lectures)"
     leviers := [.depenseEcheancier .sante preventionEcheancier] },
@@ -243,8 +249,8 @@ def mesures : List Mesure := [
     source := s!"{partie "refaire-societe"}, chap. 16 ; non chiffré : 1 % de 452,7 Md€ (budget général 2026, Sénat) moins ≈ 0,55 Md€ du programme « Sport », {hausseSport} M€ par an (périmètre : hypothèse) ; la culture à 2 % du budget n'est pas modélisée (de 0 à +4,6 Md€ selon le périmètre)"
     leviers := [.depenseSur .culture hausseSport] },
   { id := "P-31", titre := "Asile : 30 000 places d'hébergement, 10 000 visas humanitaires par an, 20 000 réinstallations"
-    source := s!"{partie "refaire-societe"}, chap. 17 et {partie "pacifier-le-monde"}, chap. 19 ; non chiffré : 21 € par jour et par place (Sénat, coût cible 2023), {coutPlacesAsile} M€ pour les places et {coutAccueil} M€ pour un an d'accueil des {accueillisParAn} personnes de plus par an (calcul, majorant : places existantes non déduites) ; solde migratoire +14 000 par an"
-    leviers := [.depenseSur .famille (coutPlacesAsile + coutAccueil), .migration 14] }
+    source := s!"{partie "refaire-societe"}, chap. 17 et {partie "pacifier-le-monde"}, chap. 19 ; non chiffré : 21 € par jour et par place (Sénat, coût cible 2023), {coutPlacesAsile} M€ pour les places et {coutAccueil} M€ pour un an d'accueil des {accueillisParAn} personnes de plus par an (calcul, majorant : places existantes non déduites) ; solde migratoire +{accueillisParAn} par an, réinstallations poursuivies au même rythme après cinq ans (hypothèse)"
+    leviers := [.depenseSur .famille (coutPlacesAsile + coutAccueil), .migration soldeAccueilMilliers] }
 ]
 
 def programme : Programme where

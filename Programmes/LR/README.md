@@ -28,7 +28,7 @@ déficit sous 3 % du PIB en 2031 et de 2,2 % en fin de quinquennat.
 | LR-09 Chômage et prestations plafonnées à 70 % du SMIC | −30 Md€ |
 | LR-10 Jour de carence d'ordre public | −4 Md€ |
 | LR-11 Collectivités de plus de 10 M€ de budget | −10 Md€ |
-| LR-12 Impôts de production | −15 Md€ d'autres impôts (voir ci-dessous) |
+| LR-12 Impôts de production | −7,2 Md€ d'autres impôts, −2,8 Md€ de cotisations (forfait social) et la CVAE restante (voir « Ajouts du 30 octobre 2026 ») |
 | LR-13 Heures supplémentaires et allègements des ménages | −21 Md€ de cotisations |
 
 Les montants sont lus comme des économies annuelles en régime de
@@ -40,7 +40,7 @@ différence n'est pas détaillée dans les sources.
 
 | Mesure | Levier |
 |---|---|
-| LR-12 (corrigée) Impôts de production | −15 Md€ : les 30 Md€ pour les entreprises se répartissent entre impôts de production et cotisations patronales (comparateur IFRAP) |
+| LR-12 (corrigée) Impôts de production | les 30 Md€ pour les entreprises se répartissent entre impôts de production (15 Md€, comparateur IFRAP) et cotisations patronales ; détail du livret appliqué le 30 octobre 2026 |
 | LR-14 Cotisations patronales | +15 Md€ d'allègements, au prorata des tranches |
 | LR-15 Revenu familial dès le premier enfant ; congé de naissance de six mois | −1,4 Md€ nets (calcul : 40,3 Md€ financés par 41 Md€ d'aides et 0,7 Md€ de gestion) ; +0,7 Md€ |
 | LR-16 Réduction d'impôt sur les intérêts d'emprunt des familles | −0,27 Md€ par génération de prêts, cumulés (hypothèse) |
@@ -86,12 +86,12 @@ Correction : **LR-12** comptait deux fois la CVAE, que la loi supprime déjà
 en 2030 et que la référence retire. D'après le livret « Travail gagnant »
 (14,3 Md€ : C3S 5,3, CVAE 4,3, forfait social 2,8, CFE industrielle 1,9),
 la mesure retire désormais 7,2 Md€ d'autres impôts, 2,8 Md€ de cotisations
-(forfait social) et le seul rendement restant de la CVAE (3,4, 2,3 puis
-1,1 Md€ de 2027 à 2029). L'ancienne traduction (15 Md€) reste une variante.
+(forfait social) et le seul rendement restant de la CVAE (3,6, 2,5 puis
+1,2 Md€ en euros 2027, de 2027 à 2029). L'ancienne traduction (15 Md€) reste une variante.
 
 **LR-08** : le plan dit « environ 42 Md€ jusqu'en 2032 », LCI « 40
 milliards d'économies cumulées sur cinq ans » ; les deux lectures diffèrent
-de près de trois fois en 2031. Seuls 12 Md€ (la décote) sont des économies
+de plus de trois fois en 2031. Seuls 12 Md€ (la décote) sont des économies
 de pensions identifiées ; le reste mêle capitalisation, réserves,
 Agirc-Arrco et régimes spéciaux. La transcription garde le chiffre du plan
 et évalue les deux autres lectures en variantes.

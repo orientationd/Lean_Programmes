@@ -80,7 +80,7 @@ def mesures : List Mesure := [
     source := s!"attalpresident.fr/programme (via Votons 2027) : « ramener le nombre de députés à 350 et celui des sénateurs à 200 » ; non chiffré : jusqu'à {economieAssemblee + economieSenat} M€ par an (voir `economieAssemblee`)"
     leviers := [.depenseEcheancier .fonctionnement economieParlement] },
   { id := "RE-10", titre := "Enseignants : +200 € net par mois pour tous, jusqu'à +500 € en milieu de carrière"
-    source := "G. Attal, Le Monde, 25 août 2026 (AFP, via La Gazette France) : revalorisation « immédiate », 2,5 Md€ par an « selon son entourage » ; contrôle : 852 752 enseignants × 200 € × 12 ≈ 2,05 Md€ net pour le seul socle (calcul), le montant est un plancher"
+    source := "G. Attal, Le Monde, 25 août 2026 (AFP, via La Gazette France) : revalorisation « immédiate », 2,5 Md€ par an « selon son entourage », lus comme un montant brut (hypothèse) ; contrôle : 852 752 enseignants × 200 € × 12 ≈ 2,05 Md€ net pour le seul socle (calcul), ≈ 2,6 Md€ brut : le chiffrage est une borne basse"
     leviers := [.remunerationPublique .traitement .enseignement [2500]] },
   { id := "RE-11", titre := "Un mois d'engagement civique obligatoire avant 25 ans"
     source := s!"attalpresident.fr, 11 octobre 2026 ; non chiffré : méthode de PP-06 sur un mois, {coutEngagement} M€ par an atteints en cinq ans (voir `coutEngagement`)"

@@ -18,7 +18,7 @@ et une règle d'or soumise à référendum.
 | Mesure | Levier |
 |---|---|
 | RN-01 TVA à 5,5 % sur les énergies | −12,2 Md€ de TVA |
-| RN-02 Suppression CFE, CVAE, C3S | −17 Md€ d'autres impôts en 2027 ; la CVAE, déjà supprimée par la loi en 2030, ne compte que pour son rendement restant (−13,6 Md€ à partir de 2030) |
+| RN-02 Suppression CFE, CVAE, C3S | −17 Md€ d'autres impôts en 2027 ; la CVAE, déjà supprimée par la loi en 2030, ne compte que pour son rendement restant (−13,4 Md€ à partir de 2030) |
 | RN-03 Fiscalité des grandes entreprises | +5,6 Md€ d'IS |
 | RN-04 Autres baisses d'impôts des ménages | −9,9 Md€ d'autres impôts (agrégat moins RN-01) |
 | RN-05 Retraite à 62 ans, 42 annuités | −24 mois d'âge légal (coût selon l'hypothèse du scénario ; le parti chiffre 9 Md€) |

@@ -50,8 +50,9 @@ octobre 2026). Majorant (calcul) : 643 905 naissances en 2025 (Insee,
 chez les parents) × 3 000 €, une génération de naissances de plus chaque
 année jusqu'à trois. -/
 def naissances2025 : Int := 643905
-def partImposesPm : Int := 4573
-def reductionNaissance : Int := naissances2025 * partImposesPm / 10000 * 3000 / 1000000
+/-- Part des foyers imposés, pour dix mille. -/
+def partImposesPdm : Int := 4573
+def reductionNaissance : Int := naissances2025 * partImposesPdm / 10000 * 3000 / 1000000
 def reductionNaissanceEcheancier : List Int :=
   ([1, 2, 3] : List Int).map fun k => k * reductionNaissance
 
@@ -105,7 +106,7 @@ def mesures : List Mesure := [
     source := s!"É. Philippe, octobre 2026 (LCP, Econostrum) : pour les familles qui travaillent, dans la limite de l'impôt dû ; non chiffré : {reductionNaissance} M€ par génération de naissances (majorant, voir `reductionNaissance`), trois générations cumulées ; touche en partie les mêmes foyers que H-08"
     leviers := [.recetteEcheancier (some .ir) (reductionNaissanceEcheancier.map fun x => 0 - x)] },
   { id := "H-12", titre := "Assurance chômage : durée maximale ramenée de 18 à 12 mois avant 50 ans"
-    source := "É. Philippe, entretien à l'AFP du 27 août 2026 (LCP) ; non chiffré : ≈ 1 Md€ par an pour converger vers 12 mois avant 50 ans (IFRAP, 2016, quand la durée maximale était de 24 mois), plancher : l'Unédic chiffre à 0,73-0,90 Md€ en 2030 le seul passage de 18 à 15 mois après une rupture conventionnelle (22 octobre 2026) ; bascule vers le RSA non comptée"
+    source := "É. Philippe, entretien à l'AFP du 27 août 2026 (LCP) ; non chiffré : ≈ 1 Md€ par an pour converger vers 12 mois avant 50 ans (IFRAP, 2016, quand la durée maximale était de 24 mois), hypothèse ; 2,6 millions d'allocataires indemnisés à 1 058 € net par mois en moyenne (Unédic, avril 2025), droits de 18 à 24 mois consommés à 54 % (Unédic, juin 2025) ; bascule vers le RSA non comptée"
     leviers := [.economieSur .famille 1000] }
 ]
 

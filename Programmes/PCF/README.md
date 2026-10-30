@@ -69,7 +69,7 @@ dispositifs modifiés depuis), baisse de 30 % des tarifs de l'énergie.
 
 | Mesure | Levier |
 |---|---|
-| PC-23 TVA sur les carburants de 20 % à 5,5 % (F. Roussel, [AFP, 11 septembre 2026](https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911)) | −5,8 Md€ de TVA (8 Md€ sur les carburants des voitures en 2024 × 14,5/20, borne basse) ; variante : −12 Md€ (bas de la fourchette du gouvernement) ; la directive TVA ne l'autorise pas ; la hausse de consommation n'est pas modélisée |
+| PC-23 TVA sur les carburants de 20 % à 5,5 % (F. Roussel, [AFP, 11 septembre 2026](https://www.connaissancedesenergies.org/afp/prix-de-lenergie-roussel-pcf-appelle-a-se-mobiliser-sur-les-ronds-points-260911)) | −5,8 Md€ de TVA (8 Md€ sur les carburants des voitures en 2024 × 14,5/20) ; variante : −12 Md€ (bas de la fourchette du gouvernement) ; la directive TVA ne l'autorise pas ; ni la hausse de consommation ni le recouvrement avec l'érosion de TVA par les voitures électriques de PC-10 (quelques centaines de M€ en 2030) ne sont modélisés |
 
 ## Non modélisé
 

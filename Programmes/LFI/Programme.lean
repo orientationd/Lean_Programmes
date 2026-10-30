@@ -119,6 +119,19 @@ def smicNetCible : Int := 1700
 def smicNetAec : Int := 1600
 def smicBrut (net : Int) : Int := net * 182303 / 144311
 
+/-- Agents publics au SMIC (L-11) : `smicCibleBrut … false` ne compte pas la
+composante publique, que L-18 (17 Md€ de rémunérations publiques) ne
+couvre qu'en partie : 17 Md€ ≈ 6,7 % des traitements, d'après la
+conversion de PC-19 (10 % de point d'indice ≈ 25,3 Md€ ; calcul). Les
+points de hausse du SMIC au-delà (hausse sur le SMIC projeté de 2027,
+≈ 1 875 € bruts) sont ajoutés en rémunération publique, au coût du modèle
+commun par point (`Hypotheses.Eco.smicParPoint`, 316 M€). -/
+def smicProjete2027 : Int := 1875
+def hausseSmicPb (net : Int) : Int := smicBrut net * 10000 / smicProjete2027 - 10000
+def couvertureL18Pb : Int := 17000 * 1000 / 25300
+def agentsPublicsNonCouverts (net : Int) : Int :=
+  max 0 (hausseSmicPb net - couvertureL18Pb) * Hypotheses.Eco.smicParPoint.remunerationPubliqueMeur / 100
+
 /-- AAH au niveau du SMIC (AEC 2025) : 12,7 Md€ versés en 2023 à
 1 352 800 allocataires, montant maximal de 1 033,32 € au 1er avril 2025
 (DREES, minima sociaux, édition 2025) ; porté au SMIC net de L-11, dépense
@@ -133,6 +146,8 @@ def hausseAAH : Int := 12700 * (smicNetCible * 100 - 103332) / 103332
 def hausseASPA : Int := 4100 * (133700 - 103428) / 103428
 
 theorem minima_valeurs : smicBrut smicNetCible = 2147 ∧ smicBrut smicNetAec = 2021 ∧
+    hausseSmicPb smicNetCible = 1450 ∧ couvertureL18Pb = 671 ∧
+    agentsPublicsNonCouverts smicNetCible = 2461 ∧ agentsPublicsNonCouverts smicNetAec = 338 ∧
     hausseAAH = 8193 ∧ hausseASPA = 1200 := by decide
 
 /-- Coût moyen d'un enseignant, hors pensions : 59,23 Md€ de masse salariale
@@ -244,9 +259,12 @@ def mesures : List Mesure := [
     leviers := [.ageLegalCible 720 0]
     variantes := [{ nom := "budget rectificatif : 62 ans dès 2027 (9 Md€), 60 ans à une date non annoncée", leviers := [.ageLegalCible 744 0] }] },
   { id := "L-11", titre := "SMIC porté à 1 700 € net"
-    source := s!"Budget rectificatif 2027 du 14 octobre 2026 (AFP, LCP) : 1 700 € net ({smicNetAec} € dans L'Avenir en commun 2025, variante). Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : {smicBrut smicNetCible} € bruts ; la hausse se calcule sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +14,5 % : au-delà d'une dizaine de points, l'effet est sans doute plus que proportionnel ; rémunération des agents publics déjà relevée par L-18 : composante publique non comptée"
-    leviers := [.smicCibleBrut (smicBrut smicNetCible) false]
-    variantes := [{ nom := "1 600 € net (L'Avenir en commun 2025)", leviers := [.smicCibleBrut (smicBrut smicNetAec) false] }] },
+    source := s!"Budget rectificatif 2027 du 14 octobre 2026 (AFP, LCP) : 1 700 € net ({smicNetAec} € dans L'Avenir en commun 2025, variante). Conversion au brut au ratio net/brut du SMIC (1 443,11 / 1 823,03 au 1er janvier 2026, cotisations salariales de 20,84 %) : {smicBrut smicNetCible} € bruts ; la hausse se calcule sur le SMIC projeté de 2027 (≈ 1 875 € bruts, indexé sur les prix depuis 1 801,80 € en 2025), soit ≈ +14,5 % : au-delà d'une dizaine de points, l'effet est sans doute plus que proportionnel ; L-18 relève les traitements d'≈ 6,7 % : les points au-delà sont ajoutés pour les agents publics, {agentsPublicsNonCouverts smicNetCible} M€ (voir `agentsPublicsNonCouverts`)"
+    leviers := [.smicCibleBrut (smicBrut smicNetCible) false,
+                .remunerationPublique .traitement .fonctionnement [agentsPublicsNonCouverts smicNetCible]]
+    variantes := [{ nom := "1 600 € net (L'Avenir en commun 2025)", leviers :=
+      [.smicCibleBrut (smicBrut smicNetAec) false,
+       .remunerationPublique .traitement .fonctionnement [agentsPublicsNonCouverts smicNetAec]] }] },
   { id := "L-12", titre := "ISF climatique"
     source := s!"{budget} : 10 Md€/an"
     leviers := [.prelevementSur .autres 10000] },
@@ -336,7 +354,7 @@ def mesures : List Mesure := [
                                                   investissementEhpad, investissementEhpad, 0],
                 .depenseEcheancier .sante fonctionnementEhpad] },
   { id := "L-40", titre := "AAH portée au niveau du SMIC"
-    source := s!"L'Avenir en commun 2025 ; non chiffré : 12,7 Md€ × ({smicNetCible} − 1 033,32) / 1 033,32 = {hausseAAH} M€ par an (DREES ; voir `hausseAAH`)"
+    source := s!"L'Avenir en commun 2025 ; non chiffré : AAH portée au SMIC net de L-11 (1 700 €, budget rectificatif), 12,7 Md€ × ({smicNetCible} − 1 033,32) / 1 033,32 = {hausseAAH} M€ (dépense de 2023, AAH de 2025 : légère sous-estimation) par an (DREES ; voir `hausseAAH`)"
     leviers := [.depenseSur .famille hausseAAH] },
   { id := "L-41", titre := "Minimum vieillesse au niveau du seuil de pauvreté"
     source := s!"L'Avenir en commun 2025 ; non chiffré : 4,1 Md€ × (1 337 − 1 034,28) / 1 034,28 = {hausseASPA} M€ par an (DREES, Insee ; voir `hausseASPA`) ; le volet « pensions au SMIC pour une carrière complète » n'est pas chiffré"

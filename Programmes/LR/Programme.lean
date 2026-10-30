@@ -39,12 +39,22 @@ theorem pretEPR_eq : pretEPR = 2022 := by decide
 2027) : 14,3 Md€, dont C3S 5,3, CVAE 4,3, forfait social 2,8 et CFE
 industrielle 1,9. La CVAE est déjà supprimée en 2030 par la loi
 (n° 2025-127, art. 62) que la référence suit : la mesure n'en retire que le
-rendement restant, 3 400, 2 310 puis 1 090 M€ de 2027 à 2029
-(`Hypotheses/Reference.lean`) ; le forfait social est une contribution
-patronale (cotisations). -/
+rendement restant, 3 400, 2 310 puis 1 090 M€ (euros 2025) de 2027 à 2029
+(`Hypotheses/Reference.lean`), ×1,0609 en euros 2027 (3 % de croissance
+nominale par an du scénario central, convention d'O-59 ; calcul) ; le
+forfait social est une contribution patronale (cotisations). -/
 def c3sEtCfe : Int := 5300 + 1900
 def forfaitSocial : Int := 2800
-def cvaeRestante : List Int := [3400, 2310, 1090, 0]
+def cvaeRestante : List Int := ([3400, 2310, 1090, 0] : List Int).map fun x => x * 10609 / 10000
+
+/-- Variante de LR-08 (LCI, 22 septembre 2026) : « 40 milliards d'euros
+d'économies cumulées sur cinq ans », en montée linéaire (hypothèse) :
+k × 40 000 / 15 M€ la k-ième année, somme ≈ 40 Md€ (calcul). -/
+def retraitesCumulees : List Int :=
+  ([1, 2, 3, 4, 5] : List Int).map fun k => 0 - k * 40000 / 15
+
+theorem lr_valeurs : cvaeRestante = [3607, 2450, 1156, 0] ∧
+    retraitesCumulees = [-2666, -5333, -8000, -10666, -13333] := by decide
 
 /-- Enseignants (LR-22) : +135 € net par mois en début de carrière, +300 €
 en milieu de carrière, « près de 2 milliards d'euros » (B. Retailleau,
@@ -82,7 +92,7 @@ def mesures : List Mesure := [
     variantes := [
       { nom := "décote seule (12 Md€) et âge minimal de 63 ans", leviers := [.ageLegalCible 756 0, .economieSur .retraites 12000] },
       { nom := "40 Md€ cumulés sur cinq ans (LCI, 22 septembre 2026)", leviers :=
-          [.depenseEcheancier .retraites [-2666, -5333, -8000, -10666, -13333]] }] },
+          [.depenseEcheancier .retraites retraitesCumulees] }] },
   { id := "LR-09", titre := "Assurance chômage et prestations : plafond de 70 % du SMIC pour les aides non contributives"
     source := s!"{plan} : 30 Md€"
     leviers := [.economieSur .famille 30000] },

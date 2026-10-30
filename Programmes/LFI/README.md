@@ -27,7 +27,7 @@ et du chap. 8 § 8) :
 | Mesure | Levier |
 |---|---|
 | L-10 Retraite à 60 ans après 40 annuités | −48 mois d'âge légal (coût selon l'hypothèse du scénario ; les 40 annuités ne sont pas modélisées) ; variante : 62 ans dès 2027, étape du budget rectificatif |
-| L-11 SMIC à 1 700 € net (budget rectificatif du 14 octobre 2026) | cible de 2 147 € bruts (ratio net/brut de 2026), ≈ +14,5 % sur le SMIC projeté de 2027 (agents publics déjà relevés par L-18) ; variante : 1 600 € net (*L'Avenir en commun* 2025), 2 021 € bruts |
+| L-11 SMIC à 1 700 € net (budget rectificatif du 14 octobre 2026) | cible de 2 147 € bruts (ratio net/brut de 2026), ≈ +14,5 % sur le SMIC projeté de 2027 ; L-18 relève les traitements d'≈ 6,7 %, les points au-delà sont ajoutés pour les agents publics (+2,5 Md€) ; variante : 1 600 € net (*L'Avenir en commun* 2025), 2 021 € bruts |
 
 **Budget rectificatif 2027** (14 octobre 2026, [Public Sénat](https://www.publicsenat.fr/actualites/politique/presidentielle-2027-jean-luc-melenchon-table-sur-106-milliards-de-recettes-supplementaires-et-82-milliards-de-depenses-nouvelles-pour-2027),
 [France Épargne](https://www.france-epargne.fr/news/melenchon-presente-un-contre-budget-2027-1064-milliards-de-recettes-25-milliards-pour-la-dette)) :
@@ -81,8 +81,8 @@ pour le plan automobile, 10 000 soignants, 10 000 enseignants.
 Recettes de la brochure désormais toutes transcrites (106,4 Md€) ; dépenses :
 72,7 Md€ sur 81,7. Non transcrit : blocage du carburant à 1,70 €/l (non
 chiffré ; la remise de 2022 avait coûté ≈ 8 Md€), impôt sur le revenu à
-14 tranches. Recalibrages publiés depuis, non appliqués : SMIC à 1 700 €
-net, retraite d'abord à 62 ans (9 Md€).
+14 tranches. Recalibrages publiés depuis, appliqués le 30 octobre 2026 : SMIC à
+1 700 € net (L-11), retraite d'abord à 62 ans (9 Md€, variante de L-10).
 
 ## Ajouts du 28 octobre 2026 : plans thématiques et *L'Avenir en commun* 2025
 

@@ -138,14 +138,14 @@ def mesures : List Mesure := [
     variantes := [{ nom := "4 Md€ par an (26 août 2026)", leviers :=
       [.investissementEcheancier .enseignement (batiScolaire 4000)] }] },
   { id := "E-23", titre := "Fonds vert rétabli et MaPrimeRénov' relevée"
-    source := "Conférence de presse des Écologistes, 26 août 2026 (L'Info Durable, La Gazette France) : « rétablissement du fonds vert (+1,9 md d'euros) », MaPrimeRénov' augmentée « à hauteur de 1,4 milliard d'euros » (chiffrage du parti) ; le Fonds vert est un investissement des collectivités aidé, MaPrimeRénov' une aide aux ménages"
+    source := "Conférence de presse des Écologistes, 26 août 2026 (L'Info Durable, La Gazette France) : « rétablissement du fonds vert (+1,9 md d'euros) », MaPrimeRénov' augmentée « à hauteur de 1,4 milliard d'euros » (chiffrage du parti) ; le Fonds vert est un investissement des collectivités aidé, MaPrimeRénov' une aide aux ménages (montant par rénovation non publié : les économies d'énergie et l'aubaine du levier `bonusRenovation` ne sont pas comptées)"
     leviers := [.investissement .logementEnvironnement 1900, .depenseSur .logementEnvironnement 1400] }
 ]
 
 def programme : Programme where
   id := "Ecologistes"
   nom := "Les Écologistes — Prospérité écologique 2027"
-  description := "Transcription partielle et non officielle du programme du 13 juillet 2026 : SMIC à 2 000 € brut, retraite à 62 ans, adaptation climatique 7 Md€/an, loi VSS, taxe Zucman, justice, salaires enseignants et chercheurs, AAH. Ajouts : contribution sur les grosses successions (contre-budget 2027), taxe pétro-gazière et chèque carburant, classes à 19 élèves, garantie d'autonomie et APL (hypothèses chiffrées), taxe numérique à 5 %. 500 000 rénovations par an, ISF climatique, TVA verte et sortie du nucléaire : sans montant publié. Ajouts du 28 octobre 2026 : ISF, fin des exonérations au-delà de 1,6 SMIC, 100 % Sécu, aide au développement à 0,7 %, congé climatique. Ajouts du 30 octobre 2026 : parc social d'un million de voitures électriques (proposition de loi), rénovation du bâti scolaire, Fonds vert et MaPrimeRénov' ; plan d'adaptation en montée jusqu'en 2032."
+  description := "Transcription partielle et non officielle du programme du 13 juillet 2026 : SMIC à 2 000 € brut, retraite à 62 ans, adaptation climatique (7 Md€/an en 2032), loi VSS, taxe Zucman, justice, salaires enseignants et chercheurs, AAH. Ajouts : contribution sur les grosses successions (contre-budget 2027), taxe pétro-gazière et chèque carburant, classes à 19 élèves, garantie d'autonomie et APL (hypothèses chiffrées), taxe numérique à 5 %. 500 000 rénovations par an, ISF climatique, TVA verte et sortie du nucléaire : sans montant publié. Ajouts du 28 octobre 2026 : ISF, fin des exonérations au-delà de 1,6 SMIC, 100 % Sécu, aide au développement à 0,7 %, congé climatique. Ajouts du 30 octobre 2026 : parc social d'un million de voitures électriques (proposition de loi), rénovation du bâti scolaire, Fonds vert et MaPrimeRénov' ; plan d'adaptation en montée jusqu'en 2032."
   mainteneurs := ["@orientationd"]
   source := "lesecologistes.fr, Projet 2027 « Pour une prospérité écologique » (via MonVote2027 et Votons 2027, consultés le 22 octobre 2026)"
   mesures := mesures

@@ -79,13 +79,13 @@ Lecture des six parties du site ([vivre libres](https://projet-socialiste.fr/pro
 |---|---|
 | P-23 Niches fiscales « jugées inefficaces » | +4 Md€ (contre-budget 2027) ; la puce du chap. 16 n'a pas de montant |
 | P-24 Avantage en nature des voitures de fonction thermiques corrigé (chap. 2) | +4 Md€ (« subvention implicite d'environ 4 milliards », correction totale : hypothèse) ; recouvrement possible avec P-23 |
-| P-25 Salaires des enseignants au niveau de l'OCDE (chap. 11 : « 16 % en dessous ») | jusqu'à +9,5 Md€/an en cinq ans (16 % de la masse salariale, majorant) |
-| P-26 AAH au seuil de pauvreté (chap. 12) | +3,6 Md€/an (1 041,59 € au 1er avril 2026, seuil de 1 337 €, calcul) |
-| P-27 Recherche publique à 1 % du PIB d'ici 2030 (chap. 5) | jusqu'à +7,3 Md€/an en 2030 (0,74 % du PIB en 2023, SIES) ; recouvrement partiel avec P-20 |
+| P-25 Salaires des enseignants au niveau de l'OCDE (chap. 11 : « 16 % en dessous ») | jusqu'à +11,3 Md€/an en cinq ans (rattrapage de +19 % sur toute la masse salariale, majorant) |
+| P-26 AAH au seuil de pauvreté (chap. 12) | +3,6 Md€/an (1 041,59 € au 1er avril 2026, seuil de 1 337 €, calcul ; dépense de 2023 : sous-estimation d'≈ 7 %) |
+| P-27 Recherche publique à 1 % du PIB d'ici 2030 (chap. 5) | jusqu'à +6,8 Md€/an en 2030 : écart de 7,3 Md€ (0,74 % du PIB en 2023, SIES), net des postes de P-20 |
 | P-28 Prévention de 4 % à 8 % des dépenses de santé (chap. 6) | doublement des 8,73 Md€ mesurés par la DREES en 2024, en cinq ans (lecture : hypothèse ; la DREES mesure 2,6 %, pas 4 %) |
 | P-29 Reconversion d'un million d'actifs en dix ans (chap. 3) | +2,9 Md€/an (100 000 par an à 29 220 €, France compétences) |
 | P-30 Sport à 1 % du budget de l'État (chap. 16) | +4,0 Md€/an (périmètre : programme « Sport », hypothèse) |
-| P-31 Asile : 30 000 places d'hébergement, 10 000 visas humanitaires par an, 20 000 réinstallations (chap. 17 et 19) | +0,34 Md€/an (21 € par jour et par place, Sénat ; majorant) ; solde migratoire +14 000 par an |
+| P-31 Asile : 30 000 places d'hébergement, 10 000 visas humanitaires par an, 20 000 réinstallations (chap. 17 et 19) | +0,34 Md€/an (21 € par jour et par place, Sénat ; majorant) ; solde migratoire +14 000 par an (réinstallations poursuivies après cinq ans : hypothèse) |
 
 Corrections du même jour : P-03 traduit en allègements (l'imputation aux
 « autres impôts » était fausse : la mesure porte sur des cotisations) ;

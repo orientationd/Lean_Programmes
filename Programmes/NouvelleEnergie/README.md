@@ -23,22 +23,25 @@ publique est annoncé pour décembre 2026.
 ## Modélisé (`Programme.lean`)
 
 Le modèle retient le chiffrage du parti : montée linéaire de 80 Md€ en
-2027 à 200 Md€ en 2032 (hypothèse : aucune trajectoire intermédiaire
-publiée), même clé de répartition chaque année. Les économies identifiées
-sont des leviers propres ; le reste de l'enveloppe est une économie non
-ventilée.
+2027 à 200 Md€ courants en 2032 (hypothèse : aucune trajectoire
+intermédiaire publiée), même clé de répartition chaque année. Les
+échéanciers du modèle étant en euros 2027 puis indexés, chaque niveau est
+ramené en euros 2027 à 3 % de croissance nominale par an (convention
+d'O-59) : 172,5 Md€ d'euros 2027 en 2032. Les économies identifiées sont
+des leviers propres ; le reste de l'enveloppe est une économie non
+ventilée. Montants ci-dessous en euros 2027.
 
 | Mesure | Levier |
 |---|---|
-| NE-01 Économies non ventilées (opérateurs et agences, dépense sociale, chômage, budgets en base zéro, ministères) | de −71,8 Md€ en 2027 à −166,3 Md€ en 2032 : l'enveloppe moins NE-02 à NE-04 ; variante : 20 % des économies à la « modernisation de l'État » au lieu de la dette |
+| NE-01 Économies non ventilées (opérateurs et agences, dépense sociale, chômage, budgets en base zéro, ministères) | de −71,8 Md€ en 2027 à −138,8 Md€ en 2032 : l'enveloppe moins NE-02 à NE-04 ; variante : 20 % des économies à la « modernisation de l'État » au lieu de la dette |
 | NE-02 Plus de 400 000 postes publics supprimés, 200 000 à 300 000 redéployés | 80 000 postes par an pendant cinq ans (hypothèse), 62 500 € par poste (ratio de LR-01 et H-02), soit −25 Md€/an en 2031 ; redéploiements neutres |
 | NE-03 Prestations non contributives après cinq ans de résidence | de −2,5 Md€ en 2027 (« 2 à 3 milliards ») à −8 Md€ (chiffrage du parti) |
 | NE-04 AME remplacée par une aide médicale d'urgence | −0,7 Md€ (chiffrage du parti) |
-| NE-05 Salaire net : baisse des prélèvements salariaux, dont CSG d'activité de 9,2 % à 6,6 % | de −48 Md€ en 2027 à −120 Md€ en 2032 de cotisations (60 % de l'enveloppe, « sans augmenter le coût du travail ») |
-| NE-06 Impôts de production, à commencer par la C3S | de −16 Md€ à −40 Md€ d'autres impôts (20 % de l'enveloppe ; C3S ≈ 5,4 Md€) |
+| NE-05 Salaire net : baisse des prélèvements salariaux, dont CSG d'activité de 9,2 % à 6,6 % | de −48 Md€ en 2027 à −103,5 Md€ en 2032 de cotisations, soit ≈ 120 Md€ courants (60 % de l'enveloppe, « sans augmenter le coût du travail ») |
+| NE-06 Impôts de production, à commencer par la C3S | de −16 Md€ à −34,5 Md€ d'autres impôts, soit ≈ 40 Md€ courants (20 % de l'enveloppe ; C3S ≈ 5,4 Md€ ; la CVAE est déjà supprimée par la loi en 2030) |
 | NE-07 20 000 places de prison | 5,4 Md€ de construction de 2028 à 2032 (270 k€ par place, paramètre d'O-75), puis 45 k€ par place ouverte et par an ; variante : 236 k€ par place (Institut Montaigne) |
 | NE-08 Enseignants : +20 % en cinq ans | jusqu'à +11,8 Md€/an de traitement (paramètre de H-09) |
-| NE-09 80 000 entrées légales par an | solde migratoire −147 000 par an (176 000 × 420/500, hypothèse et majorant) |
+| NE-09 80 000 entrées légales par an (pour 500 000 selon le candidat ; « diviser par huit » sur la page du parti) | solde migratoire −147 000 par an (176 000 × 420/500, hypothèse et majorant) |
 | NE-10 Droits de succession supprimés (« totalement libérer l'héritage ») | −16,2 Md€ (montant de RQ-12) |
 | NE-11 Quotient familial déplafonné | −2,1 Md€ d'IR (relèvement du plafond à 2 500 €, CPO ; minorant) |
 | NE-12 Âge légal à 65 ans | pour mémoire (texte non daté, non redit en 2026) ; variante : +3 mois par an jusqu'à 65 ans |
@@ -48,8 +51,8 @@ des économies qui n'est pas redistribuée.
 
 Points de vigilance :
 
-* **NE-01** porte l'essentiel des économies (166 Md€ en 2032) sans
-  ventilation : c'est l'affirmation du parti, que le modèle ne peut pas
+* **NE-01** porte l'essentiel des économies (≈ 161 Md€ courants en 2032)
+  sans ventilation : c'est l'affirmation du parti, que le modèle ne peut pas
   vérifier. Son effet sur l'activité est celui d'une économie non ventilée
   (pondérée par le moteur).
 * **NE-05** : la part salariale ou patronale des 120 Md€ n'est jamais

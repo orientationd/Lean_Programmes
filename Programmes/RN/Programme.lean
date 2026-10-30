@@ -29,12 +29,13 @@ def dossier : String :=
 
 /-- Impôts de production (RN-02) : la CVAE est déjà supprimée en 2030 par
 la loi (n° 2025-127, art. 62) que la référence suit (3 400, 2 310 puis
-1 090 M€ de 2027 à 2029, `Hypotheses/Reference.lean`). Les 17 Md€ du
-dossier ne sont pas ventilés : la part de la CVAE est supposée égale à son
+1 090 M€ en euros 2025 de 2027 à 2029, `Hypotheses/Reference.lean`),
+×1,0609 en euros 2027 (convention d'O-59 ; calcul). Les 17 Md€ du dossier
+ne sont pas ventilés : la part de la CVAE est supposée égale à son
 rendement de 2027 (hypothèse) ; la mesure ne retire que son rendement
 restant. -/
 def impotsProduction : Int := 17000
-def cvaeRestante : List Int := [3400, 2310, 1090, 0]
+def cvaeRestante : List Int := ([3400, 2310, 1090, 0] : List Int).map fun x => x * 10609 / 10000
 
 /-- Collectivités (RN-07) : 8,2 / 12 / 14,5 / 16,9 / 18,4 Md€ de 2027 à
 2031 (dossier, p. 12, cité par Public Sénat le 14 octobre 2026), montant
@@ -47,7 +48,8 @@ def collectivites2031 : Int := 18400
 def effectifsCollectivites : Int := 3750
 def collectivitesHorsEffectifs : Int := collectivites2031 - effectifsCollectivites
 
-theorem collectivites_valeur : collectivitesHorsEffectifs = 14650 := by decide
+theorem collectivites_valeur : collectivitesHorsEffectifs = 14650 ∧
+    cvaeRestante = [3607, 2450, 1156, 0] ∧ impotsProduction - cvaeRestante.headD 0 = 13393 := by decide
 
 def mesures : List Mesure := [
   { id := "RN-01", titre := "TVA à 5,5 % sur les énergies"

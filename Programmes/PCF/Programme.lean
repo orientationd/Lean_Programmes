@@ -42,8 +42,12 @@ def pretEPR : Int := 5055
 19 septembre 2026 : « 30 centimes en moins » par litre ; non chiffré par le
 parti). TVA sur les carburants des voitures particulières : 8 Md€ en 2024
 (É. Pichet, Connaissance des Énergies, 5 septembre 2026, déjà utilisé par
-l'axe énergie), × 14,5 / 20 (calcul) : borne basse, voitures seulement
-(les entreprises récupèrent la TVA), prix de 2024. Variante : 12 Md€,
+l'axe énergie), × 14,5 / 20 (calcul) : voitures seulement (les
+entreprises récupèrent la TVA), prix de 2024. Ordre de grandeur : le
+modèle retire déjà 155 € de TVA par voiture électrique de plus (érosion de
+l'assiette au taux plein), où le taux réduit n'en retirerait que ≈ 43 € ;
+avec les voitures électriques de PC-10, le recouvrement atteint quelques
+centaines de M€ en 2030, non corrigé. Variante : 12 Md€,
 bas de la fourchette du gouvernement (12 à 15 Md€, AFP, 22 septembre 2026).
 La directive TVA n'autorise pas de taux réduit sur les carburants (Public
 Sénat, 26 mars 2026). La hausse de consommation due à la baisse du prix
@@ -123,7 +127,7 @@ def mesures : List Mesure := [
     source := "20 mesures des parlementaires communistes (29 janvier 2025) : « rétablissement de l'impôt sur les sociétés à 33 % » ; taux normal porté de 25 % à 33,33 %, rendement calculé par le modèle (pilier 2, réponse de l'assiette)"
     leviers := [.impotSocietes 3333] },
   { id := "PC-23", titre := "TVA sur les carburants ramenée de 20 % à 5,5 %"
-    source := s!"F. Roussel, AFP des 11 et 19 septembre 2026 (« 30 centimes en moins ») ; non chiffré par le parti : 8 Md€ de TVA sur les carburants des voitures en 2024 (Pichet) × 14,5/20 = {baisseTvaCarburants} M€ (borne basse, calcul ; voir `baisseTvaCarburants`) ; contraire à la directive TVA ; hausse de consommation non modélisée"
+    source := s!"F. Roussel, AFP des 11 et 19 septembre 2026 (« 30 centimes en moins ») ; non chiffré par le parti : 8 Md€ de TVA sur les carburants des voitures en 2024 (Pichet) × 14,5/20 = {baisseTvaCarburants} M€ (calcul, voir `baisseTvaCarburants`) ; contraire à la directive TVA ; hausse de consommation et recouvrement avec l'érosion de TVA par les voitures électriques non modélisés"
     leviers := [.prelevementSur .tva (0 - baisseTvaCarburants)]
     variantes := [{ nom := "12 Md€ (bas de la fourchette du gouvernement)", leviers := [.prelevementSur .tva (-12000)] }] }
 ]

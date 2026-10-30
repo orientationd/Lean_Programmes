@@ -38,7 +38,7 @@
 | Mesure | Levier |
 |---|---|
 | H-11 Réduction d'impôt d'environ 3 000 € par an pendant trois ans après une naissance ([LCP](https://lcp.fr/actualites/allocations-familiales-edouard-philippe-propose-350-euros-des-le-premier-enfant-443576)) | −0,88 Md€ d'IR par génération de naissances, jusqu'à −2,65 Md€ (643 905 naissances × 45,73 % de foyers imposés × 3 000 €, majorant) |
-| H-12 Chômage : durée maximale de 12 mois avant 50 ans ([LCP](https://lcp.fr/actualites/chomage-edouard-philippe-veut-abaisser-la-duree-d-indemnisation-a-douze-mois-maximum), 27 août 2026) | −1 Md€/an (IFRAP 2016, plancher ; bascule vers le RSA non comptée) |
+| H-12 Chômage : durée maximale de 12 mois avant 50 ans ([LCP](https://lcp.fr/actualites/chomage-edouard-philippe-veut-abaisser-la-duree-d-indemnisation-a-douze-mois-maximum), 27 août 2026) | −1 Md€/an (IFRAP 2016, pour un passage de 24 à 12 mois : hypothèse ; bascule vers le RSA non comptée) |
 
 H-01 : le texte de la mesure disait 64 ans et 6 mois en 2033 ; le levier
 donne 64 ans et 3 mois (65 ans en 2036), corrigé. Le retour sur la

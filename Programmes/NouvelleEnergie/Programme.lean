@@ -39,14 +39,25 @@ année (Europe 1, 27 mai 2026 ; discours de Saint-Raphaël, 3 juillet 2026),
 200 Md€ « à l'horizon 2032 » (CNEWS et Europe 1, 27 octobre 2026 ;
 « a minima 200 milliards par an à la fin du quinquennat » dans le texte de
 Saint-Raphaël). Aucune trajectoire intermédiaire n'est publiée : montée
-linéaire (hypothèse). Contrôle : 7 points de PIB, objectif affiché de
-dépense publique, font ≈ 209 Md€ sur un PIB de ≈ 2 991 Md€ (calcul). -/
+linéaire en euros courants (hypothèse). Les échéanciers du modèle sont en
+euros de l'année d'entrée en vigueur, puis indexés : chaque niveau est
+ramené en euros 2027 au taux de croissance nominale du scénario central
+(3 % par an, convention d'O-59 au Texte Orientation D ; calcul), pour que
+l'enveloppe atteigne ≈ 200 Md€ courants en 2032. Contrôle : 7 points de
+PIB, objectif affiché de dépense publique, font ≈ 209 Md€ sur un PIB de
+≈ 2 991 Md€ (3 460,5 Md€ de dette pour 115,7 % du PIB, L'Essentiel de
+l'éco, 21 octobre 2026 ; calcul). -/
 def economiesPremiereAnnee : Int := 80000
 def economiesCible : Int := 200000
 def anneesMontee : Int := 5
-def enveloppe : List Int :=
+def croissanceNominalePm : Int := 30
+/-- Indice des prix et volumes du scénario central, base 10 000 en 2027. -/
+def deflateur (k : Nat) : Int := 10000 * (1000 + croissanceNominalePm) ^ k / 1000 ^ k
+def enveloppeCourante : List Int :=
   ([0, 1, 2, 3, 4, 5] : List Int).map fun k =>
     economiesPremiereAnnee + k * (economiesCible - economiesPremiereAnnee) / anneesMontee
+def enveloppe : List Int :=
+  (enveloppeCourante.zip [0, 1, 2, 3, 4, 5]).map fun (e, k) => e * 10000 / deflateur k
 
 /-- Clé de répartition des économies (page « Que ferait David Lisnard des
 200 milliards d'économies ? », 16 octobre 2026, appliquée aussi aux 80 Md€
@@ -112,8 +123,10 @@ def constructionPrisons (coutKEuros : Int) : List Int :=
 def fonctionnementPrisons : List Int :=
   ([0, 0, 1, 2, 3, 4, 5] : List Int).map fun k =>
     k * (placesPrison / anneesConstruction) * coutAnnuelPlaceEuros / 1000000
+/-- Le premier niveau d'`artificialisation` vaut pour l'année suivant
+l'entrée en vigueur (2028), comme la construction. -/
 def surfacesPrisons : List Int :=
-  0 :: List.replicate anneesConstruction (placesPrison * 17 / 700 / anneesConstruction)
+  List.replicate anneesConstruction (placesPrison * 17 / 700 / anneesConstruction)
 
 /-- Enseignants : rémunération +20 % en cinq ans, sous conditions (page
 « Éducation » du parti) ; même paramètre que H-09 : 20 % de 59,23 Md€ de
@@ -125,31 +138,35 @@ def enseignantsEcheancier : List Int :=
 
 /-- Immigration (NE-09) : 80 000 entrées légales par an, visas étudiants
 compris (27 octobre 2026), pour un point de départ de 500 000 retenu par
-le candidat (Saint-Raphaël) ; conversion : solde migratoire de 2025
-(176 000, INSEE) réduit dans la même proportion (hypothèse et majorant :
-les titres ne sont pas le solde, méthode de H-05). -/
+le candidat (Saint-Raphaël), soit une division par 6,25 ; la page
+« Immigration » dit « diviser par huit » les titres (176 × 7/8 = 154,
+non retenu). Conversion : solde migratoire de 2025 (176 000, INSEE) réduit
+dans la même proportion (hypothèse et majorant : les titres ne sont pas le
+solde, méthode de H-05). -/
 def soldeMigratoire2025Milliers : Int := 176
 def entreesCible : Int := 80
 def entreesDepart : Int := 500
 def baisseSoldeMilliers : Int := soldeMigratoire2025Milliers * (entreesDepart - entreesCible) / entreesDepart
 
 theorem valeurs :
-    enveloppe = [80000, 104000, 128000, 152000, 176000, 200000] ∧
-    part partSalaireNetPm = [48000, 62400, 76800, 91200, 105600, 120000] ∧
-    part partProductionPm = [16000, 20800, 25600, 30400, 35200, 40000] ∧
+    enveloppeCourante = [80000, 104000, 128000, 152000, 176000, 200000] ∧
+    deflateur 5 = 11592 ∧
+    enveloppe = [80000, 100970, 120652, 139104, 156374, 172532] ∧
+    part partSalaireNetPm = [48000, 60582, 72391, 83462, 93824, 103519] ∧
+    part partProductionPm = [16000, 20194, 24130, 27820, 31274, 34506] ∧
     economiesPostes = [5000, 10000, 15000, 20000, 25000, 25000] ∧
     economiesPrestations = [2500, 3600, 4700, 5800, 6900, 8000] ∧
-    residuNonVentile = [-71800, -89700, -107600, -125500, -143400, -166300] ∧
+    residuNonVentile = [-71800, -86670, -100252, -112604, -123774, -138832] ∧
     coutAnnuelPlaceEuros = 44984 ∧
     constructionPrisons coutPlaceKEuros = [0, 1080, 1080, 1080, 1080, 1080, 0] ∧
     fonctionnementPrisons = [0, 0, 179, 359, 539, 719, 899] ∧
-    surfacesPrisons = [0, 97, 97, 97, 97, 97] ∧
+    surfacesPrisons = [97, 97, 97, 97, 97] ∧
     enseignantsEcheancier = [2369, 4738, 7107, 9476, 11846] ∧
     baisseSoldeMilliers = 147 := by decide
 
 def mesures : List Mesure := [
   { id := "NE-01", titre := "Économies non ventilées : opérateurs et agences, dépense sociale, assurance chômage, budgets en base zéro, ministères supprimés"
-    source := s!"{site}, « Que ferait David Lisnard des 200 milliards d'économies ? » (16 octobre 2026) et {emission27oct} : 80 Md€ la première année, 200 Md€ en 2032, montée linéaire (hypothèse) ; le parti ne ventile pas les économies (pistes sans montant : 1 153 opérateurs, ARS, DREAL, DDTM, allocation sociale unique plafonnée, désindexation des pensions au-dessus de 2 200 €) ; enveloppe moins NE-02, NE-03 et NE-04, soit {residuNonVentile} M€ (voir `residuNonVentile`) ; aucune expertise indépendante (L'Essentiel de l'éco, 21 octobre 2026)"
+    source := s!"{site}, « Que ferait David Lisnard des 200 milliards d'économies ? » (16 octobre 2026) et {emission27oct} : 80 Md€ la première année, 200 Md€ courants en 2032, montée linéaire (hypothèse) ramenée en euros 2027 (voir `enveloppe`) ; le parti ne ventile pas les économies (pistes sans montant : 1 153 opérateurs, ARS, DREAL, DDTM, allocation sociale unique plafonnée, désindexation des pensions au-dessus de 2 200 €) ; enveloppe moins NE-02, NE-03 et NE-04, soit {residuNonVentile} M€ (voir `residuNonVentile`) ; aucune expertise indépendante (L'Essentiel de l'éco, 21 octobre 2026)"
     leviers := [.depenseEcheancier .nonVentile residuNonVentile]
     variantes := [
       { nom := "20 % des économies à la modernisation de l'État au lieu de la dette", leviers :=
@@ -166,10 +183,10 @@ def mesures : List Mesure := [
     source := s!"{site}, « Immigration » : {economieAme} M€ d'économies (chiffrage du parti ; coût de l'AME « près d'1,4 milliard » selon le discours de Saint-Raphaël)"
     leviers := [.economieSur .sante economieAme] },
   { id := "NE-05", titre := "Salaire net relevé par la baisse des prélèvements salariaux, dont CSG d'activité de 9,2 % à 6,6 %"
-    source := s!"{site}, « Pouvoir d'achat » et « Impôts » : 60 % des économies, 120 Md€ en 2032, « sans augmenter le coût du travail », la même clé dès la première année (calcul : {part partSalaireNetPm} M€) ; CSG à 6,6 % : {emission27oct} ; imputé aux cotisations sociales (la part de la CSG assise sur les revenus d'activité n'est pas sourcée)"
+    source := s!"{site}, « Pouvoir d'achat » et « Impôts » : 60 % des économies, 120 Md€ courants en 2032, « sans augmenter le coût du travail », la même clé dès la première année (calcul, euros 2027 : {part partSalaireNetPm} M€) ; CSG à 6,6 % : {emission27oct} ; imputé aux cotisations sociales (la part de la CSG assise sur les revenus d'activité n'est pas sourcée)"
     leviers := [.recetteEcheancier (some .cotisations) ((part partSalaireNetPm).map fun x => 0 - x)] },
   { id := "NE-06", titre := "Baisse des impôts de production, à commencer par la C3S"
-    source := s!"{site}, entretien du 21 janvier 2026 : 20 % des économies, 40 Md€ en 2032 (calcul : {part partProductionPm} M€) ; C3S ≈ 5,4 Md€ (Legifiscal, 12 décembre 2025) ; même imputation que LR-12 et H-07"
+    source := s!"{site}, entretien du 21 janvier 2026 : 20 % des économies, 40 Md€ courants en 2032 (calcul, euros 2027 : {part partProductionPm} M€) ; C3S ≈ 5,4 Md€ (Legifiscal, 12 décembre 2025) ; même imputation que RN-02 et H-07 ; la CVAE, déjà supprimée par la loi en 2030, n'est pas visée"
     leviers := [.recetteEcheancier (some .autres) ((part partProductionPm).map fun x => 0 - x)] },
   { id := "NE-07", titre := "20 000 places de prison"
     source := s!"Discours de Saint-Raphaël, 3 juillet 2026 ; Le Crayon, 15 octobre 2026 ; non chiffré : {placesPrison} places en plus du plan 15 000 (hypothèse) à {coutPlaceKEuros} k€ la place (Cour des comptes, paramètre d'O-75), construites de 2028 à 2032, puis {coutAnnuelPlaceEuros} € par place ouverte et par an ; emprise : 17 ha pour 700 places"
@@ -185,7 +202,7 @@ def mesures : List Mesure := [
     source := s!"{site}, « Éducation » : +20 % sous conditions ; non chiffré : 20 % de 59,23 Md€, {hausseEnseignants} M€ par an atteints en cinq ans (paramètre de H-09)"
     leviers := [.remunerationPublique .traitement .enseignement enseignantsEcheancier] },
   { id := "NE-09", titre := "Immigration légale ramenée à 80 000 entrées par an"
-    source := s!"{emission27oct} : 80 000 entrées par an, visas étudiants compris (« diviser par huit » les titres, page « Immigration ») ; conversion : solde migratoire réduit de {baisseSoldeMilliers} 000 par an (176 000 × 420/500, hypothèse et majorant)"
+    source := s!"{emission27oct} : 80 000 entrées par an, visas étudiants compris, pour 500 000 aujourd'hui selon le candidat (la page « Immigration » dit « diviser par huit ») ; conversion : solde migratoire réduit de {baisseSoldeMilliers} 000 par an (176 000 × 420/500, hypothèse et majorant)"
     leviers := [.migration (0 - baisseSoldeMilliers)] },
   { id := "NE-10", titre := "Droits de succession supprimés"
     source := "Discours de La Gagne, 29 août 2026 : « totalement libérer l'héritage » ; transmission d'entreprise « totalement libérée » (Benfeld, 25 septembre 2026) ; 16,2 Md€ de droits de succession (Legifiscal, 23 septembre 2026, montant de RQ-12). Le livre « Ainsi va la France » propose un barème allégé (taux marginal de 20 %), non chiffré"
