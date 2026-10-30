@@ -2583,6 +2583,84 @@ theorem poles_valeurs : solaireParAnMw = 1300 ∧ soutienSolaireEurosMWh = 16 �
     soutienSolaire = [0, 12, 38, 64, 78] ∧ stepInvestissement = 3250 ∧ stepPretParAn = 464 ∧
     chaleurEviteeKt = 151 ∧ chaleurAide = 354 := by decide
 
+/-- Métro entièrement accessible aux personnes handicapées en 2035 (O-147),
+demande de l'auteur (octobre 2026) : « accès handicapés dans les métros :
+total dans le métro en 2035 ».
+
+* Paris : 320 stations (question écrite n° 18558, JO du 29 septembre 2026 ;
+  319 pour la Ville de Paris, rapport 2025 sur les transports), dont ≈ 30
+  accessibles en autonomie aux usagers en fauteuil roulant (29 en 2025 :
+  21 sur la ligne 14 et 8 sur la ligne 11, Île-de-France Mobilités ; 33 à
+  l'été 2024 avec les prolongements des lignes 4, 11 et 14) : 290 stations à
+  traiter. Coût : 20 Md€ (Région Île-de-France, assises « Métro pour tous »
+  du 10 octobre 2024 : « 20 Md€ sur environ 20 ans » ; 15 à 20 Md€ dans le
+  dossier de presse d'IDFM du 5 septembre 2024 ; « plus de 20 Md€ » en août
+  2026, Handicap.fr), soit ≈ 69 M€ par station ; ligne 6, seule chiffrée :
+  660 à 850 M€ pour 28 stations. Le chiffre n'est pas actualisé ni majoré
+  pour la cadence (minorant).
+* Hors Paris : Marseille, 29 stations dont 9 accessibles fin 2025 et 2
+  prévues en 2026 (bilan 2025 de la commission accessibilité de la
+  Métropole Aix-Marseille-Provence) : 18 stations, à 53 M€ HT les 7
+  stations du programme de 2019 (délibération de 2019, euros 2019 :
+  minorant). Lyon : toutes accessibles sauf Croix-Paquet, jugée impossible
+  à aménager (TCL) ; Lille, Toulouse et Rennes : accessibles dès leur
+  conception.
+* Calendrier : études ligne par ligne des 13 lignes historiques en 2027
+  (10 M€ par ligne, Institut Montaigne, 2026), puis travaux de 2028 à 2035
+  au même rythme chaque année (hypothèse) : ≈ 38 stations par an.
+  **Faisabilité très faible** : aucun réseau ne dépasse durablement dix
+  stations par an (Londres : 10 en 2021 ; New York : 9 à 10 par an imposés
+  par l'accord judiciaire de 2022) ; Paris en rend 2 à 4 par an (APF France
+  handicap) ; la RATP juge certaines stations impossibles à équiper
+  d'ascenseurs et la règle incendie GN8 impose l'évacuation des fauteuils
+  par ascenseur. Variante réaliste : études en 2027-2028, puis la ligne 6
+  (755 M€, milieu de la fourchette) et 50 stations de correspondance
+  prioritaires à 65 M€ (20 Md€ pour 308 stations, Institut Montaigne) de
+  2029 à 2035, et Marseille de 2027 à 2030 : ≈ 108 stations parisiennes
+  accessibles en 2035 sur 320 (34 %), le reste vers 2045-2050 comme le
+  prévoit IDFM.
+
+Investissement public (IDFM, Région, État, Ville : la clé « un tiers, un
+tiers, un tiers » proposée par la Région n'a pas été acceptée par l'État),
+imputé aux affaires économiques (transports). Non comptés : entretien des
+ascenseurs supplémentaires, effet sur l'emploi des personnes handicapées
+(41 % en emploi contre 69 % pour l'ensemble, Insee 2025, Agefiph ; aucune
+étude ne relie leur emploi à l'accessibilité du métro). -/
+def stationsMetroParis : Int := 320
+def stationsAccessiblesParis : Int := 30
+def stationsATraiterParis : Int := stationsMetroParis - stationsAccessiblesParis
+def coutAccessibiliteParis : Int := 20000
+def stationsATraiterMarseille : Int := 29 - 9 - 2
+def coutStationMarseilleKeur : Int := 53000 / 7
+def coutAccessibiliteMarseille : Int := stationsATraiterMarseille * coutStationMarseilleKeur / 1000
+def lignesHistoriques : Int := 13
+def etudesAccessibilite : Int := lignesHistoriques * 10
+def anneesTravauxAccessibilite : Nat := 8
+def travauxAccessibiliteParAn : Int :=
+  (coutAccessibiliteParis + coutAccessibiliteMarseille) / anneesTravauxAccessibilite
+def stationsAccessiblesParAn : Int :=
+  (stationsATraiterParis + stationsATraiterMarseille) / anneesTravauxAccessibilite
+def metroAccessible : List Int :=
+  etudesAccessibilite :: List.replicate anneesTravauxAccessibilite travauxAccessibiliteParAn ++ [0]
+/-- Variante réaliste : ligne 6 (660 à 850 M€) et 50 stations de
+correspondance à 65 M€ sur sept ans, Marseille sur quatre ans. -/
+def ligne6Accessible : Int := (660 + 850) / 2
+def stationsCorrespondance : Int := 50
+def coutStationMoyen : Int := (20000 * 10 / 308 + 5) / 10
+def travauxRealistesParAn : Int := (ligne6Accessible + stationsCorrespondance * coutStationMoyen) / 7
+def marseilleParAn : Int := coutAccessibiliteMarseille / 4
+def metroAccessibleRealiste : List Int :=
+  [etudesAccessibilite / 2 + marseilleParAn, etudesAccessibilite / 2 + marseilleParAn,
+   travauxRealistesParAn + marseilleParAn, travauxRealistesParAn + marseilleParAn,
+   travauxRealistesParAn, travauxRealistesParAn, travauxRealistesParAn, travauxRealistesParAn,
+   travauxRealistesParAn, 0]
+
+theorem metro_valeurs : stationsATraiterParis = 290 ∧ coutAccessibiliteMarseille = 136 ∧
+    travauxAccessibiliteParAn = 2517 ∧ stationsAccessiblesParAn = 38 ∧
+    metroAccessible = [130, 2517, 2517, 2517, 2517, 2517, 2517, 2517, 2517, 0] ∧
+    travauxRealistesParAn = 572 ∧
+    metroAccessibleRealiste = [99, 99, 606, 606, 572, 572, 572, 572, 572, 0] := by decide
+
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
@@ -3715,13 +3793,19 @@ def mesures : List Mesure := [
     source := s!"Mise en service en 2034 après sept ans de construction ; 1,3 GW × 6 h, un cycle par jour pendant 300 jours, rendement de 75 % : ≈ 1,75 TWh restitués à la place du gaz (0,36 t par MWh) ; fin du prêt de construction"
     leviers := [.stockageElectrique (polesRegionaux * stepParPoleMw) stepHeures 300 750 360,
                 .pretEtat (0 - stepPretParAn)]
-    debut := anneesConstructionStep }
+    debut := anneesConstructionStep },
+  { id := "O-147"
+    titre := "Métro entièrement accessible aux personnes handicapées en 2035 (Paris, Marseille)"
+    source := s!"Demande de l'auteur (octobre 2026) ; {stationsATraiterParis} stations parisiennes à rendre accessibles (320, dont ≈ 30 accessibles) pour {coutAccessibiliteParis} M€ (Région Île-de-France, 2024 : « 20 Md€ sur environ 20 ans ») et {stationsATraiterMarseille} à Marseille ({coutAccessibiliteMarseille} M€) ; études en 2027, puis {travauxAccessibiliteParAn} M€ par an de 2028 à 2035, ≈ {stationsAccessiblesParAn} stations par an, quatre fois le meilleur rythme observé dans le monde : faisabilité très faible (voir `stationsMetroParis`)"
+    leviers := [.investissementEcheancier .affairesEconomiques metroAccessible]
+    variantes := [{ nom := "variante réaliste : ligne 6 et 50 stations de correspondance en 2035 (≈ 34 % des stations parisiennes), le reste vers 2045-2050", leviers :=
+      [.investissementEcheancier .affairesEconomiques metroAccessibleRealiste] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
