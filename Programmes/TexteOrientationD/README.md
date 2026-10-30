@@ -42,7 +42,7 @@ PIB potentiel.
 
 ## Mesures par catégorie
 
-169 mesures, en seize catégories. Effet de chaque mesure prise isolément en
+170 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -1816,6 +1816,7 @@ L'effet sur le solde vient surtout du surcroît d'heures travaillées
 | **O-87** Référendum d'initiative citoyenne | ≈ 0 | +700 | ≈ 0 |
 | **O-112** Titres de séjour : 500 agents de plus dans les préfectures pour réduire les délais | ≈ 0 | +500 | ≈ 0 |
 | **O-119** Plan contre les fuites d'eau : 1,5 Md€ par an pendant cinq ans pour renouveler les canalisations | +0,01 pt | ≈ 0 | ≈ 0 |
+| **O-154** Vote obligatoire, vote blanc compté parmi les suffrages exprimés, tirage au sort au-delà de 50 % de blancs | ≈ 0 | ≈ 0 | ≈ 0 |
 
 **O-86 — Liberté fiscale des collectivités.** Taxe foncière : les communes
 votent déjà leur taux, mais au plus 2,5 fois le taux moyen de l'année
@@ -1853,6 +1854,23 @@ milliard de m³ par an, sur ≈ 850 000 km de canalisations renouvelées à
 pour les collectivités : 1,5 Md€ par an pendant cinq ans (montant de
 l'amendement n° 2034 au PLF 2025 ; durée : hypothèse), environ la moitié des
 2,5 à 3 Md€ par an jugés nécessaires. L'eau économisée n'est pas modélisée.
+
+**O-154 — Vote obligatoire, vote blanc reconnu, tirage au sort.** Demande
+de l'auteur (octobre 2026). Le vote devient obligatoire à toutes les
+élections, sanctionné par une contravention de première classe (38 € au
+plus ; Belgique : 50 €, 125 € en récidive ; Australie : 20 dollars
+australiens ; étude de législation comparée du Sénat n° 301, 2022). Le vote
+blanc entre dans les suffrages exprimés (la loi du 21 février 2014 le
+décompte à part) : au second tour de la présidentielle de 2022, 2,23
+millions de blancs, 6,35 % des votants. Si les blancs dépassent 50 % des
+suffrages exprimés, le siège ou le poste est attribué par tirage au sort
+parmi les électeurs volontaires de la circonscription (modalité à
+préciser) ; ce n'est jamais arrivé à une élection nationale. Révision de
+la Constitution (articles 3, 6 et 24), qui peut passer par le même
+référendum qu'O-87. Sans effet budgétaire mesurable : à 90 % de
+participation (hypothèse), les amendes forfaitaires de 11 € rapporteraient
+au plus ≈ 50 M€ par scrutin ; une élection nationale coûte ≈ 170 M€
+(législatives de 2024) avec ou sans obligation.
 
 ### Mémoire et relations internationales
 
@@ -2115,7 +2133,7 @@ Lois du modèle commun d'octobre 2026 :
   (≈ +0,1 point pour tous les programmes ; 9,38 % au tendanciel au lieu de
   9,27 %).
 
-Mesures originales d'octobre 2026 (O-138 à O-153), à la demande de
+Mesures originales d'octobre 2026 (O-138 à O-154), à la demande de
 l'auteur (« des mesures totalement originales, quitte à modéliser de
 nouvelles choses », sans toucher au prix du carburant) : de 15 à 20
 propriétés tenues dans au moins 18 scénarios sous les trois moteurs.
@@ -2378,7 +2396,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 59 mesures sur 169 reposent au moins en partie sur une hypothèse ; les plus
+* 59 mesures sur 170 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,47 point, O-44 : −0,46 point, O-58 : −0,43 point, O-150 : −0,40 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
