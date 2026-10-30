@@ -1136,6 +1136,11 @@ structure Etat where
   marginal, indexée au taux réel), pb : celui de la dette nouvelle et de la
   part refinancée du stock. -/
   tauxEmissionPb : Int := 0
+  /-- Taux apparent de la dette à moyen et long terme, ppm (1 pb = 100 ppm) :
+  précision portée par la projection, la charge d'intérêts d'un stock de
+  ≈ 4 700 Md€ sautant de ≈ 470 M€ par pb d'arrondi ; 0 = à reprendre de
+  `tauxApparentPb` (situation de départ, rétro-test). -/
+  tauxApparentPpm : Int := 0
   /-- Écart de l'année entre variation de la dette et déficit qui ne relève
   pas des opérations financières suivies (trésorerie, primes d'émission…),
   M€ : observé pour l'année de départ, nul ensuite. -/

@@ -223,9 +223,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let court := dette * H.eco.partDetteCourtTermePm / 1000
   let long := dette - court
   let longDebut := s.detteDebut - s.detteDebut * H.eco.partDetteCourtTermePm / 1000
-  let tauxStock := if long = 0 then s.tauxApparentPb
-    else (longDebut * s.tauxApparentPb + (long - longDebut) * s.tauxEmissionPb) / long
-  let taux := tauxStock + (emission - tauxStock) * H.eco.renouvellementDettePm / 1000
+  -- taux en ppm (1 pb = 100 ppm) : un arrondi au pb sur le stock ferait
+  -- sauter la charge d'intérêts de ≈ 470 M€
+  let tauxPrecedentPpm := if s.tauxApparentPpm = 0 then s.tauxApparentPb * 100 else s.tauxApparentPpm
+  let tauxStockPpm := if long = 0 then tauxPrecedentPpm
+    else (longDebut * tauxPrecedentPpm + (long - longDebut) * (s.tauxEmissionPb * 100)) / long
+  let tauxPpm := tauxStockPpm + (emission * 100 - tauxStockPpm) * H.eco.renouvellementDettePm / 1000
+  let taux := tauxPpm / 100
   -- indexation du capital des titres indexés sur l'inflation de l'année,
   -- enregistrée en intérêts (comptabilité nationale)
   let indexation := dette * H.eco.partDetteIndexeePm * H.eco.inflationIndexationA k / 10000000
@@ -233,11 +237,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- apparent diminué de la décote ; ses intérêts, pour la part défiscalisée,
   -- échappent au PFU (perte de recettes de l'année)
   let tranche := dette * s.partDetteNumeriquePm / 1000
-  let economieNum := tranche * taux * s.decoteDetteNumeriquePm / 10000000
-  let interetsTranche := tranche * taux / 10000 - economieNum
+  let economieNum := tranche * tauxPpm * s.decoteDetteNumeriquePm / 1000000000
+  let interetsTranche := tranche * tauxPpm / 1000000 - economieNum
   let tPfu := H.eco.tauxPfuIrPm + H.eco.tauxPfuCsgCrdsPm + H.eco.tauxPfuSolidaritePm
   let pertePfu := interetsTranche * s.partDefiscaliseePm * tPfu / 1000000
-  let interets := long * taux / 10000 + court * H.eco.tauxCourtA k / 10000 + indexation - economieNum
+  let interets := long * tauxPpm / 1000000 + court * H.eco.tauxCourtA k / 10000 + indexation - economieNum
   -- la perte de PFU de l'an dernier est déjà dans l'assiette et croît avec
   -- elle : on n'ajoute que l'écart, réparti selon l'affectation du PFU
   let dPerte := pertePfu - (s.pertePfuMeur + appliquerPb s.pertePfuMeur croissance)
@@ -466,6 +470,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     autresRecettes := autresRecettes
     depensesF := depensesF
     tauxApparentPb := taux
+    tauxApparentPpm := tauxPpm
     tauxMarginalCourantPb := tauxCible
     tauxEmissionPb := emission
     chargeIndexationMeur := indexation
