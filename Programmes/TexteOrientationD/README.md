@@ -9,9 +9,9 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,38 % du PIB | 1,88 % |
-| Dette publique | 157,2 % du PIB | 124,8 % |
-| Chômage | 7,91 % | 9,03 % |
+| Déficit public | 9,38 % du PIB | 1,93 % |
+| Dette publique | 157,2 % du PIB | 125,0 % |
+| Chômage | 7,91 % | 8,98 % |
 | Indice de développement humain | 0,9392 | 0,9407 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 263 Mt CO₂e |
 
@@ -19,16 +19,16 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,59 | 4,99 | 4,61 | 4,25 | 3,87 | 3,39 | 3,05 | 2,66 | 2,27 | 1,88 |
-| Offre | 5,58 | 4,90 | 4,41 | 3,99 | 3,55 | 3,03 | 2,65 | 2,26 | 1,87 | 1,49 |
-| Équilibre | 5,59 | 4,94 | 4,51 | 4,11 | 3,70 | 3,19 | 2,82 | 2,43 | 2,03 | 1,64 |
+| Demande | 5,59 | 4,99 | 4,64 | 4,29 | 3,91 | 3,43 | 3,09 | 2,70 | 2,32 | 1,93 |
+| Offre | 5,58 | 4,90 | 4,45 | 4,01 | 3,57 | 3,04 | 2,66 | 2,26 | 1,86 | 1,47 |
+| Équilibre | 5,59 | 4,95 | 4,54 | 4,14 | 3,72 | 3,22 | 2,85 | 2,46 | 2,05 | 1,65 |
 | Sans programme (demande) | 5,59 | 6,49 | 6,82 | 7,13 | 7,45 | 7,81 | 8,15 | 8,39 | 8,98 | 9,38 |
 
 Le déficit baisse chaque année sous les trois moteurs et passe sous 3 % en
 2033 (moteur de demande). 18 propriétés sur 28 sont tenues dans au
 moins 18 des 36 scénarios sous les trois moteurs (voir « Propriétés »).
 Propriétés non tenues au scénario central (moteur de demande) :
-SNBC-3 : budget carbone 2029-2033, déficit sous le plafond juridique (3,87 % en 2030 pour un plafond de 3 %), dette/PIB stabilisée en 2035, code de l'énergie : 40 % d'électricité renouvelable en 2030, budget à l'équilibre en 2035, SNBC-3 : objectifs sectoriels 2030, UE : ajustement 0,5 pt/an, UE : climat 2030, UE : déficit sous 3 %, UE : dette −1 pt/an, UE : répartition de l'effort 2030.
+SNBC-3 : budget carbone 2029-2033, déficit sous le plafond juridique (3,91 % en 2030 pour un plafond de 3 %), dette/PIB stabilisée en 2035, code de l'énergie : 40 % d'électricité renouvelable en 2030, budget à l'équilibre en 2035, SNBC-3 : objectifs sectoriels 2030, UE : ajustement 0,5 pt/an, UE : climat 2030, UE : déficit sous 3 %, UE : dette −1 pt/an, UE : répartition de l'effort 2030.
 
 Ces chiffres sont ceux du modèle commun actuel : chaque prélèvement y est
 calculé sur son assiette (masse salariale, consommation, bénéfice fiscal et
@@ -42,7 +42,7 @@ PIB potentiel.
 
 ## Mesures par catégorie
 
-157 mesures, en seize catégories. Effet de chaque mesure prise isolément en
+158 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -673,6 +673,7 @@ pas. Les conjoints et aides familiaux (proposition de loi Brugerolles,
 | **O-146b** Pôles régionaux : réseaux de chaleur solaires et géothermiques en service | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-146c** Pôles régionaux : fin du programme solaire (3,9 GW installés) | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-146d** Pôles régionaux : stockage hydraulique souterrain en service (1,3 GW, 6 heures) | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-147** Métro entièrement accessible aux personnes handicapées en 2035 (Paris, Marseille) | +0,05 pt | +13 600 | +0,4 |
 
 **O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année.** 10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
 2035, soit 250 M€ par an et 90 000 voitures, prises parmi les 1,2 million
@@ -1103,6 +1104,31 @@ d'eau pour l'agriculture : l'eau d'une STEP circule en boucle et celle
 d'un stockage de chaleur monte à 90 °C ; une citerne enterrée coûte ≈ 1
 800 €/m³ (bassin d'Austerlitz) contre ≈ 12 €/m³ pour une réserve à ciel
 ouvert (Deux-Sèvres).
+
+**O-147 — Métro entièrement accessible aux personnes handicapées en
+2035.** Demande de l'auteur (octobre 2026) : « accès handicapés dans les
+métros : total dans le métro en 2035 ». À Paris, ≈ 30 des 320 stations
+sont accessibles en autonomie aux usagers en fauteuil roulant (29 en 2025,
+ligne 14 et prolongement de la ligne 11, Île-de-France Mobilités) : 290
+stations à traiter, pour 20 Md€ (Région Île-de-France, assises « Métro
+pour tous » d'octobre 2024 ; 15 à 20 Md€ selon IDFM ; seule la ligne 6 est
+chiffrée, 660 à 850 M€ pour 28 stations). Hors Paris, il reste Marseille
+(18 stations sur 29, ≈ 0,14 Md€ aux coûts du programme de 2019) ; Lyon est
+accessible sauf Croix-Paquet, jugée impossible à aménager ; Lille,
+Toulouse et Rennes le sont depuis leur construction. Études ligne par
+ligne en 2027 (0,13 Md€), puis 2,5 Md€ par an de 2028 à 2035 : ≈ 38
+stations par an. Effet au scénario central (moteur de demande) : +0,05
+point de déficit en 2035 (1,93 % au lieu de 1,88 %), +0,2 point de dette,
+−0,05 point de chômage (emplois des travaux) ; les 18 propriétés restent
+tenues. **Faisabilité très faible** : aucun réseau ne dépasse durablement
+dix stations par an (Londres, New York) et Paris en rend 2 à 4 par an ; la
+RATP juge certaines stations impossibles à équiper d'ascenseurs, et IDFM
+prévoit une vingtaine d'années. Le coût n'est pas majoré pour la cadence
+ni pour l'entretien des ascenseurs : c'est un minorant. **Variante
+réaliste** : la ligne 6 et 50 stations de correspondance prioritaires en
+2035 (≈ 108 stations parisiennes accessibles sur 320, 34 %), Marseille
+complète, le reste vers 2045-2050, pour 4,3 Md€ de 2027 à 2035 (voir
+« Points à arbitrer »).
 
 ### Logement et urbanisme
 
@@ -1916,11 +1942,11 @@ au moins un moteur) :
 |---|---|---|---|
 | Déficit sous le plafond juridique | 19/36 | 19/36 | 18/36 |
 | Dette/PIB non dégradée | 36/36 | 36/36 | 36/36 |
-| Chômage non dégradé | 20/36 | 34/36 | 20/36 |
+| Chômage non dégradé | 20/36 | 34/36 | 32/36 |
 | Émissions sous 300 Mt (SNBC-2) | 36/36 | 36/36 | 36/36 |
 | Déficit sous 3 % en 2035 | 18/36 | 22/36 | 20/36 |
-| Budget à l'équilibre en 2035 ⚠ | 4/36 | 6/36 | 6/36 |
-| Déficit en baisse chaque année | 30/36 | 28/36 | 28/36 |
+| Budget à l'équilibre en 2035 ⚠ | 4/36 | 8/36 | 6/36 |
+| Déficit en baisse chaque année | 30/36 | 28/36 | 30/36 |
 | Dette/PIB stabilisée en 2035 ⚠ | 6/36 | 10/36 | 10/36 |
 | Mortalité liée à l'air non dégradée | 36/36 | 36/36 | 36/36 |
 | Bornes suffisantes en 2035 | 36/36 | 36/36 | 36/36 |
@@ -1937,7 +1963,7 @@ au moins un moteur) :
 | Code de l'énergie : 40 % d'électricité renouvelable en 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | UE : déficit sous 3 % ⚠ | 4/36 | 6/36 | 4/36 |
 | UE : ajustement 0,5 pt/an ⚠ | 4/36 | 6/36 | 4/36 |
-| UE : dette −1 pt/an ⚠ | 0/36 | 2/36 | 2/36 |
+| UE : dette −1 pt/an ⚠ | 0/36 | 4/36 | 2/36 |
 | UE : climat 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | UE : répartition de l'effort 2030 ⚠ | 0/36 | 0/36 | 0/36 |
 | UE : recharge (AFIR) 2030 | 36/36 | 36/36 | 36/36 |
@@ -2000,7 +2026,7 @@ Lois du modèle commun d'octobre 2026 :
   (≈ +0,1 point pour tous les programmes ; 9,38 % au tendanciel au lieu de
   9,27 %).
 
-Mesures originales d'octobre 2026 (O-138 à O-146), à la demande de
+Mesures originales d'octobre 2026 (O-138 à O-147), à la demande de
 l'auteur (« des mesures totalement originales, quitte à modéliser de
 nouvelles choses », sans toucher au prix du carburant) : de 15 à 18
 propriétés tenues dans au moins 18 scénarios sous les trois moteurs.
@@ -2028,18 +2054,22 @@ propriétés tenues dans au moins 18 scénarios sous les trois moteurs.
   hydraulique souterrain, fosses de chaleur et géothermie) portent la part
   renouvelable de 2030 de 34,6 à 35,2 % et réduisent les émissions de
   0,15 Mt en 2030 et de ≈ 0,75 Mt en 2034 et 2035, sans propriété de plus.
+* Le métro entièrement accessible en 2035 (O-147, demande de l'auteur)
+  coûte 2,5 Md€ par an de 2028 à 2035 (+0,05 point de déficit en 2035) ;
+  les 18 propriétés tiennent toujours, mais le rythme demandé (≈ 38
+  stations par an) n'a été atteint par aucun réseau au monde.
 
 Propriétés que ces mesures ne suffisent pas à tenir, et effort
 supplémentaire qu'il faudrait dans le neuvième des dix-huit scénarios
 (moteur de demande ; entre parenthèses, au scénario central) :
 
-* *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,35
-  point de déficit en 2030, soit 4,34 % ramenés à 3 % (−0,9 point). Un frein
+* *UE : déficit sous 3 %* et *ajustement de 0,5 point par an* : ≈ −1,4
+  point de déficit en 2030, soit 4,36 % ramenés à 3 % (−0,9 point). Un frein
   à 3 % et 4 points les tiendrait, mais ferait perdre « chômage non
   dégradé » (essai).
 * *Budget à l'équilibre en 2035* : ≈ −2 points en 2035 (−1,9 point).
-* *Dette/PIB stabilisée en 2035* : ≈ −12 points de dette en 2035 ; règle
-  européenne de −10 points : ≈ −22 points. Pistes étudiées, sans effet sur
+* *Dette/PIB stabilisée en 2035* : ≈ −11 points de dette en 2035 ; règle
+  européenne de −10 points : ≈ −21 points. Pistes étudiées, sans effet sur
   le déficit : rachat sous le pair des OAT longues à petit coupon (≈ −77 Md€
   de dette pour +1,8 Md€ d'intérêts par an, gain d'affichage comptable),
   placement en titres publics des réserves de l'Agirc-Arrco (91 Md€),
@@ -2078,25 +2108,27 @@ sur 28) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) | Propriétés à 18/36 | Propriétés visées perdues |
 |---|---|---|---|---|---|---|
-| Programme actuel | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
-| IS à 15 % (texte initial d'O-08) | 2,26 % | 9,00 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
-| Norme de 100 pb (version précédente d'O-55) | 3,08 % | 8,47 % | 0,9414 | oui / oui / oui | 15 | Déficit sous le plafond juridique, Déficit sous 3 % en 2035, Déficit en baisse chaque année |
-| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | 1,12 % | 9,05 % | 0,9407 | oui / oui / oui | 18 | — |
-| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | 1,30 % | 8,92 % | 0,9407 | oui / oui / oui | 18 | — |
-| O-26 avec suppressions de postes (version précédente) | 2,01 % | 9,25 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
-| O-38 au prorata (version précédente) | 1,89 % | 9,07 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
-| O-108 à 2 Mt par an (version précédente) | 1,87 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
-| Sans O-127 (contrats aidés) | 2,18 % | 9,33 % | 0,9406 | oui / oui / oui | 17 | Chômage non dégradé |
-| IS maintenu à 25 % (variante d'O-08) | 1,55 % | 9,05 % | 0,9407 | oui / oui / oui | 17 | Déficit sous le plafond juridique |
-| Norme renforcée de 100 pb de plus (variante d'O-55) | 0,82 % | 9,53 % | 0,9401 | oui / oui / oui | 17 | Chômage non dégradé |
-| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 1,86 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
-| Sans le rétrofit électrique (O-138) | 1,85 % | 9,02 % | 0,9407 | oui / oui / oui | 17 | SNBC-3 : 15 % de voitures électriques en 2030 |
-| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 1,92 % | 9,02 % | 0,9407 | oui / oui / oui | 18 | — |
-| Biokérosène compté au prorata des ventes (variante d'O-142) | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
-| Sans le frein automatique (O-143) | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 17 | Déficit sous le plafond juridique |
-| Frein à 4,5 % et 2 points (variante d'O-143) | 1,51 % | 9,16 % | 0,9405 | oui / oui / oui | 17 | Chômage non dégradé |
-| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 1,88 % | 9,02 % | 0,9407 | oui / oui / oui | 18 | — |
-| Sans les pôles régionaux (O-146 à O-146d) | 1,87 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
+| Programme actuel | 1,93 % | 8,98 % | 0,9407 | oui / oui / oui | 18 | — |
+| IS à 15 % (texte initial d'O-08) | 2,31 % | 8,95 % | 0,9408 | oui / oui / oui | 16 | Déficit sous le plafond juridique, Chômage non dégradé |
+| Norme de 100 pb (version précédente d'O-55) | 3,13 % | 8,43 % | 0,9414 | oui / oui / oui | 16 | Déficit sous le plafond juridique, Déficit sous 3 % en 2035 |
+| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | 1,17 % | 9,01 % | 0,9407 | oui / oui / oui | 18 | — |
+| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | 1,35 % | 8,88 % | 0,9407 | oui / oui / oui | 18 | — |
+| O-26 avec suppressions de postes (version précédente) | 1,96 % | 9,23 % | 0,9407 | oui / oui / oui | 17 | Chômage non dégradé |
+| O-38 au prorata (version précédente) | 1,94 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
+| O-108 à 2 Mt par an (version précédente) | 1,92 % | 8,98 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans O-127 (contrats aidés) | 2,23 % | 9,29 % | 0,9406 | oui / oui / oui | 17 | Chômage non dégradé |
+| IS maintenu à 25 % (variante d'O-08) | 1,61 % | 9,01 % | 0,9407 | oui / oui / oui | 17 | Déficit sous le plafond juridique |
+| Norme renforcée de 100 pb de plus (variante d'O-55) | 0,87 % | 9,49 % | 0,9401 | oui / oui / oui | 17 | Chômage non dégradé |
+| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 1,91 % | 8,99 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans le rétrofit électrique (O-138) | 1,91 % | 8,98 % | 0,9407 | oui / oui / oui | 17 | SNBC-3 : 15 % de voitures électriques en 2030 |
+| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 1,98 % | 8,98 % | 0,9407 | oui / oui / oui | 18 | — |
+| Biokérosène compté au prorata des ventes (variante d'O-142) | 1,93 % | 8,98 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans le frein automatique (O-143) | 1,93 % | 8,98 % | 0,9407 | oui / oui / oui | 17 | Déficit sous le plafond juridique |
+| Frein à 4,5 % et 2 points (variante d'O-143) | 1,56 % | 9,12 % | 0,9406 | oui / oui / oui | 17 | Chômage non dégradé |
+| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 1,94 % | 8,98 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans les pôles régionaux (O-146 à O-146d) | 1,92 % | 8,99 % | 0,9407 | oui / oui / oui | 18 | — |
+| Métro accessible : variante réaliste (O-147) | 1,89 % | 9,02 % | 0,9407 | oui / oui / oui | 18 | — |
+| Sans le métro accessible (O-147) | 1,88 % | 9,03 % | 0,9407 | oui / oui / oui | 18 | — |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -2125,8 +2157,8 @@ sur 28) :
    professionnels et dépôts sauvages évités, faute de données nationales.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
    des marges minimales de 0,34 point en 2032 (demande), 0,38 point en 2032 (offre), 0,37 point en 2032 (équilibre). Sans la deuxième journée de
-   solidarité (O-84), le déficit 2035 serait de 2,15 %.
-5. **Chômage.** 9,03 % en 2035 contre 7,91 % sans programme : la propriété
+   solidarité (O-84), le déficit 2035 serait de 2,21 %.
+5. **Chômage.** 8,98 % en 2035 contre 7,91 % sans programme : la propriété
    porte sur 2030, où le programme fait légèrement mieux que le tendanciel
    (contrats aidés O-127, postes publics, accompagnement O-26b et O-77).
    La norme de dépense et les réductions d'exonérations (O-56, O-61)
@@ -2182,6 +2214,12 @@ sur 28) :
     n'entre en service qu'en 2034, avec une technologie qui ne produit
     encore nulle part en mine ; des batteries de même capacité coûteraient
     ≈ 0,85 à 2 Md€ et seraient prêtes en un à deux ans.
+16. **Métro accessible (O-147).** La mesure suit la demande de l'auteur
+    (tout le métro en 2035), mais suppose ≈ 38 stations rendues accessibles
+    chaque année, contre 2 à 4 aujourd'hui à Paris et dix au mieux à
+    Londres ou New York. La variante réaliste (ligne 6 et 50 stations de
+    correspondance en 2035, 34 % des stations parisiennes, le reste vers
+    2045-2050) coûte 4,3 Md€ sur la période au lieu de 20,3 Md€.
 
 ## Pistes pour compléter
 
@@ -2199,15 +2237,15 @@ O-83 et O-121).
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,07 pt | +0,5 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,12 pt | −0,05 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,10 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,10 pt | +0,9 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,03 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,16 pt | −0,09 pt | +0,8 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,24 pt | −0,11 pt | +1,0 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,1 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,06 pt | +0,5 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,12 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,27 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,17 pt | −0,09 pt | +0,8 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,03 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,17 pt | −0,08 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,24 pt | −0,10 pt | +1,0 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | +0,00 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
 chiffrage s'y ajouterait sans le corriger de ce recouvrement. La
@@ -2222,7 +2260,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 58 mesures sur 157 reposent au moins en partie sur une hypothèse ; les plus
+* 58 mesures sur 158 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,47 point, O-44 : −0,46 point, O-58 : −0,43 point, O-07 : +0,36 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
