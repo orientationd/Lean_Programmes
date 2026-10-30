@@ -2298,10 +2298,17 @@ theorem dechetteries_valeurs : recettesProsDechetteries recettesProsCentimesParH
 propriétés non tenues (parc électrique de 2030, LPM 2024-2030).
 
 * O-138 : rétrofit électrique massif des voitures thermiques (arrêté du
-  13 mars 2020, levier `retrofitElectrique` du modèle commun). Les ventes
-  neuves du programme sont déjà entièrement électriques : seules des
-  conversions ajoutent des voitures électriques au parc de 2030, où il en
-  manque ≈ 520 000 pour 15 %. 135 000 conversions par an de 2027 à 2030
+  13 mars 2020, levier `retrofitElectrique` du modèle commun). Il manque
+  ≈ 520 000 voitures électriques au parc de 2030 pour 15 %. Les ventes
+  neuves y sont électriques à 63 % (1,05 million sur 1,665) : une aide en
+  achète peu, l'aubaine absorbant l'essentiel (O-05, O-128) ; une
+  obligation sur les ventes ou les flottes en ajouterait : la variante
+  oblige les flottes d'entreprises et de location à acheter électrique,
+  100 000 voitures de plus chaque année jusqu'à 400 000 en 2030
+  (hypothèse ; les personnes morales achètent une grande part des voitures
+  neuves), soit ≈ 1,1 million de voitures électriques de plus en 2030,
+  sans coût public ; une conversion, elle, ajoute une voiture électrique
+  au parc sans passer par les ventes neuves. 135 000 conversions par an de 2027 à 2030
   (540 000), l'ordre de grandeur du scénario haut de l'ADEME (510 600
   voitures rétrofitées fin 2028 ; « Conditions nécessaires à un rétrofit
   économe, sûr et bénéfique pour l'environnement », mai 2021, d'après le
@@ -2313,8 +2320,10 @@ propriétés non tenues (parc électrique de 2030, LPM 2024-2030).
   2024 ; 15 000 à 20 000 € selon le ministère de la Transition écologique,
   20 novembre 2025) ; consentement à payer ≈ 3 000 € (Forum Vies Mobiles) :
   aide de 14 500 € (calcul ; la prime actuelle va jusqu'à 5 000 €). Part
-  importée du kit : 60 % (hypothèse : cellules de batterie importées, 50 à
-  70 %). Vignette Crit'Air : moyenne du parc. CO₂ évité : 1,7 t par voiture
+  importée : 60 % du kit (hypothèse : cellules de batterie importées, 50 à
+  70 %), le kit faisant 12 350 € d'un prix de 21 000 € (ADEME, 2021), soit
+  35 % de la valeur de la conversion (calcul). Vignette Crit'Air : moyenne
+  du parc. CO₂ évité : 1,7 t par voiture
   et par an (axe énergie ; 1,3 à 1,5 t avec la fabrication du kit, que
   l'inventaire ne compte pas).
 * O-139 : drones de masse et bouclier anti-drones des points d'importance
@@ -2331,12 +2340,14 @@ propriétés non tenues (parc électrique de 2030, LPM 2024-2030).
   30 en 2029 et 20 en 2030 (hypothèse), sur 1 369 points d'importance vitale
   (SGDSN) ; fonctionnement non compté. Le programme réduit la défense de
   1 Md€ (O-43) : la mesure garde la dépense au-dessus de la trajectoire de
-  la LPM chaque année jusqu'en 2030. -/
+  la LPM chaque année jusqu'en 2030, de 107 à 169 M€ seulement. Risque :
+  120 systèmes dès 2027, quand la tranche ferme de PARADE n'en compte que
+  six. -/
 def coutRetrofitEuros : Int := 17500
 def consentementRetrofitEuros : Int := 3000
 def aideRetrofitEuros : Int := coutRetrofitEuros - consentementRetrofitEuros
 def retrofitsParAn : Int := 135000
-def partImporteeKitPm : Int := 600
+def partImporteeKitPm : Int := 600 * 12350 / 21000
 def anneesRetrofit : Nat := 4
 def coutDronesParAn : Int := (3000 * 110000 + 25000 * 4000 + 20000 * 1000) / 1000000
 def coutSystemeAntiDroneKEuros : Int := 33000 / 6
@@ -2344,7 +2355,7 @@ def systemesAntiDrones : List Int := [120, 80, 30, 20]
 def defenseOriginale : List Int :=
   systemesAntiDrones.map (fun n => n * coutSystemeAntiDroneKEuros / 1000 + coutDronesParAn) ++ [coutDronesParAn]
 
-theorem originales_valeurs : aideRetrofitEuros = 14500 ∧
+theorem originales_valeurs : aideRetrofitEuros = 14500 ∧ partImporteeKitPm = 352 ∧
     retrofitsParAn * aideRetrofitEuros / 1000000 = 1957 ∧
     coutDronesParAn = 450 ∧ coutSystemeAntiDroneKEuros = 5500 ∧
     defenseOriginale = [1110, 890, 615, 560, 450] := by decide
@@ -2363,22 +2374,30 @@ theorem originales_valeurs : aideRetrofitEuros = 14500 ∧
   ha par an retenus sous le ZAN (hypothèse), dont 69 % vendus (10 400 /
   15 119, calcul). Les taxes existantes (articles 1529 et 1605 nonies du
   CGI, ≈ 100 M€ en 2022, exposé des motifs de l'amendement I-637 au PLF
-  2025) sont remplacées. Impôt sur une rente : imputé aux impôts sur le
-  patrimoine (incidence faible sur l'activité).
+  2025) sont remplacées. Périmètre : première vente de tout terrain devenu
+  constructible, y compris avant la réforme (comme l'article 1605 nonies
+  pour les terrains devenus constructibles depuis 2010), hypothèse ;
+  rétention foncière (ventes retardées) : 20 % de l'assiette (hypothèse) ;
+  la moitié du rendement la première année (hypothèse) ; une partie des
+  acheteurs sont des personnes publiques (non déduite). Impôt sur une
+  rente : imputé aux impôts sur le patrimoine (incidence faible sur
+  l'activité).
 * O-141 : contribution de 50 % sur la rémunération des réserves
   excédentaires des banques à la Banque de France (taux de la facilité de
   dépôt, toutes les réserves excédentaires depuis la décision ECB/2026/10).
   Dépôts des banques à la Banque de France : 506,6 Md€ en juin 2026, pour
-  2 177 Md€ de liquidité excédentaire de la zone euro (BCE, Bulletin
-  économique 6/2026), soit ≈ 21 % (calcul, réserves obligatoires de ≈ 40 Md€
-  déduites, hypothèse). Liquidité excédentaire : 2 201 Md€ mi-2026, moins
-  la baisse des portefeuilles de politique monétaire (3 458 Md€ mi-2026 ;
-  3 088, 2 631, 2 240 et 1 884 Md€ en fin d'année de 2027 à 2030, enquête de
-  la BCE auprès des analystes monétaires, septembre 2026), plus
-  ≈ 120 Md€ de refinancement : 1 830, 1 375, 985 et 750 Md€ (calcul),
-  800 Md€ retenus en 2030 ; taux de la facilité de dépôt : 2,50 %, 2,25 %,
-  2,10 % et 2,00 % (même enquête, moyennes annuelles arrondies, calcul).
-  Érosion de l'assiette de 20 % (déplacement des réserves, hypothèse).
+  2 177 Md€ de liquidité excédentaire de la zone euro (moyenne du 17 juin au
+  28 juillet 2026, BCE, Bulletin économique 6/2026), soit ≈ 21 % (calcul,
+  réserves obligatoires de ≈ 40 Md€ déduites, hypothèse). Liquidité
+  excédentaire : 2 177 Md€ mi-2026, moins la baisse des portefeuilles de
+  politique monétaire (3 458 Md€ mi-2026 ; 3 088, 2 631, 2 240 et 1 884 Md€
+  en fin d'année de 2027 à 2030, enquête de la BCE auprès des analystes
+  monétaires, septembre 2026) : 1 807, 1 350, 959 et 603 Md€ (calcul) ;
+  taux de la facilité de dépôt : 2,50 %, 2,25 %, 2,10 % et 2,00 % (même
+  enquête, moyennes annuelles arrondies, calcul). Érosion de l'assiette de
+  20 % (déplacement des réserves, hypothèse). Montants de chaque année
+  ramenés en euros 2027 (3 % de croissance nominale par an, convention
+  d'O-59), l'échéancier étant indexé sur le PIB nominal.
   Risque juridique élevé : la rémunération des réserves relève de la BCE,
   qui juge défavorablement les taxes bancaires nationales (avis CON/2023/9,
   CON/2023/26). Imputée à l'impôt sur les sociétés ; 2030 reconduit. -/
@@ -2387,18 +2406,27 @@ def partVenduePm : Int := 10400 * 1000 / 15119
 def plusValueEurosParHa : Int := 2390000000 / 10400 - 6400
 def tauxCaptationPm : Int := 500
 def taxesExistantesUrbanisme : Int := 100
-def captationPlusValues : Int :=
+def retentionFoncierePm : Int := 200
+def captationBrute : Int :=
   surfacesConsommeesHa * partVenduePm / 1000 * plusValueEurosParHa / 1000000 * tauxCaptationPm / 1000
-    - taxesExistantesUrbanisme
+    * (1000 - retentionFoncierePm) / 1000
+def captationPlusValues : List Int := [captationBrute / 2 - taxesExistantesUrbanisme, captationBrute - taxesExistantesUrbanisme]
 def partFranceReservesPm : Int := 210
-def liquiditeExcedentaireMdEuros : List Int := [1830, 1375, 985, 800]
+def liquiditeMi2026MdEuros : Int := 2177
+def portefeuilleMi2026MdEuros : Int := 3458
+def portefeuillesFinAnnee : List Int := [3088, 2631, 2240, 1884]
+def liquiditeExcedentaireMdEuros : List Int :=
+  portefeuillesFinAnnee.map fun p => liquiditeMi2026MdEuros - (portefeuilleMi2026MdEuros - p)
 def tauxDepotPb : List Int := [250, 225, 210, 200]
+def indicesNominauxPdm : List Int := [10000, 10300, 10609, 10927]
 def contributionReserves : List Int :=
-  (liquiditeExcedentaireMdEuros.zip tauxDepotPb).map fun (l, t) =>
-    l * partFranceReservesPm / 1000 * t / 10 * 500 / 1000 * 800 / 1000
+  ((liquiditeExcedentaireMdEuros.zip tauxDepotPb).zip indicesNominauxPdm).map fun ((l, t), i) =>
+    l * partFranceReservesPm / 1000 * t / 10 * 500 / 1000 * 800 / 1000 * 10000 / i
 
 theorem recettes_originales_valeurs : partVenduePm = 687 ∧ plusValueEurosParHa = 223407 ∧
-    captationPlusValues = 820 ∧ contributionReserves = [3840, 2592, 1730, 1344] := by decide
+    captationBrute = 736 ∧ captationPlusValues = [268, 636] ∧
+    liquiditeExcedentaireMdEuros = [1807, 1350, 959, 603] ∧
+    contributionReserves = [3789, 2471, 1591, 922] := by decide
 
 /-- Biokérosène et frein automatique (O-142, O-143).
 
@@ -2416,7 +2444,10 @@ theorem recettes_originales_valeurs : partVenduePm = 687 ∧ plusValueEurosParHa
   répartit le biokérosène au prorata des ventes de chaque aéroport, et
   l'inventaire n'en compterait alors que ≈ 20 % (variante). Production
   française : 210 à 285 kt par an à Grandpuits (Argus, 20 mars 2025),
-  pour ≈ 190 kt nécessaires en 2030.
+  absorbés par les 6 % de ReFuelEU sur tout l'avitaillement en France
+  (≈ 0,4 Mt) : les ≈ 190 kt de plus seraient importés (fuite de la dépense
+  non modélisée). ReFuelEU impose 20 % en 2035 : l'écart disparaît cette
+  année-là (O-142b). Surcoût imputé aux affaires économiques.
 * O-143 : frein automatique au déficit, sur le modèle du frein à
   l'endettement suisse (art. 126 de la Constitution fédérale, 2003) et
   allemand (art. 115 de la Loi fondamentale) : toute année où le déficit
@@ -2424,7 +2455,14 @@ theorem recettes_originales_valeurs : partVenduePm = 687 ∧ plusValueEurosParHa
   durcie de 5 points l'année suivante (levier `freinDeficit`). Seuil et
   intensité calés pour ne jouer que dans les scénarios défavorables
   (hypothèse) : au scénario central, le déficit du programme ne dépasse pas
-  5,04 % (2027) et le frein ne joue pas. -/
+  4,98 % (2027) et le frein ne joue pas. Il joue dans 12 scénarios sur 36
+  (pétrole à 100 $ ou croissance basse) : la dépense de 2030 y baisse de
+  41 à 43 Md€ (≈ 1,2 à 1,3 point de PIB) et le chômage monte de 0,2 à
+  0,4 point ; « chômage non dégradé » y passe de 24 à 20 scénarios sur 36.
+  À la différence des freins suisse et allemand, qui portent sur un solde
+  corrigé du cycle, corrigent progressivement et ont une clause d'urgence,
+  il est pro-cyclique : il durcit la dépense quand la conjoncture est
+  mauvaise. -/
 def kerosineDomestiqueKt : Int := 4200 * 100 / 315
 def pointsBiokerosenePm : Int := 35
 def biokeroseneAnnuelKt : Int := kerosineDomestiqueKt * pointsBiokerosenePm / 1000
@@ -2441,11 +2479,12 @@ theorem biokerosene_valeurs : kerosineDomestiqueKt = 1333 ∧ biokeroseneAnnuelK
 
 /-- Énergie (O-144, O-145).
 
-* O-144 : conversion des centrales au fioul des outre-mer (Pointe Jarry en
-  Guadeloupe, Bellefontaine en Martinique, Mayotte) au bioliquide de colza
-  en 2027 et 2028, au lieu de 2033 (plan « Émeraude » d'EDF : ≈ 2,5 Mt de
-  CO₂ évitées par an après conversion de toutes ses îles, AFP, 4 octobre
-  2023). Déjà engagés, donc dans la tendance : Port Est (La Réunion,
+* O-144 : conversion des centrales au fioul d'EDF encore à convertir dans
+  les outre-mer (notamment Pointe Jarry en Guadeloupe et Bellefontaine en
+  Martinique) au bioliquide de colza en 2027 et 2028, au lieu de 2033 (plan
+  « Émeraude » d'EDF : ≈ 2,5 Mt de CO₂ évitées par an après conversion de
+  toutes ses îles, AFP, 4 octobre 2023 ; Mayotte, desservie par Électricité
+  de Mayotte, n'en fait pas partie). Déjà engagés, donc dans la tendance : Port Est (La Réunion,
   ≈ 280 kt par an), Larivot (Guyane, février 2027), Ricanto (Corse). Reste
   ≈ 1,5 Mt par an (1,4 à 1,6), en deux étapes de 750 kt (hypothèse).
   Surcoût au ratio de Port Est : 74 M€ par an de charges de service public
@@ -2453,11 +2492,18 @@ theorem biokerosene_valeurs : kerosineDomestiqueKt = 1333 ∧ biokeroseneAnnuelK
   tonne (calcul). Les émissions des outre-mer de l'Union sont dans
   l'inventaire (Citepa, Secten 2026) ; leur électricité n'est pas dans la
   production de métropole du modèle (sans effet sur la part renouvelable).
+  En 2033, date du plan d'EDF, la conversion aurait eu lieu sans la
+  mesure : ses effets sortent cette année-là (O-144b). Surcoût imputé aux
+  affaires économiques, comme le raccordement des zones non
+  interconnectées ; le bioliquide est importé (fuite non modélisée).
 * O-145 : fin du soutien public aux cogénérations au gaz à l'échéance des
   contrats : charges « cogénération et autres thermiques » de 600,7 M€ en
   2027 (CRE, délibération 2026-149, annexe 1, 15 juillet 2026), éteintes en
-  quatre ans (hypothèse). L'effet sur les émissions, faible et incertain (la
-  chaleur serait produite autrement), n'est pas compté. -/
+  quatre ans (hypothèse). Hypothèses : à la tendance, les contrats échus
+  seraient renouvelés (la dépense de la fonction reconduit ces charges) ;
+  la ligne « cogénération et autres thermiques » de la CRE est surtout
+  faite de cogénérations au gaz. L'effet sur les émissions, faible et
+  incertain (la chaleur serait produite autrement), n'est pas compté. -/
 def emissionsZniEviteesKt : Int := 750
 def coutTonneZniEuros : Int := 74000000 / 280000
 def coutZni : Int := emissionsZniEviteesKt * coutTonneZniEuros / 1000
@@ -3529,38 +3575,51 @@ def mesures : List Mesure := [
 
   { id := "O-138"
     titre := "Rétrofit électrique massif : 540 000 voitures thermiques converties de 2027 à 2030"
-    source := s!"Mesure originale (octobre 2026) ; {retrofitsParAn} conversions par an pendant quatre ans, ordre de grandeur du scénario haut de l'ADEME (2021) ; aide de {aideRetrofitEuros} € (17 500 € de coût moins 3 000 € de consentement à payer, Forum Vies Mobiles 2024) ; 60 % du kit importé (hypothèse) ; risque d'exécution très élevé (≈ 740 conversions par an en 2025) (voir `aideRetrofitEuros`)"
+    source := s!"Mesure originale (octobre 2026) ; {retrofitsParAn} conversions par an pendant quatre ans, ordre de grandeur du scénario haut de l'ADEME (2021) ; aide de {aideRetrofitEuros} € (17 500 € de coût moins 3 000 € de consentement à payer, Forum Vies Mobiles 2024) ; 60 % du kit importé (hypothèse), soit 35 % de la valeur de la conversion ; risque d'exécution très élevé (≈ 740 conversions par an en 2025) (voir `aideRetrofitEuros`)"
     leviers := [.retrofitElectrique retrofitsParAn aideRetrofitEuros partImporteeKitPm 0]
-    repetitions := anneesRetrofit },
+    repetitions := anneesRetrofit
+    variantes := [{ nom := "obligation de verdissement des flottes d'entreprises et de location, +100 000 voitures par an chaque année, sans coût public (hypothèse)", leviers :=
+      [.aideAchatElectrique 100000 0 .obligation] }] },
   { id := "O-139"
     titre := "Drones de masse et bouclier anti-drones des points d'importance vitale"
     source := s!"Mesure originale (octobre 2026), en plus de la loi n° 2026-791 ; drones : {coutDronesParAn} M€ par an (3 000 munitions téléopérées longue portée à 110 000 €, 25 000 FPV à 4 000 €, 20 000 micro-drones à 1 000 €) ; anti-drones : {systemesAntiDrones} systèmes de type PARADE à 5,5 M€ de 2027 à 2030 ; {defenseOriginale} M€ (voir `defenseOriginale`)"
     leviers := [.depenseEcheancier .defense defenseOriginale] },
   { id := "O-140"
     titre := "Captation de la moitié de la plus-value des terrains rendus constructibles"
-    source := s!"Mesure originale (octobre 2026), sur le modèle suisse (au moins 20 %, loi sur l'aménagement du territoire) ; 12 000 ha consommés par an (hypothèse, 15 119 en 2024, Cerema), dont 69 % vendus, 223 400 € de plus-value par ha (Safer 2024, calcul), taux de 50 %, moins les taxes existantes (≈ 100 M€) : {captationPlusValues} M€ (voir `captationPlusValues`)"
-    leviers := [.prelevementSur .patrimoine captationPlusValues] },
+    source := s!"Mesure originale (octobre 2026), sur le modèle suisse (au moins 20 %, loi sur l'aménagement du territoire) ; 12 000 ha consommés par an (hypothèse, 15 119 en 2024, Cerema), dont 69 % vendus, 223 400 € de plus-value par ha (Safer 2024, calcul), taux de 50 %, rétention foncière de 20 % (hypothèse), moins les taxes existantes (≈ 100 M€) ; moitié la première année : {captationPlusValues} M€ (voir `captationPlusValues`)"
+    leviers := [.recetteEcheancier (some .patrimoine) captationPlusValues] },
   { id := "O-141"
     titre := "Contribution de 50 % sur la rémunération des réserves excédentaires des banques"
-    source := s!"Mesure originale (octobre 2026) ; ≈ 21 % de la liquidité excédentaire de la zone euro (Banque de France, BCE), en baisse avec la réduction des portefeuilles de politique monétaire (enquête de la BCE, septembre 2026), au taux de la facilité de dépôt, érosion de 20 % : {contributionReserves} M€ de 2027 à 2030 (voir `contributionReserves`) ; risque juridique élevé (compétence de la BCE)"
+    source := s!"Mesure originale (octobre 2026) ; ≈ 21 % de la liquidité excédentaire de la zone euro (Banque de France, BCE), en baisse avec la réduction des portefeuilles de politique monétaire (enquête de la BCE, septembre 2026), au taux de la facilité de dépôt, érosion de 20 % : {contributionReserves} M€ (euros 2027) de 2027 à 2030 (voir `contributionReserves`) ; risque juridique élevé (compétence de la BCE)"
     leviers := [.recetteEcheancier (some .impotSocietes) contributionReserves] },
   { id := "O-142"
     titre := "Biokérosène porté à 20 % du kérosène des vols intérieurs en 2030, surcoût payé par l'État"
     source := s!"Demande de l'auteur (octobre 2026) ; 3,5 points de plus par an de 2027 à 2030 au-delà de ReFuelEU (6 % en 2030) : {biokeroseneAnnuelKt} kt de plus chaque année (1,33 Mt de kérosène domestique, Citepa 2024, calcul), {biokeroseneEviteKt} kt de CO₂ évitées (3,15 t par t) pour {biokeroseneCout} M€ (surcoût du HEFA de 1 285 €/t, EASA 2025) ; biokérosène affecté aux vols intérieurs (hypothèse ; variante : répartition au prorata, DGAC) (voir `biokeroseneAnnuelKt`)"
-    leviers := [.transitionKt .transports biokeroseneEviteKt biokeroseneCout]
+    leviers := [.transitionKt .transports biokeroseneEviteKt 0, .depenseSur .affairesEconomiques biokeroseneCout]
     repetitions := anneesBiokerosene
     variantes := [{ nom := "répartition au prorata des ventes (DGAC) : ≈ 20 % de l'effet compté", leviers :=
-      [.transitionKt .transports biokeroseneProrataKt biokeroseneCout] }] },
+      [.transitionKt .transports biokeroseneProrataKt 0, .depenseSur .affairesEconomiques biokeroseneCout] }] },
+  { id := "O-142b"
+    titre := "Biokérosène : ReFuelEU impose 20 % en 2035, l'écart de la mesure disparaît"
+    source := s!"Règlement (UE) 2023/2405, annexe I : 20 % de carburant aviation durable en 2035 ; les {anneesBiokerosene * biokeroseneEviteKt} kt et {anneesBiokerosene * biokeroseneCout} M€ d'O-142 sortent en 2035"
+    leviers := [.transitionKt .transports (0 - (anneesBiokerosene : Int) * biokeroseneEviteKt) 0,
+                .depenseSur .affairesEconomiques (0 - (anneesBiokerosene : Int) * biokeroseneCout)]
+    debut := 8 },
   { id := "O-143"
     titre := "Frein automatique au déficit : au-delà de 5,5 % du PIB, norme de dépense durcie de 5 points l'année suivante"
-    source := s!"Mesure originale (octobre 2026), sur le modèle des freins à l'endettement suisse et allemand ; seuil de {freinSeuilPb} pb, durcissement de {freinNormePb} pb de la norme des fonctions pilotables (santé, affaires économiques, sécurité et justice, logement et environnement, culture, services généraux) l'année qui suit un déficit au-dessus du seuil ; calé pour ne jouer que dans les scénarios défavorables (hypothèse)"
+    source := s!"Mesure originale (octobre 2026), inspirée des freins à l'endettement suisse et allemand (qui portent, eux, sur le solde corrigé du cycle) ; seuil de {freinSeuilPb} pb, durcissement de {freinNormePb} pb de la norme des fonctions pilotables (santé, affaires économiques, sécurité et justice, logement et environnement, culture, services généraux) l'année qui suit un déficit au-dessus du seuil ; calé pour ne jouer que dans les scénarios défavorables (hypothèse)"
     leviers := [.freinDeficit freinSeuilPb freinNormePb]
-    variantes := [{ nom := "seuil de 5 %, durcissement de 2 points", leviers := [.freinDeficit 500 200] }] },
+    variantes := [{ nom := "seuil de 4,5 %, durcissement de 2 points (joue au scénario central)", leviers := [.freinDeficit 450 200] }] },
   { id := "O-144"
     titre := "Centrales au fioul des outre-mer converties au bioliquide dès 2027-2028"
     source := s!"Mesure originale (octobre 2026) : avance de cinq ans le plan « Émeraude » d'EDF (≈ 2,5 Mt par an en 2033) pour Pointe Jarry, Bellefontaine et Mayotte ; {emissionsZniEviteesKt} kt évitées par an en 2027 et en 2028 (1,5 Mt hors Port Est, Larivot et Ricanto, déjà engagés) ; {coutZni} M€ de charges de service public par étape ({coutTonneZniEuros} €/t, ratio de Port Est, CRE 2022) (voir `coutZni`)"
-    leviers := [.transitionKt .energie emissionsZniEviteesKt coutZni]
+    leviers := [.transitionKt .energie emissionsZniEviteesKt 0, .depenseSur .affairesEconomiques coutZni]
     repetitions := 2 },
+  { id := "O-144b"
+    titre := "Centrales des outre-mer : en 2033, la conversion aurait eu lieu sans la mesure"
+    source := s!"Plan « Émeraude » d'EDF (2033) : les {2 * emissionsZniEviteesKt} kt et {2 * coutZni} M€ d'O-144 sortent en 2033, la tendance les rejoignant"
+    leviers := [.transitionKt .energie (0 - 2 * emissionsZniEviteesKt) 0, .depenseSur .affairesEconomiques (0 - 2 * coutZni)]
+    debut := 6 },
   { id := "O-145"
     titre := "Fin du soutien public aux cogénérations au gaz à l'échéance des contrats"
     source := s!"Mesure originale (octobre 2026) ; 600,7 M€ de charges de service public pour la cogénération et les autres thermiques en 2027 (CRE, délibération 2026-149), éteints en quatre ans (hypothèse) : {extinctionCogenerations} M€ ; effet sur les émissions non compté"

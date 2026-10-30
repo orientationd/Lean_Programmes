@@ -1131,7 +1131,7 @@ structure Etat where
   moderationDepensesPb : Int := 0
   /-- Frein automatique au déficit (levier `freinDeficit`) : seuil de déficit,
   pb du PIB, au-delà duquel la norme de dépense est durcie l'année suivante
-  (0 : pas de frein). -/
+  (le frein est actif dès que `freinDeficitPb` n'est pas nul). -/
   freinDeficitSeuilPb : Int := 0
   /-- Durcissement de la norme de dépense, pb, l'année qui suit un déficit
   au-dessus du seuil. -/

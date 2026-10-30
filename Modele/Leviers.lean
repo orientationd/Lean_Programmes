@@ -213,7 +213,7 @@ inductive Levier where
   `normeDepense`, mais pour cette seule année : le niveau de dépense reste
   plus bas). Le frein ne joue que dans les scénarios où le déficit dépasse
   le seuil ; l'économie passe par le multiplicateur, pondérée par le
-  moteur. -/
+  moteur. Un programme n'a qu'un frein : un second levier le remplace. -/
   | freinDeficit (seuilPb : Int) (moderationPb : Int)
   /-- Recette à échéancier : impôt (`some i`, avec effet de demande pondéré
   comme un prélèvement) ou recette non fiscale (`none`, sans effet de
@@ -880,7 +880,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .importationsNiveau d, s => { s with importations := s.importations + d }
   | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
   | .freinDeficit seuil m, s =>
-      { s with freinDeficitSeuilPb := seuil, freinDeficitPb := s.freinDeficitPb + m }
+      { s with freinDeficitSeuilPb := seuil, freinDeficitPb := m }
   | .recetteEcheancier _ [], s => s
   | .recetteEcheancier i (n :: reste), s =>
       let e : EcheanceRecette := { impot := i, restants := reste, niveau := n, indice := 10000 }

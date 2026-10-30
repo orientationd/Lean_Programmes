@@ -280,9 +280,8 @@ theorem lpm_tendanciel :
 
 /-- Rétrofit : 100 000 conversions par an pendant cinq ans ajoutent
 exactement 500 000 voitures électriques au parc (pas d'aubaine ni de limite
-des ventes neuves), et évitent 1,7 t de CO₂ par voiture et par an, soit
-≥ 0,8 Mt en cinq ans ; l'aide de 5 000 € est une dépense de 500 M€ l'année
-de la conversion. -/
+des ventes neuves), et évitent 1,7 t de CO₂ par voiture et par an, soit au
+moins 0,8 Mt par an la cinquième année. -/
 def retrofit : Programme :=
   { id := "R", nom := "R", description := "", mainteneurs := [], source := "",
     mesures := [{ id := "R-1", titre := "", source := ""

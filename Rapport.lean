@@ -288,15 +288,26 @@ def horizonSynthese : Nat := 10
 
 def sourcesJson (l : List String) : Json := toJson l
 
+/-- Mesure dont l'effet dépend de l'état de l'économie (frein automatique
+au déficit) : seule sur le tendanciel, elle jouerait là où le programme
+complet ne la déclenche pas. -/
+def mesureConditionnelle (m : Mesure) : Bool :=
+  m.leviers.any fun l => match l with
+    | .freinDeficit .. => true
+    | _ => false
+
 /-- Effet d'une mesure prise isolément : le programme réduit à cette seule
 mesure, projeté `n` années sous le scénario central, comparé au tendanciel
 et au programme complet. Mesure la contribution de chaque mesure à la
-croissance, au solde et à l'emploi. -/
+croissance, au solde et à l'emploi. Une mesure conditionnelle
+(`mesureConditionnelle`) est mesurée par différence : programme complet
+moins programme sans elle. -/
 def effetMesure (M : Moteur) (p : Programme) (m : Mesure) (n : Nat) : Json :=
   let H := Hypotheses.central
   let seul : Programme := { p with mesures := [m] }
-  let a := tendancielA M H n
-  let s := seul.resultatA M H n
+  let sans : Programme := { p with mesures := p.mesures.filter (·.id ≠ m.id) }
+  let a := if mesureConditionnelle m then sans.resultatA M H n else tendancielA M H n
+  let s := if mesureConditionnelle m then p.resultatA M H n else seul.resultatA M H n
   Json.mkObj [
     ("mesure", toJson m.id), ("moteur", toJson M.id),
     ("pibPb", toJson (ratioPb (s.pib - a.pib) a.pib)),
