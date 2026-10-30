@@ -780,6 +780,107 @@ def section_resume(D: Donnees, meta) -> list:
     return out
 
 
+COULEURS_BENEFICIAIRES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#6250d6"]
+
+
+def beneficiaires_meta(D: Donnees) -> list[dict]:
+    return D.d["beneficiairesInterets"]["beneficiaires"]
+
+
+def barres_beneficiaires(D: Donnees):
+    """Charge d'intérêts de la dernière année, empilée par bénéficiaire : une
+    barre par ligne (tendanciel puis programmes)."""
+    bens = beneficiaires_meta(D)
+    lignes = D.lignes()
+    n = len(lignes)
+    fig, ax = figure(0.2 * n + 1.25)
+    totaux = []
+    for k, (pid, _nom) in enumerate(lignes):
+        r = D.fin("central", pid)["interetsBeneficiaires"]
+        gauche = 0.0
+        for j, b in enumerate(bens):
+            v = r[b["id"]] / 1000
+            ax.barh(k, v, left=gauche, height=0.66, color=COULEURS_BENEFICIAIRES[j],
+                    edgecolor="white", linewidth=0.8, zorder=3,
+                    label=b["nom"] if k == 0 else None)
+            gauche += v
+        totaux.append(gauche)
+    for k, t in enumerate(totaux):
+        ax.annotate(nombre(t, 0), (t, k), xytext=(3, 0), textcoords="offset points",
+                    va="center", fontsize=6.8, color=INK2)
+    ax.set_yticks(range(n), [court_nom(nom, 30) for _pid, nom in lignes])
+    ax.set_ylim(n - 0.5, -0.5)
+    ax.tick_params(axis="y", labelcolor=INK2, labelsize=6.8)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", visible=True)
+    ax.set_xlim(0, max(totaux) * 1.08)
+    ax.xaxis.set_major_formatter(fmt_axe(0, ""))
+    ax.set_title(f"Charge d'intérêts {D.annees[-1]} par bénéficiaire (Md€), scénario central")
+    legende(fig, ncol=3)
+    return fig
+
+
+def section_beneficiaires(D: Donnees) -> list:
+    """Répartition de la charge d'intérêts entre ses bénéficiaires (calculée par
+    le modèle Lean, `Hypotheses/DetentionDette.lean`) ; ratios d'affichage ici."""
+    a0, a1 = D.annees[0], D.annees[-1]
+    meta = D.d["beneficiairesInterets"]
+    bens = beneficiaires_meta(D)
+    pf = meta["portefeuilleBdfMeur"]
+    st = meta["structureDixMilliemes"]
+    t0, t1 = D.traj("central", None)[0], D.fin("central", None)
+
+    def part(e, bid):
+        return e["interetsBeneficiaires"][bid] * 100 / e["chargeInterets"]
+
+    intro = (
+        "Les intérêts de la dette publique sont versés à ceux qui détiennent ses titres et ses prêts. "
+        "Le modèle les répartit en deux temps. La Banque de France reçoit le rendement de son portefeuille "
+        f"de titres publics français achetés de 2015 à 2022 (programmes APP et PEPP de l'Eurosystème : "
+        f"{nombre(pf[0] / 1000, 0)} Md€ en moyenne en {a0}, ≈ {nombre(pf[-1] / 1000, 0)} Md€ en {a1}, "
+        "au rythme des projections de l'enquête de la BCE de juin 2026, puisque les titres arrivés à échéance "
+        f"ne sont plus réinvestis), à {nombre(meta['rendementBdfPb'] / 100, 2)} % (rendement de 2025). "
+        "Le reste est partagé selon la structure de détention de la dette publique hors banque centrale, "
+        f"fixe : non-résidents {nombre(st['nonResidents'] / 100, 1)} %, banques "
+        f"{nombre(st['banques'] / 100, 1)} %, autres résidents {nombre(st['autresResidents'] / 100, 1)} % "
+        f"(Banque de France : {nombre(st['banqueDeFrance'] / 100, 1)} %) de la dette totale fin 2025 "
+        "(FMI, rapport sur la dette annexé au PLF 2027), ces derniers partagés entre assurances, fonds et "
+        "autres comme sur la dette négociable de l'État (Agence France Trésor, premier trimestre 2026). "
+        "Comme la Banque de France voit son portefeuille fondre, ce sont surtout des investisseurs non "
+        f"résidents qui le remplacent : au tendanciel, leur part des intérêts passe de "
+        f"{nombre(part(t0, 'nonResidents'), 0)} % en {a0} à {nombre(part(t1, 'nonResidents'), 0)} % en {a1}, "
+        f"celle de la Banque de France de {nombre(part(t0, 'banqueDeFrance'), 1)} % à "
+        f"{nombre(part(t1, 'banqueDeFrance'), 1)} %.")
+    out = [P("Qui reçoit les intérêts", "h1"), P(intro), png(barres_beneficiaires(D))]
+    rows = []
+    for pid, nom in D.lignes():
+        e = D.fin("central", pid)
+        r = e["interetsBeneficiaires"]
+        rows.append([nom, md(e["chargeInterets"], 1)] + [md(r[b["id"]], 1) for b in bens]
+                    + [pct_pb(r["nonResidents"] * 10000 // e["pib"], 2)])
+    courts = {"nonResidents": "Non-rési­dents", "banqueDeFrance": "Banque de France",
+              "banques": "Banques", "assurances": "Assu­rances", "opc": "Fonds (OPC)",
+              "autres": "Autres rési­dents"}
+    out.append(Spacer(1, 3))
+    out.append(tableau([f"Scénario central, {a1}", "Total"] + [courts.get(b["id"], b["nom"]) for b in bens]
+                       + ["Versés à l'étranger (% PIB)"], rows,
+                       [0.25, 0.08] + [0.083] * len(bens) + [0.172], surligner_premiere=True))
+    out.append(P(
+        "Tableau en Md€ courants. « Non-résidents » comprend les titres détenus en propre par la BCE "
+        "(≈ 1 à 2 points de la dette) ; « Versés à l'étranger » rapporte leurs intérêts au PIB. Les intérêts "
+        "reçus par la Banque de France ne restent pas chez elle : elle rémunère les réserves des banques "
+        "(2,26 % en moyenne en 2025, marge nette de ses portefeuilles APP et PEPP de −12,6 Md€) et ne verse "
+        "plus de dividende à l'État depuis l'exercice 2021 (impôt sur les sociétés de 1,5 Md€ en 2025). "
+        "L'essentiel des intérêts reçus par les assurances revient aux assurés des fonds en euros de "
+        "l'assurance-vie. Limites : la répartition suit les encours, pas les coupons (les BTF, à taux court, "
+        "sont détenus à 84 % par des non-résidents ; les titres indexés, surtout par des résidents) ; aucune "
+        "source officielle ne répartit les intérêts eux-mêmes par bénéficiaire. Sources : Banque de France "
+        "(communiqué du 12 septembre 2026, « Comprendre les comptes 2025 »), BCE (Survey of Monetary "
+        "Analysts, juin 2026), Agence France Trésor (bulletin mensuel n° 434, juillet 2026), rapport sur la "
+        "dette des administrations publiques annexé au PLF 2027.", "note"))
+    return out
+
+
 def section_courbe(D, titre, intro, valeur, titre_fig, dec, suffixe, fmt_table,
                    note=None, ecart=False, reference=None, valeur_table=None):
     out = [P(titre, "h1"), P(intro)]
@@ -1994,6 +2095,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
         lambda v: md(v, 1), valeur_table=lambda e: e["chargeInterets"],
         note="Tableau en Md€. Les opérations financières (prêts de l'État) alourdissent la dette, "
              "donc les intérêts, sans entrer dans le déficit primaire.")
+    story.append(CondPageBreak(150 * mm))
+    story += section_beneficiaires(D)
     story.append(CondPageBreak(110 * mm))
     story += section_courbe(
         D, "Chômage",
