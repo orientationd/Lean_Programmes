@@ -434,7 +434,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let consoMesures := s.consommationMesuresGwh + s.consommationPacHausseGwh
   let consoElec := consoBase + (s.parcElectriqueMilliers + dParc) * El.consommationVoitureKwh / 1000
     + consoMesures
-  let potentiel := (s.capacitesMw.moyenne capacites).production El.facteurChargePm
+  -- stockages des mesures : leur restitution remplace la production
+  -- thermique fossile
+  let potentiel := ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).ajouter
+    .thermique (0 - min s.dechargeStockageGwh ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).thermique)
   let modulation := min potentiel.nucleaire (max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh))
   -- sols : consommation d'espaces (enveloppe du ZAN où s'imputent les
   -- surfaces des mesures, ou rythme d'avant la loi selon l'écart choisi par

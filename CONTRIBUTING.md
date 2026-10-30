@@ -61,6 +61,11 @@ partImportéePm vignetteCritAir` (conversion de voitures thermiques du parc,
 hors limite des ventes neuves et sans aubaine) et `deploiementBornes
 bornesParAn coûtParBorne`.
 
+Stockage d'électricité : `stockageElectrique mw heures cyclesParAn
+rendementPm gCo2ParKwh` (la restitution remplace le thermique fossile de
+pointe, la charge est prise au nucléaire, les pertes s'ajoutent à la
+consommation).
+
 Règle budgétaire : `freinDeficit seuilPb moderationPb` durcit la norme de
 dépense des fonctions pilotables l'année qui suit un déficit au-dessus du
 seuil (frein automatique, qui ne joue que dans les scénarios concernés).

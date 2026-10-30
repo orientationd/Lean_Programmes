@@ -368,6 +368,19 @@ inductive Levier where
   /-- Consommation d'électricité ajoutée par l'électrification d'usages,
   GWh/an (niveau, dès l'année). -/
   | consommationElectrique (gwhParAn : Int)
+  /-- Stockage d'électricité (station de transfert d'énergie par pompage,
+  souterraine ou non ; batteries) : `mw` MW de puissance, `heures` heures de
+  stockage, `cyclesParAn` cycles complets par an, rendement aller-retour
+  `rendementPm`. L'électricité restituée remplace la production thermique
+  fossile de pointe (dans la limite de celle-ci) et évite `gCo2ParKwh` g de
+  CO₂ par kWh dans le secteur de l'énergie ; la charge est prise sur le
+  surplus que le modèle retire au nucléaire (la production nucléaire
+  augmente d'autant), et les pertes (charge moins restitution) s'ajoutent à
+  la consommation. Le modèle, annuel, ne représente pas l'écrêtement du
+  solaire que le stockage éviterait. Le coût passe par les autres leviers
+  de la mesure. -/
+  | stockageElectrique (mw : Int) (heures : Int) (cyclesParAn : Int) (rendementPm : Int)
+      (gCo2ParKwh : Int)
   /-- Régime de zéro artificialisation nette : écart de la consommation
   d'espaces à la trajectoire ZAN, vers celle de la décennie d'avant la loi,
   pm (0 : ZAN maintenu ; 1000 : abrogé). -/
@@ -1029,6 +1042,15 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .consommationElectrique g, s =>
       { s with consommationMesuresGwh := s.consommationMesuresGwh + g
                consommationGwh := s.consommationGwh + g }
+  | .stockageElectrique mw h cycles rend g, s =>
+      let charge := mw * h * cycles / 1000
+      let restitue := charge * rend / 1000
+      let deplace := max 0 (min restitue (s.productionGwh.thermique - s.dechargeStockageGwh))
+      let pertes := charge - deplace
+      { (s.reduireEmissions .energie (deplace * g / 1000)) with
+        consommationMesuresGwh := s.consommationMesuresGwh + pertes
+        consommationGwh := s.consommationGwh + pertes
+        dechargeStockageGwh := s.dechargeStockageGwh + deplace }
   | .regimeZan e, s => { s with ecartZanPm := max s.ecartZanPm e }
   | .artificialisation d hs, s =>
       { s with surfacesMesuresHa := fusionnerSurfaces s.surfacesMesuresHa (hs.map fun h => ({} : ParDestination).ajouter d h) }

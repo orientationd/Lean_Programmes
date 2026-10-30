@@ -198,6 +198,7 @@ def etatObserve (H : Scenario) (base : Etat) (p o : AnneeObservee) : Etat :=
     pertePfuMeur := 0
     moderationDepensesPb := 0
     freinDeficitSeuilPb := 0
+    dechargeStockageGwh := 0
     freinDeficitPb := 0
     electrificationTendanceMilliers := 0
     electrificationAnnuelleMilliers := 0

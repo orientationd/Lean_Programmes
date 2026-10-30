@@ -308,4 +308,19 @@ theorem frein_deficit :
     100 * (t.depensesF.total - toujours.depensesF.total) ≥ t.depensesF.total := by
   decide +kernel
 
+/-- Stockage : 1 000 MW pendant 8 heures, 300 cycles par an, rendement de
+75 % : 2 400 GWh de charge, 1 800 GWh restitués à la place du thermique
+fossile (production thermique de l'année 5 plus basse de 1 800 GWh), la
+charge étant prise au nucléaire (+2 400 GWh) ; à 400 g par kWh, 720 kt de
+CO₂ évitées dans l'énergie la première année, ≈ 650 kt l'année 5 avec la
+baisse tendancielle du secteur. -/
+theorem stockage_electrique :
+    let t := tendancielAn D H 5
+    let r := (mesure (.stockageElectrique 1000 8 300 750 400)).resultatA D H 5
+    t.productionGwh.thermique - r.productionGwh.thermique = 1800 ∧
+    r.productionGwh.nucleaire - t.productionGwh.nucleaire = 2400 ∧
+    600 ≤ t.emissionsKt.energie - r.emissionsKt.energie ∧
+    t.emissionsKt.energie - r.emissionsKt.energie ≤ 720 := by
+  decide +kernel
+
 end Tests.Mecanismes

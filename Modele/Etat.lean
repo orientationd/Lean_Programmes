@@ -1242,6 +1242,9 @@ structure Etat where
   consommationBaseGwh : Int := 0
   /-- Consommation d'électricité ajoutée par les mesures, GWh/an (niveau). -/
   consommationMesuresGwh : Int := 0
+  /-- Électricité restituée par les stockages des mesures à la place de la
+  production thermique fossile, GWh/an (levier `stockageElectrique`). -/
+  dechargeStockageGwh : Int := 0
   /-- Consommation d'électricité de l'année, GWh : base, voitures
   électriques du parc, mesures. -/
   consommationGwh : Int := 0
