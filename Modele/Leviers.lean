@@ -83,6 +83,21 @@ inductive Levier where
   voitures retirées. Effet sur la balance commerciale cumulée : calculé
   par le sous-modèle et affiché dans le rapport à 5 et 10 ans. -/
   | remplacementVehicules (operation : Remplacement)
+  /-- Rétrofit électrique : `vehiculesParAn` voitures thermiques du parc
+  converties chaque année à l'électrique (arrêté du 13 mars 2020), avec une
+  aide publique de `aideEuros` par conversion. À la différence de
+  `aideAchatElectrique`, la voiture n'est pas un achat neuf : la conversion
+  échappe à la limite des ventes neuves, et chaque voiture convertie est une
+  voiture électrique de plus (le rétrofit n'existe presque pas à la
+  tendance, pas d'aubaine). Effet macro : l'aide est une dépense de l'année
+  (logement-environnement), payée aux installateurs (tertiaire marchand),
+  dont la part importée du kit (`partImporteePm`) va aux importations ; la
+  part payée par le ménage n'est pas comptée (comme les autres aides). Puis,
+  en niveau, comme `remplacementVehicules` : parc électrique, CO₂, carburant
+  importé évité, accises et TVA perdues, particules et décès évités selon la
+  vignette Crit'Air (`vignetteCritAir`) des voitures converties. -/
+  | retrofitElectrique (vehiculesParAn : Int) (aideEuros : Int) (partImporteePm : Int)
+      (vignetteCritAir : Nat)
   /-- Prélèvement nouveau affecté à un impôt identifié, rendement statique
   M€/an (négatif pour une baisse). `prelevement` seul va dans « autres
   impôts ». -/
@@ -582,6 +597,28 @@ def depenseUneAnnee (H : Scenario) (f : Fonction) (secteur : Option Secteur) (pa
              depensesF := s.depensesF.ajouter f montant
              importations := s.importations + montant * (1000 - part) / 1000 }
 
+/-- `nombre` voitures thermiques du parc deviennent électriques (achat de
+remplacement ou conversion) : la dépense `depense` de l'opération est
+inscrite, puis, en niveau, CO₂ évité, carburant importé en moins, accises
+et TVA perdues, parc électrique, particules et décès évités selon la
+vignette Crit'Air des voitures retirées ou converties. -/
+def basculeElectrique (H : Scenario) (nombre : Int) (vignette : Nat) (depense : Etat → Etat)
+    (s : Etat) : Etat :=
+  let pm := (H.energie.pmRelatifCritAirPm.getD vignette 1000)
+  let s : Etat := depense
+    (s.reduireEmissions .transports (nombre * H.energie.co2EviteParVehiculeKg / 1000000))
+  { s with importations := s.importations
+             - nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
+           impots := (s.impots.ajouter .accisesEnergie
+               (-(nombre * H.energie.accisesParVehiculeEuros / 1000000)))
+             |>.ajouter .tva (-(nombre * H.energie.tvaParVehiculeEuros / 1000000))
+           parcElectriqueMilliers := s.parcElectriqueMilliers + nombre / 1000
+           decesPollutionAir := s.decesPollutionAir
+             - nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000
+           anneesVieGagneesParAn := s.anneesVieGagneesParAn
+             + nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000
+               * H.demo.anneesVieParDecesPollutionDixiemes / 10 }
+
 /-- Prélèvements qui reviennent sur une rémunération publique brute `brut`,
 selon sa nature : (CSG-CRDS, cotisations salariales, impôt sur le revenu). -/
 def retoursRemuneration (H : Scenario) (nature : NatureRemuneration) (brut : Int) : Int × Int × Int :=
@@ -768,21 +805,15 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   -- parc électrique, particules selon la vignette Crit'Air des voitures
   -- retirées, CO₂, carburant importé en moins, accises et TVA perdues
   | .remplacementVehicules r, s =>
-      let pm := (H.energie.pmRelatifCritAirPm.getD r.vignetteCritAir 1000)
-      let s : Etat := depenseUneAnnee H .logementEnvironnement (some .industrie)
-        (partInterieure H r.partImporteePm) (r.cout / 1000000)
-        (s.reduireEmissions .transports (r.nombre * H.energie.co2EviteParVehiculeKg / 1000000))
-      { s with importations := s.importations
-                 - r.nombre * H.energie.gainCommercialParVehiculeEuros / 1000000
-               impots := (s.impots.ajouter .accisesEnergie
-                   (-(r.nombre * H.energie.accisesParVehiculeEuros / 1000000)))
-                 |>.ajouter .tva (-(r.nombre * H.energie.tvaParVehiculeEuros / 1000000))
-               parcElectriqueMilliers := s.parcElectriqueMilliers + r.nombre / 1000
-               decesPollutionAir := s.decesPollutionAir
-                 - r.nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000
-               anneesVieGagneesParAn := s.anneesVieGagneesParAn
-                 + r.nombre * H.energie.decesEvitesParMillionVehicules * pm / 1000000000
-                   * H.demo.anneesVieParDecesPollutionDixiemes / 10 }
+      basculeElectrique H r.nombre r.vignetteCritAir
+        (depenseUneAnnee H .logementEnvironnement (some .industrie)
+          (partInterieure H r.partImporteePm) (r.cout / 1000000)) s
+  -- conversion : seule l'aide publique est une dépense ; la voiture reste
+  -- dans le parc, électrique
+  | .retrofitElectrique n aide partImp vignette, s =>
+      basculeElectrique H n vignette
+        (depenseUneAnnee H .logementEnvironnement (some .tertiaireMarchand)
+          (partInterieure H partImp) (n * aide / 1000000)) s
   | .prelevementSur i r, s => appliquerPrelevement M H i r s
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }

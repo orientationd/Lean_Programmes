@@ -278,4 +278,22 @@ theorem lpm_tendanciel :
       decide (2450 ≤ d ∧ d ≤ 2750)) = true := by
   decide +kernel
 
+/-- Rétrofit : 100 000 conversions par an pendant cinq ans ajoutent
+exactement 500 000 voitures électriques au parc (pas d'aubaine ni de limite
+des ventes neuves), et évitent 1,7 t de CO₂ par voiture et par an, soit
+≥ 0,8 Mt en cinq ans ; l'aide de 5 000 € est une dépense de 500 M€ l'année
+de la conversion. -/
+def retrofit : Programme :=
+  { id := "R", nom := "R", description := "", mainteneurs := [], source := "",
+    mesures := [{ id := "R-1", titre := "", source := ""
+                  leviers := [.retrofitElectrique 100000 5000 400 0]
+                  repetitions := 5 }] }
+
+theorem retrofit_parc :
+    let t := tendancielAn D H 5
+    let r := retrofit.resultatA D H 5
+    r.parcElectriqueMilliers - t.parcElectriqueMilliers = 500 ∧
+    800 ≤ t.emissionsKt.transports - r.emissionsKt.transports := by
+  decide +kernel
+
 end Tests.Mecanismes
