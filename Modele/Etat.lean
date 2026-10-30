@@ -263,6 +263,15 @@ def ajouter (v : ParSecteurGes) (s : SecteurGes) (d : Int) : ParSecteurGes :=
 def total (v : ParSecteurGes) : Int :=
   v.transports + v.batiments + v.agriculture + v.industrie + v.energie + v.dechets
 
+/-- Chaque secteur multiplié par `1 + écart` (écart en ppm). -/
+def ajusterPpm (v : ParSecteurGes) (ecart : ParSecteurGes) : ParSecteurGes :=
+  { transports := v.transports * (1000000 + ecart.transports) / 1000000
+    batiments := v.batiments * (1000000 + ecart.batiments) / 1000000
+    agriculture := v.agriculture * (1000000 + ecart.agriculture) / 1000000
+    industrie := v.industrie * (1000000 + ecart.industrie) / 1000000
+    energie := v.energie * (1000000 + ecart.energie) / 1000000
+    dechets := v.dechets * (1000000 + ecart.dechets) / 1000000 }
+
 /-- Baisse de chaque secteur à son taux (pm du niveau). -/
 def baisser (v : ParSecteurGes) (taux : ParSecteurGes) : ParSecteurGes :=
   { transports := v.transports - appliquerPm v.transports taux.transports
@@ -1021,9 +1030,13 @@ structure Etat where
   parcElectriqueMilliers : Int
   /-- Points de recharge ouverts au public, milliers. -/
   bornesMilliers : Int
-  /-- Électrification supplémentaire du parc due aux mesures, milliers de
-  véhicules par an (flux porté par la projection). -/
+  /-- Électrification supplémentaire du parc due aux obligations des
+  mesures, milliers de véhicules par an (flux porté par la projection). -/
   electrificationAnnuelleMilliers : Int
+  /-- Voitures aidées par les mesures, milliers par an, pondérées par la part
+  qu'une aide rend électrique (`fractionReponsePm`) ; la projection en retire
+  chaque année la part des ventes déjà électrique (aubaine). -/
+  electrificationAideePondereeMilliers : Int := 0
   /-- Bornes supplémentaires dues aux mesures, milliers par an. -/
   bornesAnnuellesMilliers : Int
   /-- Part de la dette émise en OAT numériques (titres tokenisés réglés en
@@ -1071,6 +1084,10 @@ structure Etat where
   par le moteur). -/
   ecartTauxISPb : Int := 0
   isTauxMeur : Int := 0
+  /-- Effet du prix du pétrole déjà appliqué aux émissions des transports et
+  des bâtiments, ppm du niveau (voir `Projection.emissionsSuivantes`). -/
+  effetPrixTransportsPpm : Int := 0
+  effetPrixBatimentsPpm : Int := 0
   /-- Prélèvements dus aux hausses du SMIC (allègements en plus, nets des
   cotisations, de la CSG et de l'impôt sur les salaires), M€ courants,
   indexés sur le PIB nominal : ils compensent le coût du travail, dont

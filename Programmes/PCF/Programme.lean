@@ -66,7 +66,7 @@ def mesures : List Mesure := [
     debut := 0 },
   { id := "PC-10", titre := "Électrification du parc : fin des ventes thermiques en 2035, 2,5 millions de voitures par an"
     source := s!"{plan}, B.1 Transports, p. 17-18 et B.3, p. 29 : parc entièrement électrifié en 2048, capacité de 2,5 millions de voitures par an d'ici 2035 ; conversion : +500 000 électriques par an au-delà de la tendance, sans prime (interdiction), coût public nul ; bornes correspondantes non chiffrées par la source"
-    leviers := [.aideAchatElectrique 500000 0] },
+    leviers := [.aideAchatElectrique 500000 0 .obligation] },
   { id := "PC-09", titre := "Nationalisation de BNP Paribas et de TotalEnergies"
     source := "Discours de présentation du plan (6 novembre 2023) et presse ; prise de participation sans montant dans la source : non imputée"
     leviers := [] },

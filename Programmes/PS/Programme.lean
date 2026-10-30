@@ -115,7 +115,7 @@ def mesures : List Mesure := [
     leviers := [.prelevementSur .ir 3800] },
   { id := "P-18", titre := "Leasing social : un million de voitures électriques à 100 € par mois"
     source := s!"{site} (via Votons 2027) ; non chiffré par le PS : même traduction que PP-04 (6 Md€ pour un million de voitures selon R. Glucksmann, AFP, 2 octobre 2026), sur cinq ans : 200 000 voitures par an à 6 000 € d'aide"
-    leviers := [.aideAchatElectrique 200000 6000] },
+    leviers := [.aideAchatElectrique 200000 6000 .modestes] },
   { id := "P-19", titre := "Classes de 19 élèves au plus, de 22,4 à 18,2 élèves en moyenne en dix ans"
     source := s!"{site}, chap. 11 ; non chiffré : 6,8 Md€ par an pour les classes à 19 (Institut Montaigne, 2022, même mesure de LFI, fourchette 4,6 à 11 Md€ ; traduction de E-12), atteints en dix ans (hypothèse)"
     leviers := [.depenseEcheancier .enseignement (([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : List Int).map fun k => k * 680)] },

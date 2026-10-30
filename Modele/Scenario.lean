@@ -125,6 +125,13 @@ def ElasticitesPrix.get (e : ElasticitesPrix) : ActiviteTaxee → Int
   | .carburantsRoutiers => e.carburantsRoutiers
   | .chauffageFossile => e.chauffageFossile
 
+/-- Public d'une aide à l'achat de voitures électriques : aide générale,
+aide réservée aux ménages modestes (leasing social), ou obligation (sans
+aubaine : chaque voiture visée est une électrique de plus). -/
+inductive PublicAide where
+  | general | modestes | obligation
+  deriving Repr, DecidableEq, Inhabited
+
 /-- Territoire visé par une aide (rénovation…). -/
 inductive Territoire where
   | national | rural
@@ -374,6 +381,29 @@ structure Energie where
   /-- Facture énergétique importée au prix de référence, M€/an ; elle varie
   proportionnellement au prix du Brent. -/
   factureEnergetiqueMeur : Int
+  /-- Effet du prix du pétrole sur les émissions : élasticité du prix TTC des
+  carburants routiers au prix du Brent, pm. Avec les élasticités-prix de long
+  terme (`elasticitesPrix`), il fixe l'effet de long terme d'un Brent écarté
+  du prix de référence sur les émissions des voitures et utilitaires légers
+  et sur celles du fioul des bâtiments. Nulles par défaut. -/
+  elasticitePrixCarburantsBrentPm : Int := 0
+  /-- Élasticité du prix TTC du fioul domestique au prix du Brent, pm. -/
+  elasticitePrixFioulBrentPm : Int := 0
+  /-- Part des émissions des transports due aux voitures et utilitaires
+  légers, pm. -/
+  partTransportsVoituresPm : Int := 0
+  /-- Part des émissions des bâtiments due au fioul, pm. -/
+  partBatimentsFioulPm : Int := 0
+  /-- Part de l'écart à l'effet de long terme du prix comblée chaque année,
+  pm (élasticité de court terme / élasticité de long terme). -/
+  ajustementPrixEmissionsPm : Int := 0
+  /-- Sensibilité de l'achat d'une voiture électrique à l'aide, pm par k€
+  (β d'un modèle de choix discret) : une aide de `A` k€ rend électriques
+  `1 − e^(−β A)` des achats qui ne l'auraient pas été (la part des ventes
+  qui l'est déjà, tendancielle, est ôtée chaque année). Aide générale, et
+  aide réservée aux ménages modestes. Nulles par défaut. -/
+  sensibiliteAideGeneralePmParKeur : Int := 0
+  sensibiliteAideModestesPmParKeur : Int := 0
   sources : List String
   deriving Repr
 
@@ -643,6 +673,18 @@ structure Economie where
   /-- Baisse tendancielle annuelle des émissions de chaque secteur, pm du
   niveau (politiques en vigueur). -/
   baisseEmissionsSecteurPm : ParSecteurGes
+  /-- Élasticités des émissions de chaque secteur à l'activité, pm : chaque
+  année, les émissions s'écartent de leur baisse tendancielle de
+  `élasticité × (croissance du PIB en volume − croissance de calage)`. La
+  baisse tendancielle est calée sur la croissance du scénario central ; nulles
+  par défaut (rétro-test). -/
+  elasticitesEmissionsActivitePm : ParSecteurGes :=
+    { transports := 0, batiments := 0, agriculture := 0, industrie := 0, energie := 0, dechets := 0 }
+  /-- Croissance du PIB en volume sur laquelle est calée la baisse
+  tendancielle des émissions (scénario central), pb, année par année ;
+  au-delà de la liste, `croissanceCalageEmissionsPb`. -/
+  croissanceCalageEmissionsAnneesPb : List Int := []
+  croissanceCalageEmissionsPb : Int := 0
   /-- Prélèvement forfaitaire unique sur les revenus de capitaux mobiliers,
   par affectation, pm : part impôt sur le revenu (État), CSG + CRDS
   (Sécurité sociale, CADES), prélèvement de solidarité (État). -/
@@ -698,6 +740,10 @@ def croissanceVolumeA (e : Economie) (k : Nat) : Int :=
 /-- Croissance potentielle de l'année `k + 1`, pb. -/
 def croissancePotentielleA (e : Economie) (k : Nat) : Int :=
   annee e.croissancePotentielleAnneesPb e.croissancePotentiellePb k
+
+/-- Croissance de calage des émissions de l'année `k + 1`, pb. -/
+def croissanceCalageEmissionsA (e : Economie) (k : Nat) : Int :=
+  annee e.croissanceCalageEmissionsAnneesPb e.croissanceCalageEmissionsPb k
 
 /-- Évolution du déflateur du PIB de l'année `k + 1`, pb. -/
 def inflationA (e : Economie) (k : Nat) : Int := annee e.inflationAnneesPb e.inflationPb k

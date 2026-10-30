@@ -3277,7 +3277,7 @@ def mesures : List Mesure := [
   { id := "O-128"
     titre := "Leasing social électrique : 150 000 voitures par an à 100 € par mois"
     source := s!"{leasingSocialParAn} voitures par an à {leasingSocialAideEuros} € d'aide (coût unitaire de PP-04) ; 50 000 voitures par édition depuis 2024 ; émissions évitées par le sous-modèle automobile (voir `leasingSocialParAn`)"
-    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros] },
+    leviers := [.aideAchatElectrique leasingSocialParAn leasingSocialAideEuros .modestes] },
 
   { id := "O-129"
     titre := "Rémunération des dirigeants d'institutions publiques (Louvre, DGFiP, Haut-commissariat au plan…) : −20 %"

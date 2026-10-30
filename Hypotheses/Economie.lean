@@ -241,7 +241,40 @@ Transition écologique, mesures adoptées jusqu'au 31 décembre 2023) en partant
 2026) et des baisses récentes par secteur (2024-2025 : transports −1,9 %,
 bâtiments −2,1 %, agriculture −1,3 %, industrie −5,2 % et −3,6 % en
 2023-2024, déchets −2,2 % ; énergie très variable). Identique dans les trois
-variantes (la croissance n'agit pas sur les émissions dans ce modèle).
+variantes ; la baisse est supposée calée sur la croissance du scénario
+central (`croissanceCalageEmissions`, hypothèse : l'AME 2024 ne publie pas
+de variante de croissance).
+
+Émissions selon l'activité (`elasticitesEmissionsActivitePm`, loi
+économique d'octobre 2026) : chaque année, les émissions d'un secteur
+s'écartent de leur baisse tendancielle de `élasticité × écart de croissance
+du PIB en volume au scénario central` ; l'écart se cumule, comme celui du
+PIB. Élasticités (pm) :
+* industrie 800 : 0,79 dans l'année pour l'industrie manufacturière (Burke,
+  Shahiduzzaman et Stern, Global Environmental Change, 2015) ; 0,46 à 1,47
+  selon les branches par rapport à leur production (DG Trésor, Trésor-Éco
+  n° 390, juin 2026) ; en 2009, −18 % de CO₂ industriel pour ≈ −16 % de
+  production manufacturière (Citepa, Secten 2022 ; INSEE ; calcul) ;
+* transports 600 : 0,72 des émissions routières au trafic (Trésor-Éco
+  n° 390) ; trafic automobile au revenu 0,30 à court terme, 0,73 à long
+  terme (Graham et Glaister, Transport Reviews, 2004) ; fret 0,8 à 1
+  (hypothèse) ; valeur composite, hypothèse dans la fourchette de 0,2 à 0,9 ;
+* bâtiments 230 : résidentiel 0,1 (hypothèse, le chauffage dépend du climat
+  et du parc plus que de l'activité), tertiaire 0,5 (services : Burke et
+  al., 2015), pondérés deux tiers - un tiers (hypothèse ; calcul) ;
+* agriculture 200 : 0,24, non significatif (Burke et al., 2015) ; 0,19 à la
+  production agricole (Trésor-Éco n° 390) ;
+* production d'énergie 500 : hypothèse (0 à 1,5 ; dominée par le nucléaire
+  et le prix du gaz) ;
+* déchets 100 : hypothèse (0 à 0,2).
+Contrôle : moyenne pondérée par les émissions de 2030 ≈ 0,44, sous les
+élasticités cycliques agrégées de 0,5 à 0,8 (FMI, document de travail
+18/56, 2018 : 0,6 pour les pays avancés ; Cohen, Jalles, Loungani et
+Pizzuto, Journal of Macroeconomics, 2022 : 0,78 pour la France sur
+1990-2018) : choix prudent, l'élasticité de tendance de la France étant
+proche de zéro (même source). Relation symétrique (pas d'asymétrie
+robuste entre récessions et expansions). Le prix du pétrole agit à part
+(`Hypotheses.Energie`).
 
 Emplois par secteur : `intensiteEmploiSecteurPm` = valeur ajoutée par
 personne en emploi de l'ensemble (87,0 k€) / celle du secteur, 2025 (INSEE,
@@ -437,6 +470,15 @@ open Modele
 docstring du module). -/
 def baisseEmissionsAME : ParSecteurGes :=
   { transports := 19, batiments := 21, agriculture := 10, industrie := 30, energie := 20, dechets := 22 }
+
+/-- Élasticités des émissions à l'activité, pm (voir le docstring du
+module). -/
+def elasticitesEmissionsActivite : ParSecteurGes :=
+  { transports := 600, batiments := 230, agriculture := 200, industrie := 800, energie := 500, dechets := 100 }
+
+/-- Croissance potentielle du scénario central, pb, sur laquelle est calée
+la baisse tendancielle des émissions (hypothèse). -/
+def croissanceCalageEmissions : Int := 100
 
 /-- Élasticités des prélèvements à l'écart de production, pm (voir le
 docstring du module). -/
@@ -742,6 +784,9 @@ def centrale : Economie where
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
   baisseEmissionsSecteurPm := baisseEmissionsAME
+  elasticitesEmissionsActivitePm := elasticitesEmissionsActivite
+  croissanceCalageEmissionsAnneesPb := trajectoireVolume croissanceCalageEmissions
+  croissanceCalageEmissionsPb := croissanceCalageEmissions
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
@@ -834,6 +879,9 @@ def croissanceBasse : Economie where
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
   baisseEmissionsSecteurPm := baisseEmissionsAME
+  elasticitesEmissionsActivitePm := elasticitesEmissionsActivite
+  croissanceCalageEmissionsAnneesPb := trajectoireVolume croissanceCalageEmissions
+  croissanceCalageEmissionsPb := croissanceCalageEmissions
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75
@@ -926,6 +974,9 @@ def croissanceHaute : Economie where
   letaliteAccidentsPdm := 13
   tauxAccidentsUEPdm := 110
   baisseEmissionsSecteurPm := baisseEmissionsAME
+  elasticitesEmissionsActivitePm := elasticitesEmissionsActivite
+  croissanceCalageEmissionsAnneesPb := trajectoireVolume croissanceCalageEmissions
+  croissanceCalageEmissionsPb := croissanceCalageEmissions
   tauxPfuIrPm := 128
   tauxPfuCsgCrdsPm := 111
   tauxPfuSolidaritePm := 75

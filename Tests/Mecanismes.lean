@@ -218,4 +218,43 @@ theorem smic_un_point :
       a.smicPrelevementsMeur < -1000 ∧ a.smicMensuel = 1820 ∧ c.smicMensuel = 1820 := by
   decide +kernel
 
+/-! ## Émissions selon le scénario, aubaine (octobre 2026) -/
+
+/-- Tendanciel à `n` ans sous un scénario. -/
+def tendanciel (S : Scenario) (n : Nat) : Etat := (trajectoire D S n (etatDepart S)).getD n (etatDepart S)
+
+/-- Émissions selon l'activité : la croissance basse (0,6 % de long terme,
+−0,4 point en 2029 et en 2030) fait baisser les émissions de l'industrie de
+≈ 0,8 × 0,8 % en 2030 par rapport au central ; la croissance haute les fait
+monter d'autant (élasticité 0,8). -/
+theorem emissions_activite :
+    let c := (tendanciel H 5).emissionsKt.industrie
+    let b := (tendanciel { H with eco := Hypotheses.Eco.croissanceBasse } 5).emissionsKt.industrie
+    let h := (tendanciel { H with eco := Hypotheses.Eco.croissanceHaute } 5).emissionsKt.industrie
+    b < c ∧ c < h ∧ 50 ≤ (c - b) * 10000 / c ∧ (c - b) * 10000 / c ≤ 80 := by
+  decide +kernel
+
+/-- Prix du pétrole : au Brent de 100 $ (référence 63 $), l'effet de long
+terme sur les émissions des transports vaut ≈ −8 % (élasticité-prix 0,6,
+prix TTC au Brent 0,33, voitures et utilitaires 68,6 % des émissions) ; cinq
+ans après, 92 % en est atteint (40 % de l'écart comblé chaque année). Les
+émissions des bâtiments baissent aussi (fioul). -/
+theorem emissions_petrole :
+    let c := tendanciel H 5
+    let h := tendanciel { H with energie := Hypotheses.Energie.haut } 5
+    let dPb := (c.emissionsKt.transports - h.emissionsKt.transports) * 10000 / c.emissionsKt.transports
+    680 ≤ dPb ∧ dPb ≤ 780 ∧ h.emissionsKt.batiments < c.emissionsKt.batiments := by
+  decide +kernel
+
+/-- Aubaine : 300 000 primes de 4 000 € par an ajoutent ≈ 166 000 voitures
+électriques au parc en cinq ans (19,7 % des achats non électriques,
+moins la part des ventes déjà électrique, de 28 à 60 %), contre 1 500 000
+pour une obligation portant sur le même nombre de voitures. -/
+theorem aubaine_aide_electrique :
+    let t := (tendanciel H 5).parcElectriqueMilliers
+    let a := ((mesure (.aideAchatElectrique 300000 4000)).resultatA D H 5).parcElectriqueMilliers
+    let o := ((mesure (.aideAchatElectrique 300000 0 .obligation)).resultatA D H 5).parcElectriqueMilliers
+    150 ≤ a - t ∧ a - t ≤ 180 ∧ o - t = 1500 := by
+  decide +kernel
+
 end Tests.Mecanismes

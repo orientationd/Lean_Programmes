@@ -119,6 +119,44 @@ def Assiettes.taux (A : Assiettes) (eAutres : Int) (c : CroissanceAssiettes) : P
     droitsMutation := c.pibNominal, mutationsOnereuses := c.immobilier, patrimoine := c.pibNominal
     autres := c.pibNominal + (eAutres - 1000) * c.cycle / 1000 }
 
+/-- Effet de long terme du prix du pétrole sur les émissions d'un usage, ppm
+du niveau du secteur : élasticité-prix de long terme × élasticité du prix
+TTC au Brent × écart du Brent au prix de référence × part de l'usage dans
+les émissions du secteur (négatif quand le Brent est plus cher). -/
+def effetPrixCiblePpm (E : Energie) (elasticitePrix elasticiteBrent part : Int) : Int :=
+  if E.prixReferenceDollars = 0 then 0 else
+  let ecartBrentPm := (E.prixBrentDollars - E.prixReferenceDollars) * 1000 / E.prixReferenceDollars
+  0 - elasticitePrix * elasticiteBrent * ecartBrentPm * part / 1000000
+
+/-- Émissions de l'année suivante avant les mesures, et effets du prix du
+pétrole appliqués aux transports et aux bâtiments (ppm) :
+* baisse tendancielle de chaque secteur (`baisseEmissionsSecteurPm`) ;
+* écart d'activité : `élasticité × (croissance en volume − croissance de
+  calage)` (`elasticitesEmissionsActivitePm`), nul au scénario central ;
+* prix du pétrole : l'effet sur les carburants des voitures et utilitaires
+  légers et sur le fioul des bâtiments rejoint chaque année une part
+  (`ajustementPrixEmissionsPm`) de son niveau de long terme
+  (`effetPrixCiblePpm`), nul au prix de référence. -/
+def emissionsSuivantes (H : Scenario) (k : Nat) (volume : Int) (s : Etat) :
+    ParSecteurGes × Int × Int :=
+  let E := H.energie
+  let el := H.eco.elasticitesEmissionsActivitePm
+  let ecart := volume - H.eco.croissanceCalageEmissionsA k
+  let activite : ParSecteurGes :=
+    { transports := el.transports * ecart / 10, batiments := el.batiments * ecart / 10
+      agriculture := el.agriculture * ecart / 10, industrie := el.industrie * ecart / 10
+      energie := el.energie * ecart / 10, dechets := el.dechets * ecart / 10 }
+  let e := (s.emissionsKt.baisser H.eco.baisseEmissionsSecteurPm).ajusterPpm activite
+  let cibleT := effetPrixCiblePpm E E.elasticitesPrix.carburantsRoutiers
+    E.elasticitePrixCarburantsBrentPm E.partTransportsVoituresPm
+  let cibleB := effetPrixCiblePpm E E.elasticitesPrix.chauffageFossile
+    E.elasticitePrixFioulBrentPm E.partBatimentsFioulPm
+  let nT := s.effetPrixTransportsPpm + (cibleT - s.effetPrixTransportsPpm) * E.ajustementPrixEmissionsPm / 1000
+  let nB := s.effetPrixBatimentsPpm + (cibleB - s.effetPrixBatimentsPpm) * E.ajustementPrixEmissionsPm / 1000
+  ({ e with
+      transports := e.transports * (1000000 + nT) / (1000000 + s.effetPrixTransportsPpm)
+      batiments := e.batiments * (1000000 + nB) / (1000000 + s.effetPrixBatimentsPpm) }, nT, nB)
+
 /-- Canal du capital, une année (moteurs où `canalCapitalPm` > 0 ; sans
 effet sinon). L'investissement public de l'année écoulée s'ajoute au capital
 public des mesures (`investissementAnnee`, M€), réévalué aux prix (`prix`,
@@ -210,7 +248,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- les mesures s'y ajoutent dans la même limite
   let ventes := H.energie.ventesNeuvesMilliers
   let elecTendance := min ventes (s.electrificationTendanceMilliers + H.energie.hausseElectrificationMilliers)
-  let dParc := max elecTendance (min ventes (elecTendance + s.electrificationAnnuelleMilliers))
+  -- aides : seule la part des ventes qui n'est pas déjà électrique peut
+  -- basculer (aubaine) ; obligations : chaque voiture visée
+  let aideesAdditionnelles := if ventes = 0 then 0
+    else s.electrificationAideePondereeMilliers * (ventes - elecTendance) / ventes
+  let dParc := max elecTendance
+    (min ventes (elecTendance + s.electrificationAnnuelleMilliers + aideesAdditionnelles))
   -- chaque voiture thermique remplacée retire son carburant de l'assiette des
   -- accises et de la TVA (nets des taxes sur l'électricité consommée)
   -- rénovations des mesures : les économies de fioul et de gaz acquises
@@ -445,7 +488,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     ajustementDetteAnnee := 0
     participationsEtat := participations
     dividendesEtat := dividendes
-    emissionsKt := s.emissionsKt.baisser H.eco.baisseEmissionsSecteurPm
+    emissionsKt := (emissionsSuivantes H k volume s).1
+    effetPrixTransportsPpm := (emissionsSuivantes H k volume s).2.1
+    effetPrixBatimentsPpm := (emissionsSuivantes H k volume s).2.2
     populationMilliers := s.populationMilliers + H.natalite.naissancesMilliers
       - deces + solde
     decesMilliers := deces

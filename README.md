@@ -124,6 +124,30 @@ chaudières au fioul ou au gaz (chaleur, rendement et coefficient de
 performance mesuré par l'ADEME) : fioul et gaz économisés, électricité
 consommée, coûts de réseau de gaz évités (`Hypotheses/Energie.lean`).
 
+**Émissions et aides à l'électrique.** Les émissions de chaque secteur
+baissent à leur rythme tendanciel (scénario « avec mesures existantes » du
+ministère), corrigé de deux lois économiques : l'activité (élasticité au
+PIB en volume de 0,8 pour l'industrie, 0,6 pour les transports, 0,1 à 0,5
+ailleurs, appliquée à l'écart de croissance au scénario central) et le prix
+du pétrole (un Brent cher fait baisser les émissions des voitures et du
+fioul selon les élasticités-prix de long terme, atteintes à 40 % par an).
+Les propriétés climatiques peuvent donc tenir dans une partie seulement des
+36 scénarios. Une aide à l'achat d'une voiture électrique de `A` k€ ne rend
+électriques que `1 − e^(−β A)` des achats qui ne l'auraient pas été, moins
+la part des ventes déjà électrique (aubaine) : β = 0,055 par k€ pour une
+aide générale (≈ 13 % des voitures aidées par une prime de 4 000 € en 2027),
+0,115 pour les ménages modestes (leasing social) ; une obligation compte
+chaque voiture (`Hypotheses/Energie.lean`, `Hypotheses/Economie.lean`).
+
+**Lois à respecter.** Outre les règles budgétaires françaises et
+européennes et les objectifs climatiques, chaque programme est vérifié
+contre la loi de programmation militaire actualisée (loi n° 2026-791 : la
+dépense de défense ne passe pas sous sa trajectoire), les capacités 2030
+de la programmation pluriannuelle de l'énergie (décret n° 2026-76) et
+l'objectif de 40 % d'électricité renouvelable en 2030 (code de l'énergie,
+art. L.100-4) (`Proprietes/Lois.lean`). Un programme peut proposer de
+modifier une loi : la propriété signale alors l'écart.
+
 ## Engagements, contrats et évaluation
 
 | | Engagements | Contrats de mesure | Évaluation |

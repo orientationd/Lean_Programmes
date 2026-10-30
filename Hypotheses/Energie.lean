@@ -113,9 +113,65 @@ Valeurs de long terme, en valeur absolue : recul de l'activité (et de ses
   modal compris : Significance et CE Delft pour la Commission européenne,
   2010 ; valeur médiane retenue).
 * Carburants routiers : 0,6 (consommation de carburant au prix, long terme :
-  Goodwin, Dargay et Hanly, Transport Reviews, 2004).
-* Chauffage fossile : 0,3 (hypothèse ; non utilisée par les programmes à ce
-  jour).
+  Goodwin, Dargay et Hanly, Transport Reviews, 2004 ; France : 0,6 à 0,7,
+  Calvet et Marical, Économie et Statistique n° 446, 2011 ; méta-analyse :
+  0,72 pour l'essence, 0,60 pour le gazole, Labandeira et al., Energy
+  Policy, 2017 ; 0,40, Clerc et Marcus, INSEE, 2009).
+* Chauffage fossile : 0,3 (fioul : 0,20, Clerc et Marcus, 2009 ; 0,75,
+  Labandeira et al., 2017 ; valeur prudente dans la fourchette).
+
+## Prix du pétrole et émissions (loi économique d'octobre 2026)
+
+Un Brent écarté du prix de référence change le prix TTC des carburants et
+du fioul, donc, à long terme, les émissions des voitures et utilitaires
+légers et celles du fioul des bâtiments, selon les élasticités-prix
+ci-dessus :
+* élasticité du prix TTC au Brent, structure des prix de 2024 (DGEC, « Prix
+  des produits pétroliers en 2024 » : brut ≈ 46,5 c€/L ; gazole 169 c€/L
+  TTC, SP95-E10 178, fioul 120 ; calcul) : gazole 0,35, SP95-E10 0,27,
+  retenu 0,33 pour les carburants (gazole majoritaire, pondéré aux trois
+  quarts : hypothèse), fioul 0,47 ; le prix du gaz ne suit plus le pétrole
+  (82 % des prix européens formés sur les marchés gaziers, IGU, 2025) et
+  n'est pas indexé ;
+* part des émissions des transports due aux voitures et utilitaires légers :
+  (66,5 + 19,3) / 124,9 Mt en 2024 (SDES, Chiffres clés des transports ;
+  calcul) ; les poids lourds, dont le carburant ne fait qu'une partie du coût
+  au kilomètre, ne sont pas comptés ;
+* part des émissions des bâtiments due au fioul : 85 % des émissions des
+  bâtiments viennent du chauffage fossile (hypothèse, celle de la composante
+  carbone du Texte Orientation D), dont la part du fioul se déduit des parts
+  de logements chauffés au fioul (8,5 %) et au gaz (35 %) et de leurs
+  facteurs d'émission (325 et 239 kg/MWh) du sous-modèle de la rénovation
+  (calcul) ;
+* ajustement : 40 % de l'écart à l'effet de long terme comblé chaque année,
+  rapport des élasticités de court et de long terme (0,19 / 0,40, Clerc et
+  Marcus, 2009 ; ≈ 0,3 / 0,65, Calvet et Marical, 2011 ; 0,23 / 0,72,
+  Labandeira et al., 2017 ; calcul).
+Au Brent de 100 $ (référence 63 $), l'effet de long terme vaut ≈ −8 % des
+émissions des transports ; à 50 $, ≈ +3 %. L'effet de la croissance sur les
+émissions est dans `Hypotheses.Eco` (`elasticitesEmissionsActivitePm`).
+
+## Aubaine des aides à l'achat de voitures électriques (octobre 2026)
+
+Une aide de `A` k€ rend électriques `1 − e^(−β A)` des achats qui ne
+l'auraient pas été (modèle de choix discret) ; la part des ventes déjà
+électrique (trajectoire tendancielle) est ôtée chaque année. Sensibilités :
+* aide générale, β = 55 pm par k€ : 0,045 par k€ (IPP, Perspectives
+  budgétaires 2026, chapitre 4 : 81 % d'aubaine pour le bonus de 6 000 € de
+  2022) et ≈ 0,07 (France Stratégie, rapport France Relance, 2024 : +3,3
+  points de part de marché électrique en 2021) ; calcul. Une prime de
+  4 000 € rend électriques 19,7 % des achats non électriques : ≈ 13 % des
+  voitures aidées en 2027, ≈ 8 % en 2030 ;
+* aide réservée aux ménages modestes (leasing social), β = 115 pm par k€ :
+  semi-élasticité au prix des déciles 1 à 5 2,1 fois la moyenne (0,25 contre
+  0,119 : DGE, Théma n° 37, 2025 ; calcul) ; ≈ 50 % des acheteurs sous le
+  revenu médian rendus électriques par les aides (Sheldon, Dua et Alharbi,
+  Energy Economics, 2023). Une aide de 6 000 € : 49,8 % des achats non
+  électriques ;
+* une obligation (fin de ventes thermiques, quotas) compte chaque voiture
+  visée.
+Aucune évaluation causale du leasing social n'est publiée ; l'IPP trouve
+34 à 37 % d'additionnalité pour les centiles de revenu 11 à 30 avec 6 000 €.
 
 Outre-mer (zones non interconnectées) : l'électricité y coûte bien plus à
 produire que le tarif péréqué ne rapporte ; le surcoût est compensé par les
@@ -229,6 +285,22 @@ theorem pompesAChaleur_valeurs :
     pompesAChaleur.partFioulNationalPm = 195 ∧ pompesAChaleur.accisesElecEurosMWh = 30 ∧
     pompesAChaleur.tvaElecEurosMWh = 33 ∧ pompesAChaleur.reseauGazEvitesEuros = 67 := by decide
 
+/-- Prix du pétrole et émissions, et aubaine des aides à l'électrique : voir
+le docstring du module. -/
+def elasticitePrixCarburantsBrent : Int := 330
+def elasticitePrixFioulBrent : Int := 470
+def partTransportsVoitures : Int := (66500 + 19300) * 1000 / 124900
+def partBatimentsFossile : Int := 850
+def partBatimentsFioul : Int :=
+  partBatimentsFossile * (renovation.partFioulNationalPm * renovation.co2FioulKgMWh * 1000
+    / (renovation.partFioulNationalPm * renovation.co2FioulKgMWh
+      + renovation.partGazNationalPm * renovation.co2GazKgMWh)) / 1000
+
+theorem prixPetrole_valeurs : partTransportsVoitures = 686 ∧ partBatimentsFioul = 210 := by decide
+def ajustementPrixEmissions : Int := 400
+def sensibiliteAideGenerale : Int := 55
+def sensibiliteAideModestes : Int := 115
+
 /-- Élasticités-prix de long terme (valeur absolue, pm) : voir le docstring
 du module. -/
 def elasticitesPrix : ElasticitesPrix :=
@@ -260,6 +332,13 @@ def bas : Energie where
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 238
   factureEnergetiqueMeur := 60000
+  elasticitePrixCarburantsBrentPm := elasticitePrixCarburantsBrent
+  elasticitePrixFioulBrentPm := elasticitePrixFioulBrent
+  partTransportsVoituresPm := partTransportsVoitures
+  partBatimentsFioulPm := partBatimentsFioul
+  ajustementPrixEmissionsPm := ajustementPrixEmissions
+  sensibiliteAideGeneralePmParKeur := sensibiliteAideGenerale
+  sensibiliteAideModestesPmParKeur := sensibiliteAideModestes
   sources := sources
 
 def central : Energie where
@@ -288,6 +367,13 @@ def central : Energie where
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 319
   factureEnergetiqueMeur := 60000
+  elasticitePrixCarburantsBrentPm := elasticitePrixCarburantsBrent
+  elasticitePrixFioulBrentPm := elasticitePrixFioulBrent
+  partTransportsVoituresPm := partTransportsVoitures
+  partBatimentsFioulPm := partBatimentsFioul
+  ajustementPrixEmissionsPm := ajustementPrixEmissions
+  sensibiliteAideGeneralePmParKeur := sensibiliteAideGenerale
+  sensibiliteAideModestesPmParKeur := sensibiliteAideModestes
   sources := sources
 
 def haut : Energie where
@@ -316,6 +402,13 @@ def haut : Energie where
   vehiculesParBorne := 10
   gainCommercialParVehiculeEuros := 488
   factureEnergetiqueMeur := 60000
+  elasticitePrixCarburantsBrentPm := elasticitePrixCarburantsBrent
+  elasticitePrixFioulBrentPm := elasticitePrixFioulBrent
+  partTransportsVoituresPm := partTransportsVoitures
+  partBatimentsFioulPm := partBatimentsFioul
+  ajustementPrixEmissionsPm := ajustementPrixEmissions
+  sensibiliteAideGeneralePmParKeur := sensibiliteAideGenerale
+  sensibiliteAideModestesPmParKeur := sensibiliteAideModestes
   sources := sources
 
 def toutes : List Energie := [bas, central, haut]

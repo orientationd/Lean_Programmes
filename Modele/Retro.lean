@@ -215,6 +215,10 @@ def scenarioRetro (H : Scenario) (e : Etat) (o s : AnneeObservee) : Scenario :=
     eco := { H.eco with
       -- le PIB est observé : il contient déjà les effets de demande
       multiplicateurPm := 0
+      -- émissions : la baisse tendancielle de l'axe central ne vaut pas pour
+      -- le passé ; pas d'écart d'activité
+      elasticitesEmissionsActivitePm :=
+        { transports := 0, batiments := 0, agriculture := 0, industrie := 0, energie := 0, dechets := 0 }
       croissancePotentielleAnneesPb := [s.croissancePotentiellePb]
       croissanceVolumeAnneesPb := [s.croissanceVolumePb]
       inflationAnneesPb := [s.deflateurPb]
