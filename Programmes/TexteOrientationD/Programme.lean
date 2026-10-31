@@ -3016,13 +3016,17 @@ def ttfElargie : Int := 1500
 def prelevementFondsEpargne : Int := 1600
 def redevanceFrequences : Int := 300
 
-/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1,15 %,
-même assiette et même calendrier ; dès 1 %,
+/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1,25 %,
+même assiette et même calendrier (1,15 % jusqu'en octobre 2026 : la
+transition décrite finement, où les pompes à chaleur offertes ne sont plus
+du capital public, coûte ≈ 0,1 point de PIB de plus en 2035 sous le moteur
+d'offre, et l'équilibre de 2035 était perdu ; à 1,20 %, il tient avec
+0,04 point de marge) ; dès 1 %,
 les impôts sur l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de
 l'OCDE (Danemark : 7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-
 Galles du Sud : 1,6 à 2 % au-delà de 1,075 M A$, résidence principale
 exonérée). **Acceptabilité très faible.** -/
-def tauxSolSupplementPdm : Int := 65
+def tauxSolSupplementPdm : Int := 75
 def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPdm / tauxSolPdm
 
 /-- Transition décrite finement (leviers `transitionEcologique`,
@@ -3089,7 +3093,7 @@ theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 �
     soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧ plusValueDernierTiersParAn = 14473 ∧
     devisesVendues = 14200 ∧ chauffageGazKt + chauffageFioulKt + biofioulKt = chauffageKt ∧
     investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 ∧
-    contributionSolSupplement = 32100 := by decide
+    contributionSolSupplement = 37039 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
@@ -4441,7 +4445,7 @@ def mesures : List Mesure := [
     leviers := [.recetteEcheancier (some .autres) [ttfElargie],
                 .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
   { id := "O-169"
-    titre := "Contribution sur la valeur du sol portée à 1,15 % (O-151)"
+    titre := "Contribution sur la valeur du sol portée à 1,25 % (O-151)"
     source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; impôts sur l'immobilier au-delà de 3,3 % du PIB, au sommet de l'OCDE ; acceptabilité très faible (voir `tauxSolSupplementPdm`)"
     leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] },
   { id := "O-170"
