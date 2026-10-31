@@ -165,8 +165,8 @@ def erreursRegistre : List String := Id.run do
 
 /-! ## JSON -/
 
-def etatJson (s : Etat) : Json :=
-  Json.mkObj [
+def etatChamps (s : Etat) : List (String × Json) :=
+  [
     ("pib", toJson s.pib), ("recettes", toJson s.recettes),
     ("depenses", toJson s.depenses), ("dette", toJson s.dette),
     ("deficitPb", toJson s.deficitPb), ("dettePb", toJson s.dettePb),
@@ -235,6 +235,14 @@ def etatJson (s : Etat) : Json :=
     ("dividendesEtat", toJson s.dividendesEtat),
     ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
     ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]
+
+def etatJson (s : Etat) : Json := Json.mkObj (etatChamps s)
+
+/-- État d'une trajectoire de la synthèse (année `anneeDepart + k`), avec
+la répartition de la charge d'intérêts entre ses bénéficiaires. -/
+def etatAnneeJson (k : Nat) (s : Etat) : Json :=
+  Json.mkObj (etatChamps s ++ [("interetsBeneficiaires", Json.mkObj <|
+    (Hypotheses.Detention.repartition k s).champs.map fun (c, v) => (c, toJson v))])
 
 def rapportJson : Json :=
   Json.mkObj [
@@ -448,10 +456,20 @@ def rapportSyntheseJson : Json :=
         ("partActiveMigrantsPm", toJson H.demo.partActiveMigrantsPm),
         ("moteurs", Json.mkObj <| moteurs.map fun M =>
           (M.id, Json.mkObj [
-            ("tendanciel", Json.arr <| (trajectoire M H horizonSynthese (etatDepart H)).toArray.map etatJson),
+            ("tendanciel", Json.arr <| (trajectoire M H horizonSynthese (etatDepart H)).toArray.mapIdx etatAnneeJson),
             ("programmes", Json.mkObj <| Programmes.tous.map fun p =>
-              (p.id, Json.arr <| (p.trajectoire M H horizonSynthese 0 (etatDepart H)).toArray.map etatJson))]))]),
+              (p.id, Json.arr <| (p.trajectoire M H horizonSynthese 0 (etatDepart H)).toArray.mapIdx etatAnneeJson))]))]),
     ("retro", retroJson),
+    ("beneficiairesInterets", Json.mkObj [
+      ("beneficiaires", Json.arr <| Hypotheses.Detention.beneficiaires.toArray.map fun b =>
+        Json.mkObj [("id", toJson b.id), ("nom", toJson b.nom)]),
+      ("portefeuilleBdfMeur", toJson ((List.range (horizonSynthese + 1)).map Hypotheses.Detention.portefeuilleMoyen)),
+      ("rendementBdfPb", toJson Hypotheses.Detention.rendementBdfPb),
+      ("structureDixMilliemes", Json.mkObj [
+        ("nonResidents", toJson Hypotheses.Detention.partNonResidents),
+        ("banqueDeFrance", toJson Hypotheses.Detention.partBdf),
+        ("banques", toJson Hypotheses.Detention.partBanques),
+        ("autresResidents", toJson Hypotheses.Detention.partAutresResidents)])]),
     ("textesEuropeens", Json.arr <| Hypotheses.Europe.textes.toArray.map fun t =>
       Json.mkObj [("id", toJson t.id), ("titre", toJson t.titre), ("reference", toJson t.reference),
         ("critere", toJson t.critere)]),
