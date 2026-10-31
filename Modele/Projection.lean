@@ -319,9 +319,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- l'année écoulée) ; norme de dépense : économie de l'année sur les
   -- fonctions pilotables
   let tauxDep := H.eco.tauxDepenses k s.inflationConsoPb
+  -- frein automatique au déficit : norme durcie l'année qui suit un déficit
+  -- au-dessus du seuil du levier `freinDeficit`
+  let moderation := s.moderationDepensesPb
+    + (if s.freinDeficitPb ≠ 0 ∧ s.deficitPb > s.freinDeficitSeuilPb then s.freinDeficitPb else 0)
   let sansNorme := s.depensesF.croitrePrimaires tauxDep s.robotisationPb
   let avecNorme := s.depensesF.croitrePrimaires tauxDep s.robotisationPb
-    s.moderationDepensesPb
+    moderation
   let economieNorme := sansNorme.total - avecNorme.total
   -- règles contracycliques de l'assurance chômage : au-dessus du seuil de
   -- chômage, la durée réduite est complétée (complément de fin de droits) ;
@@ -430,7 +434,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let consoMesures := s.consommationMesuresGwh + s.consommationPacHausseGwh
   let consoElec := consoBase + (s.parcElectriqueMilliers + dParc) * El.consommationVoitureKwh / 1000
     + consoMesures
-  let potentiel := (s.capacitesMw.moyenne capacites).production El.facteurChargePm
+  -- stockages des mesures : leur restitution remplace la production
+  -- thermique fossile
+  let potentiel := ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).ajouter
+    .thermique (0 - min s.dechargeStockageGwh ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).thermique)
   let modulation := min potentiel.nucleaire (max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh))
   -- sols : consommation d'espaces (enveloppe du ZAN où s'imputent les
   -- surfaces des mesures, ou rythme d'avant la loi selon l'écart choisi par
@@ -468,7 +475,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     -- investissement public du levier `investissement`, reconduit comme la
     -- dépense de sa fonction (norme comprise)
     investissementPublicMesures := s.investissementPublicMesures.croitrePrimaires tauxDep
-      s.robotisationPb s.moderationDepensesPb
+      s.robotisationPb moderation
     -- recettes d'IS dues au taux des mesures : elles croissent comme l'IS
     isTauxMeur := if s.impots.impotSocietes = 0 then 0
       else s.isTauxMeur * impots.impotSocietes / s.impots.impotSocietes
@@ -563,7 +570,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     -- niveau prévu est indexé hors norme (l'échéancier est une décision explicite)
     let t := ParFonction.tauxCroissance e.fonction tauxDep s.robotisationPb
     let tNorme := ParFonction.tauxCroissance e.fonction tauxDep s.robotisationPb
-      s.moderationDepensesPb
+      moderation
     let indice := e.indice + appliquerPb e.indice t
     let reconduit := e.niveau + appliquerPb e.niveau tNorme
     match e.restants with

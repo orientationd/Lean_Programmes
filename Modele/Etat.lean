@@ -1129,6 +1129,13 @@ structure Etat where
   /-- Norme de dépense : moindre croissance annuelle des fonctions pilotables
 (`Fonction.pilotable`), pb. -/
   moderationDepensesPb : Int := 0
+  /-- Frein automatique au déficit (levier `freinDeficit`) : seuil de déficit,
+  pb du PIB, au-delà duquel la norme de dépense est durcie l'année suivante
+  (le frein est actif dès que `freinDeficitPb` n'est pas nul). -/
+  freinDeficitSeuilPb : Int := 0
+  /-- Durcissement de la norme de dépense, pb, l'année qui suit un déficit
+  au-dessus du seuil. -/
+  freinDeficitPb : Int := 0
   /-- Taux marginal de l'année (taux du scénario corrigé de la prime de risque
   liée au déficit), pb (suivi). -/
   tauxMarginalCourantPb : Int := 0
@@ -1235,6 +1242,9 @@ structure Etat where
   consommationBaseGwh : Int := 0
   /-- Consommation d'électricité ajoutée par les mesures, GWh/an (niveau). -/
   consommationMesuresGwh : Int := 0
+  /-- Électricité restituée par les stockages des mesures à la place de la
+  production thermique fossile, GWh/an (levier `stockageElectrique`). -/
+  dechargeStockageGwh : Int := 0
   /-- Consommation d'électricité de l'année, GWh : base, voitures
   électriques du parc, mesures. -/
   consommationGwh : Int := 0

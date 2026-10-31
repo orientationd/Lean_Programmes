@@ -278,4 +278,49 @@ theorem lpm_tendanciel :
       decide (2450 ≤ d ∧ d ≤ 2750)) = true := by
   decide +kernel
 
+/-- Rétrofit : 100 000 conversions par an pendant cinq ans ajoutent
+exactement 500 000 voitures électriques au parc (pas d'aubaine ni de limite
+des ventes neuves), et évitent 1,7 t de CO₂ par voiture et par an, soit au
+moins 0,8 Mt par an la cinquième année. -/
+def retrofit : Programme :=
+  { id := "R", nom := "R", description := "", mainteneurs := [], source := "",
+    mesures := [{ id := "R-1", titre := "", source := ""
+                  leviers := [.retrofitElectrique 100000 5000 400 0]
+                  repetitions := 5 }] }
+
+theorem retrofit_parc :
+    let t := tendancielAn D H 5
+    let r := retrofit.resultatA D H 5
+    r.parcElectriqueMilliers - t.parcElectriqueMilliers = 500 ∧
+    800 ≤ t.emissionsKt.transports - r.emissionsKt.transports := by
+  decide +kernel
+
+/-- Frein automatique au déficit : un seuil jamais atteint (100 % du PIB)
+laisse la trajectoire inchangée ; un seuil nul (déficit toujours au-dessus)
+durcit la norme chaque année et réduit la dépense de l'année 5 de plus de
+1 % (100 pb de norme sur les fonctions pilotables, environ la moitié de la
+dépense, pendant cinq ans). -/
+theorem frein_deficit :
+    let t := tendancielAn D H 5
+    let jamais := (mesure (.freinDeficit 10000 100)).resultatA D H 5
+    let toujours := (mesure (.freinDeficit 0 100)).resultatA D H 5
+    jamais.depensesF.total = t.depensesF.total ∧
+    100 * (t.depensesF.total - toujours.depensesF.total) ≥ t.depensesF.total := by
+  decide +kernel
+
+/-- Stockage : 1 000 MW pendant 8 heures, 300 cycles par an, rendement de
+75 % : 2 400 GWh de charge, 1 800 GWh restitués à la place du thermique
+fossile (production thermique de l'année 5 plus basse de 1 800 GWh), la
+charge étant prise au nucléaire (+2 400 GWh) ; à 400 g par kWh, 720 kt de
+CO₂ évitées dans l'énergie la première année, ≈ 650 kt l'année 5 avec la
+baisse tendancielle du secteur. -/
+theorem stockage_electrique :
+    let t := tendancielAn D H 5
+    let r := (mesure (.stockageElectrique 1000 8 300 750 400)).resultatA D H 5
+    t.productionGwh.thermique - r.productionGwh.thermique = 1800 ∧
+    r.productionGwh.nucleaire - t.productionGwh.nucleaire = 2400 ∧
+    600 ≤ t.emissionsKt.energie - r.emissionsKt.energie ∧
+    t.emissionsKt.energie - r.emissionsKt.energie ≤ 720 := by
+  decide +kernel
+
 end Tests.Mecanismes
