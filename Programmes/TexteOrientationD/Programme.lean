@@ -2827,6 +2827,223 @@ de PIB ; une élection nationale coûte ≈ 170 M€ (législatives de 2024 :
 obligatoire. -/
 def voteObligatoirePourMemoire : Unit := ()
 
+/-- Paquet climat sans signal-prix sur le carburant (O-155 à O-163), demande
+de l'auteur (octobre 2026) : « toutes les propriétés à 18 sur 36, mesures
+ultra-originales ». Cibles 2030 (scénario médian, moteur de demande) :
+transports ≤ 92 Mt (104,4), bâtiments ≤ 37 (46,9), production d'énergie
+≤ 25 (26,8), total ≤ 276 (295,5), répartition de l'effort (hors marché
+carbone) ≤ 210,5 (245,8), budget carbone 2029-2033 ≤ 262 Mt par an
+(289,9). C'est la répartition de l'effort qui décide : ≈ −35 Mt dans les
+transports, les bâtiments, l'agriculture et les déchets. Les effets sont
+ceux de 2030, atteints par quarts de 2027 à 2030 (levier `transitionKt`) ;
+coûts, accises perdues (≈ 0,4 Md€ par Mt de carburant routier évité,
+0,25 Md€ pour les flottes professionnelles qui déduisent la TVA) et
+consommation d'électricité en plus sont comptés à part. Recherche
+documentaire d'octobre 2026, sources citées mesure par mesure.
+
+**Faisabilité d'ensemble très faible d'ici 2030** : le paquet suppose des
+pompes à chaleur à 3 ou 4 fois le marché record, le rachat de 20 % du
+cheptel bovin en quatre ans, ≈ 2,5 Mt de biocarburants dans un marché
+européen déjà en pénurie et la fermeture d'une raffinerie. -/
+def anneesMonteeClimat : Nat := 4
+
+/-- Sobriété routière (O-155), effets 2030 en kt : 110 km/h sur autoroute
+et 100 km/h sur voies rapides (−2 100 : Espagne 2011, −2 à −3 % de
+carburant ; A62 à 110 km/h, −9 % ; Umweltbundesamt 2023) ; poids lourds à
+80 km/h sur autoroute (−600, estimation) ; télétravail de deux jours sur
+les postes télétravaillables et covoiturage (−1 000 ; ADEME : −69 % de
+trajets les jours télétravaillés, rebond de 31 %) ; semaine de quatre jours
+compressée dans la fonction publique (−160 dans les transports, −130 dans
+les bâtiments ; domicile-travail : 17,4 Mt, Insee Première n° 1975). -/
+def sobrieteRoutiereKt : Int := 2100 + 600 + 1000 + 160
+def sobrieteRoutiereBatimentsKt : Int := 130
+def sobrieteRoutiereAccises : Int := (2100 + 1000 + 160) * 400 / 1000 + 600 * 250 / 1000
+
+/-- Flottes 100 % électriques (O-156), effets 2030 en kt : voitures de
+société à la belge, fin de la déductibilité des thermiques et quotas de
+95 % d'électriques en 2030 (−2 000 ; Belgique : 40 % d'électriques chez
+les voitures de société, ICCT 2025) ; VUL d'entreprise électriques
+(−2 040 ; 400 000 VUL neufs par an, 7 % électriques en 2024, T&E) ;
+loueurs, taxis et VTC (−740 ; ANFA 2025) ; livraisons urbaines zéro
+émission dans 40 agglomérations (−500 ; Pays-Bas, 30 villes) ; camions
+électriques, bonus et exonération de la contribution kilométrique (−1 300 ;
+Allemagne : exonération jusqu'en 2031). Électricité : +9,5 TWh en 2030.
+Aides : 2,1 Md€ par an de 2027 à 2030. -/
+def flottesKt : Int := 2000 + 2040 + 740 + 500 + 1300
+def flottesGwh : Int := 9500
+def flottesAides : Int := 2100
+def flottesAccises : Int := 500 + 500 + 220 + 130 + 330
+
+/-- Biocarburants payés par l'État, prix à la pompe inchangé (O-157), en
+kt : HVO porté de 5 points dans le gazole routier (−3 000 ; gazole R33,
+norme EN 590, Neste 2018 ; ≈ 0,75 Md€ par an à 0,6 € de surcoût par
+litre) ; B100 et HVO pour les poids lourds (−1 500 ; 0,25 Md€) ; bus et cars
+au B100, au HVO ou au bioGNV (−1 000 ; 0,05 Md€) ; 600 000 conversions à
+l'E85 (−500 ; 0,3 Md€). Biomasse limitée : l'inventaire compte −100 %,
+le cycle de vie ≈ −60 %. -/
+def biocarburantsKt : Int := 3000 + 1500 + 1000 + 500
+def biocarburantsCout : Int := 750 + 250 + 50 + 300
+
+/-- Plan « Liberty ships » du chauffage (O-158), en kt 2030 : pompes à
+chaleur air-eau et hybrides gratuites, 150 000 en 2027, 350 000 en 2028,
+550 000 en 2029 puis 700 000 par an jusqu'en 2033 (179 377 PAC air-eau
+vendues en 2025, record de 346 313 en 2022 ; Royaume-Uni : 13,5 millions
+de foyers convertis au gaz en dix ans), 80 % d'effet additionnel
+(−3 780 ; 8 500 € par PAC) ; un million de PAC air-air en relève de
+chaudières (−1 150) ; biofioul F30 obligatoire (−1 630) ; thermostats
+connectés réglés à 19 °C (−450). Électricité : +7 TWh en 2030, puis
++1,2 TWh par an avec les PAC de 2031 à 2033. -/
+def chauffageKt : Int := 3780 + 1150 + 1630 + 450
+def chauffageGwh : Int := 7000
+def chauffageSuiteKt : Int := 600
+def chauffageSuiteGwh : Int := 1200
+def chauffageInvestissement : List Int := [4100, 6500, 6700, 6400, 6400, 6400, 6400, 0]
+
+/-- Tertiaire (O-159), en kt : 19 °C contrôlé, régulation des grands
+systèmes de chauffage et sanctions du décret tertiaire (−1 300) ; quotas
+d'émissions des grands bâtiments tertiaires sur le modèle de Tokyo (−500 ;
+≈ 1 300 bâtiments, −20 %) ; chauffage collectif (−600) ; fuites de fluides
+frigorigènes et consigne à la destruction (−1 200 ; Norvège depuis 2004).
+0,6 Md€ par an. -/
+def tertiaireKt : Int := 1300 + 500 + 600 + 1200
+def tertiaireCout : Int := 600
+
+/-- Production d'énergie (O-160), en kt : Fonds chaleur doublé (−780 dans
+l'énergie, −540 dans l'industrie, −230 dans les bâtiments ; 51,5 € d'aide
+par tonne en 2025, ADEME) et chaudières électriques dans les réseaux de
+chaleur (−300) ; fermeture et reconversion de la raffinerie de Donges en
+2029 (−1 150 ; 11 Mt de brut par an, ≈ 650 salariés ; les émissions
+partent avec les importations de gazole). -/
+def energieKt : Int := 780 + 300 + 1150
+def energieIndustrieKt : Int := 540
+def energieBatimentsKt : Int := 230
+def energieGwh : Int := 1300
+def energieInvestissement : List Int := [800, 800, 1300, 1300, 800]
+
+/-- Agriculture (O-161), en kt : rachat volontaire de 20 % du cheptel
+bovin de 2028 à 2031 (−3 750 ; Pays-Bas : 723 élevages rachetés pour
+1,81 Md€ ; Cour des comptes, 2023) ; additif 3-NOP pour 900 000 vaches de
+plus (−620, avis de l'EFSA attendu) ; deux repas végétariens sur cinq en
+restauration collective (−200) ; plafond d'azote minéral 15 % sous
+l'optimum, à la danoise (−1 200) ; fosses à lisier couvertes dans 15 000
+élevages (−1 230). ≈ 2,45 Md€ par an de 2028 à 2031. -/
+def agricultureKt : Int := 3750 + 620 + 200 + 1200 + 1230
+def agricultureCout : List Int := [750, 2450, 2450, 2450, 2450, 750]
+
+/-- Déchets (O-162) : captage du biogaz des décharges porté à 70 % (au
+lieu des 55 % d'O-135), −2 500 kt (189 kt par point de captage, paramètre
+d'O-135), 0,15 Md€ par an. -/
+def dechetsKt : Int := 2500
+def dechetsCout : Int := 150
+
+/-- Électricité renouvelable avec l'électrification (O-163) : les flottes,
+les pompes à chaleur et les réseaux de chaleur ajoutent ≈ 18 TWh de
+consommation en 2030, qui feraient retomber la part renouvelable sous
+40 % ; 1,5 GW de solaire de plus par an de 2027 à 2030 (moitié au sol,
+moitié sur toitures) et 4 TWh de sobriété de plus (un million de logements
+de plus passés des convecteurs aux PAC air-air). -/
+def solaireSupplementMw : Int := 750
+def sobrieteSupplementGwh : Int := 1000
+/-- Soutien du supplément solaire, M€ : même calcul que `soutienRenouvelables`
+(16 €/MWh au sol, 38 €/MWh sur toitures). -/
+def soutienSolaireSupplement : List Int :=
+  ([1, 3, 5, 7, 8] : List Int).map fun demiAnnees =>
+    (solaireSupplementMw * soutienSolaireEurosMWh + solaireSupplementMw * soutienToitEurosMWh)
+      * demiAnnees / 2 * productionSolaireGwhParGw / 1000000
+
+/-- Finances pour l'équilibre en 2035, la règle européenne de −1 point de
+dette par an et le financement du paquet climat (O-164 à O-169), demande
+de l'auteur (octobre 2026). Au rang qui décide (neuvième meilleur des
+dix-huit scénarios économiques), il manquait ≈ 0,5 point de déficit en
+2030, ≈ 0,8 point en 2035 et ≈ 6,5 points de dette, plus ≈ 15 Md€ par an
+pour le climat. Trois familles : opérations sur la dette sans effet sur
+l'activité (O-164 à O-166), recettes à faible effet sur la demande
+(O-167, O-168), contribution sur le sol relevée (O-169). Recherche
+documentaire d'octobre 2026.
+
+Dernier tiers de l'or (O-164) : avec O-149, tout l'or de la Banque de
+France est vendu de 2027 à 2032 (réserves en or : 301,2 Md€ fin août
+2026) ; mêmes règles qu'O-149 (Eurostat 1997) et même risque juridique,
+aggravé : la France n'aurait plus d'or. -/
+def plusValueDernierTiersParAn : Int := plusValueOrParAn / 2
+
+/-- Réserves de change de l'État hors or : 28,4 Md€ ; la moitié vendue en
+2027 (O-164), opération financière ; capacité d'intervention réduite. -/
+def devisesVendues : Int := 28400 / 2
+
+/-- Réserve de réévaluation des réserves de change et en or de l'État
+(RRRODE) de la Banque de France : 11,4 Md€ après la plus-value de 11 Md€
+réalisée en 2025 sur l'or « mis aux normes » (résultats 2025, 25 mars
+2026), versée à l'État en 2027 (O-164) ; elle couvrait les pertes futures
+de la Banque de France. -/
+def rrrode : Int := 11400
+
+/-- Deuxième baisse de la trésorerie de l'État (O-164) : 15 Md€ en 2027
+(écart de 95,4 Md€ entre dette des administrations et dette de l'État,
+Insee, fin 2025). -/
+def tresorerieSupplementaire : Int := 15000
+
+/-- Consolidation de l'Agirc-Arrco (O-165) : 91,2 Md€ de réserves fin
+2025 (Agirc-Arrco, résultats 2025, 31 mars 2026), trois quarts placés en
+OAT de 2027 à 2029 (hypothèse : un quart déjà en titres publics) ;
+rendement des placements vendus perdu (2,5 %, comme O-150). **Risque très
+élevé** : régime géré par les partenaires sociaux (alinéa 8 du Préambule
+de 1946), ponction de 2023 abandonnée. Avec le Régime complémentaire des
+indépendants (≈ 15 Md€ convertibles, organisme public) et le Fonds de
+garantie des dépôts (classé parmi les administrations publiques depuis
+2015 : ≈ 5 Md€). -/
+def agircConvertiParAn : Int := 91200 * 3 / 4 / 3
+def rciFgdr : Int := 15000 + 5000
+def rendementPerdu (montant : Int) : Int := montant * rendementPerduPm / 1000
+
+/-- Caisse des dépôts et hydroélectricité (O-166) : dividende exceptionnel
+de 10 Md€ du fonds d'épargne en 2028 (42,7 Md€ de fonds propres et autres
+ressources ; la Caisse n'est pas une administration publique, le versement
+est une opération financière) ; droit d'entrée des concessions
+hydroélectriques au juste prix (loi n° 2026-554 du 29 juin 2026 : droit
+réel de 70 ans contre une somme évaluée par des experts) : 12 Md€ en 2028
+(fourchette 10 à 20, calcul), avance comptée en dette d'un coup et en
+recette sur 70 ans (≈ 171 M€ par an, règle d'Eurostat sur les licences de
+mars 2017) ; la dette passe à EDF. -/
+def dividendeCdc : Int := 10000
+def droitEntreeHydro : Int := 12000
+def droitEntreeHydroParAn : Int := droitEntreeHydro / 70
+
+/-- Recettes à faible effet sur la demande (O-167, O-168), M€ :
+fin des avantages du démembrement de propriété (réunion de l'usufruit
+taxée au décès, barème de l'article 669 revu : 2 à 3 Md€ de coût actuel,
+Conseil d'analyse économique, note 69, 2021), montée de 0,3 à 2,3 Md€ ;
+plus-values immobilières indexées sur l'inflation au lieu de l'abattement
+pour durée de détention (surcoût actuel ≈ 3 Md€, Cour des comptes, novembre
+2025) et exonération de la résidence principale plafonnée à l'américaine
+(250 000 $ par personne), de 1 à 3 Md€ ; fin du reste du Pacte Dutreil
+(37,5 % → 0, après O-41), 2 Md€ ; taxe sur les transactions financières
+étendue aux achats-reventes dans la journée et aux dérivés sur actions
+françaises (modèle italien), 1,5 Md€ ; prélèvement sur le fonds d'épargne
+de la Caisse des dépôts porté à 90 % de son résultat, 1,6 Md€ ; redevance
+annuelle de marché sur les fréquences (modèle de l'Ofcom), 0,3 Md€. -/
+def demembrement : List Int := [300, 600, 800, 1000, 1300, 1600, 1900, 2100, 2300]
+def plusValuesImmobilieres : List Int := [1000, 1500, 2000, 2200, 2400, 2600, 2800, 3000]
+def finDutreil : Int := 2000
+def ttfElargie : Int := 1500
+def prelevementFondsEpargne : Int := 1600
+def redevanceFrequences : Int := 300
+
+/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1 %,
+même assiette et même calendrier ; à 1 %,
+les impôts sur l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de
+l'OCDE (Danemark : 7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-
+Galles du Sud : 1,6 à 2 % au-delà de 1,075 M A$, résidence principale
+exonérée). **Acceptabilité très faible.** -/
+def tauxSolSupplementPdm : Int := 50
+def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPdm / tauxSolPdm
+
+theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 ∧ biocarburantsKt = 6000 ∧
+    chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
+    soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧ plusValueDernierTiersParAn = 14473 ∧
+    devisesVendues = 14200 ∧ agircConvertiParAn = 22800 ∧ droitEntreeHydroParAn = 171 ∧
+    contributionSolSupplement = 24693 := by decide
+
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
@@ -4025,13 +4242,169 @@ def mesures : List Mesure := [
   { id := "O-154"
     titre := "Vote obligatoire, vote blanc compté parmi les suffrages exprimés, tirage au sort au-delà de 50 % de blancs"
     source := "Demande de l'auteur (octobre 2026) ; révision constitutionnelle (articles 3, 6 et 24) ; contravention de 1re classe (38 € au plus ; Belgique 50 €, Australie 20 dollars australiens, Sénat, 2022) ; blancs : 6,35 % des votants au second tour de 2022 ; amendes ≈ 50 M€ par scrutin au plus : sans effet budgétaire mesurable (voir `voteObligatoirePourMemoire`)"
-    leviers := [] }
+    leviers := [] },
+  { id := "O-155"
+    titre := "Sobriété routière : 110 km/h sur autoroute, 100 sur voies rapides, poids lourds à 80, télétravail de deux jours, semaine de quatre jours dans la fonction publique"
+    source := s!"Demande de l'auteur (octobre 2026), sans toucher au prix du carburant ; −{sobrieteRoutiereKt} kt dans les transports et −{sobrieteRoutiereBatimentsKt} kt dans les bâtiments en 2030 (Espagne 2011, A62, Umweltbundesamt 2023, ADEME, Insee) (voir `sobrieteRoutiereKt`)"
+    leviers := [.transitionKt .transports (sobrieteRoutiereKt / 4) 0, .transitionKt .batiments (sobrieteRoutiereBatimentsKt / 4) 0]
+    repetitions := anneesMonteeClimat },
+  { id := "O-155c"
+    titre := "Sobriété routière : covoiturage aidé et accises perdues"
+    source := s!"0,1 à 0,4 Md€ par an ; accises et TVA perdues : {sobrieteRoutiereAccises} M€ en 2030"
+    leviers := [.depenseEcheancier .affairesEconomiques [100, 200, 300, 400],
+                .recetteEcheancier (some .accisesEnergie) ((List.range 4).map fun (k : Nat) => 0 - sobrieteRoutiereAccises * (Int.ofNat k + 1) / 4)] },
+  { id := "O-156"
+    titre := "Flottes 100 % électriques : voitures de société à la belge, VUL d'entreprise, loueurs, taxis et VTC, livraisons urbaines, camions"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{flottesKt} kt dans les transports en 2030, +{flottesGwh} GWh d'électricité (ICCT 2025, T&E, ANFA, Pays-Bas, Allemagne) (voir `flottesKt`)"
+    leviers := [.transitionKt .transports (flottesKt / 4) 0, .consommationElectrique (flottesGwh / 4)]
+    repetitions := anneesMonteeClimat },
+  { id := "O-156c"
+    titre := "Flottes électriques : aides de 2027 à 2030 et accises perdues"
+    source := s!"{flottesAides} M€ par an de 2027 à 2030 (VUL 5 000 €, camions, livraisons, loueurs) ; accises et TVA perdues : {flottesAccises} M€ en 2030"
+    leviers := [.depenseEcheancier .affairesEconomiques [flottesAides, flottesAides, flottesAides, flottesAides, 0],
+                .recetteEcheancier (some .accisesEnergie) ((List.range 4).map fun (k : Nat) => 0 - flottesAccises * (Int.ofNat k + 1) / 4)] },
+  { id := "O-157"
+    titre := "Biocarburants payés par l'État, prix à la pompe inchangé : HVO dans le gazole, B100 pour les poids lourds, bus et cars, E85"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{biocarburantsKt} kt dans les transports en 2030 pour {biocarburantsCout} M€ par an (Neste, Greenea 2026 : marché du HVO en pénurie) (voir `biocarburantsKt`)"
+    leviers := [.transitionKt .transports (biocarburantsKt / 4) 0]
+    repetitions := anneesMonteeClimat },
+  { id := "O-157c"
+    titre := "Biocarburants : surcoût payé par l'État"
+    source := s!"{biocarburantsCout} M€ par an à partir de 2030"
+    leviers := [.depenseEcheancier .affairesEconomiques ((List.range 4).map fun (k : Nat) => biocarburantsCout * (Int.ofNat k + 1) / 4)] },
+  { id := "O-158"
+    titre := "Plan « Liberty ships » du chauffage : 700 000 pompes à chaleur gratuites par an, PAC air-air en relève, biofioul F30 obligatoire, thermostats à 19 °C"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{chauffageKt} kt dans les bâtiments en 2030, +{chauffageGwh} GWh (Uniclima, plan PAC 2024, Royaume-Uni 1967-1977) ; pompes à chaleur jusqu'en 2033 (voir `chauffageKt`)"
+    leviers := [.transitionKt .batiments (chauffageKt / 4) 0, .consommationElectrique (chauffageGwh / 4)]
+    repetitions := anneesMonteeClimat },
+  { id := "O-158b"
+    titre := "Plan « Liberty ships » : pompes à chaleur de 2031 à 2033"
+    source := s!"700 000 PAC par an : −{chauffageSuiteKt} kt et +{chauffageSuiteGwh} GWh par an"
+    leviers := [.transitionKt .batiments chauffageSuiteKt 0, .consommationElectrique chauffageSuiteGwh]
+    debut := anneesMonteeClimat
+    repetitions := 3 },
+  { id := "O-158c"
+    titre := "Plan « Liberty ships » : investissement public"
+    source := s!"{chauffageInvestissement} M€ (8 500 € par PAC, PAC air-air, kits F30, thermostats)"
+    leviers := [.investissementEcheancier .logementEnvironnement chauffageInvestissement] },
+  { id := "O-159"
+    titre := "Tertiaire : 19 °C contrôlé, sanctions du décret tertiaire, quotas des grands bâtiments (modèle de Tokyo), chauffage collectif, fluides frigorigènes"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{tertiaireKt} kt dans les bâtiments en 2030, {tertiaireCout} M€ par an (voir `tertiaireKt`)"
+    leviers := [.transitionKt .batiments (tertiaireKt / 4) 0]
+    repetitions := anneesMonteeClimat },
+  { id := "O-159c"
+    titre := "Tertiaire : contrôles et aides"
+    source := s!"{tertiaireCout} M€ par an"
+    leviers := [.depenseEcheancier .logementEnvironnement [tertiaireCout]] },
+  { id := "O-160"
+    titre := "Production d'énergie : Fonds chaleur doublé, chaudières électriques dans les réseaux de chaleur, fermeture et reconversion de la raffinerie de Donges (2029)"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{energieKt} kt dans l'énergie, −{energieIndustrieKt} dans l'industrie, −{energieBatimentsKt} dans les bâtiments en 2030 (ADEME 2025) ; émissions de Donges reportées sur les importations de gazole (voir `energieKt`)"
+    leviers := [.transitionKt .energie (energieKt / 4) 0, .transitionKt .industrie (energieIndustrieKt / 4) 0,
+                .transitionKt .batiments (energieBatimentsKt / 4) 0, .consommationElectrique (energieGwh / 4)]
+    repetitions := anneesMonteeClimat },
+  { id := "O-160c"
+    titre := "Production d'énergie : Fonds chaleur et reconversion de Donges"
+    source := s!"{energieInvestissement} M€"
+    leviers := [.investissementEcheancier .logementEnvironnement energieInvestissement] },
+  { id := "O-161"
+    titre := "Agriculture : rachat volontaire de 20 % du cheptel bovin, 3-NOP, repas végétariens en restauration collective, plafond d'azote à la danoise, fosses couvertes"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{agricultureKt} kt en 2030 (Pays-Bas, Danemark, Cour des comptes 2023) ; ≈ 15 000 à 20 000 exploitations en moins (hypothèse) (voir `agricultureKt`)"
+    leviers := [.transitionKt .agriculture (agricultureKt / 4) 0]
+    repetitions := anneesMonteeClimat },
+  { id := "O-161c"
+    titre := "Agriculture : rachats et compensations"
+    source := s!"{agricultureCout} M€"
+    leviers := [.depenseEcheancier .affairesEconomiques agricultureCout] },
+  { id := "O-162"
+    titre := "Déchets : captage du biogaz des décharges porté à 70 %"
+    source := s!"Demande de l'auteur (octobre 2026) ; −{dechetsKt} kt en 2030 (paramètre d'O-135), {dechetsCout} M€ par an (voir `dechetsKt`)"
+    leviers := [.transitionKt .dechets (dechetsKt / 4) 0]
+    repetitions := anneesMonteeClimat },
+  { id := "O-162c"
+    titre := "Déchets : captage du biogaz"
+    source := s!"{dechetsCout} M€ par an"
+    leviers := [.depenseEcheancier .logementEnvironnement [dechetsCout]] },
+  { id := "O-163"
+    titre := "Électricité renouvelable avec l'électrification : 1,5 GW de solaire de plus par an et un million de logements de plus aux PAC air-air"
+    source := s!"Les O-156, O-158 et O-160 ajoutent ≈ 18 TWh de consommation en 2030 ; +{solaireSupplementMw} MW au sol et sur toitures par an de 2027 à 2030, −{sobrieteSupplementGwh} GWh par an de sobriété (voir `solaireSupplementMw`)"
+    leviers := [.capaciteElectrique .solaire solaireSupplementMw, .solaireToiture solaireSupplementMw,
+                .depenseEcheancier .affairesEconomiques soutienSolaireSupplement] },
+  { id := "O-163b"
+    titre := "Électricité : fin du supplément solaire (2031)"
+    source := "Quatre années d'installation"
+    leviers := [.capaciteElectrique .solaire (0 - solaireSupplementMw), .solaireToiture (0 - solaireSupplementMw)]
+    debut := 4 },
+  { id := "O-163c"
+    titre := "Électricité : sobriété supplémentaire (PAC air-air à la place des convecteurs)"
+    source := s!"−{sobrieteSupplementGwh} GWh par an de 2027 à 2030 ; 400 M€ par an (estimation, comme O-148c)"
+    leviers := [.consommationElectrique (0 - sobrieteSupplementGwh), .investissementEcheancier .logementEnvironnement [400, 0]]
+    repetitions := anneesMonteeClimat },
+  { id := "O-164"
+    titre := "Vente du dernier tiers de l'or, de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus"
+    source := s!"Demande de l'auteur (octobre 2026) ; or : {plusValueDernierTiersParAn} M€ par an de 2027 à 2032 (avec O-149, tout l'or est vendu) ; devises {devisesVendues} M€, RRRODE {rrrode} M€, trésorerie {tresorerieSupplementaire} M€ en 2027 ; opérations financières, risque juridique élevé (BCE) (voir `plusValueDernierTiersParAn`)"
+    leviers := [.pretEtat (0 - plusValueDernierTiersParAn - devisesVendues - rrrode - tresorerieSupplementaire)] },
+  { id := "O-164b"
+    titre := "Fin des versements exceptionnels de 2027"
+    source := "Devises, RRRODE et trésorerie : une seule année"
+    leviers := [.pretEtat (devisesVendues + rrrode + tresorerieSupplementaire)]
+    debut := 1 },
+  { id := "O-164d"
+    titre := "Vente d'or : fin des versements du dernier tiers (2033)"
+    source := "Six années de vente"
+    leviers := [.pretEtat plusValueDernierTiersParAn]
+    debut := anneesVenteOr },
+  { id := "O-165"
+    titre := "Réserves de l'Agirc-Arrco, du RCI et du Fonds de garantie des dépôts placées en titres de l'État"
+    source := s!"Demande de l'auteur (octobre 2026) ; Agirc-Arrco 91,2 Md€ fin 2025, {agircConvertiParAn} M€ par an de 2027 à 2029 ; RCI et FGDR {rciFgdr} M€ en 2027 ; rendements perdus (2,5 %) ; risque très élevé (régime paritaire) (voir `agircConvertiParAn`)"
+    leviers := [.pretEtat (0 - agircConvertiParAn - rciFgdr),
+                .recetteEcheancier none [0 - rendementPerdu (agircConvertiParAn + rciFgdr),
+                  0 - rendementPerdu (2 * agircConvertiParAn + rciFgdr), 0 - rendementPerdu (3 * agircConvertiParAn + rciFgdr)]] },
+  { id := "O-165b"
+    titre := "Consolidation : RCI et FGDR convertis (2028)"
+    source := "Une seule année"
+    leviers := [.pretEtat rciFgdr]
+    debut := 1 },
+  { id := "O-165d"
+    titre := "Consolidation de l'Agirc-Arrco achevée (2030)"
+    source := "Trois années de conversion"
+    leviers := [.pretEtat agircConvertiParAn]
+    debut := 3 },
+  { id := "O-166"
+    titre := "Dividende exceptionnel du fonds d'épargne de la Caisse des dépôts et droit d'entrée des concessions hydroélectriques (2028)"
+    source := s!"Demande de l'auteur (octobre 2026) ; {dividendeCdc} M€ et {droitEntreeHydro} M€ en 2028 (loi n° 2026-554), recette de {droitEntreeHydroParAn} M€ par an sur 70 ans (voir `dividendeCdc`)"
+    leviers := [.pretEtat (0 - dividendeCdc - droitEntreeHydro)]
+    debut := 1 },
+  { id := "O-166b"
+    titre := "Caisse des dépôts et hydroélectricité : fin des versements ponctuels"
+    source := "Une seule année"
+    leviers := [.pretEtat (dividendeCdc + droitEntreeHydro)]
+    debut := 2 },
+  { id := "O-166c"
+    titre := "Hydroélectricité : droit d'entrée étalé en recette"
+    source := s!"{droitEntreeHydroParAn} M€ par an, déjà encaissés en 2028"
+    leviers := [.recetteEcheancier none [droitEntreeHydroParAn], .pretEtat droitEntreeHydroParAn]
+    debut := 1 },
+  { id := "O-167"
+    titre := "Patrimoine : fin des avantages du démembrement, plus-values immobilières indexées et résidence principale plafonnée à l'américaine, fin du reste du Pacte Dutreil"
+    source := s!"Demande de l'auteur (octobre 2026) ; démembrement {demembrement} M€ (CAE 2021) ; plus-values {plusValuesImmobilieres} M€ (Cour des comptes 2025) ; Dutreil {finDutreil} M€ (voir `demembrement`)"
+    leviers := [.recetteEcheancier (some .patrimoine) demembrement,
+                .recetteEcheancier (some .patrimoine) plusValuesImmobilieres,
+                .recetteEcheancier (some .patrimoine) [finDutreil]] },
+  { id := "O-168"
+    titre := "Taxe sur les transactions financières étendue aux achats-reventes du jour et aux dérivés ; Caisse des dépôts et fréquences"
+    source := s!"Demande de l'auteur (octobre 2026) ; TTF {ttfElargie} M€ (modèle italien) ; fonds d'épargne {prelevementFondsEpargne} M€ ; fréquences {redevanceFrequences} M€ (Ofcom) (voir `ttfElargie`)"
+    leviers := [.recetteEcheancier (some .autres) [ttfElargie],
+                .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
+  { id := "O-169"
+    titre := "Contribution sur la valeur du sol portée à 1 % (O-151)"
+    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; impôts sur l'immobilier ≈ 3,3 % du PIB, au sommet de l'OCDE ; acceptabilité très faible (voir `tauxSolSupplementPdm`)"
+    leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, électricité renouvelable à 40 %, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État, vote obligatoire et vote blanc reconnu."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, électricité renouvelable à 40 %, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État, vote obligatoire et vote blanc reconnu, paquet climat sans signal-prix sur le carburant et son financement."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
