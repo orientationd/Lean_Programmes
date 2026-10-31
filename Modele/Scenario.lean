@@ -313,6 +313,60 @@ def partFioul (P : PompesAChaleur) : Territoire → Int
 
 end PompesAChaleur
 
+/-- Technologies de la transition écologique (levier
+`investissementTransition`) : chacune a sa part importée
+(`Energie.partImporteeTransitionPm`), son secteur d'emploi et sa fonction
+de dépense (`TechnoTransition.secteur`, `TechnoTransition.fonction`). -/
+inductive TechnoTransition where
+  | pompeAChaleur | vehiculeElectrique | solaire | eolien | renovation
+  | reseauChaleur | biocarburant | agricole
+  deriving Repr, DecidableEq, Inhabited
+
+/-- Valeur par technologie de la transition. -/
+structure ParTechno where
+  pompeAChaleur : Int
+  vehiculeElectrique : Int
+  solaire : Int
+  eolien : Int
+  renovation : Int
+  reseauChaleur : Int
+  biocarburant : Int
+  agricole : Int
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParTechno
+
+def get (v : ParTechno) : TechnoTransition → Int
+  | .pompeAChaleur => v.pompeAChaleur
+  | .vehiculeElectrique => v.vehiculeElectrique
+  | .solaire => v.solaire
+  | .eolien => v.eolien
+  | .renovation => v.renovation
+  | .reseauChaleur => v.reseauChaleur
+  | .biocarburant => v.biocarburant
+  | .agricole => v.agricole
+
+end ParTechno
+
+namespace TechnoTransition
+
+/-- Secteur où la part intérieure de la dépense crée des emplois : la pose
+et les travaux (construction) pour les équipements des bâtiments, les
+réseaux et les centrales, souvent importés ; la fabrication (industrie)
+pour les véhicules et les biocarburants ; l'agriculture pour les aides aux
+exploitations. -/
+def secteur : TechnoTransition → Secteur
+  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur => .construction
+  | .vehiculeElectrique | .biocarburant => .industrie
+  | .agricole => .agriculture
+
+/-- Fonction de dépense publique (COFOG agrégée). -/
+def fonction : TechnoTransition → Fonction
+  | .pompeAChaleur | .renovation | .reseauChaleur => .logementEnvironnement
+  | .vehiculeElectrique | .solaire | .eolien | .biocarburant | .agricole => .affairesEconomiques
+
+end TechnoTransition
+
 /-- Hypothèse sur le prix du pétrole, appliquée comme un choc de niveau sur
 le PIB de départ, identique pour le tendanciel et pour chaque programme. -/
 structure Energie where
@@ -356,6 +410,9 @@ structure Energie where
   pmRelatifCritAirPm : List Int
   /-- Rénovation énergétique des logements. -/
   renovation : Renovation
+  /-- Part importée de la dépense de transition, par technologie, pm
+  (levier `investissementTransition`). -/
+  partImporteeTransitionPm : ParTechno
   /-- Élasticités-prix des activités visées par une taxe environnementale. -/
   elasticitesPrix : ElasticitesPrix
   /-- Consommation d'électricité d'un foyer d'outre-mer, kWh/an. -/

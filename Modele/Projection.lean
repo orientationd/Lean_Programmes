@@ -605,6 +605,12 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       -- qu'elle avait créés (intensité en emplois symétrique) ; une économie
       -- (niveau négatif) n'a pas de secteur
       let secteur := if e.niveau < 0 then none else (e.secteur <|> e.fonction.secteur)
+      -- investissement privé entraîné : demande et importations, sans dépense
+      -- publique
+      if e.privee then
+        effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) H.eco.incidenceInvestissementPm)
+          { st with importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 }
+      else
       effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) (poidsEcheance H e))
         { st with depensesF := st.depensesF.ajouter e.fonction d
                   importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
@@ -657,7 +663,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- investissement public de l'année écoulée : levier `investissement` et
   -- échéanciers de construction (niveaux de l'année)
   let investissementAnnee := s.investissementPublicMesures.total
-    + (s.echeances.filter (·.secteur = some .construction)).foldl (fun a e => a + e.niveau) 0
+    + (s.echeances.filter (fun e => e.secteur = some .construction ∧ !e.privee)).foldl (fun a e => a + e.niveau) 0
   let s₇ := canalCapital M H prix investissementAnnee s₇
   -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
   -- d'année (cycle, tendance et mesures de l'année)

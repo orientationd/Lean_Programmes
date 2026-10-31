@@ -938,6 +938,10 @@ structure Echeance where
   l'année d'entrée en vigueur, €. Chaque variation du niveau crée (ou
   supprime) les emplois publics correspondants, un pour un. -/
   coutParPosteEuros : Option Int := none
+  /-- Investissement privé entraîné par une mesure (levier
+  `investissementPriveTransition`) : effet de demande et importations, sans
+  dépense publique ni canal du capital public. -/
+  privee : Bool := false
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/
