@@ -139,6 +139,27 @@ aide générale (≈ 13 % des voitures aidées par une prime de 4 000 € en 202
 0,115 pour les ménages modestes (leasing social) ; une obligation compte
 chaque voiture (`Hypotheses/Energie.lean`, `Hypotheses/Economie.lean`).
 
+**Transition écologique : PIB et emploi.** Une tonne de CO₂ évitée n'est
+pas neutre pour l'activité. Le levier `transitionEcologique` compte
+l'énergie fossile qui n'est plus achetée : importations évitées (la
+dépense se reporte sur des biens produits en France), accises et TVA
+perdues (rendues aux ménages et aux entreprises, pondérées comme une baisse
+de prélèvement), accise et TVA de l'électricité consommée à la place ; un
+biocarburant à prix et taxes inchangés ne retire que la part non importée
+du substitut. La production qui disparaît (raffinerie, cheptel) retire
+autant de PIB et d'emplois dans son secteur, la part reprise par des
+importations s'ajoutant aux importations. Les investissements sont décrits
+par technologie, publics (`investissementTransition`) ou privés
+déclenchés par une mesure (`investissementPriveTransition`), avec la part
+importée propre à chacune (véhicules électriques 75 %, HVO 80 %, éolien
+60 %, biogazole 55 %, pompes à chaleur 45 %, biogaz 35 %, solaire 34 %,
+rénovation et réseaux de chaleur 20 %, bioéthanol 10 % ; ADEME, IEA-PVPS,
+IRENA, FranceAgriMer, Insee) et son secteur d'emploi (construction,
+industrie, agriculture). Ordres de grandeur publiés pour comparaison :
++0,2 à +0,4 % de PIB et +20 000 à +60 000 emplois nets en 2030 pour une
+transition financée par la dette (DG Trésor, Banque de France, ThreeME de
+l'ADEME et de l'OFCE).
+
 **Lois à respecter.** Outre les règles budgétaires françaises et
 européennes et les objectifs climatiques, chaque programme est vérifié
 contre la loi de programmation militaire actualisée (loi n° 2026-791 : la
@@ -258,7 +279,11 @@ CI) :
   année (acomptes de l'IS) ; un point d'inflation coûte la part indexée de
   la dette ; un point de taux ne relève le taux apparent que de la part
   refinancée ; convergence du taux apparent ; multiplicateur ; symétrie
-  dépense-économie ; rendement d'un prélèvement ;
+  dépense-économie ; rendement d'un prélèvement ; transition écologique
+  (carburant évité : importations et accises en baisse, PIB en hausse ;
+  biocarburant à taxes inchangées ; accise de l'électricité ; activité
+  perdue ; part importée des investissements par technologie ;
+  investissement privé sans dépense publique) ;
 * **assiettes** (`Tests/Assiettes.lean`) : barème indexé (l'inflation seule
   ne relève pas l'IR plus que les revenus), progressivité sur la hausse
   réelle, accises insensibles aux prix, revalorisation légale des valeurs
