@@ -3029,20 +3029,34 @@ def ttfElargie : Int := 1500
 def prelevementFondsEpargne : Int := 1600
 def redevanceFrequences : Int := 300
 
-/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1 %,
-même assiette et même calendrier ; à 1 %,
+/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1,15 %,
+même assiette et même calendrier ; dès 1 %,
 les impôts sur l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de
 l'OCDE (Danemark : 7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-
 Galles du Sud : 1,6 à 2 % au-delà de 1,075 M A$, résidence principale
 exonérée). **Acceptabilité très faible.** -/
-def tauxSolSupplementPdm : Int := 50
+def tauxSolSupplementPdm : Int := 65
 def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPdm / tauxSolPdm
+
+/-- Foncière de l'État (O-170) : cession d'un quart des bureaux de l'État
+en dix ans (23 millions de m², valeur comptable 73,7 Md€ ; cessions de
+0,2 à 0,3 Md€ par an aujourd'hui ; projet de foncière de l'État, Sénat,
+PLF 2025, compte d'affectation spéciale « Immobilier de l'État ») :
+≈ 0,9 Md€ par an, investissement négatif qui réduit le déficit ; ventes
+avec reprise en location exclues (Eurostat les requalifie en dette). -/
+def cessionsBureaux : Int := 900
+
+/-- Confiscation des avoirs criminels sans condamnation (O-171), permise
+par la directive (UE) 2024/1260 à transposer avant novembre 2027 : en 2025,
+1,44 Md€ saisis, 212 M€ confisqués dont 145 M€ versés au budget (ministère
+de la Justice) ; +0,1 puis +0,2 Md€ par an (estimation). -/
+def avoirsConfisques : List Int := [100, 200]
 
 theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 ∧ biocarburantsKt = 6000 ∧
     chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
     soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧ plusValueDernierTiersParAn = 14473 ∧
     devisesVendues = 14200 ∧ agircConvertiParAn = 22800 ∧ droitEntreeHydroParAn = 171 ∧
-    contributionSolSupplement = 24693 := by decide
+    contributionSolSupplement = 32100 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
@@ -4396,9 +4410,17 @@ def mesures : List Mesure := [
     leviers := [.recetteEcheancier (some .autres) [ttfElargie],
                 .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
   { id := "O-169"
-    titre := "Contribution sur la valeur du sol portée à 1 % (O-151)"
-    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; impôts sur l'immobilier ≈ 3,3 % du PIB, au sommet de l'OCDE ; acceptabilité très faible (voir `tauxSolSupplementPdm`)"
-    leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] }
+    titre := "Contribution sur la valeur du sol portée à 1,15 % (O-151)"
+    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; impôts sur l'immobilier au-delà de 3,3 % du PIB, au sommet de l'OCDE ; acceptabilité très faible (voir `tauxSolSupplementPdm`)"
+    leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] },
+  { id := "O-170"
+    titre := "Foncière de l'État : un quart des bureaux de l'État vendus en dix ans"
+    source := s!"Demande de l'auteur (octobre 2026) ; {cessionsBureaux} M€ par an (Sénat, PLF 2025 : 23 millions de m², 73,7 Md€) ; sans reprise en location (voir `cessionsBureaux`)"
+    leviers := [.investissementEcheancier .fonctionnement [0 - cessionsBureaux]] },
+  { id := "O-171"
+    titre := "Confiscation des avoirs criminels sans condamnation (directive (UE) 2024/1260)"
+    source := s!"Demande de l'auteur (octobre 2026) ; {avoirsConfisques} M€ (2025 : 212 M€ confisqués, ministère de la Justice) (voir `avoirsConfisques`)"
+    leviers := [.recetteEcheancier none avoirsConfisques] }
 ]
 
 def programme : Programme where
