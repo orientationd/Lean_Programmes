@@ -88,7 +88,10 @@ d'experts de juillet 2026) ; l'indemnisation du chômage suit, dans
 l'année, les chômeurs ; la charge d'intérêts suit la structure de la dette
 (titres à court terme renouvelés au taux court, refinancement de la dette à
 moyen et long terme et dette nouvelle au taux de l'OAT, indexation des
-titres indexés sur l'inflation) ; la dette de fin d'année est celle de
+titres indexés sur l'inflation), et la synthèse la répartit entre ses
+bénéficiaires (Banque de France, non-résidents, banques, assurances, fonds,
+autres résidents : `Hypotheses/DetentionDette.lean`, affichage seulement) ;
+la dette de fin d'année est celle de
 début d'année plus le déficit de l'année, mesures comprises. Tous les programmes sont
 évalués sous tous les moteurs ; un engagement précise le sien. Toute
 personne autorisée peut **ajouter son moteur** dans `Moteurs/<Nom>/`
@@ -196,7 +199,7 @@ hypothèse ajoutée plus tard par n'importe qui.
 | Chemin | Rôle |
 |---|---|
 | `Modele/` | état, unités, axes d'hypothèses, moteurs, leviers, projection, propriétés, programmes (types), sous-modèles SRU, automobile, attribution, rétro-test |
-| `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes, comptes publics observés 2017-2025 |
+| `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes, comptes publics observés 2017-2025, détenteurs de la dette publique |
 | `Tests/` | tests du modèle commun : comptabilité, mécanismes, assiettes des prélèvements, rétro-test, tendanciel |
 | `Proprietes/` | propriétés partagées, registre `Proprietes.toutes` |
 | `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` + `PROPRIETAIRES` |
