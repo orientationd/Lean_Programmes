@@ -401,12 +401,28 @@ theorem investissement_transition_part_importee :
 
 /-- Investissement privé déclenché (1 Md€ de centrales solaires) : PIB et
 emploi en hausse, aucune dépense publique (la dépense baisse même, par
-l'indemnisation du chômage), déficit en baisse. -/
+l'indemnisation du chômage), déficit en baisse (malgré l'éviction de 40 %
+de l'axe central). -/
 theorem investissement_prive_transition :
     let s0 := etatDepart H
     let p := depart (mesure (.investissementPriveTransition .solaire [1000]))
     0 < p.pib - s0.pib ∧ 0 < p.emploiTotal - s0.emploiTotal ∧
       p.depensesF.total ≤ s0.depensesF.total ∧ p.deficit < s0.deficit := by
+  decide +kernel
+
+/-- Éviction et équipement fossile remplacé : le même milliard de solaire
+soutient moins l'activité financé par le privé (40 % évincés à l'axe
+central) que payé par l'État ; une pompe à chaleur offerte soutient moins
+l'activité quand elle remplace une chaudière qui aurait été achetée (13 %)
+que sans cette substitution. -/
+theorem eviction_substitution :
+    let pub := depart (mesure (.investissementTransition .solaire [1000]))
+    let priv := depart (mesure (.investissementPriveTransition .solaire [1000]))
+    let H0 : Scenario := { H with energie := { H.energie with substitutionBruneTransitionPm :=
+      { H.energie.substitutionBruneTransitionPm with pompeAChaleur := 0 } } }
+    let pac := depart (mesure (.investissementTransition .pompeAChaleur [1000]))
+    let pac0 := (mesure (.investissementTransition .pompeAChaleur [1000])).etatInitial D H0
+    priv.pib < pub.pib ∧ pac.pib < pac0.pib := by
   decide +kernel
 
 end Tests.Mecanismes

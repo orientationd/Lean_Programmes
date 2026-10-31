@@ -942,6 +942,11 @@ structure Echeance where
   `investissementPriveTransition`) : effet de demande et importations, sans
   dépense publique ni canal du capital public. -/
   privee : Bool := false
+  /-- Part du niveau, pm, qui remplace une autre dépense privée de l'année
+  (équipement fossile qui n'est plus acheté, investissement évincé par le
+  financement d'un investissement privé) : retirée de l'effet de demande,
+  au contenu importé moyen (levier `investissementTransition`). -/
+  substitutionPm : Int := 0
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/

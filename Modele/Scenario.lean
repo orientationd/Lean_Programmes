@@ -422,6 +422,12 @@ structure Energie where
   /-- Part importée de la dépense de transition, par technologie, pm
   (levier `investissementTransition`). -/
   partImporteeTransitionPm : ParTechno
+  /-- Part de la dépense de transition saisie qui remplace l'achat d'un
+  équipement fossile qui aurait eu lieu (chaudière en fin de vie), par
+  technologie, pm. Convention de saisie : coût complet pour le chauffage,
+  la rénovation et les réseaux de chaleur, surcoût pour les véhicules et les
+  biocarburants (déjà net de l'équipement fossile). -/
+  substitutionBruneTransitionPm : ParTechno
   /-- Élasticités-prix des activités visées par une taxe environnementale. -/
   elasticitesPrix : ElasticitesPrix
   /-- Consommation d'électricité d'un foyer d'outre-mer, kWh/an. -/
@@ -625,6 +631,11 @@ structure Economie where
   public (bâtiments, infrastructures), qui la soutient davantage. -/
   incidenceDepensePm : ParFonction
   incidenceInvestissementPm : Int
+  /-- Éviction de l'investissement privé de transition
+  (`investissementPriveTransition`), pm : part financée l'année même en
+  renonçant à d'autres dépenses privées (autres investissements,
+  consommation), retirée de l'effet de demande. -/
+  evictionInvestissementPrivePm : Int
   /-- Inflation annuelle (déflateur du PIB), pb : sépare le volume des prix
   pour le RNB par habitant de l'IDH. -/
   inflationPb : Int
@@ -1049,6 +1060,7 @@ abbrev ValideTravail (H : Scenario) : Prop :=
   H.eco.elasticiteCycliquePm.toutEntre 0 3000 = true ∧
   H.eco.incidenceDepensePm.toutEntre 0 3000 = true ∧
   0 ≤ H.eco.incidenceInvestissementPm ∧ H.eco.incidenceInvestissementPm ≤ 3000 ∧
+  0 ≤ H.eco.evictionInvestissementPrivePm ∧ H.eco.evictionInvestissementPrivePm ≤ 1000 ∧
   H.eco.elasticiteEmploiCoutTravailPm.toutEntre 0 3000 = true ∧
   H.eco.emploiPriveTrancheMilliers.toutEntre 0 30000 = true ∧
   H.eco.coutTravailTrancheMeur.toutEntre 1 2000000 = true ∧

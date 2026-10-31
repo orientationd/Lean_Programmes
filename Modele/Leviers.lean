@@ -915,20 +915,25 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .investissementTransition _ [], s => s
   | .investissementTransition tech (n :: reste), s =>
       let part := partInterieure H (H.energie.partImporteeTransitionPm.get tech)
+      -- équipement fossile qui n'est plus acheté (chaudière en fin de vie)
+      let subst := min part (H.energie.substitutionBruneTransitionPm.get tech)
       let e : Echeance := { fonction := tech.fonction, restants := reste, niveau := n, indice := 10000,
-                            secteur := some tech.secteur, partInterieurePm := part }
+                            secteur := some tech.secteur, partInterieurePm := part, substitutionPm := subst }
       let s' : Etat := { s with echeances := s.echeances ++ [e]
                                 depensesF := s.depensesF.ajouter tech.fonction n
                                 importations := s.importations + n * (1000 - part) / 1000 }
-      effetDemande H (some tech.secteur) (appliquerPm (n * part / 1000) (poidsEcheance H e)) s'
+      effetDemande H (some tech.secteur) (appliquerPm (n * (part - subst) / 1000) (poidsEcheance H e)) s'
   | .investissementPriveTransition _ [], s => s
   | .investissementPriveTransition tech (n :: reste), s =>
       let part := partInterieure H (H.energie.partImporteeTransitionPm.get tech)
+      -- équipement fossile remplacé et éviction par le financement
+      let subst := min part (H.energie.substitutionBruneTransitionPm.get tech + H.eco.evictionInvestissementPrivePm)
       let e : Echeance := { fonction := tech.fonction, restants := reste, niveau := n, indice := 10000,
-                            secteur := some tech.secteur, partInterieurePm := part, privee := true }
+                            secteur := some tech.secteur, partInterieurePm := part, privee := true,
+                            substitutionPm := subst }
       let s' : Etat := { s with echeances := s.echeances ++ [e]
                                 importations := s.importations + n * (1000 - part) / 1000 }
-      effetDemande H (some tech.secteur) (appliquerPm (n * part / 1000) H.eco.incidenceInvestissementPm) s'
+      effetDemande H (some tech.secteur) (appliquerPm (n * (part - subst) / 1000) H.eco.incidenceInvestissementPm) s'
   -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
   -- logement (rattrapage induit) demanderait un indicateur et une hypothèse
   -- de comportement des communes : évolution du modèle commun, à discuter

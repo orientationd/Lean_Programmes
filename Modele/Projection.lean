@@ -608,10 +608,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
       -- investissement privé entraîné : demande et importations, sans dépense
       -- publique
       if e.privee then
-        effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) H.eco.incidenceInvestissementPm)
+        effetDemande H secteur (appliquerPm (impulsion * (e.partInterieurePm - e.substitutionPm) / 1000) H.eco.incidenceInvestissementPm)
           { st with importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 }
       else
-      effetDemande H secteur (appliquerPm (impulsion * e.partInterieurePm / 1000) (poidsEcheance H e))
+      effetDemande H secteur (appliquerPm (impulsion * (e.partInterieurePm - e.substitutionPm) / 1000) (poidsEcheance H e))
         { st with depensesF := st.depensesF.ajouter e.fonction d
                   importations := st.importations + d * (1000 - e.partInterieurePm) / 1000 })
     ({ s₂ with echeances := pasEcheances.map (·.1) } : Etat)

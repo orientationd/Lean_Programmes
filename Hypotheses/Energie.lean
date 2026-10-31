@@ -351,6 +351,29 @@ def partImporteeTransition : ParTechno :=
     eolien := 600, renovation := 200, reseauChaleur := 200, hvo := 800, biogazole := 550,
     bioethanol := 100, biogaz := 350 }
 
+/-- Achats d'équipements fossiles remplacés par la dépense de transition,
+pm de la dépense saisie (champ `substitutionBruneTransitionPm`).
+
+* Pompes à chaleur : 130. Une chaudière gaz à condensation posée coûte
+  ≈ 5 350 € TTC (4 500 à 6 200 €, La Maison Saint-Gobain, décembre 2025),
+  une pompe à chaleur air-eau en rénovation ≈ 13 900 € (ADEME et In Numeri,
+  « Marchés et emplois concourant à la transition énergétique », 2024 :
+  6,8 Md€ pour 490 000 PAC en 2022), soit 38 % ; un tiers des PAC
+  remplacent une chaudière en fin de vie (hypothèse, entre 5 à 7 % si les
+  PAC étaient attribuées sans lien avec l'âge de la chaudière et ≈ 60 % si
+  toutes prenaient la place des 422 000 chaudières vendues en 2025,
+  Uniclima, bilan 2025) : 1/3 × 38 % ≈ 13 % (calcul). Ordre de grandeur de
+  la DG Trésor pour l'ensemble du bâtiment : 6 Md€ d'« alternative
+  carbonée » évitée pour 39 Md€ d'investissement brut en 2030 (15 %,
+  document de travail 2024/2, tableau 1).
+* Autres technologies : 0 (véhicules et biocarburants saisis en surcoût ;
+  rénovation de l'enveloppe, réseaux de chaleur, solaire, éolien et biogaz
+  sans équipement fossile remplacé, hypothèse). -/
+def substitutionBruneTransition : ParTechno :=
+  { pompeAChaleur := 130, vehiculeElectrique := 0, vehiculeUtilitaire := 0, solaire := 0,
+    eolien := 0, renovation := 0, reseauChaleur := 0, hvo := 0, biogazole := 0,
+    bioethanol := 0, biogaz := 0 }
+
 def bas : Energie where
   id := "petrole-bas"
   description := "Brent à 50 $"
@@ -369,6 +392,7 @@ def bas : Energie where
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
   partImporteeTransitionPm := partImporteeTransition
+  substitutionBruneTransitionPm := substitutionBruneTransition
   elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
@@ -405,6 +429,7 @@ def central : Energie where
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
   partImporteeTransitionPm := partImporteeTransition
+  substitutionBruneTransitionPm := substitutionBruneTransition
   elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
@@ -441,6 +466,7 @@ def haut : Energie where
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
   partImporteeTransitionPm := partImporteeTransition
+  substitutionBruneTransitionPm := substitutionBruneTransition
   elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
