@@ -2957,8 +2957,13 @@ de l'auteur (octobre 2026). Au rang qui décide (neuvième meilleur des
 dix-huit scénarios économiques), il manquait ≈ 0,5 point de déficit en
 2030, ≈ 0,8 point en 2035 et ≈ 6,5 points de dette, plus ≈ 15 Md€ par an
 pour le climat. Trois familles : opérations sur la dette sans effet sur
-l'activité (O-164 à O-166), recettes à faible effet sur la demande
-(O-167, O-168), contribution sur le sol relevée (O-169). Recherche
+l'activité (O-164), recettes à faible effet sur la demande (O-167, O-168,
+O-170, O-171), contribution sur le sol relevée (O-169). Essai : la
+consolidation des réserves de l'Agirc-Arrco, du RCI et du Fonds de garantie
+des dépôts, un dividende exceptionnel du fonds d'épargne de la Caisse des
+dépôts et le droit d'entrée des concessions hydroélectriques permettraient
+de garder le dernier tiers de l'or ; écartés pour leur risque juridique
+(régime paritaire) et parce que la dette hydroélectrique passe à EDF. Recherche
 documentaire d'octobre 2026.
 
 Dernier tiers de l'or (O-164) : avec O-149, tout l'or de la Banque de
@@ -2982,32 +2987,6 @@ def rrrode : Int := 11400
 (écart de 95,4 Md€ entre dette des administrations et dette de l'État,
 Insee, fin 2025). -/
 def tresorerieSupplementaire : Int := 15000
-
-/-- Consolidation de l'Agirc-Arrco (O-165) : 91,2 Md€ de réserves fin
-2025 (Agirc-Arrco, résultats 2025, 31 mars 2026), trois quarts placés en
-OAT de 2027 à 2029 (hypothèse : un quart déjà en titres publics) ;
-rendement des placements vendus perdu (2,5 %, comme O-150). **Risque très
-élevé** : régime géré par les partenaires sociaux (alinéa 8 du Préambule
-de 1946), ponction de 2023 abandonnée. Avec le Régime complémentaire des
-indépendants (≈ 15 Md€ convertibles, organisme public) et le Fonds de
-garantie des dépôts (classé parmi les administrations publiques depuis
-2015 : ≈ 5 Md€). -/
-def agircConvertiParAn : Int := 91200 * 3 / 4 / 3
-def rciFgdr : Int := 15000 + 5000
-def rendementPerdu (montant : Int) : Int := montant * rendementPerduPm / 1000
-
-/-- Caisse des dépôts et hydroélectricité (O-166) : dividende exceptionnel
-de 10 Md€ du fonds d'épargne en 2028 (42,7 Md€ de fonds propres et autres
-ressources ; la Caisse n'est pas une administration publique, le versement
-est une opération financière) ; droit d'entrée des concessions
-hydroélectriques au juste prix (loi n° 2026-554 du 29 juin 2026 : droit
-réel de 70 ans contre une somme évaluée par des experts) : 12 Md€ en 2028
-(fourchette 10 à 20, calcul), avance comptée en dette d'un coup et en
-recette sur 70 ans (≈ 171 M€ par an, règle d'Eurostat sur les licences de
-mars 2017) ; la dette passe à EDF. -/
-def dividendeCdc : Int := 10000
-def droitEntreeHydro : Int := 12000
-def droitEntreeHydroParAn : Int := droitEntreeHydro / 70
 
 /-- Recettes à faible effet sur la demande (O-167, O-168), M€ :
 fin des avantages du démembrement de propriété (réunion de l'usufruit
@@ -3055,7 +3034,7 @@ def avoirsConfisques : List Int := [100, 200]
 theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 ∧ biocarburantsKt = 6000 ∧
     chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
     soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧ plusValueDernierTiersParAn = 14473 ∧
-    devisesVendues = 14200 ∧ agircConvertiParAn = 22800 ∧ droitEntreeHydroParAn = 171 ∧
+    devisesVendues = 14200 ∧
     contributionSolSupplement = 32100 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
@@ -4367,37 +4346,6 @@ def mesures : List Mesure := [
     source := "Six années de vente"
     leviers := [.pretEtat plusValueDernierTiersParAn]
     debut := anneesVenteOr },
-  { id := "O-165"
-    titre := "Réserves de l'Agirc-Arrco, du RCI et du Fonds de garantie des dépôts placées en titres de l'État"
-    source := s!"Demande de l'auteur (octobre 2026) ; Agirc-Arrco 91,2 Md€ fin 2025, {agircConvertiParAn} M€ par an de 2027 à 2029 ; RCI et FGDR {rciFgdr} M€ en 2027 ; rendements perdus (2,5 %) ; risque très élevé (régime paritaire) (voir `agircConvertiParAn`)"
-    leviers := [.pretEtat (0 - agircConvertiParAn - rciFgdr),
-                .recetteEcheancier none [0 - rendementPerdu (agircConvertiParAn + rciFgdr),
-                  0 - rendementPerdu (2 * agircConvertiParAn + rciFgdr), 0 - rendementPerdu (3 * agircConvertiParAn + rciFgdr)]] },
-  { id := "O-165b"
-    titre := "Consolidation : RCI et FGDR convertis (2028)"
-    source := "Une seule année"
-    leviers := [.pretEtat rciFgdr]
-    debut := 1 },
-  { id := "O-165d"
-    titre := "Consolidation de l'Agirc-Arrco achevée (2030)"
-    source := "Trois années de conversion"
-    leviers := [.pretEtat agircConvertiParAn]
-    debut := 3 },
-  { id := "O-166"
-    titre := "Dividende exceptionnel du fonds d'épargne de la Caisse des dépôts et droit d'entrée des concessions hydroélectriques (2028)"
-    source := s!"Demande de l'auteur (octobre 2026) ; {dividendeCdc} M€ et {droitEntreeHydro} M€ en 2028 (loi n° 2026-554), recette de {droitEntreeHydroParAn} M€ par an sur 70 ans (voir `dividendeCdc`)"
-    leviers := [.pretEtat (0 - dividendeCdc - droitEntreeHydro)]
-    debut := 1 },
-  { id := "O-166b"
-    titre := "Caisse des dépôts et hydroélectricité : fin des versements ponctuels"
-    source := "Une seule année"
-    leviers := [.pretEtat (dividendeCdc + droitEntreeHydro)]
-    debut := 2 },
-  { id := "O-166c"
-    titre := "Hydroélectricité : droit d'entrée étalé en recette"
-    source := s!"{droitEntreeHydroParAn} M€ par an, déjà encaissés en 2028"
-    leviers := [.recetteEcheancier none [droitEntreeHydroParAn], .pretEtat droitEntreeHydroParAn]
-    debut := 1 },
   { id := "O-167"
     titre := "Patrimoine : fin des avantages du démembrement, plus-values immobilières indexées et résidence principale plafonnée à l'américaine, fin du reste du Pacte Dutreil"
     source := s!"Demande de l'auteur (octobre 2026) ; démembrement {demembrement} M€ (CAE 2021) ; plus-values {plusValuesImmobilieres} M€ (Cour des comptes 2025) ; Dutreil {finDutreil} M€ (voir `demembrement`)"
