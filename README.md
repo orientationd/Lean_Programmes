@@ -56,7 +56,17 @@ de capital public déprécié de 5 % par an, élasticité de la production de
 ans) et au taux d'IS (coût du capital des entreprises : +0,10 % de PIB à long
 terme par point de taux en moins, atteint à 61 % en dix ans) ; il joue
 entièrement au moteur d'offre, pour moitié au moteur « Exemple équilibre »,
-pas au moteur de demande. Le moteur fixe l'effet moyen
+pas au moteur de demande. Les effets de demande des mesures s'estompent
+sous les moteurs d'offre et d'équilibre, quand l'activité revient vers son
+potentiel : pour un point de PIB de dépense publique, le PIB est plus haut
+de 1 point à 5 ans et de 0,2 à long terme dans Mésange, de 0,90 à 5 ans,
+0,80 à 10 ans et 0,45 à long terme dans ThreeME (DG Trésor, Trésor-Éco
+n° 394, juillet 2026). Le moteur d'offre garde 20 % de l'effet à long
+terme et résorbe le reste de 5 % par an ; le moteur d'équilibre en garde la
+moitié et résorbe l'autre de 3 % par an ; le moteur de demande garde des
+effets permanents (cas limite). Sur dix ans, l'écart reste modeste : la
+résorption relève le PIB 2035 du Texte Orientation D de 0,2 point sous le
+moteur d'offre. Le moteur fixe l'effet moyen
 d'un prélèvement sur la demande ; l'axe économique le répartit selon l'impôt
 (TVA, IR, CSG au-dessus de la moyenne ; IS, successions, patrimoine bien
 en dessous). Les allègements de cotisations patronales passent par le coût
