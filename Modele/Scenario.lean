@@ -313,25 +313,29 @@ def partFioul (P : PompesAChaleur) : Territoire → Int
 
 end PompesAChaleur
 
-/-- Technologies de la transition écologique (levier
-`investissementTransition`) : chacune a sa part importée
-(`Energie.partImporteeTransitionPm`), son secteur d'emploi et sa fonction
-de dépense (`TechnoTransition.secteur`, `TechnoTransition.fonction`). -/
+/-- Technologies de la transition écologique (leviers
+`investissementTransition` et `investissementPriveTransition`) : chacune a
+sa part importée (`Energie.partImporteeTransitionPm`), son secteur d'emploi
+et sa fonction de dépense (`TechnoTransition.secteur`,
+`TechnoTransition.fonction`). -/
 inductive TechnoTransition where
-  | pompeAChaleur | vehiculeElectrique | solaire | eolien | renovation
-  | reseauChaleur | biocarburant | agricole
+  | pompeAChaleur | vehiculeElectrique | vehiculeUtilitaire | solaire | eolien
+  | renovation | reseauChaleur | hvo | biogazole | bioethanol | biogaz
   deriving Repr, DecidableEq, Inhabited
 
 /-- Valeur par technologie de la transition. -/
 structure ParTechno where
   pompeAChaleur : Int
   vehiculeElectrique : Int
+  vehiculeUtilitaire : Int
   solaire : Int
   eolien : Int
   renovation : Int
   reseauChaleur : Int
-  biocarburant : Int
-  agricole : Int
+  hvo : Int
+  biogazole : Int
+  bioethanol : Int
+  biogaz : Int
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParTechno
@@ -339,12 +343,15 @@ namespace ParTechno
 def get (v : ParTechno) : TechnoTransition → Int
   | .pompeAChaleur => v.pompeAChaleur
   | .vehiculeElectrique => v.vehiculeElectrique
+  | .vehiculeUtilitaire => v.vehiculeUtilitaire
   | .solaire => v.solaire
   | .eolien => v.eolien
   | .renovation => v.renovation
   | .reseauChaleur => v.reseauChaleur
-  | .biocarburant => v.biocarburant
-  | .agricole => v.agricole
+  | .hvo => v.hvo
+  | .biogazole => v.biogazole
+  | .bioethanol => v.bioethanol
+  | .biogaz => v.biogaz
 
 end ParTechno
 
@@ -352,18 +359,20 @@ namespace TechnoTransition
 
 /-- Secteur où la part intérieure de la dépense crée des emplois : la pose
 et les travaux (construction) pour les équipements des bâtiments, les
-réseaux et les centrales, souvent importés ; la fabrication (industrie)
-pour les véhicules et les biocarburants ; l'agriculture pour les aides aux
-exploitations. -/
+réseaux, les centrales et le captage du biogaz, dont les équipements sont
+souvent importés ; la fabrication (industrie) pour les véhicules et le HVO ;
+l'agriculture pour le biogazole de colza et le bioéthanol, dont la valeur
+intérieure est surtout agricole. -/
 def secteur : TechnoTransition → Secteur
-  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur => .construction
-  | .vehiculeElectrique | .biocarburant => .industrie
-  | .agricole => .agriculture
+  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur | .biogaz => .construction
+  | .vehiculeElectrique | .vehiculeUtilitaire | .hvo => .industrie
+  | .biogazole | .bioethanol => .agriculture
 
 /-- Fonction de dépense publique (COFOG agrégée). -/
 def fonction : TechnoTransition → Fonction
-  | .pompeAChaleur | .renovation | .reseauChaleur => .logementEnvironnement
-  | .vehiculeElectrique | .solaire | .eolien | .biocarburant | .agricole => .affairesEconomiques
+  | .pompeAChaleur | .renovation | .reseauChaleur | .biogaz => .logementEnvironnement
+  | .vehiculeElectrique | .vehiculeUtilitaire | .solaire | .eolien | .hvo | .biogazole
+  | .bioethanol => .affairesEconomiques
 
 end TechnoTransition
 
