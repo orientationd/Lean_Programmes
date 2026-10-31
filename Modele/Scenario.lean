@@ -313,6 +313,81 @@ def partFioul (P : PompesAChaleur) : Territoire → Int
 
 end PompesAChaleur
 
+/-- Technologies de la transition écologique (leviers
+`investissementTransition` et `investissementPriveTransition`) : chacune a
+sa part importée (`Energie.partImporteeTransitionPm`), son secteur d'emploi
+et sa fonction de dépense (`TechnoTransition.secteur`,
+`TechnoTransition.fonction`). -/
+inductive TechnoTransition where
+  | pompeAChaleur | vehiculeElectrique | vehiculeUtilitaire | solaire | eolien
+  | renovation | reseauChaleur | hvo | biogazole | bioethanol | biogaz
+  deriving Repr, DecidableEq, Inhabited
+
+/-- Valeur par technologie de la transition. -/
+structure ParTechno where
+  pompeAChaleur : Int
+  vehiculeElectrique : Int
+  vehiculeUtilitaire : Int
+  solaire : Int
+  eolien : Int
+  renovation : Int
+  reseauChaleur : Int
+  hvo : Int
+  biogazole : Int
+  bioethanol : Int
+  biogaz : Int
+  deriving Repr, DecidableEq, Inhabited
+
+namespace ParTechno
+
+def get (v : ParTechno) : TechnoTransition → Int
+  | .pompeAChaleur => v.pompeAChaleur
+  | .vehiculeElectrique => v.vehiculeElectrique
+  | .vehiculeUtilitaire => v.vehiculeUtilitaire
+  | .solaire => v.solaire
+  | .eolien => v.eolien
+  | .renovation => v.renovation
+  | .reseauChaleur => v.reseauChaleur
+  | .hvo => v.hvo
+  | .biogazole => v.biogazole
+  | .bioethanol => v.bioethanol
+  | .biogaz => v.biogaz
+
+end ParTechno
+
+namespace TechnoTransition
+
+/-- Secteur où la part intérieure de la dépense crée des emplois : la pose
+et les travaux (construction) pour les équipements des bâtiments, les
+réseaux, les centrales et le captage du biogaz, dont les équipements sont
+souvent importés ; la fabrication (industrie) pour les véhicules et le HVO ;
+l'agriculture pour le biogazole de colza et le bioéthanol, dont la valeur
+intérieure est surtout agricole. -/
+def secteur : TechnoTransition → Secteur
+  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur | .biogaz => .construction
+  | .vehiculeElectrique | .vehiculeUtilitaire | .hvo => .industrie
+  | .biogazole | .bioethanol => .agriculture
+
+/-- Fonction de dépense publique (COFOG agrégée). -/
+def fonction : TechnoTransition → Fonction
+  | .pompeAChaleur | .renovation | .reseauChaleur | .biogaz => .logementEnvironnement
+  | .vehiculeElectrique | .vehiculeUtilitaire | .solaire | .eolien | .hvo | .biogazole
+  | .bioethanol => .affairesEconomiques
+
+/-- La dépense publique crée-t-elle un équipement public (canal du capital
+public du moteur d'offre) ? Oui pour les réseaux de chaleur, les centrales
+et le captage du biogaz, que l'État ou un opérateur public possède ; non
+pour les pompes à chaleur, la rénovation, les véhicules et les
+biocarburants, qui sont des aides aux ménages et aux entreprises
+(transferts en capital ou subventions, pas de l'investissement public en
+comptabilité nationale). -/
+def capitalPublic : TechnoTransition → Bool
+  | .reseauChaleur | .solaire | .eolien | .biogaz => true
+  | .pompeAChaleur | .renovation | .vehiculeElectrique | .vehiculeUtilitaire | .hvo
+  | .biogazole | .bioethanol => false
+
+end TechnoTransition
+
 /-- Hypothèse sur le prix du pétrole, appliquée comme un choc de niveau sur
 le PIB de départ, identique pour le tendanciel et pour chaque programme. -/
 structure Energie where
@@ -356,6 +431,15 @@ structure Energie where
   pmRelatifCritAirPm : List Int
   /-- Rénovation énergétique des logements. -/
   renovation : Renovation
+  /-- Part importée de la dépense de transition, par technologie, pm
+  (levier `investissementTransition`). -/
+  partImporteeTransitionPm : ParTechno
+  /-- Part de la dépense de transition saisie qui remplace l'achat d'un
+  équipement fossile qui aurait eu lieu (chaudière en fin de vie), par
+  technologie, pm. Convention de saisie : coût complet pour le chauffage,
+  la rénovation et les réseaux de chaleur, surcoût pour les véhicules et les
+  biocarburants (déjà net de l'équipement fossile). -/
+  substitutionBruneTransitionPm : ParTechno
   /-- Élasticités-prix des activités visées par une taxe environnementale. -/
   elasticitesPrix : ElasticitesPrix
   /-- Consommation d'électricité d'un foyer d'outre-mer, kWh/an. -/
@@ -559,6 +643,11 @@ structure Economie where
   public (bâtiments, infrastructures), qui la soutient davantage. -/
   incidenceDepensePm : ParFonction
   incidenceInvestissementPm : Int
+  /-- Éviction de l'investissement privé de transition
+  (`investissementPriveTransition`), pm : part financée l'année même en
+  renonçant à d'autres dépenses privées (autres investissements,
+  consommation), retirée de l'effet de demande. -/
+  evictionInvestissementPrivePm : Int
   /-- Inflation annuelle (déflateur du PIB), pb : sépare le volume des prix
   pour le RNB par habitant de l'IDH. -/
   inflationPb : Int
@@ -983,6 +1072,7 @@ abbrev ValideTravail (H : Scenario) : Prop :=
   H.eco.elasticiteCycliquePm.toutEntre 0 3000 = true ∧
   H.eco.incidenceDepensePm.toutEntre 0 3000 = true ∧
   0 ≤ H.eco.incidenceInvestissementPm ∧ H.eco.incidenceInvestissementPm ≤ 3000 ∧
+  0 ≤ H.eco.evictionInvestissementPrivePm ∧ H.eco.evictionInvestissementPrivePm ≤ 1000 ∧
   H.eco.elasticiteEmploiCoutTravailPm.toutEntre 0 3000 = true ∧
   H.eco.emploiPriveTrancheMilliers.toutEntre 0 30000 = true ∧
   H.eco.coutTravailTrancheMeur.toutEntre 1 2000000 = true ∧

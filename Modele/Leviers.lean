@@ -30,6 +30,40 @@ pourrait émettre des certificats vérifiés ici.
 
 namespace Modele
 
+/-- Énergie fossile évitée par une mesure de transition (levier
+`transitionEcologique`). -/
+inductive EnergieFossile where
+  | carburant | fioul | gaz | aucune
+  deriving Repr, DecidableEq, Inhabited
+
+/-- Mesure de transition écologique décrite finement : émissions évitées,
+énergie fossile qui n'est plus achetée, électricité consommée à la place,
+activité intérieure qui disparaît. Voir le levier `transitionEcologique`. -/
+structure MesureTransition where
+  /-- Secteur d'émission. -/
+  secteurGes : SecteurGes
+  /-- Émissions évitées, kt CO₂e (niveau ajouté à chaque application). -/
+  reductionKt : Int
+  /-- Énergie fossile dont la baisse explique ces émissions (`aucune` pour
+  le méthane, le protoxyde d'azote, les gaz fluorés ou une fermeture
+  d'usine comptée à part). -/
+  energie : EnergieFossile := .aucune
+  /-- Part de l'énergie évitée remplacée par un substitut importé
+  (biocarburant), pm. -/
+  substitutImportePm : Int := 0
+  /-- Le substitut paie les mêmes accises et la même TVA (biocarburant,
+  biofioul) : pas de recette perdue. -/
+  taxesMaintenues : Bool := false
+  /-- Électricité consommée à la place, GWh (niveau ajouté). -/
+  electriciteGwh : Int := 0
+  /-- Production intérieure qui disparaît, M€ par an (niveau ajouté), et son
+  secteur. -/
+  activitePerdueMeur : Int := 0
+  secteurActivite : Secteur := .industrie
+  /-- Part de cette production remplacée par des importations, pm. -/
+  activiteImporteePm : Int := 0
+  deriving Repr, DecidableEq
+
 inductive Levier where
   /-- Dépense publique nouvelle, M€/an. -/
   | depense (montant : Int)
@@ -65,6 +99,34 @@ inductive Levier where
   | transition (secteur : SecteurGes) (reductionMt : Int) (coutAnnuel : Int)
   /-- Comme `transition`, en kt de CO₂e (négatif : émissions en hausse). -/
   | transitionKt (secteur : SecteurGes) (reductionKt : Int) (coutAnnuel : Int)
+  /-- Transition écologique décrite finement (`MesureTransition`), appliquée
+  en niveau : émissions évitées ; énergie fossile évitée (carburant aux
+  valeurs par voiture du sous-modèle automobile rapportées au CO₂, fioul et
+  gaz aux valeurs par MWh des rénovations) : importations en moins, sauf la
+  part remplacée par un substitut importé, et accises et TVA perdues, sauf
+  si le substitut les paie ; électricité consommée à la place (accise et TVA
+  gagnées). Effets sur l'activité : la dépense qui n'achète plus d'énergie
+  importée reste dans l'économie (impulsion de demande égale aux importations
+  évitées) ; les taxes perdues, nettes de celles de l'électricité, restent
+  aux ménages et aux entreprises (pondérées comme un prélèvement) ; la
+  production intérieure qui disparaît retire autant de PIB dans son secteur
+  (emplois par la loi d'Okun et l'intensité en emploi du secteur), et sa
+  part remplacée par des importations s'ajoute aux importations. Coûts
+  publics : par les autres leviers de la mesure. -/
+  | transitionEcologique (t : MesureTransition)
+  /-- Investissement public de transition par technologie : niveaux annuels
+  (M€ de l'année d'entrée en vigueur, le dernier reconduit, 0 pour arrêter)
+  comme `investissementEcheancier`, mais avec la part importée de la
+  technologie (`Energie.partImporteeTransitionPm`, qui part aux
+  importations et ne soutient pas l'activité) et son secteur d'emploi
+  (`TechnoTransition.secteur`). -/
+  | investissementTransition (techno : TechnoTransition) (niveaux : List Int)
+  /-- Investissement privé de transition entraîné par une mesure (centrales
+  solaires ou éoliennes, équipements des entreprises), M€ par an,
+  échéancier comme `investissementTransition` : impulsion de demande de sa
+  part intérieure dans le secteur de la technologie, part importée aux
+  importations ; aucune dépense publique. -/
+  | investissementPriveTransition (techno : TechnoTransition) (niveaux : List Int)
   /-- Amende SRU automatique selon la part de logements sociaux manquants
   (barème et propriétés : `Modele/Logement.lean`). C'est un transfert des
   communes vers le FNAP et les établissements fonciers : **neutre sur le
@@ -815,6 +877,64 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec (r * 1000))
   | .transitionKt sec kt c, s =>
       appliquerDepense H none .logementEnvironnement c (s.reduireEmissions sec kt)
+  | .transitionEcologique t, s =>
+      let E := H.energie
+      let R := E.renovation
+      let P := E.pac
+      -- énergie fossile évitée : importations et taxes (M€ par an)
+      let (imports, accises, tva, acciseAutres) := match t.energie with
+        | .carburant =>
+            if E.co2EviteParVehiculeKg = 0 then (0, 0, 0, 0)
+            else (t.reductionKt * E.gainCommercialParVehiculeEuros / E.co2EviteParVehiculeKg,
+                  t.reductionKt * E.accisesParVehiculeEuros / E.co2EviteParVehiculeKg,
+                  t.reductionKt * E.tvaParVehiculeEuros / E.co2EviteParVehiculeKg, 0)
+        | .fioul =>
+            let mwh := if R.co2FioulKgMWh = 0 then 0 else t.reductionKt * 1000000 / R.co2FioulKgMWh
+            (mwh * R.importFioulEurosMWh * E.prixBrentDollars / E.prixReferenceDollars / 1000000,
+             mwh * R.accisesFioulEurosMWh / 1000000, mwh * R.tvaFioulEurosMWh / 1000000, 0)
+        | .gaz =>
+            let mwh := if R.co2GazKgMWh = 0 then 0 else t.reductionKt * 1000000 / R.co2GazKgMWh
+            (mwh * R.importGazEurosMWh / 1000000, 0, mwh * R.tvaGazEurosMWh / 1000000,
+             mwh * R.accisesGazEurosMWh / 1000000)
+        | .aucune => (0, 0, 0, 0)
+      let importsEvites := imports * (1000 - t.substitutImportePm) / 1000
+      let (accises, tva, acciseAutres) := if t.taxesMaintenues then (0, 0, 0) else (accises, tva, acciseAutres)
+      let acciseElec := t.electriciteGwh * P.accisesElecEurosMWh / 1000
+      let tvaElec := t.electriciteGwh * P.tvaElecEurosMWh / 1000
+      let taxesNettes := accises + tva + acciseAutres - acciseElec - tvaElec
+      let s₁ : Etat := { (s.reduireEmissions t.secteurGes t.reductionKt) with
+        importations := s.importations - importsEvites
+          + t.activitePerdueMeur * t.activiteImporteePm / 1000
+        impots := ((s.impots.ajouter .accisesEnergie (acciseElec - accises)).ajouter .tva (tvaElec - tva)).ajouter
+          .autres (0 - acciseAutres)
+        consommationMesuresGwh := s.consommationMesuresGwh + t.electriciteGwh
+        consommationGwh := s.consommationGwh + t.electriciteGwh }
+      let s₂ := effetDemande H (some .tertiaireMarchand) importsEvites s₁
+      let s₃ := effetDemande H none (appliquerPm taxesNettes M.multiplicateurPrelevementsPm) s₂
+      chocPib H (some t.secteurActivite) (0 - t.activitePerdueMeur) s₃
+  | .investissementTransition _ [], s => s
+  | .investissementTransition tech (n :: reste), s =>
+      let part := partInterieure H (H.energie.partImporteeTransitionPm.get tech)
+      -- équipement fossile qui n'est plus acheté (chaudière en fin de vie)
+      let subst := min part (H.energie.substitutionBruneTransitionPm.get tech)
+      let e : Echeance := { fonction := tech.fonction, restants := reste, niveau := n, indice := 10000,
+                            secteur := some tech.secteur, partInterieurePm := part, substitutionPm := subst,
+                            capitalPublic := tech.capitalPublic }
+      let s' : Etat := { s with echeances := s.echeances ++ [e]
+                                depensesF := s.depensesF.ajouter tech.fonction n
+                                importations := s.importations + n * (1000 - part) / 1000 }
+      effetDemande H (some tech.secteur) (appliquerPm (n * (part - subst) / 1000) (poidsEcheance H e)) s'
+  | .investissementPriveTransition _ [], s => s
+  | .investissementPriveTransition tech (n :: reste), s =>
+      let part := partInterieure H (H.energie.partImporteeTransitionPm.get tech)
+      -- équipement fossile remplacé et éviction par le financement
+      let subst := min part (H.energie.substitutionBruneTransitionPm.get tech + H.eco.evictionInvestissementPrivePm)
+      let e : Echeance := { fonction := tech.fonction, restants := reste, niveau := n, indice := 10000,
+                            secteur := some tech.secteur, partInterieurePm := part, privee := true,
+                            substitutionPm := subst }
+      let s' : Etat := { s with echeances := s.echeances ++ [e]
+                                importations := s.importations + n * (1000 - part) / 1000 }
+      effetDemande H (some tech.secteur) (appliquerPm (n * (part - subst) / 1000) H.eco.incidenceInvestissementPm) s'
   -- Transfert interne aux APU : aucun effet sur l'état consolidé. Un effet
   -- logement (rattrapage induit) demanderait un indicateur et une hypothèse
   -- de comportement des communes : évolution du modèle commun, à discuter
