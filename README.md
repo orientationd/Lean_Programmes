@@ -88,7 +88,10 @@ d'experts de juillet 2026) ; l'indemnisation du chômage suit, dans
 l'année, les chômeurs ; la charge d'intérêts suit la structure de la dette
 (titres à court terme renouvelés au taux court, refinancement de la dette à
 moyen et long terme et dette nouvelle au taux de l'OAT, indexation des
-titres indexés sur l'inflation) ; la dette de fin d'année est celle de
+titres indexés sur l'inflation), et la synthèse la répartit entre ses
+bénéficiaires (Banque de France, non-résidents, banques, assurances, fonds,
+autres résidents : `Hypotheses/DetentionDette.lean`, affichage seulement) ;
+la dette de fin d'année est celle de
 début d'année plus le déficit de l'année, mesures comprises. Tous les programmes sont
 évalués sous tous les moteurs ; un engagement précise le sien. Toute
 personne autorisée peut **ajouter son moteur** dans `Moteurs/<Nom>/`
@@ -139,6 +142,36 @@ aide générale (≈ 13 % des voitures aidées par une prime de 4 000 € en 202
 0,115 pour les ménages modestes (leasing social) ; une obligation compte
 chaque voiture (`Hypotheses/Energie.lean`, `Hypotheses/Economie.lean`).
 
+**Transition écologique : PIB et emploi.** Une tonne de CO₂ évitée n'est
+pas neutre pour l'activité. Le levier `transitionEcologique` compte
+l'énergie fossile qui n'est plus achetée : importations évitées (la
+dépense se reporte sur des biens produits en France), accises et TVA
+perdues (rendues aux ménages et aux entreprises, pondérées comme une baisse
+de prélèvement), accise et TVA de l'électricité consommée à la place ; un
+biocarburant à prix et taxes inchangés ne retire que la part non importée
+du substitut. La production qui disparaît (raffinerie, cheptel) retire
+autant de PIB et d'emplois dans son secteur, la part reprise par des
+importations s'ajoutant aux importations. Les investissements sont décrits
+par technologie, publics (`investissementTransition`) ou privés
+déclenchés par une mesure (`investissementPriveTransition`), avec la part
+importée propre à chacune (véhicules électriques 75 %, HVO 80 %, éolien
+60 %, biogazole 55 %, pompes à chaleur 45 %, biogaz 35 %, solaire 34 %,
+rénovation et réseaux de chaleur 20 %, bioéthanol 10 % ; ADEME, IEA-PVPS,
+IRENA, FranceAgriMer, Insee) et son secteur d'emploi (construction,
+industrie, agriculture). Deux pertes d'effet sont déduites : l'équipement
+fossile qui n'est plus acheté (une pompe à chaleur offerte remplace parfois
+une chaudière en fin de vie : 13 % de la dépense) et l'éviction de
+l'investissement privé par son financement (20, 40 ou 60 % selon l'axe
+économique, entre l'absence d'éviction de ThreeME et de la Banque de France
+et la borne de la DG Trésor). Repères publiés : pour la DG Trésor, les
+investissements de la transition ajoutent +1,0 point de PIB en 2030, leur
+financement et leur surcoût en retirent 0,6 (rapport final sur les enjeux
+économiques de la neutralité carbone, janvier 2025) ; le ministère attend
++200 000 à +550 000 emplois nets en 2030 pour l'ensemble de la stratégie
+nationale bas-carbone (SGPE). Non modélisé : l'effet sur la productivité
+(−0,25 à −0,3 point par an vers 2030 si l'investissement de décarbonation
+évince l'investissement productif ; Pisani-Ferry et Mahfouz, 2023).
+
 **Lois à respecter.** Outre les règles budgétaires françaises et
 européennes et les objectifs climatiques, chaque programme est vérifié
 contre la loi de programmation militaire actualisée (loi n° 2026-791 : la
@@ -175,7 +208,7 @@ hypothèse ajoutée plus tard par n'importe qui.
 | Chemin | Rôle |
 |---|---|
 | `Modele/` | état, unités, axes d'hypothèses, moteurs, leviers, projection, propriétés, programmes (types), sous-modèles SRU, automobile, attribution, rétro-test |
-| `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes, comptes publics observés 2017-2025 |
+| `Hypotheses/` | valeurs des axes et produit cartésien `Hypotheses.tous`, panel de communes, comptes publics observés 2017-2025, détenteurs de la dette publique |
 | `Tests/` | tests du modèle commun : comptabilité, mécanismes, assiettes des prélèvements, rétro-test, tendanciel |
 | `Proprietes/` | propriétés partagées, registre `Proprietes.toutes` |
 | `Programmes/<Nom>/` | un dossier par programme : `Programme.lean` + `README.md` + `PROPRIETAIRES` |
@@ -258,7 +291,12 @@ CI) :
   année (acomptes de l'IS) ; un point d'inflation coûte la part indexée de
   la dette ; un point de taux ne relève le taux apparent que de la part
   refinancée ; convergence du taux apparent ; multiplicateur ; symétrie
-  dépense-économie ; rendement d'un prélèvement ;
+  dépense-économie ; rendement d'un prélèvement ; transition écologique
+  (carburant évité : importations et accises en baisse, PIB en hausse ;
+  biocarburant à taxes inchangées ; accise de l'électricité ; activité
+  perdue ; part importée des investissements par technologie ;
+  investissement privé sans dépense publique ; éviction et chaudières
+  remplacées) ;
 * **assiettes** (`Tests/Assiettes.lean`) : barème indexé (l'inflation seule
   ne relève pas l'IR plus que les revenus), progressivité sur la hausse
   réelle, accises insensibles aux prix, revalorisation légale des valeurs

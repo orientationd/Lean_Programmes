@@ -323,4 +323,106 @@ theorem stockage_electrique :
     t.emissionsKt.energie - r.emissionsKt.energie ≤ 720 := by
   decide +kernel
 
+/-! ## Transition écologique décrite finement -/
+
+/-- Carburant routier évité (1 Mt de CO₂, ≈ 380 millions de litres) : les
+importations de produits pétroliers baissent, les accises baissent de
+≈ 0,2 Md€ (≈ 0,55 € par litre), le PIB monte (la dépense de carburant,
+importée et taxée, se reporte sur le reste de la consommation) et le
+déficit se creuse de moins que les taxes perdues. -/
+theorem transition_carburant :
+    let s0 := etatDepart H
+    let p := depart (mesure (.transitionEcologique
+      { secteurGes := .transports, reductionKt := 1000, energie := .carburant }))
+    p.importations < s0.importations ∧
+      180 ≤ s0.impots.accisesEnergie - p.impots.accisesEnergie ∧
+      s0.impots.accisesEnergie - p.impots.accisesEnergie ≤ 240 ∧
+      0 < p.pib - s0.pib ∧ 0 < p.deficit - s0.deficit ∧
+      p.deficit - s0.deficit < (s0.impots.accisesEnergie - p.impots.accisesEnergie) + (s0.impots.tva - p.impots.tva) ∧
+      s0.emissionsKt.transports - p.emissionsKt.transports = 1000 := by
+  decide +kernel
+
+/-- Biocarburant à taxes inchangées : ni accise ni TVA perdue (aux recettes
+induites près), seule la part non importée du substitut réduit les
+importations ; l'effet sur le PIB est bien plus faible qu'une baisse de
+consommation de carburant. -/
+theorem transition_biocarburant :
+    let s0 := etatDepart H
+    let sobriete := depart (mesure (.transitionEcologique
+      { secteurGes := .transports, reductionKt := 1000, energie := .carburant }))
+    let bio := depart (mesure (.transitionEcologique
+      { secteurGes := .transports, reductionKt := 1000, energie := .carburant,
+        substitutImportePm := 550, taxesMaintenues := true }))
+    bio.impots.accisesEnergie - s0.impots.accisesEnergie ≥ -5 ∧
+      bio.impots.accisesEnergie - s0.impots.accisesEnergie ≤ 5 ∧
+      bio.importations < s0.importations ∧
+      0 < bio.pib - s0.pib ∧ 3 * (bio.pib - s0.pib) < sobriete.pib - s0.pib := by
+  decide +kernel
+
+/-- Électrification : 2 TWh consommés à la place du gaz rapportent l'accise
+sur l'électricité (30,62 €/MWh : 61 M€, aux recettes induites près) et
+s'ajoutent à la consommation. -/
+theorem transition_electricite :
+    let s0 := etatDepart H
+    let p := depart (mesure (.transitionEcologique
+      { secteurGes := .batiments, reductionKt := 1000, energie := .gaz, electriciteGwh := 2000 }))
+    55 ≤ p.impots.accisesEnergie - s0.impots.accisesEnergie ∧
+      p.impots.accisesEnergie - s0.impots.accisesEnergie ≤ 65 ∧
+      p.consommationGwh - s0.consommationGwh = 2000 := by
+  decide +kernel
+
+/-- Activité perdue : 1 Md€ de valeur ajoutée agricole qui disparaît retire
+≈ 1 Md€ de PIB (le stabilisateur en rend un peu), supprime des emplois
+agricoles et, remplacée aux deux tiers par des importations, relève les
+importations (moins le contenu importé de l'activité perdue). -/
+theorem transition_activite_perdue :
+    let s0 := etatDepart H
+    let p := depart (mesure (.transitionEcologique
+      { secteurGes := .agriculture, reductionKt := 0, activitePerdueMeur := 1000,
+        secteurActivite := .agriculture, activiteImporteePm := 650 }))
+    p.pib - s0.pib ≥ -1000 ∧ p.pib - s0.pib ≤ -900 ∧
+      p.emploi.agriculture < s0.emploi.agriculture ∧
+      300 ≤ p.importations - s0.importations ∧ p.importations - s0.importations ≤ 400 := by
+  decide +kernel
+
+/-- Investissement de transition : à dépense égale (1 Md€), l'effet sur le
+PIB suit la part intérieure de la technologie : véhicules électriques
+(75 % importés) < pompes à chaleur (45 %) < investissement public moyen ;
+les importations suivent l'ordre inverse. -/
+theorem investissement_transition_part_importee :
+    let s0 := etatDepart H
+    let ve := depart (mesure (.investissementTransition .vehiculeElectrique [1000]))
+    let pac := depart (mesure (.investissementTransition .pompeAChaleur [1000]))
+    let moyen := depart (mesure (.investissementEcheancier .logementEnvironnement [1000]))
+    ve.pib < pac.pib ∧ pac.pib < moyen.pib ∧
+      ve.importations > pac.importations ∧ pac.importations > moyen.importations ∧
+      900 ≤ ve.depensesF.total - s0.depensesF.total ∧ 900 ≤ pac.depensesF.total - s0.depensesF.total := by
+  decide +kernel
+
+/-- Investissement privé déclenché (1 Md€ de centrales solaires) : PIB et
+emploi en hausse, aucune dépense publique (la dépense baisse même, par
+l'indemnisation du chômage), déficit en baisse (malgré l'éviction de 40 %
+de l'axe central). -/
+theorem investissement_prive_transition :
+    let s0 := etatDepart H
+    let p := depart (mesure (.investissementPriveTransition .solaire [1000]))
+    0 < p.pib - s0.pib ∧ 0 < p.emploiTotal - s0.emploiTotal ∧
+      p.depensesF.total ≤ s0.depensesF.total ∧ p.deficit < s0.deficit := by
+  decide +kernel
+
+/-- Éviction et équipement fossile remplacé : le même milliard de solaire
+soutient moins l'activité financé par le privé (40 % évincés à l'axe
+central) que payé par l'État ; une pompe à chaleur offerte soutient moins
+l'activité quand elle remplace une chaudière qui aurait été achetée (13 %)
+que sans cette substitution. -/
+theorem eviction_substitution :
+    let pub := depart (mesure (.investissementTransition .solaire [1000]))
+    let priv := depart (mesure (.investissementPriveTransition .solaire [1000]))
+    let H0 : Scenario := { H with energie := { H.energie with substitutionBruneTransitionPm :=
+      { H.energie.substitutionBruneTransitionPm with pompeAChaleur := 0 } } }
+    let pac := depart (mesure (.investissementTransition .pompeAChaleur [1000]))
+    let pac0 := (mesure (.investissementTransition .pompeAChaleur [1000])).etatInitial D H0
+    priv.pib < pub.pib ∧ pac.pib < pac0.pib := by
+  decide +kernel
+
 end Tests.Mecanismes

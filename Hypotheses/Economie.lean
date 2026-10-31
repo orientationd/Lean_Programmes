@@ -591,6 +591,26 @@ def incidenceDepenses : ParFonction :=
     logementEnvironnement := 1000, culture := 1000, interets := 0, fonctionnement := 1000,
     nonVentile := 1000 }
 
+/-- Éviction de l'investissement privé de transition, pm (champ
+`evictionInvestissementPrivePm`) : part financée l'année même en renonçant à
+d'autres dépenses privées. Bornes publiées : aucune éviction dans ThreeME
+(taux d'intérêt réel fixe : évaluation macroéconomique de la SNBC 2, ADEME
+et CGDD, février 2022) ni dans les scénarios courts de la Banque de France
+(investissement privé financé par l'impôt, « pas d'éviction notable »,
+billet n° 332, décembre 2023) ; à l'opposé, la DG Trésor retire 0,6 point de
+PIB en 2030 pour le financement par baisse d'autres dépenses et le surcoût
+technologique, contre +1,0 point pour l'effet des investissements (« Les
+enjeux économiques de la transition vers la neutralité carbone », rapport
+final, janvier 2025, p. 15). Valeurs (hypothèses dans ces bornes) : 200 pour
+l'axe de croissance haute (multiplicateur fort, capacités disponibles), 400
+pour l'axe central, 600 pour l'axe bas (borne de la DG Trésor). Effet sur la
+productivité (−0,25 à −0,3 point par an vers 2030 si l'investissement de
+décarbonation évince l'investissement de productivité ; Pisani-Ferry et
+Mahfouz, France Stratégie, 2023, chap. 8) : non modélisé. -/
+def evictionInvestissementPriveHaute : Int := 200
+def evictionInvestissementPriveCentrale : Int := 400
+def evictionInvestissementPriveBasse : Int := 600
+
 /-- Élasticité de l'emploi au coût du travail par tranche, pm (voir le
 docstring du module). -/
 def elasticitesCoutTravail : ParTranche := { bas := 400, intermediaire := 250, haut := 50 }
@@ -749,6 +769,7 @@ def centrale : Economie where
   incidencePrelevementPm := incidencePrelevements
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
+  evictionInvestissementPrivePm := evictionInvestissementPriveCentrale
   inflationPb := 175
   elasticitePrixTabacPm := 400
   accisesTabacMeur := 13200
@@ -844,6 +865,7 @@ def croissanceBasse : Economie where
   incidencePrelevementPm := incidencePrelevements
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
+  evictionInvestissementPrivePm := evictionInvestissementPriveBasse
   inflationPb := 125
   elasticitePrixTabacPm := 400
   accisesTabacMeur := 13200
@@ -939,6 +961,7 @@ def croissanceHaute : Economie where
   incidencePrelevementPm := incidencePrelevements
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
+  evictionInvestissementPrivePm := evictionInvestissementPriveHaute
   inflationPb := 200
   elasticitePrixTabacPm := 400
   accisesTabacMeur := 13200

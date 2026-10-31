@@ -61,6 +61,31 @@ partImportéePm vignetteCritAir` (conversion de voitures thermiques du parc,
 hors limite des ventes neuves et sans aubaine) et `deploiementBornes
 bornesParAn coûtParBorne`.
 
+Transition écologique décrite finement (de préférence à `transitionKt`,
+qui ne fait que baisser les émissions) : `transitionEcologique { secteurGes,
+reductionKt, energie, substitutImportePm, taxesMaintenues, electriciteGwh,
+activitePerdueMeur, secteurActivite, activiteImporteePm }` compte, pour les
+tonnes évitées, l'énergie fossile qui n'est plus achetée (`.carburant`,
+`.fioul`, `.gaz` ou `.aucune` : importations évitées, accises et TVA
+perdues, aux paramètres de l'axe énergie), le substitut importé et les
+taxes maintenues d'un biocarburant, l'électricité consommée à la place
+(accise et TVA gagnées) et la production intérieure qui disparaît
+(fermeture d'usine, réduction de cheptel : PIB et emplois du secteur, part
+reprise par des importations). Les dépenses vont par technologie :
+`investissementTransition techno niveaux` (public) et
+`investissementPriveTransition techno niveaux` (investissement privé
+déclenché, sans dépense publique), avec la part importée de chaque
+technologie (`Energie.partImporteeTransitionPm` : pompes à chaleur,
+véhicules électriques et utilitaires, solaire, éolien, rénovation, réseaux
+de chaleur, HVO, biogazole, bioéthanol, biogaz) et son secteur d'emploi.
+Saisir le coût complet pour le chauffage, la rénovation et les réseaux de
+chaleur, le surcoût pour les véhicules et les biocarburants : la part qui
+remplace un équipement fossile (`Energie.substitutionBruneTransitionPm`) et
+l'éviction de l'investissement privé (`Economie.evictionInvestissementPrivePm`)
+sont retirées de l'effet de demande. Restent hors du modèle : les marges perdues par la distribution de
+carburant et l'entretien automobile (réallocations entre secteurs
+intérieurs), les effets de prix de l'électricité et la productivité.
+
 Stockage d'électricité : `stockageElectrique mw heures cyclesParAn
 rendementPm gCo2ParKwh` (la restitution remplace le thermique fossile de
 pointe, la charge est prise au nucléaire, les pertes s'ajoutent à la
