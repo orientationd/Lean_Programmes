@@ -9,9 +9,9 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 3,96 % |
-| Dette publique | 156,7 % du PIB | 133,0 % |
-| Chômage | 7,90 % | 9,36 % |
+| Déficit public | 9,27 % du PIB | 3,89 % |
+| Dette publique | 156,7 % du PIB | 132,6 % |
+| Chômage | 7,90 % | 9,33 % |
 | Indice de développement humain | 0,9392 | 0,9412 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 282 Mt CO₂e |
 
@@ -19,9 +19,9 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,32 | 5,08 | 4,90 | 4,67 | 4,48 | 4,37 | 4,22 | 4,14 | 3,96 |
-| Offre | 5,57 | 5,23 | 4,96 | 4,74 | 4,51 | 4,33 | 4,25 | 4,13 | 4,10 | 3,98 |
-| Équilibre | 5,58 | 5,28 | 5,02 | 4,82 | 4,59 | 4,40 | 4,31 | 4,15 | 4,09 | 3,94 |
+| Demande | 5,58 | 5,32 | 5,08 | 4,89 | 4,65 | 4,45 | 4,33 | 4,15 | 3,96 | 3,89 |
+| Offre | 5,57 | 5,23 | 4,96 | 4,73 | 4,49 | 4,30 | 4,21 | 4,07 | 4,03 | 3,91 |
+| Équilibre | 5,58 | 5,28 | 5,02 | 4,81 | 4,57 | 4,37 | 4,27 | 4,11 | 4,05 | 3,90 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-105 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
+108 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -907,6 +907,9 @@ les installations hors zone prioritaire n'est pas chiffré.
 | **O-75** 100 000 places de prison en cellule individuelle : construction, surveillants et fonctionnement | +0,06 pt | +8 100 | +0,2 |
 | **O-82** Loi intégrale contre les violences sexistes et sexuelles : 2,6 Md€ par an | +0,08 pt | +11 900 | +0,3 |
 | **O-100** 2 000 douaniers de plus et contrôle renforcé des produits agricoles et industriels importés | ≈ 0 | +500 | ≈ 0 |
+| **O-105** Légalisation encadrée du cannabis après référendum : vente sous licence aux majeurs, 9 € le gramme | −0,03 pt | −1 500 | −0,1 |
+| **O-105b** Filière légale du cannabis : production et distribution sous licence (emplois) | −0,03 pt | +15 500 | +0,1 |
+| **O-106** Légalisation de la prostitution sur le modèle allemand après référendum : activité déclarée, établissements autorisés, fin de la pénalisation des clients | ≈ 0 | −200 | ≈ 0 |
 
 **O-10 — Moyens pour la justice.** +300 M€ par an (prud'hommes en
 priorité) ; les délais de justice ne sont pas modélisés.
@@ -965,6 +968,64 @@ frontières). La douane compte 16 500 agents et contrôle 0,1 % des
 marchandises importées. Coût : 52 000 € par emploi (coût moyen du
 programme 302), 104 M€ par an. Les droits, taxes et amendes recouvrés
 grâce aux contrôles ne sont pas comptés.
+
+**O-105 et O-105b — Légalisation encadrée du cannabis.** Soumise à
+référendum : le scrutin annuel du RIC (O-87) porte la question, sans coût
+propre ; le programme retient l'hypothèse d'un oui en 2027, la loi en
+2028 et les premières ventes en 2029. Modèle du Conseil d'analyse
+économique (note n° 52, juin 2019) : production et distribution sous
+licence d'État, vente aux majeurs, 9 € le gramme toutes taxes comprises
+(5 € hors taxes, accise de 50 %, TVA de 20 %, soit 2,50 € d'accise et
+1,50 € de TVA par gramme), entre les prix de rue de la résine (8 €) et de
+l'herbe (10 €). Le marché de 2023 est de 397 t pour 2,73 Md€ (OFDT,
+décembre 2025). Le circuit légal en prend 72 % en cinq ans, la part
+atteinte au Canada (Enquête canadienne sur le cannabis 2024, contre 4 % en
+2018) : 714 M€ d'accise et 428 M€ de TVA par an à partir de 2033, dont 10 %
+de l'accise pour la prévention et le soin (hypothèse ; le CAE recommande
+d'y affecter une partie des recettes). Les amendes forfaitaires pour
+usage disparaissent (≈ 148 000 par an, 34,6 % recouvrées : ≈ 10 M€).
+Emplois (O-105b) : 55 par tonne, bas de la fourchette du CAE (55 à 114,
+directs, indirects et induits), soit ≈ 15 700 en 2033, à 20 % dans
+l'agriculture et 80 % dans le commerce (coût de production inférieur à
+1 € sur 5 € hors taxes) ; la production légale remplace des importations
+illicites. Les forces de l'ordre (plus d'un million d'heures par an pour
+l'usage) sont redéployées vers les trafics : la dépense publique de
+répression du cannabis (568 M€, dont 70 % de police et 20 % de justice,
+CAE) n'est pas économisée. L'effet sur la consommation et la santé n'est
+pas modélisé. Point juridique : la convention unique des Nations unies
+sur les stupéfiants (1961) et le droit de l'Union (décision-cadre
+2004/757/JAI, article 71 de la convention d'application de l'accord de
+Schengen) imposent de réprimer le trafic, et une vente commerciale, même
+contrôlée par l'État, ne semble pas couverte par leurs exceptions
+(Bundestag, service Europe, juin 2023) : l'Allemagne s'est donc limitée en
+2024 à l'autoculture et aux associations sans but lucratif. Une vente sous licence suppose de faire
+évoluer ces engagements ou de s'en écarter : un référendum national ne
+lève pas l'obstacle. Variante : économie de la moitié des coûts de police
+et de justice de la répression (255 M€).
+
+**O-106 — Légalisation de la prostitution sur le modèle allemand.**
+Soumise au même référendum, avec l'hypothèse d'un oui. Fin de la
+pénalisation des clients (loi du 13 avril 2016) ; activité légale,
+exercée comme indépendant ou salarié, déclarée et imposée ;
+établissements soumis à autorisation ; enregistrement obligatoire,
+consultation de santé annuelle et préservatif obligatoire, comme en
+Allemagne (lois de 2002 et de 2017). La traite, le proxénétisme de
+contrainte et la prostitution des mineurs restent réprimés ; le parcours
+de sortie de la loi de 2016 est maintenu. Recettes : l'activité non
+déclarée prive l'État et la sécurité sociale de 853 M€ par an pour 37 000
+personnes (étude ProstCost du Mouvement du Nid et de Psytel, 2015 ;
+chiffres contestés, le ministère de l'Intérieur comptant 20 000
+personnes). En Allemagne, 32 300 personnes sont enregistrées fin 2024
+(Destatis) sur 200 000 à 400 000 estimées (gouvernement fédéral) : avec
+la même part déclarée (10,7 % au milieu de la fourchette), 91 M€ par an à
+partir de 2029. L'évaluation allemande de 2025 (KFN) juge la loi « pas un
+échec » mais relève que l'enregistrement repère rarement la traite et que
+beaucoup de personnes ne s'enregistrent pas. Point juridique : la
+convention des Nations unies du 2 décembre 1949, ratifiée par la France
+en 1960 (l'Allemagne n'y est pas partie), oblige à punir quiconque tient
+ou finance une maison de prostitution : les établissements autorisés
+supposent de la dénoncer. Variante : estimation basse du nombre de
+personnes en Allemagne, 16 % déclarés (137 M€).
 
 ### Cybersécurité
 
@@ -1147,28 +1208,28 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 3,96 % | 9,36 % | 0,9412 | oui / oui / oui |
-| Sans O-84 (deuxième journée de solidarité) | 4,17 % | 9,39 % | 0,9411 | oui / oui / oui |
-| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,89 % | 9,18 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 4,00 % | 9,34 % | 0,9424 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,79 % | 9,38 % | 0,9412 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 3,22 % | 9,42 % | 0,9411 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,71 % | 9,92 % | 0,9405 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,55 % | 10,45 % | 0,9399 | oui / oui / oui |
+| Programme actuel | 3,89 % | 9,33 % | 0,9412 | oui / oui / oui |
+| Sans O-84 (deuxième journée de solidarité) | 4,12 % | 9,35 % | 0,9411 | oui / oui / oui |
+| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,83 % | 9,15 % | 0,9413 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 3,92 % | 9,30 % | 0,9424 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,72 % | 9,34 % | 0,9412 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 3,15 % | 9,38 % | 0,9411 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,65 % | 9,88 % | 0,9405 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,47 % | 10,41 % | 0,9399 | oui / oui / oui |
 
 1. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,08 point en 2034 (demande), 0,03 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
+   des marges minimales de 0,07 point en 2035 (demande), 0,04 point en 2034 (offre), 0,06 point en 2034 (équilibre). Elle tient grâce à O-62
    (niches réduites de 1,5 Md€ de plus par an de 2029 à 2035) et à O-84
    (deuxième journée de solidarité, −0,23 point en 2035) ; sans O-84,
-   le déficit 2035 serait de 4,17 %. Toute dépense nouvelle non financée
+   le déficit 2035 serait de 4,12 %. Toute dépense nouvelle non financée
    réduit ces marges : chaque piste de dépense est à apparier à une recette
    ou à une économie.
-2. **Chômage.** 9,36 % en 2035 contre 7,90 % sans programme. Premières
+2. **Chômage.** 9,33 % en 2035 contre 7,90 % sans programme. Premières
    causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000 emplois)
    et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
    +20 000), O-76 et O-77 (+44 000 et +44 000) et O-84 (+7 000)
    compensent en partie. Au-delà de 9 %, le complément de fin de droits de
-   l'assurance chômage se déclenche. L'option B le réduit (9,18 %) ;
+   l'assurance chômage se déclenche. L'option B le réduit (9,15 %) ;
    passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit
    plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
@@ -1208,6 +1269,14 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
    son effet sur la vitesse de la conversion n'est pas modélisé ; la
    rentabilité de la coopérative d'engrais (O-104) dépend du prix de
    l'électricité et de celui de l'ammoniac importé.
+8. **Légalisations par référendum (O-105, O-106).** Les deux mesures
+   supposent un oui et se heurtent à des engagements internationaux que le
+   référendum ne lève pas : la convention unique de 1961 et le droit de
+   l'Union pour la vente de cannabis (l'Allemagne s'en est tenue à
+   l'autoculture et aux associations), la convention de 1949 pour les
+   établissements de prostitution. L'effet du cannabis sur le déficit 2035
+   (−0,03 point pour les taxes, −0,03 pour les emplois de la
+   filière) dépend de la part du marché qui passe dans le circuit légal.
 
 ## Pistes pour compléter
 
@@ -1224,16 +1293,16 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,11 pt | −0,06 pt | +0,6 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,10 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,24 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,14 pt | −0,09 pt | +0,8 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,07 pt | −0,04 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,08 pt | −0,03 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,04 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,14 pt | −0,07 pt | +0,8 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,22 pt | −0,11 pt | +1,1 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | +0,00 pt | +0,1 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,13 pt | −0,07 pt | +0,6 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,11 pt | −0,05 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,25 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,10 pt | +0,8 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,09 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,06 pt | −0,03 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,16 pt | −0,08 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,23 pt | −0,11 pt | +1,1 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant), et PC-12
 recoupe O-88 (médecins scolaires) : leur chiffrage s'y ajouterait sans le
@@ -1249,7 +1318,7 @@ O-04) ; culture ; immigration et intégration ; sécurité intérieure.
 
 ### Chiffrages à documenter
 
-* 38 mesures sur 105 reposent au moins en partie sur une hypothèse ; les plus
+* 40 mesures sur 108 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
