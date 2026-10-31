@@ -312,6 +312,68 @@ du module. -/
 def elasticitesPrix : ElasticitesPrix :=
   { aerienInterieur := 900, poidsLourds := 500, carburantsRoutiers := 600, chauffageFossile := 300 }
 
+/-- Part importée de la dépense de transition, par technologie, pm
+(leviers `investissementTransition` et `investissementPriveTransition`) ;
+recherche documentaire d'octobre 2026, valeurs centrales.
+
+* Pompes à chaleur : 450. Air-eau et hybrides ≈ 40 % (≈ 80 % de celles
+  vendues en France sont fabriquées en France ou en Europe, AFPAC 2022 ;
+  compresseurs non fabriqués en Europe ; solde extérieur des PAC
+  aérothermiques −262 M€ en 2022 pour 8,9 Md€ de marché, ADEME, « Marchés et
+  emplois concourant à la transition énergétique », 2024) ; air-air ≈ 60 %
+  (800 000 vendues par an, l'essentiel importé d'Asie, Hello Watt, juillet
+  2026) ; moyenne pondérée par les dépenses (calcul, hypothèse).
+* Voitures électriques : 750 (VE vendus en France en 2025 : 27,2 % fabriqués
+  en France, Mobilians ; matériel de transport acheté par les ménages :
+  84,3 % importé, Insee Première n° 1756, 2019).
+* Utilitaires et camions électriques : 620 (VUL ≈ 60 % : Kangoo, Trafic,
+  Master produits en France, Inovev 2024 ; camions ≈ 65 %, batteries
+  importées ; hypothèses).
+* Solaire : 340 (centrales au sol ≈ 38 % : modules 0,12 €/W et onduleurs
+  0,04 sur 0,87 €/W raccordement compris ; toitures de 100 à 500 kW ≈ 30 % ;
+  IEA-PVPS, National Survey Report France 2025 ; moyenne des deux, calcul).
+* Éolien terrestre : 600 (turbine : 64 à 84 % du coût, aucun turbinier
+  terrestre en France ; IRENA-ETSAP 2016, France Renouvelables 2023).
+* Rénovation : 200 (construction : 20,3 % de contenu importé, Insee Première
+  n° 1756 ; isolation : importations directes 5 %, ADEME 2024).
+* Réseaux de chaleur et géothermie : 200 (génie civil local, tubes et
+  chaudières en partie importés ; hypothèse).
+* HVO : 800 (bioraffineries de La Mède et Grandpuits seules, matières
+  premières importées ; Énergies et Mobilités, juin 2026).
+* Biogazole (EMAG, B100) : 550 (autosuffisance de 48 % en 2024, colza à 49 %
+  français ; FranceAgriMer, janvier 2026).
+* Bioéthanol (E85) : 100 (solde extérieur des biocarburants essence
+  positif, ADEME 2024).
+* Biogaz (captage en décharge, fosses couvertes) : 350 (moteurs et torchères
+  importés ; hypothèse). -/
+def partImporteeTransition : ParTechno :=
+  { pompeAChaleur := 450, vehiculeElectrique := 750, vehiculeUtilitaire := 620, solaire := 340,
+    eolien := 600, renovation := 200, reseauChaleur := 200, hvo := 800, biogazole := 550,
+    bioethanol := 100, biogaz := 350 }
+
+/-- Achats d'équipements fossiles remplacés par la dépense de transition,
+pm de la dépense saisie (champ `substitutionBruneTransitionPm`).
+
+* Pompes à chaleur : 130. Une chaudière gaz à condensation posée coûte
+  ≈ 5 350 € TTC (4 500 à 6 200 €, La Maison Saint-Gobain, décembre 2025),
+  une pompe à chaleur air-eau en rénovation ≈ 13 900 € (ADEME et In Numeri,
+  « Marchés et emplois concourant à la transition énergétique », 2024 :
+  6,8 Md€ pour 490 000 PAC en 2022), soit 38 % ; un tiers des PAC
+  remplacent une chaudière en fin de vie (hypothèse, entre 5 à 7 % si les
+  PAC étaient attribuées sans lien avec l'âge de la chaudière et ≈ 60 % si
+  toutes prenaient la place des 422 000 chaudières vendues en 2025,
+  Uniclima, bilan 2025) : 1/3 × 38 % ≈ 13 % (calcul). Ordre de grandeur de
+  la DG Trésor pour l'ensemble du bâtiment : 6 Md€ d'« alternative
+  carbonée » évitée pour 39 Md€ d'investissement brut en 2030 (15 %,
+  document de travail 2024/2, tableau 1).
+* Autres technologies : 0 (véhicules et biocarburants saisis en surcoût ;
+  rénovation de l'enveloppe, réseaux de chaleur, solaire, éolien et biogaz
+  sans équipement fossile remplacé, hypothèse). -/
+def substitutionBruneTransition : ParTechno :=
+  { pompeAChaleur := 130, vehiculeElectrique := 0, vehiculeUtilitaire := 0, solaire := 0,
+    eolien := 0, renovation := 0, reseauChaleur := 0, hvo := 0, biogazole := 0,
+    bioethanol := 0, biogaz := 0 }
+
 def bas : Energie where
   id := "petrole-bas"
   description := "Brent à 50 $"
@@ -329,6 +391,8 @@ def bas : Energie where
   co2EviteParVehiculeKg := 1700
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
+  partImporteeTransitionPm := partImporteeTransition
+  substitutionBruneTransitionPm := substitutionBruneTransition
   elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
@@ -364,6 +428,8 @@ def central : Energie where
   co2EviteParVehiculeKg := 1700
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
+  partImporteeTransitionPm := partImporteeTransition
+  substitutionBruneTransitionPm := substitutionBruneTransition
   elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360
@@ -399,6 +465,8 @@ def haut : Energie where
   co2EviteParVehiculeKg := 1700
   pmRelatifCritAirPm := pmRelatifCritAir
   renovation := renovation
+  partImporteeTransitionPm := partImporteeTransition
+  substitutionBruneTransitionPm := substitutionBruneTransition
   elasticitesPrix := elasticitesPrix
   consommationFoyerZniKWh := 2500
   surcoutPerequationZniEurosMWh := 360

@@ -938,6 +938,18 @@ structure Echeance where
   l'année d'entrée en vigueur, €. Chaque variation du niveau crée (ou
   supprime) les emplois publics correspondants, un pour un. -/
   coutParPosteEuros : Option Int := none
+  /-- Investissement privé entraîné par une mesure (levier
+  `investissementPriveTransition`) : effet de demande et importations, sans
+  dépense publique ni canal du capital public. -/
+  privee : Bool := false
+  /-- Part du niveau, pm, qui remplace une autre dépense privée de l'année
+  (équipement fossile qui n'est plus acheté, investissement évincé par le
+  financement d'un investissement privé) : retirée de l'effet de demande,
+  au contenu importé moyen (levier `investissementTransition`). -/
+  substitutionPm : Int := 0
+  /-- La dépense crée un équipement public (canal du capital public) ; faux
+  pour une aide à l'équipement des ménages et des entreprises. -/
+  capitalPublic : Bool := true
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/

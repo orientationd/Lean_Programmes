@@ -2580,10 +2580,13 @@ def chaleurParPoleGwh : Int := 28 + 25
 def chaleurEviteeKt : Int := polesRegionaux * chaleurParPoleGwh * 220 / 1000
 def chaleurInvestissementPole : Int := 42
 def chaleurAide : Int := polesRegionaux * chaleurInvestissementPole * 650 / 1000
+/-- Part de l'investissement de chaleur non couverte par l'aide (35 %),
+payée par les exploitants des réseaux (calcul). -/
+def chaleurPrive : Int := polesRegionaux * chaleurInvestissementPole - chaleurAide
 
 theorem poles_valeurs : solaireParAnMw = 1300 ∧ soutienSolaireEurosMWh = 16 ∧
     soutienSolaire = [0, 12, 38, 64, 78] ∧ stepInvestissement = 3250 ∧ stepPretParAn = 464 ∧
-    chaleurEviteeKt = 151 ∧ chaleurAide = 354 := by decide
+    chaleurEviteeKt = 151 ∧ chaleurAide = 354 ∧ chaleurPrive = 192 := by decide
 
 /-- Métro entièrement accessible aux personnes handicapées en 2035 (O-147),
 demande de l'auteur (octobre 2026) : « accès handicapés dans les métros :
@@ -2835,10 +2838,15 @@ transports ≤ 92 Mt (104,4), bâtiments ≤ 37 (46,9), production d'énergie
 carbone) ≤ 210,5 (245,8), budget carbone 2029-2033 ≤ 262 Mt par an
 (289,9). C'est la répartition de l'effort qui décide : ≈ −35 Mt dans les
 transports, les bâtiments, l'agriculture et les déchets. Les effets sont
-ceux de 2030, atteints par quarts de 2027 à 2030 (levier `transitionKt`) ;
-coûts, accises perdues (≈ 0,4 Md€ par Mt de carburant routier évité,
-0,25 Md€ pour les flottes professionnelles qui déduisent la TVA) et
-consommation d'électricité en plus sont comptés à part. Recherche
+ceux de 2030, atteints par quarts de 2027 à 2030. Depuis octobre 2026, le
+levier `transitionEcologique` du modèle commun compte, pour chaque tonne
+évitée, l'énergie fossile qui n'est plus achetée (importations évitées,
+accises et TVA perdues, sauf quand un biocarburant prend la place à prix et
+taxes inchangés), l'électricité consommée en plus (accise et TVA gagnées)
+et l'activité perdue (raffinerie, élevage), avec sa part reprise par des
+importations ; les dépenses sont des investissements par technologie
+(`investissementTransition`, part importée propre à chaque technologie),
+et l'investissement privé déclenché est compté (`investissementPriveTransition`). Recherche
 documentaire d'octobre 2026, sources citées mesure par mesure.
 
 **Faisabilité d'ensemble très faible d'ici 2030** : le paquet suppose des
@@ -3008,14 +3016,63 @@ def ttfElargie : Int := 1500
 def prelevementFondsEpargne : Int := 1600
 def redevanceFrequences : Int := 300
 
-/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1,15 %,
-même assiette et même calendrier ; dès 1 %,
+/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1,25 %,
+même assiette et même calendrier (1,15 % jusqu'en octobre 2026 : la
+transition décrite finement, où les pompes à chaleur offertes ne sont plus
+du capital public, coûte ≈ 0,1 point de PIB de plus en 2035 sous le moteur
+d'offre, et l'équilibre de 2035 était perdu ; à 1,20 %, il tient avec
+0,04 point de marge) ; dès 1 %,
 les impôts sur l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de
 l'OCDE (Danemark : 7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-
 Galles du Sud : 1,6 à 2 % au-delà de 1,075 M A$, résidence principale
 exonérée). **Acceptabilité très faible.** -/
-def tauxSolSupplementPdm : Int := 65
+def tauxSolSupplementPdm : Int := 75
 def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPdm / tauxSolPdm
+
+/-- Transition décrite finement (leviers `transitionEcologique`,
+`investissementTransition`, `investissementPriveTransition` du modèle
+commun) : paramètres propres aux mesures du programme, recherche
+documentaire d'octobre 2026.
+
+* Investissement privé dans le solaire : 0,87 M€ par MW au sol (0,72 €/W et
+  0,15 €/W de raccordement) et 0,85 M€ par MW sur les toitures de 100 à
+  500 kW (IEA-PVPS, National Survey Report France 2025) ; éolien terrestre :
+  ≈ 1,4 M€ par MW (hypothèse, ordre de grandeur européen de l'IRENA).
+* Raffinerie de Donges (O-160) : valeur ajoutée perdue ≈ 375 M€ par an
+  (0,3 à 0,45 Md€ : marge brute de raffinage de 57 €/t en 2025 sur ≈ 10 Mt,
+  moins les coûts d'exploitation ; DGEC), remplacée par des importations de
+  produits raffinés ; 650 salariés et 1 500 à 2 800 emplois indirects.
+* Rachat de 20 % du cheptel bovin (O-161) : valeur ajoutée agricole perdue
+  ≈ 1 150 M€ par an (0,8 à 1,5 Md€ ; 154 820 ETP dans les exploitations
+  bovines en 2020, Cour des comptes 2023 ; production de 1,3 Mtec en 2024,
+  FranceAgriMer), dont ≈ 65 % remplacés par des importations de viande
+  (≈ +0,75 Md€ ; ≈ +1,5 Md€ si la consommation ne baissait pas,
+  hypothèse) ; aval (abattoirs, transformation) : ≈ 600 M€ de valeur ajoutée
+  (10 000 emplois à 60 k€, hypothèse).
+* Répartition des énergies évitées (hypothèses) : chauffage (O-158), 60 %
+  de gaz et 40 % de fioul pour les PAC (le fioul en priorité), gaz pour les
+  thermostats ; biofioul F30 : fioul remplacé par du biogazole ; tertiaire
+  (O-159) : gaz, sauf les fluides frigorigènes ; biocarburants (O-157) :
+  HVO 3 000 kt, biogazole 2 500 kt (B100, bus et cars), bioéthanol 500 kt.
+
+Parts importées des biocarburants substitués (mêmes valeurs que
+`Hypotheses.Energie.partImporteeTransition` : HVO 80 %, biogazole 55 %,
+bioéthanol 10 %). -/
+def partImporteeHvo : Int := 800
+def partImporteeBiogazole : Int := 550
+def partImporteeBioethanol : Int := 100
+def capexSolaireSolMeurParMw : Int := 87
+def capexSolaireToitMeurParMw : Int := 85
+def capexEolienMeurParMw : Int := 140
+def investissementSolaire (solMw toitMw : Int) : Int :=
+  (solMw * capexSolaireSolMeurParMw + toitMw * capexSolaireToitMeurParMw) / 100
+def valeurAjouteeDonges : Int := 375
+def valeurAjouteeCheptel : Int := 1150
+def partCheptelImporteePm : Int := 650
+def valeurAjouteeAvalBovin : Int := 600
+def chauffageGazKt : Int := (3780 + 1150) * 600 / 1000 + 450
+def chauffageFioulKt : Int := (3780 + 1150) * 400 / 1000
+def biofioulKt : Int := 1630
 
 /-- Foncière de l'État (O-170) : cession d'un quart des bureaux de l'État
 en dix ans (23 millions de m², valeur comptable 73,7 Md€ ; cessions de
@@ -3034,8 +3091,9 @@ def avoirsConfisques : List Int := [100, 200]
 theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 ∧ biocarburantsKt = 6000 ∧
     chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
     soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧ plusValueDernierTiersParAn = 14473 ∧
-    devisesVendues = 14200 ∧
-    contributionSolSupplement = 32100 := by decide
+    devisesVendues = 14200 ∧ chauffageGazKt + chauffageFioulKt + biofioulKt = chauffageKt ∧
+    investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 ∧
+    contributionSolSupplement = 37039 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
@@ -4151,13 +4209,15 @@ def mesures : List Mesure := [
     titre := "Pôles régionaux solaire, stockage hydraulique souterrain et chaleur : construction (13 pôles)"
     source := s!"Demande de l'auteur (octobre 2026) ; {solaireParAnMw} MW de photovoltaïque au sol par an de 2027 à 2029 (300 MWc par pôle), soutien de {soutienSolaireEurosMWh} €/MWh ({soutienSolaire} M€) ; stockage hydraulique souterrain de 1,3 GW et 7,8 GWh à 2 500 €/kW ({stepInvestissement} M€ en sept ans, prêt de l'État de {stepPretParAn} M€ par an à un opérateur public) ; chaleur : fosses enterrées, capteurs solaires et géothermie, {chaleurAide} M€ d'aide du Fonds chaleur en 2027-2028 (voir `polesRegionaux`)"
     leviers := [.capaciteElectrique .solaire solaireParAnMw,
+                .investissementPriveTransition .solaire [investissementSolaire solaireParAnMw 0, investissementSolaire solaireParAnMw 0, investissementSolaire solaireParAnMw 0, 0],
                 .depenseEcheancier .affairesEconomiques soutienSolaire,
                 .pretEtat stepPretParAn,
-                .investissementEcheancier .logementEnvironnement [chaleurAide / 2, chaleurAide - chaleurAide / 2, 0]] },
+                .investissementTransition .reseauChaleur [chaleurAide / 2, chaleurAide - chaleurAide / 2, 0],
+                .investissementPriveTransition .reseauChaleur [chaleurPrive / 2, chaleurPrive - chaleurPrive / 2, 0]] },
   { id := "O-146b"
     titre := "Pôles régionaux : réseaux de chaleur solaires et géothermiques en service"
     source := s!"Fosses de 200 000 m³ et 70 000 m² de capteurs (Vojens : 28 GWh par an) et un doublet de géothermie (≈ 25 GWh) par pôle : {polesRegionaux * chaleurParPoleGwh} GWh à la place du gaz des réseaux de chaleur, {chaleurEviteeKt} kt de CO₂ évitées (0,22 t par MWh, Fonds chaleur 2025) à partir de 2029"
-    leviers := [.transitionKt .energie chaleurEviteeKt 0]
+    leviers := [.transitionEcologique { secteurGes := .energie, reductionKt := chaleurEviteeKt, energie := .gaz }]
     debut := 2 },
   { id := "O-146c"
     titre := "Pôles régionaux : fin du programme solaire (3,9 GW installés)"
@@ -4181,6 +4241,8 @@ def mesures : List Mesure := [
     source := s!"Mesure originale (octobre 2026) ; {solaireSolParAnMw} MW de solaire au sol et {solaireToitParAnMw} MW sur toitures et ombrières par an de 2027 à 2030 en plus de la tendance (appels d'offres d'octobre 2026 : 8,34 GW candidats pour 0,925 GW retenus ; bâtiments, juin 2026 : 1 559 MWc pour 300), {eolienRenouveleParAnMw} MW d'éolien terrestre par an ; soutien {soutienRenouvelables} M€ ; rythme total ≈ 14 GW de solaire par an, plus du double du record : risque élevé (raccordement) (voir `solaireSolParAnMw`)"
     leviers := [.capaciteElectrique .solaire solaireSolParAnMw, .solaireToiture solaireToitParAnMw,
                 .capaciteElectrique .eolienTerrestre eolienRenouveleParAnMw,
+                .investissementPriveTransition .solaire ((List.replicate 4 (investissementSolaire solaireSolParAnMw solaireToitParAnMw)) ++ [0]),
+                .investissementPriveTransition .eolien ((List.replicate 4 (eolienRenouveleParAnMw * capexEolienMeurParMw / 100)) ++ [0]),
                 .depenseEcheancier .affairesEconomiques soutienRenouvelables] },
   { id := "O-148b"
     titre := "Électricité renouvelable : fin du rattrapage (33 GW de solaire et 1,6 GW d'éolien installés)"
@@ -4192,7 +4254,7 @@ def mesures : List Mesure := [
     titre := "Sobriété électrique : éclairage public à LED et éteint la nuit, pompes à chaleur air-air à la place des convecteurs"
     source := s!"−{sobrieteParAnGwh} GWh par an de 2027 à 2030 (−6 TWh en 2030 : ≈ −2 TWh d'éclairage public, ≈ −4 TWh pour un million de logements) ; {investissementSobriete} M€ par an (estimations)"
     leviers := [.consommationElectrique (0 - sobrieteParAnGwh),
-                .investissementEcheancier .logementEnvironnement [investissementSobriete, 0]]
+                .investissementTransition .pompeAChaleur [investissementSobriete, 0]]
     repetitions := 4 },
   { id := "O-149"
     titre := "Vente des deux tiers de l'or de la Banque de France (2027-2032), plus-value versée à l'État pour réduire la dette"
@@ -4239,51 +4301,65 @@ def mesures : List Mesure := [
   { id := "O-155"
     titre := "Sobriété routière : 110 km/h sur autoroute, 100 sur voies rapides, poids lourds à 80, télétravail de deux jours, semaine de quatre jours dans la fonction publique"
     source := s!"Demande de l'auteur (octobre 2026), sans toucher au prix du carburant ; −{sobrieteRoutiereKt} kt dans les transports et −{sobrieteRoutiereBatimentsKt} kt dans les bâtiments en 2030 (Espagne 2011, A62, Umweltbundesamt 2023, ADEME, Insee) (voir `sobrieteRoutiereKt`)"
-    leviers := [.transitionKt .transports (sobrieteRoutiereKt / 4) 0, .transitionKt .batiments (sobrieteRoutiereBatimentsKt / 4) 0]
+    leviers := [.transitionEcologique { secteurGes := .transports, reductionKt := sobrieteRoutiereKt / 4, energie := .carburant },
+                .transitionEcologique { secteurGes := .batiments, reductionKt := sobrieteRoutiereBatimentsKt / 4, energie := .gaz }]
     repetitions := anneesMonteeClimat },
   { id := "O-155c"
-    titre := "Sobriété routière : covoiturage aidé et accises perdues"
-    source := s!"0,1 à 0,4 Md€ par an ; accises et TVA perdues : {sobrieteRoutiereAccises} M€ en 2030"
-    leviers := [.depenseEcheancier .affairesEconomiques [100, 200, 300, 400],
-                .recetteEcheancier (some .accisesEnergie) ((List.range 4).map fun (k : Nat) => 0 - sobrieteRoutiereAccises * (Int.ofNat k + 1) / 4)] },
+    titre := "Sobriété routière : covoiturage aidé"
+    source := "0,1 à 0,4 Md€ par an ; accises et TVA perdues : calculées par le levier `transitionEcologique` d'O-155"
+    leviers := [.depenseEcheancier .affairesEconomiques [100, 200, 300, 400]] },
   { id := "O-156"
     titre := "Flottes 100 % électriques : voitures de société à la belge, VUL d'entreprise, loueurs, taxis et VTC, livraisons urbaines, camions"
     source := s!"Demande de l'auteur (octobre 2026) ; −{flottesKt} kt dans les transports en 2030, +{flottesGwh} GWh d'électricité (ICCT 2025, T&E, ANFA, Pays-Bas, Allemagne) (voir `flottesKt`)"
-    leviers := [.transitionKt .transports (flottesKt / 4) 0, .consommationElectrique (flottesGwh / 4)]
+    leviers := [.transitionEcologique { secteurGes := .transports, reductionKt := flottesKt / 4, energie := .carburant,
+                                        electriciteGwh := flottesGwh / 4 }]
     repetitions := anneesMonteeClimat },
   { id := "O-156c"
-    titre := "Flottes électriques : aides de 2027 à 2030 et accises perdues"
-    source := s!"{flottesAides} M€ par an de 2027 à 2030 (VUL 5 000 €, camions, livraisons, loueurs) ; accises et TVA perdues : {flottesAccises} M€ en 2030"
-    leviers := [.depenseEcheancier .affairesEconomiques [flottesAides, flottesAides, flottesAides, flottesAides, 0],
-                .recetteEcheancier (some .accisesEnergie) ((List.range 4).map fun (k : Nat) => 0 - flottesAccises * (Int.ofNat k + 1) / 4)] },
+    titre := "Flottes électriques : aides de 2027 à 2030"
+    source := s!"{flottesAides} M€ par an de 2027 à 2030 (VUL 5 000 €, camions, livraisons, loueurs), part importée des utilitaires ; accises et TVA perdues : calculées par le levier `transitionEcologique` d'O-156"
+    leviers := [.investissementTransition .vehiculeUtilitaire [flottesAides, flottesAides, flottesAides, flottesAides, 0]] },
   { id := "O-157"
     titre := "Biocarburants payés par l'État, prix à la pompe inchangé : HVO dans le gazole, B100 pour les poids lourds, bus et cars, E85"
     source := s!"Demande de l'auteur (octobre 2026) ; −{biocarburantsKt} kt dans les transports en 2030 pour {biocarburantsCout} M€ par an (Neste, Greenea 2026 : marché du HVO en pénurie) (voir `biocarburantsKt`)"
-    leviers := [.transitionKt .transports (biocarburantsKt / 4) 0]
+    leviers := [.transitionEcologique { secteurGes := .transports, reductionKt := 3000 / 4, energie := .carburant,
+                                        substitutImportePm := partImporteeHvo, taxesMaintenues := true },
+                .transitionEcologique { secteurGes := .transports, reductionKt := 2500 / 4, energie := .carburant,
+                                        substitutImportePm := partImporteeBiogazole, taxesMaintenues := true },
+                .transitionEcologique { secteurGes := .transports, reductionKt := 500 / 4, energie := .carburant,
+                                        substitutImportePm := partImporteeBioethanol, taxesMaintenues := true }]
     repetitions := anneesMonteeClimat },
   { id := "O-157c"
     titre := "Biocarburants : surcoût payé par l'État"
     source := s!"{biocarburantsCout} M€ par an à partir de 2030"
-    leviers := [.depenseEcheancier .affairesEconomiques ((List.range 4).map fun (k : Nat) => biocarburantsCout * (Int.ofNat k + 1) / 4)] },
+    leviers := [.investissementTransition .hvo ((List.range 4).map fun (k : Nat) => 750 * (Int.ofNat k + 1) / 4),
+                .investissementTransition .biogazole ((List.range 4).map fun (k : Nat) => 300 * (Int.ofNat k + 1) / 4),
+                .investissementTransition .bioethanol ((List.range 4).map fun (k : Nat) => 300 * (Int.ofNat k + 1) / 4)] },
   { id := "O-158"
     titre := "Plan « Liberty ships » du chauffage : 700 000 pompes à chaleur gratuites par an, PAC air-air en relève, biofioul F30 obligatoire, thermostats à 19 °C"
     source := s!"Demande de l'auteur (octobre 2026) ; −{chauffageKt} kt dans les bâtiments en 2030, +{chauffageGwh} GWh (Uniclima, plan PAC 2024, Royaume-Uni 1967-1977) ; pompes à chaleur jusqu'en 2033 (voir `chauffageKt`)"
-    leviers := [.transitionKt .batiments (chauffageKt / 4) 0, .consommationElectrique (chauffageGwh / 4)]
+    leviers := [.transitionEcologique { secteurGes := .batiments, reductionKt := chauffageGazKt / 4, energie := .gaz,
+                                        electriciteGwh := chauffageGwh / 4 },
+                .transitionEcologique { secteurGes := .batiments, reductionKt := chauffageFioulKt / 4, energie := .fioul },
+                .transitionEcologique { secteurGes := .batiments, reductionKt := biofioulKt / 4, energie := .fioul,
+                                        substitutImportePm := partImporteeBiogazole, taxesMaintenues := true }]
     repetitions := anneesMonteeClimat },
   { id := "O-158b"
     titre := "Plan « Liberty ships » : pompes à chaleur de 2031 à 2033"
     source := s!"700 000 PAC par an : −{chauffageSuiteKt} kt et +{chauffageSuiteGwh} GWh par an"
-    leviers := [.transitionKt .batiments chauffageSuiteKt 0, .consommationElectrique chauffageSuiteGwh]
+    leviers := [.transitionEcologique { secteurGes := .batiments, reductionKt := chauffageSuiteKt * 600 / 1000, energie := .gaz,
+                                        electriciteGwh := chauffageSuiteGwh },
+                .transitionEcologique { secteurGes := .batiments, reductionKt := chauffageSuiteKt * 400 / 1000, energie := .fioul }]
     debut := anneesMonteeClimat
     repetitions := 3 },
   { id := "O-158c"
     titre := "Plan « Liberty ships » : investissement public"
     source := s!"{chauffageInvestissement} M€ (8 500 € par PAC, PAC air-air, kits F30, thermostats)"
-    leviers := [.investissementEcheancier .logementEnvironnement chauffageInvestissement] },
+    leviers := [.investissementTransition .pompeAChaleur chauffageInvestissement] },
   { id := "O-159"
     titre := "Tertiaire : 19 °C contrôlé, sanctions du décret tertiaire, quotas des grands bâtiments (modèle de Tokyo), chauffage collectif, fluides frigorigènes"
     source := s!"Demande de l'auteur (octobre 2026) ; −{tertiaireKt} kt dans les bâtiments en 2030, {tertiaireCout} M€ par an (voir `tertiaireKt`)"
-    leviers := [.transitionKt .batiments (tertiaireKt / 4) 0]
+    leviers := [.transitionEcologique { secteurGes := .batiments, reductionKt := (tertiaireKt - 1200) / 4, energie := .gaz },
+                .transitionEcologique { secteurGes := .batiments, reductionKt := 1200 / 4 }]
     repetitions := anneesMonteeClimat },
   { id := "O-159c"
     titre := "Tertiaire : contrôles et aides"
@@ -4292,17 +4368,27 @@ def mesures : List Mesure := [
   { id := "O-160"
     titre := "Production d'énergie : Fonds chaleur doublé, chaudières électriques dans les réseaux de chaleur, fermeture et reconversion de la raffinerie de Donges (2029)"
     source := s!"Demande de l'auteur (octobre 2026) ; −{energieKt} kt dans l'énergie, −{energieIndustrieKt} dans l'industrie, −{energieBatimentsKt} dans les bâtiments en 2030 (ADEME 2025) ; émissions de Donges reportées sur les importations de gazole (voir `energieKt`)"
-    leviers := [.transitionKt .energie (energieKt / 4) 0, .transitionKt .industrie (energieIndustrieKt / 4) 0,
-                .transitionKt .batiments (energieBatimentsKt / 4) 0, .consommationElectrique (energieGwh / 4)]
+    leviers := [.transitionEcologique { secteurGes := .energie, reductionKt := (780 + 300) / 4, energie := .gaz,
+                                        electriciteGwh := energieGwh / 4 },
+                .transitionEcologique { secteurGes := .energie, reductionKt := 1150 / 4,
+                                        activitePerdueMeur := valeurAjouteeDonges / 4, secteurActivite := .industrie,
+                                        activiteImporteePm := 1000 },
+                .transitionEcologique { secteurGes := .industrie, reductionKt := energieIndustrieKt / 4, energie := .gaz },
+                .transitionEcologique { secteurGes := .batiments, reductionKt := energieBatimentsKt / 4, energie := .gaz }]
     repetitions := anneesMonteeClimat },
   { id := "O-160c"
     titre := "Production d'énergie : Fonds chaleur et reconversion de Donges"
     source := s!"{energieInvestissement} M€"
-    leviers := [.investissementEcheancier .logementEnvironnement energieInvestissement] },
+    leviers := [.investissementTransition .reseauChaleur [800],
+                .investissementEcheancier .logementEnvironnement [0, 0, 500, 500, 0]] },
   { id := "O-161"
     titre := "Agriculture : rachat volontaire de 20 % du cheptel bovin, 3-NOP, repas végétariens en restauration collective, plafond d'azote à la danoise, fosses couvertes"
     source := s!"Demande de l'auteur (octobre 2026) ; −{agricultureKt} kt en 2030 (Pays-Bas, Danemark, Cour des comptes 2023) ; ≈ 15 000 à 20 000 exploitations en moins (hypothèse) (voir `agricultureKt`)"
-    leviers := [.transitionKt .agriculture (agricultureKt / 4) 0]
+    leviers := [.transitionEcologique { secteurGes := .agriculture, reductionKt := agricultureKt / 4,
+                                        activitePerdueMeur := valeurAjouteeCheptel / 4, secteurActivite := .agriculture,
+                                        activiteImporteePm := partCheptelImporteePm },
+                .transitionEcologique { secteurGes := .agriculture, reductionKt := 0,
+                                        activitePerdueMeur := valeurAjouteeAvalBovin / 4, secteurActivite := .industrie }]
     repetitions := anneesMonteeClimat },
   { id := "O-161c"
     titre := "Agriculture : rachats et compensations"
@@ -4311,16 +4397,17 @@ def mesures : List Mesure := [
   { id := "O-162"
     titre := "Déchets : captage du biogaz des décharges porté à 70 %"
     source := s!"Demande de l'auteur (octobre 2026) ; −{dechetsKt} kt en 2030 (paramètre d'O-135), {dechetsCout} M€ par an (voir `dechetsKt`)"
-    leviers := [.transitionKt .dechets (dechetsKt / 4) 0]
+    leviers := [.transitionEcologique { secteurGes := .dechets, reductionKt := dechetsKt / 4 }]
     repetitions := anneesMonteeClimat },
   { id := "O-162c"
     titre := "Déchets : captage du biogaz"
     source := s!"{dechetsCout} M€ par an"
-    leviers := [.depenseEcheancier .logementEnvironnement [dechetsCout]] },
+    leviers := [.investissementTransition .biogaz [dechetsCout]] },
   { id := "O-163"
     titre := "Électricité renouvelable avec l'électrification : 1,5 GW de solaire de plus par an et un million de logements de plus aux PAC air-air"
     source := s!"Les O-156, O-158 et O-160 ajoutent ≈ 18 TWh de consommation en 2030 ; +{solaireSupplementMw} MW au sol et sur toitures par an de 2027 à 2030, −{sobrieteSupplementGwh} GWh par an de sobriété (voir `solaireSupplementMw`)"
     leviers := [.capaciteElectrique .solaire solaireSupplementMw, .solaireToiture solaireSupplementMw,
+                .investissementPriveTransition .solaire ((List.replicate 4 (investissementSolaire solaireSupplementMw solaireSupplementMw)) ++ [0]),
                 .depenseEcheancier .affairesEconomiques soutienSolaireSupplement] },
   { id := "O-163b"
     titre := "Électricité : fin du supplément solaire (2031)"
@@ -4330,7 +4417,7 @@ def mesures : List Mesure := [
   { id := "O-163c"
     titre := "Électricité : sobriété supplémentaire (PAC air-air à la place des convecteurs)"
     source := s!"−{sobrieteSupplementGwh} GWh par an de 2027 à 2030 ; 400 M€ par an (estimation, comme O-148c)"
-    leviers := [.consommationElectrique (0 - sobrieteSupplementGwh), .investissementEcheancier .logementEnvironnement [400, 0]]
+    leviers := [.consommationElectrique (0 - sobrieteSupplementGwh), .investissementTransition .pompeAChaleur [400, 0]]
     repetitions := anneesMonteeClimat },
   { id := "O-164"
     titre := "Vente du dernier tiers de l'or, de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus"
@@ -4358,7 +4445,7 @@ def mesures : List Mesure := [
     leviers := [.recetteEcheancier (some .autres) [ttfElargie],
                 .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
   { id := "O-169"
-    titre := "Contribution sur la valeur du sol portée à 1,15 % (O-151)"
+    titre := "Contribution sur la valeur du sol portée à 1,25 % (O-151)"
     source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; impôts sur l'immobilier au-delà de 3,3 % du PIB, au sommet de l'OCDE ; acceptabilité très faible (voir `tauxSolSupplementPdm`)"
     leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] },
   { id := "O-170"
