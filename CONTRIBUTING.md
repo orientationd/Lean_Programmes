@@ -78,7 +78,11 @@ déclenché, sans dépense publique), avec la part importée de chaque
 technologie (`Energie.partImporteeTransitionPm` : pompes à chaleur,
 véhicules électriques et utilitaires, solaire, éolien, rénovation, réseaux
 de chaleur, HVO, biogazole, bioéthanol, biogaz) et son secteur d'emploi.
-Restent hors du modèle : les marges perdues par la distribution de
+Saisir le coût complet pour le chauffage, la rénovation et les réseaux de
+chaleur, le surcoût pour les véhicules et les biocarburants : la part qui
+remplace un équipement fossile (`Energie.substitutionBruneTransitionPm`) et
+l'éviction de l'investissement privé (`Economie.evictionInvestissementPrivePm`)
+sont retirées de l'effet de demande. Restent hors du modèle : les marges perdues par la distribution de
 carburant et l'entretien automobile (réallocations entre secteurs
 intérieurs), les effets de prix de l'électricité et la productivité.
 

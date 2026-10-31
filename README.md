@@ -158,10 +158,19 @@ importée propre à chacune (véhicules électriques 75 %, HVO 80 %, éolien
 60 %, biogazole 55 %, pompes à chaleur 45 %, biogaz 35 %, solaire 34 %,
 rénovation et réseaux de chaleur 20 %, bioéthanol 10 % ; ADEME, IEA-PVPS,
 IRENA, FranceAgriMer, Insee) et son secteur d'emploi (construction,
-industrie, agriculture). Ordres de grandeur publiés pour comparaison :
-+0,2 à +0,4 % de PIB et +20 000 à +60 000 emplois nets en 2030 pour une
-transition financée par la dette (DG Trésor, Banque de France, ThreeME de
-l'ADEME et de l'OFCE).
+industrie, agriculture). Deux pertes d'effet sont déduites : l'équipement
+fossile qui n'est plus acheté (une pompe à chaleur offerte remplace parfois
+une chaudière en fin de vie : 13 % de la dépense) et l'éviction de
+l'investissement privé par son financement (20, 40 ou 60 % selon l'axe
+économique, entre l'absence d'éviction de ThreeME et de la Banque de France
+et la borne de la DG Trésor). Repères publiés : pour la DG Trésor, les
+investissements de la transition ajoutent +1,0 point de PIB en 2030, leur
+financement et leur surcoût en retirent 0,6 (rapport final sur les enjeux
+économiques de la neutralité carbone, janvier 2025) ; le ministère attend
++200 000 à +550 000 emplois nets en 2030 pour l'ensemble de la stratégie
+nationale bas-carbone (SGPE). Non modélisé : l'effet sur la productivité
+(−0,25 à −0,3 point par an vers 2030 si l'investissement de décarbonation
+évince l'investissement productif ; Pisani-Ferry et Mahfouz, 2023).
 
 **Lois à respecter.** Outre les règles budgétaires françaises et
 européennes et les objectifs climatiques, chaque programme est vérifié
@@ -286,7 +295,8 @@ CI) :
   (carburant évité : importations et accises en baisse, PIB en hausse ;
   biocarburant à taxes inchangées ; accise de l'électricité ; activité
   perdue ; part importée des investissements par technologie ;
-  investissement privé sans dépense publique) ;
+  investissement privé sans dépense publique ; éviction et chaudières
+  remplacées) ;
 * **assiettes** (`Tests/Assiettes.lean`) : barème indexé (l'inflation seule
   ne relève pas l'IR plus que les revenus), progressivité sur la hausse
   réelle, accises insensibles aux prix, revalorisation légale des valeurs
