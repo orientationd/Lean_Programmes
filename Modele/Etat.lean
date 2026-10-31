@@ -1089,6 +1089,14 @@ structure Etat where
   investissementPublicMesures : ParFonction := ParFonction.depuis (fun _ => 0)
   capitalPublicMesures : Int := 0
   effetCapitalPublicPpm : Int := 0
+  /-- Effets de demande des mesures (impulsions passées par
+  `effetDemande`), M€ courants : écart de PIB qu'il en reste
+  (`ecartDemandeMeur`) et somme des écarts initiaux (`demandeCumuleeMeur`),
+  tous deux indexés sur le PIB nominal ; la résorption du moteur
+  (`resorptionDemandePm`) referme chaque année une part de l'écart au-delà
+  de sa part durable. -/
+  ecartDemandeMeur : Int := 0
+  demandeCumuleeMeur : Int := 0
   /-- Canal du capital des entreprises : écart du taux effectif d'IS fixé par
   les mesures au taux du scénario, pb ; variation des recettes d'IS due à ce
   taux (réponse de l'assiette comprise), M€ courants, qui croît comme l'IS ;

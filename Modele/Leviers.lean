@@ -531,7 +531,11 @@ def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Et
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
 multiplicateur, puis `chocPib`. -/
 def effetDemande (H : Scenario) (cible : Option Secteur) (impulsion : Int) (s : Etat) : Etat :=
-  chocPib H cible (appliquerPm impulsion H.eco.multiplicateurPm) s
+  let dPib := appliquerPm impulsion H.eco.multiplicateurPm
+  let s' := chocPib H cible dPib s
+  -- écart de demande suivi pour la résorption du moteur
+  { s' with ecartDemandeMeur := s'.ecartDemandeMeur + dPib
+            demandeCumuleeMeur := s'.demandeCumuleeMeur + dPib }
 
 /-- Stabilisateur automatique : la dépense d'indemnisation du chômage suit le
 nombre de chômeurs (écart à ceux que les dépenses inscrites couvrent déjà),
@@ -542,7 +546,9 @@ def stabilisateurChomage (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let d := if H.reference.etat.pib = 0 then 0
     else (chomeurs - s.chomeursComptes) * H.eco.coutParChomeurEuros * s.pib
       / (H.reference.etat.pib * 1000000)
-  effetDemande H none (appliquerPm d M.multiplicateurPrelevementsPm)
+  -- réponse automatique au chômage : pas suivie pour la résorption (elle se
+  -- retourne d'elle-même quand le chômage revient)
+  chocPib H none (appliquerPm (appliquerPm d M.multiplicateurPrelevementsPm) H.eco.multiplicateurPm)
     { s with depensesF := s.depensesF.ajouter .famille d, chomeursComptes := chomeurs }
 
 /-- Part des achats non électriques qu'une aide de `aideEuros` rend

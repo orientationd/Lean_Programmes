@@ -30,6 +30,18 @@ Deux lectures des mêmes mesures (plus le moteur contribué « Exemple
   point de taux en moins). Pour l'IS, ce canal remplace l'effet générique
   des prélèvements. Paramètres et sources : `Hypotheses/Economie.lean`.
   Le moteur de demande n'a pas ce canal.
+  Enfin, les effets de demande des mesures s'estompent
+  (`resorptionDemandePm`, `partDemandeDurablePm`) : à long terme, il n'en
+  reste que 20 %, et la part qui s'en va se résorbe de 5 % par an.
+  Repères : pour une hausse de la dépense publique de 1 point de PIB, le PIB
+  est plus haut de 0,9 point à 1 an, de 1 point à 5 ans et de 0,2 point à
+  long terme dans Mésange, de 0,68, 0,90, 0,80 (10 ans), 0,46 (30 ans) et
+  0,45 dans ThreeME (Trésor-Éco n° 394, juillet 2026, tableau 1 et p. 2) :
+  part durable de Mésange (0,2 sur 1) ; rythme tiré de ThreeME, dont la
+  part qui s'en va perd 22 % de 5 à 10 ans (calcul : ≈ 5 % par an).
+  L'effet maximal, atteint au bout de quelques années dans ces modèles, est
+  ici immédiat : la résorption part de l'année de l'impulsion (hypothèse).
+  Le moteur de demande garde des effets permanents (cas limite).
 
 Tous les programmes sont évalués sous les deux ; les engagements précisent
 leur moteur.
@@ -49,11 +61,13 @@ def demande : Moteur where
 def offre : Moteur where
   id := "offre"
   nom := "Offre"
-  description := "Économies à demi-multiplicateur ; +1 point de prélèvements obligatoires retire 0,1 point de croissance par an ; canal du capital (investissement public, IS) sur le PIB potentiel"
+  description := "Économies à demi-multiplicateur ; +1 point de prélèvements obligatoires retire 0,1 point de croissance par an ; canal du capital (investissement public, IS) sur le PIB potentiel ; effets de demande durables à 20 % (Mésange), résorbés de 5 % par an"
   multiplicateurEconomiesPm := 500
   multiplicateurPrelevementsPm := 500
   elasticiteCroissancePoPm := 100
   canalCapitalPm := 1000
+  resorptionDemandePm := 50
+  partDemandeDurablePm := 200
 
 def tous : List Moteur := [demande, offre]
 

@@ -480,6 +480,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     isTauxMeur := if s.impots.impotSocietes = 0 then 0
       else s.isTauxMeur * impots.impotSocietes / s.impots.impotSocietes
     pib := pib
+    -- les écarts de demande suivent le PIB nominal
+    ecartDemandeMeur := s.ecartDemandeMeur + appliquerPb s.ecartDemandeMeur croissance
+    demandeCumuleeMeur := s.demandeCumuleeMeur + appliquerPb s.demandeCumuleeMeur croissance
     impots := impots
     remunerationParEmploiEuros := remuneration
     consommationMenages := s.consommationMenages + appliquerPb s.consommationMenages gConso
@@ -665,6 +668,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let investissementAnnee := s.investissementPublicMesures.total
     + (s.echeances.filter (fun e => e.secteur = some .construction ∧ !e.privee ∧ e.capitalPublic)).foldl (fun a e => a + e.niveau) 0
   let s₇ := canalCapital M H prix investissementAnnee s₇
+  -- résorption des effets de demande des mesures : l'activité revient vers
+  -- son potentiel ; une part de l'écart au-delà de sa part durable se
+  -- referme (emploi et recettes suivent), sans être suivie comme impulsion
+  let resorption := (s₇.ecartDemandeMeur - appliquerPm s₇.demandeCumuleeMeur M.partDemandeDurablePm)
+    * M.resorptionDemandePm / 1000
+  let s₇ := if resorption = 0 then s₇
+    else { chocPib H none (0 - resorption) s₇ with ecartDemandeMeur := s₇.ecartDemandeMeur - resorption }
   -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
   -- d'année (cycle, tendance et mesures de l'année)
   let s₈ := stabilisateurChomage M H s₇

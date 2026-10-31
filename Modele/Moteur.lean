@@ -39,12 +39,22 @@ structure Moteur where
   de la variation d'IS due au taux (surtaxes et cycle restent dans l'effet
   générique). -/
   canalCapitalPm : Int := 0
+  /-- Résorption des effets de demande des mesures, pm par an : part de
+  l'écart de PIB dû à leurs impulsions de demande (au-delà de sa part
+  durable) qui se referme chaque année, quand l'activité revient vers son
+  potentiel (`0` : effets permanents). -/
+  resorptionDemandePm : Int := 0
+  /-- Part durable de l'effet de demande des mesures, pm : ce qu'il en reste
+  à long terme (`1000` : tout). -/
+  partDemandeDurablePm : Int := 1000
   deriving Repr
 
 abbrev Moteur.Valide (M : Moteur) : Prop :=
   0 ≤ M.multiplicateurEconomiesPm ∧ M.multiplicateurEconomiesPm ≤ 1000 ∧
   0 ≤ M.multiplicateurPrelevementsPm ∧ M.multiplicateurPrelevementsPm ≤ 1000 ∧
   0 ≤ M.elasticiteCroissancePoPm ∧ M.elasticiteCroissancePoPm ≤ 1000 ∧
-  0 ≤ M.canalCapitalPm ∧ M.canalCapitalPm ≤ 1000
+  0 ≤ M.canalCapitalPm ∧ M.canalCapitalPm ≤ 1000 ∧
+  0 ≤ M.resorptionDemandePm ∧ M.resorptionDemandePm ≤ 1000 ∧
+  0 ≤ M.partDemandeDurablePm ∧ M.partDemandeDurablePm ≤ 1000
 
 end Modele

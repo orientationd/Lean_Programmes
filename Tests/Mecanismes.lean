@@ -425,4 +425,18 @@ theorem eviction_substitution :
     priv.pib < pub.pib ∧ pac.pib < pac0.pib := by
   decide +kernel
 
+/-- Résorption des effets de demande : sous un moteur identique au moteur de
+demande mais où il ne reste à long terme que 20 % de l'effet de demande, la
+part qui s'en va se résorbant de 5 % par an, une dépense d'un point de PIB
+relève encore le PIB au bout de cinq ans, mais moins qu'avec des effets
+permanents ; ≈ 0,2 + 0,8 × 0,95⁵ ≈ 82 % de l'écart initial (fourchette
+large : l'emploi et les recettes suivent). -/
+theorem resorption_demande :
+    let R : Moteur := { D with resorptionDemandePm := 50, partDemandeDurablePm := 200 }
+    let un := (etatDepart H).pib / 100
+    let p := mesure (.depenseSur .enseignement un)
+    let ecart (M : Moteur) : Int := (p.resultatA M H 5).pib - (tendancielAn M H 5).pib
+    0 < ecart R ∧ ecart R < ecart D ∧ 70 * ecart D ≤ 100 * ecart R ∧ 100 * ecart R ≤ 90 * ecart D := by
+  decide +kernel
+
 end Tests.Mecanismes
