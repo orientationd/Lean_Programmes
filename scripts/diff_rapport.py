@@ -101,6 +101,19 @@ def mesures_communales(base: dict, pr: dict) -> list[str]:
     return out
 
 
+def pastille(k: int, n: int) -> str:
+    """Part des scénarios où une propriété tient, en quatre paliers (même
+    règle que `pastille` dans Rapport.lean) : rouge (moins d'un quart),
+    orange (jusqu'aux trois quarts), jaune, vert (tous)."""
+    if n == 0:
+        return ""
+    if k == n:
+        return "🟩"
+    if 3 * n <= 4 * k:
+        return "🟨"
+    return "🟧" if n <= 4 * k else "🟥"
+
+
 def ids(r: dict, cle: str) -> set:
     return {x["id"] for x in r.get(cle, [])}
 
@@ -155,7 +168,8 @@ def nouveautes(base: dict, pr: dict) -> list[str]:
     nb_mot = max(1, len(pr.get("moteurs", [])) or 1)
 
     def tenues(p: dict, q: str) -> str:
-        return f"{sum(1 for ev in p['evaluations'] if ev['proprietes'].get(q))}/{nb_scen * nb_mot}"
+        k, n = sum(1 for ev in p['evaluations'] if ev['proprietes'].get(q)), nb_scen * nb_mot
+        return f"{pastille(k, n)} {k}/{n}"
 
     nouveaux_p = [p for p in pr["programmes"] if p["id"] not in ids(base, "programmes")]
     if nouveaux_p:
