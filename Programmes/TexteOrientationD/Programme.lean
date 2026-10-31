@@ -3074,6 +3074,75 @@ def chauffageGazKt : Int := (3780 + 1150) * 600 / 1000 + 450
 def chauffageFioulKt : Int := (3780 + 1150) * 400 / 1000
 def biofioulKt : Int := 1630
 
+/-- Mesures originales pour le PIB (O-172 à O-174), demande de l'auteur
+(octobre 2026) : « trouve des moyens d'augmenter le PIB et garder les
+propriétés », mesures originales. Dans le modèle commun, le PIB monte
+surtout par les heures travaillées, la population active et la
+productivité ; recherche documentaire d'octobre 2026.
+
+Budget réglementaire (O-172) : les coûts administratifs imposés aux
+entreprises valent au moins 3 % du PIB (≈ 60 Md€ par an, chiffre du
+gouvernement repris par le Sénat, rapport d'information n° 743, juin 2023,
+p. 12 ; jusqu'au double selon le même rapport). La Commission européenne
+estimait qu'une baisse de 25 % de coûts valant 3,5 % du PIB relèverait le
+PIB de ≈ 1,4 % à moyen terme (communication COM(2007)23, §1.1, modèle
+WorldScan du CPB ; jusqu'à 1,8 % avec QUEST) : ≈ 1,6 point de PIB par point
+de coûts supprimés (calcul). Pour la France : 25 % de 3 % = 0,75 point,
+soit ≈ +1,2 % de PIB ; la moitié seulement est retenue, car les
+simplifications annoncées se réalisent mal (43 % des mesures du Conseil de
+la simplification non effectives, Sénat 2017, repris par l'iFRAP ;
+hypothèse) : +0,6 % de PIB, par cinquièmes de 2027 à 2031. Autorité
+indépendante de mesure des coûts (modèle néerlandais ATR) : 30 M€ par an
+(hypothèse). -/
+def coutAdministratifPibPb : Int := 300
+def baisseCoutsAdministratifsPm : Int := 250
+def rendementPibSimplificationPm : Int := 1600
+def realisationSimplificationPm : Int := 500
+def anneesSimplification : Nat := 5
+def gainSimplificationParAnPb : Int :=
+  coutAdministratifPibPb * baisseCoutsAdministratifsPm / 1000 * rendementPibSimplificationPm / 1000
+    * realisationSimplificationPm / 1000 / anneesSimplification
+def autoriteNormes : Int := 30
+
+/-- Visa diplômé France (O-173) : droit au séjour et au travail de trois
+ans, sans autorisation de travail, pour tout diplômé de master ou de
+doctorat d'un établissement français (modèle de la Graduate Route
+britannique de 2021 et du permis post-diplôme canadien). ≈ 118 000
+premiers titres étudiants en 2025 (DGEF, juin 2026) ; cinq ans après leur
+arrivée, 21 % des étudiants étrangers sont encore en France avec un statut
+économique (CAE, note n° 67, novembre 2021, p. 12). +10 points de rétention
+(hypothèse) : ≈ 11 800 personnes de plus par an dans le solde migratoire,
+actives à la part des migrants du scénario (60 %, prudent pour des
+diplômés). Contribution budgétaire des immigrés : de −0,5 à +0,5 % du PIB
+(CAE, p. 6) ; le FMI trouve jusqu'à +2 % de PIB par habitant à long terme
+par point de migrants dans la population adulte (Jaumotte et al., 2016). -/
+def premiersTitresEtudiants : Int := 118000
+def hausseRetentionDiplomesPm : Int := 100
+def visaDiplomeMilliersParAn : Int := premiersTitresEtudiants * hausseRetentionDiplomesPm / 1000 / 1000
+
+/-- Droit au rachat des RTT (O-174) : le salarié peut exiger le paiement de
+cinq jours de RTT par an, majorés de 10 % (aujourd'hui, l'employeur peut
+refuser ; rachat possible jusqu'au 31 décembre 2026, avec déduction de
+cotisations patronales), sans exonération : neutre pour les finances
+publiques. 8 millions de salariés ont des RTT, 13 jours en moyenne
+(Institut Montaigne, 2022, d'après l'Insee et le Sénat) ; recours de la
+moitié (hypothèse, milieu de la fourchette de 25 à 100 % de l'Institut
+Montaigne) ; 7 heures par jour ; ≈ 45 milliards d'heures travaillées par an
+(≈ 30 millions d'emplois × 1 500 h, calcul) : ≈ +0,3 % d'heures. Risque :
+la détaxation des heures supplémentaires de 2007 a relevé les heures
+déclarées, pas les heures réelles (Cahuc et Carcillo, 2011). -/
+def salariesRttMilliers : Int := 8000
+def joursRachetables : Int := 5
+def recoursRachatPm : Int := 500
+def heuresParJour : Int := 7
+def heuresTravailleesMillions : Int := 45000
+def heuresRachatPm : Int :=
+  salariesRttMilliers * 1000 * joursRachetables * recoursRachatPm / 1000 * heuresParJour * 1000
+    / (heuresTravailleesMillions * 1000000)
+
+theorem pib_originales_valeurs :
+    gainSimplificationParAnPb = 12 ∧ visaDiplomeMilliersParAn = 11 ∧ heuresRachatPm = 3 := by decide
+
 /-- Foncière de l'État (O-170) : cession d'un quart des bureaux de l'État
 en dix ans (23 millions de m², valeur comptable 73,7 Md€ ; cessions de
 0,2 à 0,3 Md€ par an aujourd'hui ; projet de foncière de l'État, Sénat,
@@ -4450,7 +4519,24 @@ def mesures : List Mesure := [
   { id := "O-171"
     titre := "Confiscation des avoirs criminels sans condamnation (directive (UE) 2024/1260)"
     source := s!"Demande de l'auteur (octobre 2026) ; {avoirsConfisques} M€ (2025 : 212 M€ confisqués, ministère de la Justice) (voir `avoirsConfisques`)"
-    leviers := [.recetteEcheancier none avoirsConfisques] }
+    leviers := [.recetteEcheancier none avoirsConfisques] },
+  { id := "O-172"
+    titre := "Budget réglementaire : coûts administratifs des entreprises réduits de 25 % en cinq ans, une norme créée pour deux supprimées, autorité indépendante de mesure"
+    source := s!"Demande de l'auteur (octobre 2026) ; coûts administratifs ≥ 3 % du PIB (Sénat, 2023) ; −25 % → ≈ +1,2 % de PIB (Commission européenne, COM(2007)23, calcul), moitié retenue : +{gainSimplificationParAnPb} pb de PIB par an de 2027 à 2031 ; autorité : {autoriteNormes} M€ par an (voir `coutAdministratifPibPb`)"
+    leviers := [.automatisation gainSimplificationParAnPb 0 0]
+    repetitions := anneesSimplification },
+  { id := "O-172b"
+    titre := "Budget réglementaire : autorité indépendante de mesure des coûts"
+    source := s!"{autoriteNormes} M€ par an (hypothèse, modèle néerlandais ATR)"
+    leviers := [.depenseSur .fonctionnement autoriteNormes] },
+  { id := "O-173"
+    titre := "Visa diplômé France : trois ans de séjour et de travail pour tout diplômé de master ou de doctorat d'un établissement français"
+    source := s!"Demande de l'auteur (octobre 2026) ; 118 000 premiers titres étudiants (2025), rétention de 21 % portée à 31 % (CAE, 2021 ; hypothèse) : +{visaDiplomeMilliersParAn} milliers par an au solde migratoire (voir `premiersTitresEtudiants`)"
+    leviers := [.migration visaDiplomeMilliersParAn] },
+  { id := "O-174"
+    titre := "Droit au rachat de cinq jours de RTT par an, majorés de 10 %, sans exonération"
+    source := s!"Demande de l'auteur (octobre 2026) ; 8 millions de salariés à RTT, recours de moitié (hypothèse) : +{heuresRachatPm} ‰ d'heures par emploi ; neutre pour les finances publiques (voir `salariesRttMilliers`)"
+    leviers := [.dureeTravail heuresRachatPm] }
 ]
 
 def programme : Programme where
