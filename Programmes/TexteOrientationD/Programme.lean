@@ -2715,13 +2715,15 @@ def soutienRenouvelables : List Int :=
 theorem renouvelables_valeurs : soutienToitEurosMWh = 38 ∧
     soutienRenouvelables = [234, 502, 770, 1038, 1172] := by decide
 
-/-- Vente des deux tiers de l'or de la Banque de France (O-149), mesure
+/-- Vente de la moitié de l'or de la Banque de France (O-149), mesure
 originale (octobre 2026). Stock : 2 436,8 t, soit 78,35 millions d'onces
 (Banque de France, gestion de l'or) ; cours ≈ 4 000 $ l'once (4 038 $ le
-26 octobre 2026) pour 1,12 $ par euro (hypothèse) : ≈ 280 Md€. Deux tiers
-(≈ 1 625 t) vendus de 2027 à 2032 : ≈ 186 Md€, dont la plus-value réalisée
+26 octobre 2026) pour 1,12 $ par euro (hypothèse) : ≈ 280 Md€. La moitié
+(≈ 1 218 t) vendue de 2027 à 2032 : ≈ 140 Md€, dont la plus-value réalisée
 (coût d'entrée dans l'Eurosystème : 246,37 € l'once au 1er janvier 1999)
-est versée à l'État par une distribution exceptionnelle, ≈ 29 Md€ par an.
+est versée à l'État par une distribution exceptionnelle, ≈ 21,7 Md€ par an.
+Deux tiers jusqu'en octobre 2026, puis tout l'or avec O-164 ; l'auteur
+divise la vente par deux (« diminue de moitié la vente d'or »).
 Comptabilité nationale : le versement à l'État du produit de la vente
 d'actifs de réserve est une opération financière, sans effet sur le
 déficit (décisions d'Eurostat du 3 février 1997) : la dette baisse, et les
@@ -2739,10 +2741,10 @@ def coutEntreeOrCentiemes : Int := 24637
 def anneesVenteOr : Nat := 6
 def valeurOr : Int := onceOrMillions * coursOrDollars * 100 / dollarsParEuroCentiemes / 100
 def plusValueOrParAn : Int :=
-  valeurOr * 2 / 3 * (coursOrDollars * 100 * 100 / dollarsParEuroCentiemes - coutEntreeOrCentiemes)
+  valeurOr / 2 * (coursOrDollars * 100 * 100 / dollarsParEuroCentiemes - coutEntreeOrCentiemes)
     / (coursOrDollars * 100 * 100 / dollarsParEuroCentiemes) / anneesVenteOr
 
-theorem or_valeurs : valeurOr = 279821 ∧ plusValueOrParAn = 28946 := by decide
+theorem or_valeurs : valeurOr = 279821 ∧ plusValueOrParAn = 21709 := by decide
 
 /-- Consolidation des réserves de trois fonds publics en titres de l'État
 (O-150), mesure originale (octobre 2026). Fonds de réserve pour les
@@ -2974,13 +2976,11 @@ de garder le dernier tiers de l'or ; écartés pour leur risque juridique
 (régime paritaire) et parce que la dette hydroélectrique passe à EDF. Recherche
 documentaire d'octobre 2026.
 
-Dernier tiers de l'or (O-164) : avec O-149, tout l'or de la Banque de
-France est vendu de 2027 à 2032 (réserves en or : 301,2 Md€ fin août
-2026) ; mêmes règles qu'O-149 (Eurostat 1997) et même risque juridique,
-aggravé : la France n'aurait plus d'or. -/
-def plusValueDernierTiersParAn : Int := plusValueOrParAn / 2
+Or : O-164 vendait aussi le dernier tiers de l'or (avec O-149, tout l'or de
+la Banque de France) ; retiré à la demande de l'auteur (octobre 2026,
+« diminue de moitié la vente d'or ») : O-149 vend la moitié de l'or.
 
-/-- Réserves de change de l'État hors or : 28,4 Md€ ; la moitié vendue en
+Réserves de change de l'État hors or : 28,4 Md€ ; la moitié vendue en
 2027 (O-164), opération financière ; capacité d'intervention réduite. -/
 def devisesVendues : Int := 28400 / 2
 
@@ -3016,18 +3016,18 @@ def ttfElargie : Int := 1500
 def prelevementFondsEpargne : Int := 1600
 def redevanceFrequences : Int := 300
 
-/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 1,15 %,
-même assiette et même calendrier. Avec la transition décrite finement (les
-pompes à chaleur offertes ne sont plus du capital public), l'équilibre de
-2035 n'est plus tenu sous le moteur d'offre (16 scénarios sur 36) ; il
-faudrait 1,25 % pour le retrouver, l'auteur y renonce (octobre 2026 :
-« on peut lâcher du lest sur le dernier non atteint ») ; dès 1 %,
-les impôts sur l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de
-l'OCDE (Danemark : 7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-
-Galles du Sud : 1,6 à 2 % au-delà de 1,075 M A$, résidence principale
-exonérée). **Acceptabilité très faible.** -/
-def tauxSolSupplementPdm : Int := 65
-def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPdm / tauxSolPdm
+/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 0,575 %,
+même assiette et même calendrier. Elle était portée à 1,15 % ; l'auteur la
+réduit de moitié (octobre 2026 : « réduit la contribution sur le sol de
+moitié »), pour l'acceptabilité. Taux du supplément en pour cent mille
+(0,075 %). Avec O-151, la contribution rapporte ≈ 28 Md€ par an à plein
+taux au lieu de ≈ 57 Md€ (calcul). À 1,15 %, comme dès 1 %, les impôts sur
+l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de l'OCDE (Danemark :
+7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-Galles du Sud : 1,6 à 2 %
+au-delà de 1,075 M A$, résidence principale exonérée) : acceptabilité très
+faible. -/
+def tauxSolSupplementPcm : Int := 75
+def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPcm / (tauxSolPdm * 10)
 
 /-- Transition décrite finement (leviers `transitionEcologique`,
 `investissementTransition`, `investissementPriveTransition` du modèle
@@ -3090,10 +3090,10 @@ def avoirsConfisques : List Int := [100, 200]
 
 theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 ∧ biocarburantsKt = 6000 ∧
     chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
-    soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧ plusValueDernierTiersParAn = 14473 ∧
+    soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧
     devisesVendues = 14200 ∧ chauffageGazKt + chauffageFioulKt + biofioulKt = chauffageKt ∧
     investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 ∧
-    contributionSolSupplement = 32100 := by decide
+    contributionSolSupplement = 3703 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
@@ -4257,8 +4257,8 @@ def mesures : List Mesure := [
                 .investissementTransition .pompeAChaleur [investissementSobriete, 0]]
     repetitions := 4 },
   { id := "O-149"
-    titre := "Vente des deux tiers de l'or de la Banque de France (2027-2032), plus-value versée à l'État pour réduire la dette"
-    source := s!"Mesure originale (octobre 2026) ; 2 436,8 t (≈ {valeurOr} M€ à 4 000 $ l'once) ; deux tiers vendus en six ans, plus-value (coût d'entrée de 246,37 € l'once, 1999) de {plusValueOrParAn} M€ par an versée à l'État ; opération financière (Eurostat, 1997) : la dette baisse, pas le déficit ; risque juridique élevé (BCE) (voir `onceOrMillions`)"
+    titre := "Vente de la moitié de l'or de la Banque de France (2027-2032), plus-value versée à l'État pour réduire la dette"
+    source := s!"Mesure originale (octobre 2026) ; 2 436,8 t (≈ {valeurOr} M€ à 4 000 $ l'once) ; la moitié vendue en six ans (deux tiers, puis tout l'or, dans les versions précédentes), plus-value (coût d'entrée de 246,37 € l'once, 1999) de {plusValueOrParAn} M€ par an versée à l'État ; opération financière (Eurostat, 1997) : la dette baisse, pas le déficit ; risque juridique élevé (BCE) (voir `onceOrMillions`)"
     leviers := [.pretEtat (0 - plusValueOrParAn)] },
   { id := "O-149b"
     titre := "Vente d'or : fin des versements (2033)"
@@ -4420,19 +4420,14 @@ def mesures : List Mesure := [
     leviers := [.consommationElectrique (0 - sobrieteSupplementGwh), .investissementTransition .pompeAChaleur [400, 0]]
     repetitions := anneesMonteeClimat },
   { id := "O-164"
-    titre := "Vente du dernier tiers de l'or, de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus"
-    source := s!"Demande de l'auteur (octobre 2026) ; or : {plusValueDernierTiersParAn} M€ par an de 2027 à 2032 (avec O-149, tout l'or est vendu) ; devises {devisesVendues} M€, RRRODE {rrrode} M€, trésorerie {tresorerieSupplementaire} M€ en 2027 ; opérations financières, risque juridique élevé (BCE) (voir `plusValueDernierTiersParAn`)"
-    leviers := [.pretEtat (0 - plusValueDernierTiersParAn - devisesVendues - rrrode - tresorerieSupplementaire)] },
+    titre := "Vente de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus"
+    source := s!"Demande de l'auteur (octobre 2026) ; devises {devisesVendues} M€, RRRODE {rrrode} M€, trésorerie {tresorerieSupplementaire} M€ en 2027 ; opérations financières, risque juridique élevé (BCE) ; le dernier tiers de l'or est retiré (voir `devisesVendues`)"
+    leviers := [.pretEtat (0 - devisesVendues - rrrode - tresorerieSupplementaire)] },
   { id := "O-164b"
     titre := "Fin des versements exceptionnels de 2027"
     source := "Devises, RRRODE et trésorerie : une seule année"
     leviers := [.pretEtat (devisesVendues + rrrode + tresorerieSupplementaire)]
     debut := 1 },
-  { id := "O-164d"
-    titre := "Vente d'or : fin des versements du dernier tiers (2033)"
-    source := "Six années de vente"
-    leviers := [.pretEtat plusValueDernierTiersParAn]
-    debut := anneesVenteOr },
   { id := "O-167"
     titre := "Patrimoine : fin des avantages du démembrement, plus-values immobilières indexées et résidence principale plafonnée à l'américaine, fin du reste du Pacte Dutreil"
     source := s!"Demande de l'auteur (octobre 2026) ; démembrement {demembrement} M€ (CAE 2021) ; plus-values {plusValuesImmobilieres} M€ (Cour des comptes 2025) ; Dutreil {finDutreil} M€ (voir `demembrement`)"
@@ -4445,8 +4440,8 @@ def mesures : List Mesure := [
     leviers := [.recetteEcheancier (some .autres) [ttfElargie],
                 .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
   { id := "O-169"
-    titre := "Contribution sur la valeur du sol portée à 1,15 % (O-151)"
-    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; impôts sur l'immobilier au-delà de 3,3 % du PIB, au sommet de l'OCDE ; acceptabilité très faible (voir `tauxSolSupplementPdm`)"
+    titre := "Contribution sur la valeur du sol portée à 0,575 % (O-151), moitié de 1,15 %"
+    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; réduite de moitié par l'auteur (1,15 % auparavant) pour l'acceptabilité (voir `tauxSolSupplementPcm`)"
     leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] },
   { id := "O-170"
     titre := "Foncière de l'État : un quart des bureaux de l'État vendus en dix ans"
