@@ -918,7 +918,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       -- équipement fossile qui n'est plus acheté (chaudière en fin de vie)
       let subst := min part (H.energie.substitutionBruneTransitionPm.get tech)
       let e : Echeance := { fonction := tech.fonction, restants := reste, niveau := n, indice := 10000,
-                            secteur := some tech.secteur, partInterieurePm := part, substitutionPm := subst }
+                            secteur := some tech.secteur, partInterieurePm := part, substitutionPm := subst,
+                            capitalPublic := tech.capitalPublic }
       let s' : Etat := { s with echeances := s.echeances ++ [e]
                                 depensesF := s.depensesF.ajouter tech.fonction n
                                 importations := s.importations + n * (1000 - part) / 1000 }

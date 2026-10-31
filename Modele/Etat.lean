@@ -947,6 +947,9 @@ structure Echeance where
   financement d'un investissement privé) : retirée de l'effet de demande,
   au contenu importé moyen (levier `investissementTransition`). -/
   substitutionPm : Int := 0
+  /-- La dépense crée un équipement public (canal du capital public) ; faux
+  pour une aide à l'équipement des ménages et des entreprises. -/
+  capitalPublic : Bool := true
   /-- Niveaux des années suivantes, M€ de l'année d'entrée en vigueur. -/
   restants : List Int
   /-- Niveau de l'année, M€ courants. -/

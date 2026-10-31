@@ -374,6 +374,18 @@ def fonction : TechnoTransition → Fonction
   | .vehiculeElectrique | .vehiculeUtilitaire | .solaire | .eolien | .hvo | .biogazole
   | .bioethanol => .affairesEconomiques
 
+/-- La dépense publique crée-t-elle un équipement public (canal du capital
+public du moteur d'offre) ? Oui pour les réseaux de chaleur, les centrales
+et le captage du biogaz, que l'État ou un opérateur public possède ; non
+pour les pompes à chaleur, la rénovation, les véhicules et les
+biocarburants, qui sont des aides aux ménages et aux entreprises
+(transferts en capital ou subventions, pas de l'investissement public en
+comptabilité nationale). -/
+def capitalPublic : TechnoTransition → Bool
+  | .reseauChaleur | .solaire | .eolien | .biogaz => true
+  | .pompeAChaleur | .renovation | .vehiculeElectrique | .vehiculeUtilitaire | .hvo
+  | .biogazole | .bioethanol => false
+
 end TechnoTransition
 
 /-- Hypothèse sur le prix du pétrole, appliquée comme un choc de niveau sur

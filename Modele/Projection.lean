@@ -663,7 +663,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- investissement public de l'année écoulée : levier `investissement` et
   -- échéanciers de construction (niveaux de l'année)
   let investissementAnnee := s.investissementPublicMesures.total
-    + (s.echeances.filter (fun e => e.secteur = some .construction ∧ !e.privee)).foldl (fun a e => a + e.niveau) 0
+    + (s.echeances.filter (fun e => e.secteur = some .construction ∧ !e.privee ∧ e.capitalPublic)).foldl (fun a e => a + e.niveau) 0
   let s₇ := canalCapital M H prix investissementAnnee s₇
   -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
   -- d'année (cycle, tendance et mesures de l'année)
