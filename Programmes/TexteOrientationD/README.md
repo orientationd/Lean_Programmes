@@ -9,19 +9,19 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,92 % du PIB | 0,32 % |
-| Dette publique | 160,8 % du PIB | 108,7 % |
-| Chômage | 7,97 % | 8,91 % |
-| Indice de développement humain | 0,9387 | 0,9405 |
+| Déficit public | 9,92 % du PIB | 0,33 % |
+| Dette publique | 160,8 % du PIB | 108,5 % |
+| Chômage | 7,97 % | 8,78 % |
+| Indice de développement humain | 0,9387 | 0,9407 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 226 Mt CO₂e |
 
 Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,62 | 4,78 | 4,22 | 3,44 | 2,67 | 1,99 | 1,57 | 1,18 | 0,69 | 0,32 |
-| Offre | 5,62 | 4,71 | 4,06 | 3,20 | 2,36 | 1,62 | 1,15 | 0,70 | 0,16 | -0,26 |
-| Équilibre | 5,62 | 4,75 | 4,13 | 3,30 | 2,48 | 1,77 | 1,31 | 0,87 | 0,34 | -0,07 |
+| Demande | 5,62 | 4,81 | 4,26 | 3,48 | 2,71 | 2,03 | 1,61 | 1,20 | 0,71 | 0,33 |
+| Offre | 5,62 | 4,74 | 4,09 | 3,24 | 2,40 | 1,66 | 1,19 | 0,74 | 0,19 | -0,24 |
+| Équilibre | 5,62 | 4,78 | 4,17 | 3,34 | 2,52 | 1,80 | 1,34 | 0,90 | 0,36 | -0,05 |
 | Sans programme (demande) | 5,62 | 6,57 | 6,95 | 7,32 | 7,69 | 8,08 | 8,48 | 8,79 | 9,45 | 9,92 |
 
 Le déficit baisse chaque année sous les trois moteurs et passe sous 3 % en
@@ -40,9 +40,160 @@ octobre 2026, les moteurs d'offre et d'équilibre comptent aussi le canal du
 capital : l'investissement public du programme et l'IS à 20 % relèvent le
 PIB potentiel.
 
+## Grands principes
+
+Texte rédigé à la demande de l'auteur (novembre 2026) pour expliquer ce
+qui tient ensemble les mesures. Les numéros renvoient aux mesures
+chiffrées ; ce qui n'est pas chiffré est dit tel quel.
+
+**1. Solidarité.** Le programme commence par ceux qui n'ont pas de
+marge : retraités agricoles portés à 100 % du SMIC net (O-93), revenu
+minimum pendant les cinq premières années d'exploitation agricole (O-96),
+allocations familiales dès le premier enfant (O-83), cotisations
+salariales réduites d'un demi-point pour tous les salariés (O-122) et de
+trois points dans les départements d'outre-mer (O-102), allègements
+recentrés dont l'économie est reversée aux salaires de 1 à 1,6 SMIC
+(O-76), leasing social électrique (O-128), pompes à chaleur gratuites en
+zone rurale (O-90), rénovation des passoires des villes moyennes (O-107)
+et aide majorée en milieu rural (O-63). Le grand âge et la santé : 52 000
+places en Ehpad publics (O-109), aides à domicile revalorisées de 10 %
+(O-120), deuxième journée de solidarité affectée à l'autonomie (O-84),
+santé mentale (O-85), médecins scolaires doublés (O-88), déserts médicaux
+(O-92, O-97, O-101), ascenseurs remis en état pour que les personnes âgées
+ne restent pas enfermées (O-182). L'État paie ses propres dettes envers
+ceux qui le servent : heures supplémentaires des policiers et des hôpitaux
+payées (O-67, O-74), primes des enseignants alignées (O-68), rémunération
+des enseignants +2 % par an (O-25), 90 000 postes dans les écoles (O-121).
+La solidarité est aussi dans le temps : la retraite à la durée cotisée,
+réduite selon la pénibilité (O-07), et des droits qui décroissent sans
+marche quand le revenu monte, pour que personne ne soit perdant à
+travailler plus (O-180). Et envers le reste du monde : réponse aux
+demandes mémorielles de l'Algérie (O-113), remboursement de la dette
+d'Haïti (O-114), restitutions en Afrique (O-115).
+
+**2. Réparation du lien social.** Un pays où l'on ne se parle plus se
+répare par des lieux, des services et des règles communes. Les services
+publics reviennent là où ils ont disparu : un commissariat dans chaque
+ville de plus de 30 000 habitants (O-130), police de proximité (O-110),
+TER la nuit entre métropoles et villes moyennes (O-34), eau potable et
+électricité pour tous dans les outre-mer (O-64, O-65), fin de l'octroi de
+mer (O-89), déchetteries gratuites (O-137), métro accessible aux
+personnes handicapées (O-147). Le travail redevient un lien : 200 000
+parcours emploi compétences (O-127), 20 000 emplois aidés dans l'industrie
+(O-94), 10 000 conseillers de plus à France Travail (O-77), scolarisation
+des 18-24 ans (O-81), droit au temps complet (O-178). La confiance se
+reconstruit par la justice et la sûreté : loi intégrale contre les
+violences sexistes et sexuelles (O-82), escroqueries remboursées au double
+par l'escroc (O-132), cellule individuelle pour chaque détenu (O-75),
+indemnisation des blessés d'interventions de police (O-131), amendes
+proportionnelles aux revenus (O-125). Elle se reconstruit aussi par des
+gestes partagés : chaque lycéen formé aux premiers secours (O-184),
+vote obligatoire et vote blanc compté (O-154), référendum d'initiative
+citoyenne (O-87), financements de Bpifrance choisis en partie par vote
+(O-111), attributions de logements sociaux vérifiables par tous (O-03),
+amendes SRU proportionnelles pour que chaque commune prenne sa part (O-02).
+La fin des ZFE (O-183) relève du même souci : ne pas séparer, par une
+vignette, ceux qui peuvent changer de voiture de ceux qui ne le peuvent
+pas ; sa compensation (O-183c) remplace les voitures les plus polluantes
+des ménages qui en ont le plus besoin.
+
+**3. Moins d'autoritarisme d'État.** L'État commande moins et contrôle
+mieux. Il cesse d'interdire ce qu'il ne sait pas faire respecter : fin des
+zones à faibles émissions et de la vignette Crit'Air (O-183), vitesse
+libre sur une partie des autoroutes (O-118), fin du DPE dans les quartiers
+historiques (O-32), conduite autonome autorisée (O-13), cannabis et
+prostitution légalisés et encadrés après référendum (O-105, O-106). Il
+réduit son propre poids réglementaire : budget réglementaire des
+entreprises réduit d'un quart en cinq ans, une norme créée pour une norme
+supprimée, mesuré par une autorité indépendante (O-172) ; simplification
+pour les généralistes (O-27) ; automatisation des tâches administratives
+avec redéploiement des agents vers l'accompagnement (O-26, O-77) ;
+logiciel libre dans toute l'administration (O-15). Il plafonne ses
+propres élites : revenus des élus plafonnés (O-50), dirigeants
+d'institutions publiques −20 % (O-129), hauts fonctionnaires −5 % (O-49).
+Le modèle dit le prix de cette orientation : O-87 et O-154 exigent une
+révision de la Constitution (propriété « Constitution inchangée »
+perdue, voir « Points à arbitrer »).
+
+**4. Liberté des personnes.** La liberté se mesure à ce que chacun peut
+faire de sa vie sans demander la permission : partir à la retraite quand
+on a cotisé assez, sans âge légal (O-07) ; démissionner avec des droits au
+chômage une fois tous les cinq ans (O-09) ; vendre ses RTT (O-174) ou
+obtenir un temps complet (O-178) ; s'installer comme médecin, notaire ou
+pharmacien où l'on veut (O-101, O-175) ; venir travailler en France après
+y avoir étudié (O-173) ; fixer soi-même, commune par commune, le niveau de
+l'impôt local (O-86). La liberté n'est pas l'abandon : elle suppose la
+sécurité (paragraphe 2) et des compensations pour ceux que le changement
+frappe (chauffeurs de taxi indemnisés jusqu'à la retraite, O-13).
+
+**5. Libération des puissances financières.** La France est riche et son
+État est pauvre : le programme mobilise les actifs dormants plutôt que
+d'emprunter. La moitié de l'or de la Banque de France est vendue et la
+plus-value réduit la dette (O-149) ; les réserves du Fonds de réserve des
+retraites, du RAFP et de l'Ircantec sont placées en titres de l'État
+(O-150) ; la moitié des devises et la trésorerie de précaution sont
+remises au service de la dette (O-164, O-153) ; la dette est ouverte à
+l'épargne directe des ménages par des obligations tokenisées en stablecoin
+euro, intérêts exonérés (O-24) ; la rente des réserves excédentaires des
+banques est partagée (O-141) ; la plus-value des terrains rendus
+constructibles revient pour moitié à la collectivité (O-140) ; les
+plus-values latentes ne s'effacent plus au décès (O-152). L'investissement
+privé est appelé là où il manque : solaire et éolien (O-163), rénovation
+(O-63, O-107), ascenseurs (O-182), engrais bas carbone en coopérative
+(O-104), entreprises stratégiques (O-47). Le modèle suit chaque opération
+dans la dette et les passifs implicites (« dette étendue », voir le
+schéma des actifs et de la dette).
+
+**6. Contre la concurrence fiscale des pays à impôt sur les sociétés bas.**
+Le programme refuse de courir après l'Irlande : l'impôt sur les sociétés
+est ramené à 20 %, pas à 15 % (O-08 ; son texte initial à 15 % est évalué
+en option), la contribution exceptionnelle des grandes entreprises est
+pérennisée (O-60), la taxe sur les rachats d'actions passe de 8 à 20 %
+(O-52), le Pacte Dutreil est réduit de moitié et la taxe sur les holdings
+élargie (O-41), le prélèvement forfaitaire unique disparaît (O-51). Ce que
+l'Irlande attire par le taux, la France le reprend par l'assiette : la
+taxe sur les services numériques, assise sur le chiffre d'affaires réalisé
+en France, passe de 3 à 15 % (O-37), de sorte qu'un bénéfice logé à Dublin
+paie en France ce qu'il y gagne ; la lutte contre la fraude et le travail
+dissimulé est renforcée (O-23, O-45) ; les aides aux entreprises sont
+conditionnées et réduites (O-56, O-61) ; les niches sont revues (O-40).
+Le programme soutient l'impôt minimum mondial de 15 % (pilier 2 de
+l'OCDE, en vigueur depuis 2024) et demande que son taux suive celui de la
+France ; cette orientation européenne n'est pas chiffrée. La ligne rouge
+est constitutionnelle : le taux marginal maximal créé par le programme
+reste sous le seuil confiscatoire (propriété « DDHC, art. 13 » tenue).
+
+**7. Souveraineté.** Énergétique d'abord : six EPR2 (O-04), priorité au
+nucléaire sans modulation (O-181), zones d'électrification industrielle
+(O-91), coût de l'électricité des entreprises tenu sous celui des voisins
+et usines qui reviennent (voir « Coût de l'énergie »). Industrielle :
+engrais azotés produits en France (O-104), participations dans les
+entreprises stratégiques (O-47), douaniers et contrôle des importations
+(O-100), amende automatique en cas de fuite de données (O-99), divisions
+de cybersécurité (O-95). Militaire et spatiale : avion de combat de
+sixième génération national (O-186), second porte-avions (O-133),
+lanceurs français et européens (O-134), drones de masse et bouclier
+anti-drones (O-139), contribution à l'ESA portée au-dessus de l'allemande
+(O-187). Alimentaire et territoriale : revenu minimum des nouveaux
+agriculteurs (O-96), fret ferroviaire doublé (O-117), eau et électricité
+pour tous dans les outre-mer (O-64, O-65), centrales des outre-mer au
+bioliquide (O-144). Monétaire enfin : la dette détenue par les résidents
+plutôt que par les non-résidents (O-24, O-150), et un déficit ramené sous
+3 % du PIB dès 2030 pour ne plus dépendre des marchés (voir
+« Propriétés »). La souveraineté a un coût que le modèle montre : le
+nucléaire sans modulation coûte « 40 % d'électricité renouvelable en
+2030 », et les programmes d'armement pèsent sur le déficit de 2035.
+
+Ces principes s'opposent parfois : la liberté des collectivités (O-86)
+contre la lisibilité de l'impôt, la fin des ZFE contre la qualité de
+l'air (compensée par O-183c), la souveraineté nucléaire contre la part
+renouvelable, les programmes d'armement contre l'équilibre de 2035. Le
+rapport ne tranche pas ; il montre ce que chaque choix coûte et ce qu'il
+rapporte, scénario par scénario.
+
 ## Mesures par catégorie
 
-207 mesures, en seize catégories. Effet de chaque mesure prise isolément en
+215 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -255,6 +406,8 @@ doublons, octobre 2026).
 | **O-133** Second porte-avions de nouvelle génération | +0,01 pt | +1 900 | +0,1 |
 | **O-134** Programme de lancements de satellites sur lanceurs français et européens | ≈ 0 | +1 500 | +0,1 |
 | **O-139** Drones de masse et bouclier anti-drones des points d'importance vitale | +0,01 pt | +1 900 | +0,1 |
+| **O-186** Avion de combat du futur de sixième génération, programme national (Dassault, Safran, Thales) : financement sécurisé à 2,1 Md€ par an, démonstrateur en 2031, service vers 2040 | +0,03 pt | +5 000 | +0,2 |
+| **O-187** Contribution à l'Agence spatiale européenne portée au-dessus de l'allemande : +630 M€ par an souscrits aux programmes optionnels | +0,01 pt | +2 000 | +0,1 |
 | **O-47** Investissements de l'État dans les entreprises stratégiques : 100 M€ par an | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-48** Non-renouvellement des concessions autoroutières : exploitation publique à l'échéance (2031-2036) | −0,10 pt | +600 | ≈ 0 |
 | **O-49** Rémunération des hauts fonctionnaires : −5 % | −0,01 pt | −200 | ≈ 0 |
@@ -272,7 +425,7 @@ doublons, octobre 2026).
 | **O-164** Vente de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus | −0,57 pt | ≈ 0 | ≈ 0 |
 | **O-164b** Fin des versements exceptionnels de 2027 | +0,49 pt | ≈ 0 | ≈ 0 |
 | **O-170** Foncière de l'État : un quart des bureaux de l'État vendus en dix ans | −0,01 pt | −4 900 | −0,2 |
-| **O-179** Dette cachée d'entretien : rénovation accélérée des ouvrages d'art, chaussées et voies navigables, 1 Md€ par an pendant dix ans | +0,02 pt | +4 300 | +0,1 |
+| **O-179** Dette cachée d'entretien et maintenance renforcée : ouvrages d'art, chaussées et voies navigables, 1,8 Md€ par an pendant douze ans (1 Md€ de résorption du retard, 0,8 Md€ d'entretien courant) | +0,02 pt | +7 900 | +0,2 |
 
 **O-15 — Logiciel libre dans l'État.** Migration de tous les logiciels et postes de l'État vers le libre :
 900 M€ de migration (comptés en une fois) puis 400 M€/an d'économies de
@@ -501,7 +654,7 @@ de l'auteur (octobre 2026). Trois familles :
   0,575 % en tout) est retiré en novembre 2026 ; O-151 devient progressive
   selon la surface de la parcelle (≈ 19,5 Md€ par an).
 
-Effet au scénario central (moteur de demande), avec la moitié de l'or, la contribution sur le sol progressive par surface (≈ 19,5 Md€), les mesures pour le PIB (O-172 à O-178), l'entretien des infrastructures (O-179), la suppression des effets de seuil (O-180), la courbe de Phillips, le facteur d'implantation industrielle et la priorité au nucléaire (O-181, sans O-148) : déficit de 2,67 % en 2030 et de 0,32 % en 2035, dette de 108,7 % du PIB en 2035 (99,8 % avec tout l'or, 1,15 % uniforme et une inflation exogène). Le déficit passe sous 3 % en 2030 et en 2035 et la dette reste stabilisée ; l'équilibre de 2035, la règle de −1 point de dette par an et, sous le moteur de demande, les règles européennes du déficit sont perdus. **Risques** : la BCE doit être consultée sur la vente de l'or,
+Effet au scénario central (moteur de demande), avec la moitié de l'or, la contribution sur le sol progressive par surface (≈ 19,5 Md€), les mesures pour le PIB (O-172 à O-178), l'entretien des infrastructures (O-179), la suppression des effets de seuil (O-180), la courbe de Phillips, le facteur d'implantation industrielle et la priorité au nucléaire (O-181, sans O-148), le plan ascenseurs (O-182), la fin des ZFE compensée (O-183), les premiers secours au lycée (O-184), la chirurgie réfractive remboursée (O-185), l'avion de combat du futur (O-186), le supplément à l'ESA (O-187) et la maintenance renforcée des infrastructures (O-179 à 1,8 Md€) : déficit de 2,71 % en 2030 et de 0,33 % en 2035, dette de 108,5 % du PIB en 2035 (99,8 % avec tout l'or, 1,15 % uniforme et une inflation exogène). Le déficit passe sous 3 % en 2030 et en 2035 et la dette reste stabilisée ; l'équilibre de 2035, la règle de −1 point de dette par an et, sous le moteur de demande, les règles européennes du déficit sont perdus. **Risques** : la BCE doit être consultée sur la vente de l'or,
 des devises et de la réserve RRRODE ; la France garderait la moitié de son
 or ; ces opérations baissent la dette brute, pas la dette nette ; la
 contribution sur le sol reste mal acceptée.
@@ -521,12 +674,58 @@ sont pas comptés. L'enveloppe de 1 Md€ par an de 2027 à 2036 (fonds ponts
 des collectivités et entretien courant 0,5 Md€, chaussées 0,35, voies
 navigables 0,15) est un investissement d'une année renouvelé : emplois
 dans la construction (≈ 5,5 emplois directs par million d'euros, FNTP),
-capital public au moteur d'offre, et ≈ 10 Md€ retirés du passif sur dix
-ans, soit la moitié du retard cumulé en 2035. Un entretien différé coûte
+capital public au moteur d'offre. Maintenance renforcée (demande de
+l'auteur, novembre 2026) : l'enveloppe passe à 1,8 Md€ par an pendant
+douze ans, 1 Md€ de résorption du retard et 0,8 Md€ d'entretien courant
+égal au flux annuel de dégradation ; le stock cesse de croître et se
+résorbe de 1 Md€ par an, à zéro vers 2038 (≈ 3 Md€ restants en 2035). Un entretien différé coûte
 ≈ 3 fois plus en curatif (audit de 2018). Limites : capacité des maîtrises
 d'ouvrage communales (la moitié des ouvrages subventionnés en 2023 étaient
 sans travaux deux ans plus tard) et coûts des travaux d'ouvrages d'art en
 hausse de 84 % de 2016 à 2023.
+
+**O-186 — Avion de combat du futur de sixième génération.** Demande de
+l'auteur (novembre 2026). Le pilier « avion » du SCAF franco-allemand a
+été abandonné en juin 2026 (constat d'échec Macron-Merz à l'ILA de Berlin
+; seuls les drones et le réseau de combat survivent sous le nom FCAS) ; la
+France développe seule l'ACF avec Dassault, Safran et Thales : phase de
+démonstration lancée en 2027, développement à partir de 2029,
+démonstrateur en vol en 2031-2032, service vers 2040 (ministre des Armées
+à l'Assemblée, 8 octobre 2026 ; chef d'état-major de l'armée de l'air, 14
+octobre 2026) ; l'Allemagne explore une entrée dans le GCAP
+britannico-italo-japonais, qui vise 2035. Crédits inscrits : 2,74 Md€
+d'autorisations d'engagement et 558 M€ de crédits de paiement en 2027 (PLF
+2027, programme 146), dans une LPM actualisée qui n'avait budgété le SCAF
+qu'à ≈ 0,5 Md€ par an. Coût d'un programme national : « nettement en
+dessous de 50 Md€ » (Dassault), 25 à 35 Md€ de développement sur 2027-2040
+selon la presse spécialisée ; le Rafale a coûté 44 Md€ (prix 2011) pour le
+développement et la série ; l'Italie met 18,6 Md€ dans les deux premières
+phases du GCAP. La mesure sécurise 2,1 Md€ par an en rythme de croisière
+(30 Md€ sur quatorze ans, hypothèse médiane) en ajoutant à la LPM, qui
+monte de 0,56 à ≈ 0,9 Md€ par an (hypothèse), 0,3 Md€ en 2027, 0,6 en
+2028, 1,0 en 2029 puis 1,2 Md€ par an : dépense de défense, industrie
+nationale. Elle contredit en partie O-43 (−1 Md€ par an sur la défense),
+gardé : le programme arbitre entre équipements. Effet au scénario central
+(moteur de demande) : déficit de 2035 +0,04 point, dette +0,2 point, ≈ +5
+000 emplois industriels en 2030 ; aucune propriété ne change (la LPM reste
+tenue : la mesure s'ajoute à sa trajectoire).
+
+**O-187 — Contribution à l'Agence spatiale européenne au-dessus de
+l'allemande.** Demande de l'auteur (novembre 2026). Au conseil ministériel
+de Brême (novembre 2025, 22,3 Md€ souscrits, l'essentiel sur 2026-2028),
+l'Allemagne a souscrit 5,07 Md€ (5,4 aux conditions économiques de 2025 ;
+23 %), la France 3,6 Md€ (16 %, +12 % par rapport à 2022), l'Italie 3,5,
+l'Espagne 1,85, le Royaume-Uni 1,7 (ESA, DLR, Sénat) ; la France versait ≈
+1,07 Md€ par an en 2024, plus de la moitié du programme 193. Dépasser
+l'Allemagne aux conditions courantes demande ≈ 1,9 Md€ de plus sur trois
+ans : +630 M€ par an à partir de 2027, souscrits aux programmes optionnels
+(lanceurs : Ariane 6 et European Launcher Challenge ; observation de la
+Terre, exploration, connectivité), qui reviennent à la filière française
+par le retour géographique (ArianeGroup, Airbus Defence and Space, Thales
+Alenia Space ; ≈ 30 000 emplois spatiaux, dont 20 000 industriels).
+Dépense de recherche traitée comme intérieure (retour géographique proche
+de 90 % ; hypothèse). Effet au scénario central (moteur de demande) :
+déficit +0,02 point, ≈ +4 000 emplois ; aucune propriété ne change.
 
 ### Travail, emploi et entreprises
 
@@ -927,6 +1126,9 @@ pas. Les conjoints et aides familiaux (proposition de loi Brugerolles,
 | **O-163b** Électricité : fin du supplément solaire (2031) | ≈ 0 | +1 500 | ≈ 0 |
 | **O-163c** Électricité : sobriété supplémentaire (PAC air-air à la place des convecteurs) | ≈ 0 | −1 500 | ≈ 0 |
 | **O-181** Pas de modulation du nucléaire : la production en surplus est écrêtée sur le solaire et l'éolien, le parc nucléaire produit à plein | −0,03 pt | +13 600 | +0,1 |
+| **O-183** Suppression des zones à faibles émissions au 1er janvier 2029 et de la vignette Crit'Air | ≈ 0 | ≈ 0 | ≈ 0 |
+| **O-183b** Suppression des ZFE : décès non évités par le renouvellement du parc que les ZFE auraient accéléré (par tiers, 2029 à 2031) | ≈ 0 | ≈ 0 | −0,5 |
+| **O-183c** Compensation de la fin des ZFE : 10 000 voitures Crit'Air 5 de plus remplacées chaque année par une électrique d'occasion récente, de 2029 à 2035 | +0,01 pt | ≈ 0 | ≈ 0 |
 
 **O-01 — Remplacement gratuit de 10 000 voitures parmi les plus polluantes chaque année.** 10 000 citadines électriques à 25 000 € (hypothèse) chaque année de 2027 à
 2035, soit 250 M€ par an et 90 000 voitures, prises parmi les 1,2 million
@@ -1582,10 +1784,45 @@ renouvelable. Effet au scénario central (moteur de demande), en 2035 :
 nucléaire modulé 0 au lieu de 83 TWh (35 TWh écrêtés sur le solaire et
 l'éolien, 0 en 2030), coût d'équilibre de l'électricité des entreprises
 126 €/MWh au lieu de 137, +22 600 emplois d'implantation industrielle par
-rapport à la modulation, déficit de 2035 0,32 % au lieu de 0,33 (avec le
-retrait d'O-148, dont l'investissement privé soutenait l'activité : 0,29 %
-en le gardant), dette 108,7 %. « 40 % d'électricité renouvelable en 2030 »
+rapport à la modulation, déficit de 2035 −0,01 point avec le retrait
+d'O-148 (dont l'investissement privé soutenait l'activité : −0,04 en la
+gardant), dette −0,1 point. « 40 % d'électricité renouvelable en 2030 »
 est perdue (≈ 35 %) : 27 propriétés sur 33. Sans O-181 et avec O-148 : 28.
+
+**O-183 — Suppression des ZFE à terme et de la vignette Crit'Air.**
+Demande de l'auteur (novembre 2026). Droit en vigueur : loi Climat et
+résilience de 2021 (ZFE obligatoires au-dessus de 150 000 habitants ;
+Crit'Air 3 interdites à Paris et Lyon depuis le 1er janvier 2025,
+sanctions à Lyon depuis juillet 2026, à Paris pas avant 2027) ; la
+suppression votée dans la loi de simplification (avril 2026) a été
+censurée comme cavalier législatif (Conseil constitutionnel, 21 mai 2026)
+et la proposition de loi d'abrogation n'a pas été votée le 8 octobre 2026.
+La mesure abroge les ZFE au 1er janvier 2029 (deux ans pour les
+alternatives) et la vignette (la circulation différenciée des pics de
+pollution, 0 à 3 jours par an, revient à l'alternance des plaques). Effet
+sanitaire, nouveau levier `pollutionAir` : les ZFE accélèrent le
+renouvellement du parc (+5,8 points de Crit'Air 1 et E en deux ans, −4,6
+points de NOx du parc, Insee Analyses n° 124, août 2026) ; appliquées,
+elles éviteraient ≈ 150 décès par an à terme (fourchette 30 à 350 :
+Airparif 2024, −2,2 % des 5 040 décès attribuables du Grand Paris pour
+l'étape Crit'Air 3 ; ORS Île-de-France 2018, 110 à 340). Le modèle compte
+ces décès non évités par tiers de 2029 à 2031 (O-183b), sur 40 000 décès
+attribuables aux particules fines. Finances : aides spécifiques de l'État
+inférieures à 5 M€ par an depuis la fin de la prime à la conversion
+(économisées) ; vignette au coût de fabrication, sans recette nette ;
+contrôle automatisé non chiffré publiquement. Les 0,5 million de voitures
+Crit'Air 3 et plus de Paris et Lyon (SDES 2024) ne sont plus remplacées
+par anticipation : dépense des ménages reportée, sans effet net compté.
+Compensation (O-183c) : 10 000 voitures Crit'Air 5 ou non classées de plus
+par an remplacées par une électrique d'occasion récente (12 000 €,
+hypothèse ; part importée comme O-01) de 2029 à 2035, 120 M€ par an, ≈ 47
+décès évités par an en 2035 (6,75 par vague de 10 000). Effet au scénario
+central (moteur de demande), en 2035 : sans compensation, les 150 décès
+non évités portaient la mortalité liée à l'air du programme à 20 décès
+au-dessus du tendanciel (elle était 130 au-dessous) et « mortalité liée à
+l'air non dégradée » était perdue (0 scénario sur 36) ; avec O-183c, 22
+au-dessous : la propriété est tenue dans les 36 scénarios. Déficit +0,01
+point, IDH inchangé. Les 27 propriétés sont conservées.
 
 ### Logement et urbanisme
 
@@ -1598,6 +1835,7 @@ est perdue (≈ 35 %) : 27 propriétés sur 33. Sans O-181 et avec O-148 : 28.
 | **O-63** Aide à la rénovation énergétique majorée de 25 % dans les territoires ruraux | +0,01 pt | +3 100 | +0,1 |
 | **O-107** Rénovation des passoires thermiques dans les villes moyennes : 27 670 rénovations d'ampleur de plus par an | +0,03 pt | +4 800 | +0,2 |
 | **O-116** Zones commerciales densifiées : parkings mutualisés en silo, 105 ha libérés par an pour les activités | ≈ 0 | +1 100 | +0,1 |
+| **O-182** Plan de rénovation des ascenseurs : remplacement des 165 000 appareils de plus de 40 ans en onze ans, subvention de 30 % (ANAH, ANRU), prêts de la Banque des Territoires pour le reste | −0,07 pt | +31 400 | +1,1 |
 
 **O-02 — Amendes SRU proportionnelles.** Coefficient ×1 à ×5 selon la part de l'objectif non atteinte, plafond porté
 à 10 % des dépenses réelles de fonctionnement. Le rapport compare la version
@@ -1696,6 +1934,43 @@ des commerces, activités ou logements qui ne consomment plus d'espaces
 naturels ; sous le ZAN, l'enveloppe reste consommée par les autres usages
 (le logement surtout).
 
+**O-182 — Plan de rénovation des ascenseurs.** Demande de l'auteur
+(novembre 2026). Parc : 661 000 ascenseurs en 2025, dont ≈ 25 % de plus de
+40 ans (≈ 165 000) et 40 % de plus de 25 ans ; ≈ 2 900 remplacements
+complets par an, soit un taux de renouvellement de 0,45 % (plus de deux
+siècles) ; 1,5 million de pannes par an, 126 000 personnes bloquées en
+cabine, pannes trois fois plus fréquentes dans les quartiers populaires ;
+filière de 17 200 salariés et 2,83 Md€ de chiffre d'affaires (Fédération
+des Ascenseurs 2025-2026 ; rapport AN n° 704, janvier 2025 ; le « plan
+ascenseurs » gouvernemental de 2024 n'a ni budget ni travaux, et la
+proposition de loi sur les pannes, adoptée à l'Assemblée en janvier 2025,
+attend au Sénat). Le plan remplace les 165 000 appareils de plus de 40 ans
+en onze ans : 15 000 par an (cinq fois le rythme actuel ; la filière pose
+11 000 appareils neufs par an et recrute 1 000 à 2 000 personnes par an :
+risque d'exécution élevé les premières années), à 75 000 € par appareil (≈
+30 000 € pour cinq niveaux, jusqu'à 300 000 € pour une tour ; moyenne
+pondérée, hypothèse), soit 1,1 Md€ de travaux par an. L'État en
+subventionne 30 % (taux de MaPrimeRénov' Copropriété ; ANAH pour les
+copropriétés, ANRU-PNRU3 pour le logement social) : 337 M€ par an ; les
+copropriétés et les bailleurs financent le reste avec les prêts de la
+Banque des Territoires, 635 M€ par an d'investissement privé déclenché
+(les 2 900 remplacements tendanciels sont subventionnés sans être ajoutés
+: effet d'aubaine de 19 %). Nouvelle technologie du modèle commun,
+`ascenseur` : pose et travaux dans la construction, un quart de la dépense
+importé (matériel ≈ la moitié du coût, Otis fabrique à Gien, les autres
+grands fabricants importent ; hypothèse), pas de capital public (aide aux
+propriétaires). Chaque appareil remplacé consomme ≈ 2 000 kWh de moins par
+an (−24 GWh par cohorte) et appelle ≈ 40 % de dépannages en moins. Non
+comptés : pannes évitées, personnes âgées maintenues à domicile (23 % des
+Français ont déjà renoncé à sortir faute d'ascenseur, Ipsos), accidents (≈
+1 décès par an). Effet au scénario central (moteur de demande) : +15 000
+emplois en 2030 (dont ≈ 15 500 dans la construction, moins les effets
+d'éviction), PIB 2035 +0,3 point, déficit de 2035 inférieur de 0,05 point
+(les recettes induites par 1,1 Md€ de travaux dépassent la subvention),
+dette −0,5 point, chômage −0,1 point ; IDH +0,00012 (emploi) ; aucune
+propriété ne change. Subventionné à 50 %, le plan est évalué dans les
+options chiffrées.
+
 ### Éducation et enseignement supérieur
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -1709,6 +1984,7 @@ naturels ; sous le ZAN, l'enveloppe reste consommée par les autres usages
 | **O-81** Scolarisation des 18-24 ans : +1 point par an pendant trois ans (places, bourses) | +0,05 pt | +10 800 | +21,6 |
 | **O-88** Médecins scolaires : effectif doublé, 800 de plus en quatre ans | ≈ 0 | +700 | ≈ 0 |
 | **O-121** Écoles : 90 000 enseignants, AESH et infirmières scolaires de plus en quatre ans | +0,07 pt | +85 800 | +0,4 |
+| **O-184** Formation aux premiers secours obligatoire au lycée : PSC de 7 h en seconde pour les élèves non certifiés, recyclage de 3 h en terminale | ≈ 0 | +200 | ≈ 0 |
 
 **O-16 à O-19 — Universités.**
 
@@ -1777,6 +2053,35 @@ gouvernement, janvier 2025), recrutés en quatre ans (cinq dans la version
 précédente) : 3 375 M€ par an en 2030. Postes publics comptés un pour un
 (levier `creationPostes`), comme ceux d'O-88, O-95, O-100, O-110 et O-112.
 
+**O-184 — Formation aux premiers secours obligatoire au lycée.** Demande
+de l'auteur (novembre 2026). Droit : l'article L. 312-13-1 du code de
+l'éducation (loi « citoyen sauveteur » de 2020) prévoit l'apprentissage
+des gestes pendant la scolarité obligatoire, sans le lycée ni objectif
+chiffré ; ≈ 30 % des élèves de 3e sont certifiés PSC1 (2022-2023, 44 % en
+2017-2018), aucun suivi au lycée ; la proposition de loi Castiglione (100
+% des 3e en 2030) a été retirée en mai 2025. La mesure : PSC de 7 h en
+seconde pour les élèves non certifiés (≈ 560 000 sur 802 500 entrants,
+DEPP 2025) et recyclage de 3 h en terminale pour tous (684 000) ; 60 € par
+formation (tarif moyen, ministère) et 27 € par recyclage : 52 M€, arrondis
+à 50 M€ par an avec le matériel et le doublement des 7 000 enseignants
+formateurs. Effet, nouvelle cause de décès suivie `arrêt cardiaque` (≈ 46
+000 arrêts extrahospitaliers par an, survie ≈ 7 %, réanimation par un
+témoin dans 36 % des cas, RéAC et ARLoD 2024 ; 40 000 décès, 10 ans de vie
+par décès, hypothèses) et levier générique `baisseMortalite` : au
+Danemark, la formation scolaire obligatoire de 2005, avec le secourisme au
+permis et les défibrillateurs, a porté la réanimation par un témoin de 21
+à 45 % et la survie de 3,5 à 10,8 % en dix ans (Wissenberg et al., JAMA
+2013) ; porter la survie française à 10-14 % éviterait 1 400 à 3 200 décès
+par an toutes mesures confondues, dont 20 à 40 % pour la seule formation
+lycéenne : 600 décès par an retenus (1,5 % de la cause), atteints en
+quinze ans (les victimes ont 71 ans en moyenne, le témoin est souvent le
+conjoint). Preuve causale faible ; lois scolaires souvent peu appliquées
+(Danemark : 28 % des classes formées huit ans après la loi). Effet au
+scénario central (moteur de demande) : baisse atteinte des décès par arrêt
+cardiaque de 0,8 % en 2035 (≈ 320 décès par an, en route vers 600 ; 3 200
+années de vie par an), IDH +0,000003 ; déficit +0,01 point. Aucune
+propriété ne change.
+
 ### Santé
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -1793,6 +2098,7 @@ précédente) : 3 375 M€ par an en 2030. Postes publics comptés un pour un
 | **O-109** Ehpad publics : 52 000 places de plus, construites de 2027 à 2031 | ≈ 0 | −300 | +0,1 |
 | **O-109b** Ehpad publics : fonctionnement des places ouvertes (soins et APA) | +0,02 pt | +4 300 | +0,1 |
 | **O-120** Grand âge : salaires des 475 000 aides à domicile revalorisés de 10 % | +0,01 pt | +2 100 | +0,1 |
+| **O-185** Remboursement de la chirurgie réfractive (Lasik, PKR, SMILE, implants) : tarif de responsabilité de 1 500 € par œil pris en charge à 70 % | +0,01 pt | +2 200 | +0,1 |
 
 **O-22 — Médicaments et dispositifs.** −2 Md€ par an (génériques,
 biosimilaires, prix, pertinence ; Assurance maladie 2025) ; création d'une
@@ -1898,6 +2204,31 @@ dont 156 000 employées par des particuliers, pour un revenu salarial moyen
 de 7 040 € nets par an (DREES, juin 2025), faute d'heures. Revalorisation
 de 10 % (hypothèse), financée par le tarif de l'APA et le crédit d'impôt des
 particuliers employeurs : 428 M€ par an.
+
+**O-185 — Remboursement de la chirurgie réfractive (Lasik et
+équivalents).** Demande de l'auteur (novembre 2026). Aujourd'hui hors
+nomenclature (acte « de confort », TVA à 20 %), prise en charge par les
+complémentaires pour quatre assurés sur cinq (305 € par œil en moyenne,
+DREES 2024) ; 150 000 à 200 000 yeux opérés par an à 1 000-2 000 € au
+laser ; aucun pays ne rembourse l'acte de routine (Pays-Bas : indications
+médicales strictes ; NICE : pas sur le NHS). La mesure : tarif de
+responsabilité de 1 500 € par œil remboursé à 70 % (1 050 €), le reste aux
+complémentaires sous contrat responsable. Demande : reste à charge quasi
+nul, flux multiplié par 2,5 en trois ans (3 % des amétropes opérés et 15 %
+intéressés en Belgique, KCE 2013 ; fourchette 1,5 à 4), limité par l'offre
+(5 800 ophtalmologistes, 130 lasers) : 180 000, puis 450 000 yeux par an,
+189 puis 473 M€ par an. L'Assurance maladie ne finance que 345 M€ des 8,3
+Md€ d'optique (4 %, DREES 2024) : l'optique économisée (≈ 4,5 M€ par
+cohorte d'opérés, déduite) ne compense presque rien ; les économies des
+complémentaires (≈ 150 € par porteur et par an) et des ménages ne sont pas
+publiques ; TVA perdue sur l'activité existante : 39 M€ par an. Non
+comptés : retouches (11 % à dix ans), presbytie après 45 ans, éviction de
+l'activité médicale des ophtalmologistes vers le réfractif. Effet au
+scénario central (moteur de demande) : dépense de santé +0,46 Md€ par an
+en régime, déficit de 2035 +0,01 point, dette +0,1 point, IDH +0,000016
+(emplois de santé) ; aucune propriété ne change. La variante « indications
+médicales strictes » (type Pays-Bas, ≈ 15 000 yeux par an, 16 M€) est
+évaluée dans les options chiffrées.
 
 ### Justice, sécurité et égalité
 
@@ -2494,14 +2825,14 @@ au moins un moteur) :
 
 | Propriété | Demande | Offre | Équilibre |
 |---|---|---|---|
-| Déficit sous le plafond juridique | 26/36 | 29/36 | 27/36 |
+| Déficit sous le plafond juridique | 26/36 | 28/36 | 26/36 |
 | Dette/PIB non dégradée | 36/36 | 36/36 | 36/36 |
-| Chômage non dégradé | 34/36 | 36/36 | 36/36 |
+| Chômage non dégradé | 36/36 | 36/36 | 36/36 |
 | Émissions sous 300 Mt (SNBC-2) | 36/36 | 36/36 | 36/36 |
 | Déficit sous 3 % en 2035 | 30/36 | 32/36 | 32/36 |
 | Budget à l'équilibre en 2035 ⚠ | 10/36 | 16/36 | 16/36 |
 | Déficit en baisse chaque année | 30/36 | 30/36 | 30/36 |
-| Dette/PIB stabilisée en 2035 | 18/36 | 24/36 | 22/36 |
+| Dette/PIB stabilisée en 2035 | 18/36 | 24/36 | 24/36 |
 | Mortalité liée à l'air non dégradée | 36/36 | 36/36 | 36/36 |
 | Bornes suffisantes en 2035 | 36/36 | 36/36 | 36/36 |
 | Emplois annoncés réalisables | 36/36 | 36/36 | 36/36 |
@@ -2515,8 +2846,8 @@ au moins un moteur) :
 | LPM 2024-2030 : crédits de défense | 36/36 | 36/36 | 36/36 |
 | PPE3 : capacités renouvelables 2030 | 36/36 | 36/36 | 36/36 |
 | Code de l'énergie : 40 % d'électricité renouvelable en 2030 ⚠ | 0/36 | 0/36 | 0/36 |
-| UE : déficit sous 3 % ⚠ | 16/36 | 22/36 | 18/36 |
-| UE : ajustement 0,5 pt/an ⚠ | 16/36 | 22/36 | 18/36 |
+| UE : déficit sous 3 % ⚠ | 16/36 | 20/36 | 16/36 |
+| UE : ajustement 0,5 pt/an ⚠ | 16/36 | 20/36 | 16/36 |
 | UE : dette −1 pt/an ⚠ | 10/36 | 16/36 | 14/36 |
 | UE : climat 2030 | 36/36 | 36/36 | 36/36 |
 | UE : répartition de l'effort 2030 | 24/36 | 24/36 | 24/36 |
@@ -2526,7 +2857,7 @@ au moins un moteur) :
 | DDHC art. 13 : imposition non confiscatoire | 36/36 | 36/36 | 36/36 |
 | Préambule 1946, al. 11 : retraites | 36/36 | 36/36 | 36/36 |
 | Préambule 1946, al. 13 : enseignement | 36/36 | 36/36 | 36/36 |
-| Loi organique 2012 : solde structurel | 28/36 | 24/36 | 26/36 |
+| Loi organique 2012 : solde structurel | 26/36 | 24/36 | 24/36 |
 
 27 propriétés sur 33 sont tenues dans au moins 18 scénarios sous les
 trois moteurs, contre 11 avant cette révision. Le plafond juridique de
@@ -2604,7 +2935,12 @@ ni le coût de l'énergie et le facteur d'implantation industrielle ; la
 priorité au nucléaire (O-181, « pas de modulation du nucléaire »), qui
 rend le solaire d'O-148 inutile et le fait retirer, coûte « 40 %
 d'électricité renouvelable » (27 sur 33) mais rend ≈ 12 600 emplois
-d'usines par rapport au tendanciel.
+d'usines par rapport au tendanciel ; le plan ascenseurs (O-182) et la
+suppression des ZFE et de Crit'Air (O-183), compensée par des électriques
+d'occasion pour les Crit'Air 5, les premiers secours au lycée (O-184) et
+le remboursement de la chirurgie réfractive (O-185), l'avion de combat du
+futur (O-186), le supplément à l'ESA (O-187) et la maintenance renforcée
+(O-179) n'en changent pas le compte.
 
 * *15 % de voitures électriques en 2030* : tenu (36/36) par le rétrofit
   massif (O-138, nouveau levier `retrofitElectrique`), qui ajoute des
@@ -2672,7 +3008,7 @@ les trois moteurs. Six ne le sont pas :
   sièges (O-154) exigent une révision, que le programme déclare ; sans ces
   deux mesures, 28 propriétés.
 * *Budget à l'équilibre en 2035* : 10 à 16 scénarios sur 36 (déficit de
-  0,32 % au scénario central ; sous le moteur d'offre, équilibre dans 8 des
+  0,33 % au scénario central ; sous le moteur d'offre, équilibre dans 8 des
   18 scénarios démographiques et économiques, le neuvième à 0,60 %).
 * *UE : déficit sous 3 %* et *UE : ajustement de 0,5 point par an* : 16,
   22 et 18 scénarios sur 36 ; tenues sous les moteurs d'offre et d'équilibre,
@@ -2702,46 +3038,56 @@ sur 33) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) | Propriétés à 18/36 | Propriétés visées perdues |
 |---|---|---|---|---|---|---|
-| Programme actuel | 0,32 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| IS à 15 % (texte initial d'O-08) | 0,65 % | 8,88 % | 0,9406 | oui / oui / oui | 27 | — |
-| Norme de 100 pb (version précédente d'O-55) | 1,31 % | 8,35 % | 0,9414 | oui / oui / oui | 25 | — |
-| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | -0,39 % | 8,93 % | 0,9404 | oui / oui / oui | 29 | — |
-| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | -0,19 % | 8,81 % | 0,9404 | oui / oui / oui | 29 | — |
-| O-26 avec suppressions de postes (version précédente) | 0,35 % | 9,15 % | 0,9404 | oui / oui / oui | 27 | — |
-| O-38 au prorata (version précédente) | 0,33 % | 8,95 % | 0,9405 | oui / oui / oui | 27 | — |
-| O-108 à 2 Mt par an (version précédente) | 0,32 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Sans O-127 (contrats aidés) | 0,61 % | 9,21 % | 0,9404 | oui / oui / oui | 26 | Chômage non dégradé |
-| IS maintenu à 25 % (variante d'O-08) | 0,03 % | 8,94 % | 0,9404 | oui / oui / oui | 29 | — |
-| Norme renforcée de 100 pb de plus (variante d'O-55) | -0,52 % | 9,42 % | 0,9396 | oui / oui / oui | 29 | — |
-| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 0,30 % | 8,91 % | 0,9405 | oui / oui / oui | 26 | — |
-| Sans le rétrofit électrique (O-138) | 0,30 % | 8,91 % | 0,9405 | oui / oui / oui | 26 | SNBC-3 : 15 % de voitures électriques en 2030 |
-| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 0,36 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Biokérosène compté au prorata des ventes (variante d'O-142) | 0,32 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Sans le frein automatique (O-143) | 0,32 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Frein à 4,5 % et 2 points (variante d'O-143) | 0,07 % | 9,05 % | 0,9402 | oui / oui / oui | 29 | — |
-| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 0,33 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Sans les pôles régionaux (O-146 à O-146d) | 0,31 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Métro accessible : variante réaliste (O-147) | 0,30 % | 8,94 % | 0,9404 | oui / oui / oui | 27 | — |
-| Sans le métro accessible (O-147) | 0,29 % | 8,95 % | 0,9404 | oui / oui / oui | 27 | — |
-| Sans la priorité au nucléaire (O-181 : nucléaire modulé) | 0,33 % | 8,93 % | 0,9405 | oui / oui / oui | 27 | — |
-| Avec l'électricité renouvelable à 40 % (O-148 à O-148c, retirée) et sans O-181 | 0,33 % | 8,95 % | 0,9405 | oui / oui / oui | 28 | — |
-| Sans la vente d'or (O-149) | 0,49 % | 8,91 % | 0,9405 | oui / oui / oui | 26 | — |
-| Sans la contribution sur le sol (O-151) | 1,01 % | 8,85 % | 0,9406 | oui / oui / oui | 26 | — |
-| Sans le paquet climat (O-155 à O-163) | 0,12 % | 8,97 % | 0,9403 | oui / oui / oui | 25 | — |
-| Sans le rachat du cheptel et l'agriculture (O-161) | 0,24 % | 8,89 % | 0,9405 | oui / oui / oui | 26 | — |
-| Sans le référendum d'initiative citoyenne ni le tirage au sort (O-87, O-154 : Constitution inchangée) | 0,32 % | 8,91 % | 0,9405 | oui / oui / oui | 28 | — |
-| Sans l'entretien des infrastructures (O-179) | 0,30 % | 8,92 % | 0,9405 | oui / oui / oui | 27 | — |
-| Sans la suppression des effets de seuil (O-180) | 0,27 % | 8,93 % | 0,9404 | oui / oui / oui | 27 | — |
-| Sans la deuxième série pour le PIB (O-175 à O-178) | 0,82 % | 9,00 % | 0,9401 | oui / oui / oui | 26 | — |
-| Concurrence au chiffrage large de l'OCDE (O-175 : +0,7 % à cinq ans) | 0,00 % | 8,90 % | 0,9407 | oui / oui / oui | 29 | — |
-| Sans les mesures originales pour le PIB (O-172 à O-174) | 1,06 % | 8,92 % | 0,9401 | oui / oui / oui | 26 | — |
-| Budget réglementaire réalisé en entier (O-172 : +1,2 % de PIB) | -0,16 % | 8,90 % | 0,9408 | oui / oui / oui | 29 | — |
-| Sans les devises, la réserve RRRODE ni la trésorerie (O-164) | 0,39 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Vente de tout l'or (version précédente d'O-149 et O-164) | 0,15 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Contribution sur le sol : taux unique de 0,5 % (version précédente d'O-151) | 0,13 % | 8,92 % | 0,9405 | oui / oui / oui | 27 | — |
-| Contribution sur le sol à 1,15 % uniforme (version d'octobre, 57 Md€) | -0,99 % | 9,02 % | 0,9403 | oui / oui / oui | 30 | — |
-| Barème par surface doublé (0,5 %, 1 %, 2 %) | -0,37 % | 8,97 % | 0,9404 | oui / oui / oui | 29 | — |
-| Vente de tout l'or et contribution sur le sol à 1,15 % uniforme (versions précédentes) | -1,15 % | 9,02 % | 0,9403 | oui / oui / oui | 31 | — |
+| Programme actuel | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| IS à 15 % (texte initial d'O-08) | 0,67 % | 8,75 % | 0,9407 | oui / oui / oui | 27 | — |
+| Norme de 100 pb (version précédente d'O-55) | 1,32 % | 8,22 % | 0,9416 | oui / oui / oui | 25 | — |
+| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | -0,38 % | 8,80 % | 0,9406 | oui / oui / oui | 29 | — |
+| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | -0,18 % | 8,68 % | 0,9406 | oui / oui / oui | 29 | — |
+| O-26 avec suppressions de postes (version précédente) | 0,35 % | 9,02 % | 0,9406 | oui / oui / oui | 27 | — |
+| O-38 au prorata (version précédente) | 0,35 % | 8,82 % | 0,9407 | oui / oui / oui | 27 | — |
+| O-108 à 2 Mt par an (version précédente) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans O-127 (contrats aidés) | 0,51 % | 9,10 % | 0,9405 | oui / oui / oui | 27 | — |
+| IS maintenu à 25 % (variante d'O-08) | 0,04 % | 8,81 % | 0,9406 | oui / oui / oui | 29 | — |
+| Norme renforcée de 100 pb de plus (variante d'O-55) | -0,51 % | 9,28 % | 0,9398 | oui / oui / oui | 29 | — |
+| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 0,32 % | 8,78 % | 0,9407 | oui / oui / oui | 26 | — |
+| Sans le rétrofit électrique (O-138) | 0,31 % | 8,78 % | 0,9407 | oui / oui / oui | 25 | SNBC-3 : 15 % de voitures électriques en 2030 |
+| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 0,37 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Biokérosène compté au prorata des ventes (variante d'O-142) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans le frein automatique (O-143) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Frein à 4,5 % et 2 points (variante d'O-143) | 0,08 % | 8,91 % | 0,9404 | oui / oui / oui | 29 | — |
+| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 0,34 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans les pôles régionaux (O-146 à O-146d) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Métro accessible : variante réaliste (O-147) | 0,31 % | 8,81 % | 0,9406 | oui / oui / oui | 27 | — |
+| Sans le métro accessible (O-147) | 0,30 % | 8,82 % | 0,9406 | oui / oui / oui | 27 | — |
+| Sans la priorité au nucléaire (O-181 : nucléaire modulé) | 0,35 % | 8,80 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans le plan ascenseurs (O-182) | 0,38 % | 8,87 % | 0,9405 | oui / oui / oui | 27 | — |
+| Sans la suppression des ZFE ni sa compensation (O-183 à O-183c) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Suppression des ZFE sans compensation (sans O-183c) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 26 | — |
+| Sans la formation aux premiers secours au lycée (O-184) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans le remboursement de la chirurgie réfractive (O-185) | 0,32 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Chirurgie réfractive : indications médicales strictes seulement (variante d'O-185, type Pays-Bas, 15 000 yeux par an) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans l'avion de combat du futur (O-186) | 0,31 % | 8,79 % | 0,9406 | oui / oui / oui | 27 | — |
+| Sans le supplément à l'ESA (O-187) | 0,32 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Entretien des infrastructures à 1 Md€ par an pendant dix ans (version précédente d'O-179) | 0,33 % | 8,79 % | 0,9407 | oui / oui / oui | 27 | — |
+| Plan ascenseurs subventionné à 50 % (variante d'O-182) | 0,37 % | 8,76 % | 0,9407 | oui / oui / oui | 27 | — |
+| Avec l'électricité renouvelable à 40 % (O-148 à O-148c, retirée) et sans O-181 | 0,34 % | 8,82 % | 0,9407 | oui / oui / oui | 28 | — |
+| Sans la vente d'or (O-149) | 0,51 % | 8,78 % | 0,9407 | oui / oui / oui | 26 | — |
+| Sans la contribution sur le sol (O-151) | 1,03 % | 8,72 % | 0,9408 | oui / oui / oui | 26 | — |
+| Sans le paquet climat (O-155 à O-163) | 0,14 % | 8,84 % | 0,9405 | oui / oui / oui | 25 | — |
+| Sans le rachat du cheptel et l'agriculture (O-161) | 0,26 % | 8,76 % | 0,9407 | oui / oui / oui | 26 | — |
+| Sans le référendum d'initiative citoyenne ni le tirage au sort (O-87, O-154 : Constitution inchangée) | 0,34 % | 8,78 % | 0,9407 | oui / oui / oui | 28 | — |
+| Sans l'entretien des infrastructures (O-179) | 0,31 % | 8,80 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans la suppression des effets de seuil (O-180) | 0,28 % | 8,80 % | 0,9406 | oui / oui / oui | 27 | — |
+| Sans la deuxième série pour le PIB (O-175 à O-178) | 0,84 % | 8,87 % | 0,9403 | oui / oui / oui | 26 | — |
+| Concurrence au chiffrage large de l'OCDE (O-175 : +0,7 % à cinq ans) | 0,01 % | 8,77 % | 0,9409 | oui / oui / oui | 27 | — |
+| Sans les mesures originales pour le PIB (O-172 à O-174) | 1,07 % | 8,79 % | 0,9403 | oui / oui / oui | 26 | — |
+| Budget réglementaire réalisé en entier (O-172 : +1,2 % de PIB) | -0,15 % | 8,77 % | 0,9410 | oui / oui / oui | 29 | — |
+| Sans les devises, la réserve RRRODE ni la trésorerie (O-164) | 0,40 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Vente de tout l'or (version précédente d'O-149 et O-164) | 0,16 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
+| Contribution sur le sol : taux unique de 0,5 % (version précédente d'O-151) | 0,15 % | 8,79 % | 0,9406 | oui / oui / oui | 27 | — |
+| Contribution sur le sol à 1,15 % uniforme (version d'octobre, 57 Md€) | -0,98 % | 8,89 % | 0,9405 | oui / oui / oui | 30 | — |
+| Barème par surface doublé (0,5 %, 1 %, 2 %) | -0,36 % | 8,83 % | 0,9406 | oui / oui / oui | 29 | — |
+| Vente de tout l'or et contribution sur le sol à 1,15 % uniforme (versions précédentes) | -1,13 % | 8,89 % | 0,9405 | oui / oui / oui | 31 | — |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -2769,9 +3115,9 @@ sur 33) :
    (variantes). Pour les déchetteries : recettes perdues sur les
    professionnels et dépôts sauvages évités, faute de données nationales.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,37 point en 2035 (demande), 0,42 point en 2035 (offre), 0,41 point en 2035 (équilibre). Sans la deuxième journée de
-   solidarité (O-84), le déficit 2035 serait de 0,58 %.
-5. **Chômage.** 8,91 % en 2035 contre 7,97 % sans programme : la propriété
+   des marges minimales de 0,38 point en 2035 (demande), 0,43 point en 2035 (offre), 0,41 point en 2035 (équilibre). Sans la deuxième journée de
+   solidarité (O-84), le déficit 2035 serait de 0,59 %.
+5. **Chômage.** 8,78 % en 2035 contre 7,97 % sans programme : la propriété
    porte sur 2030, où le programme fait légèrement mieux que le tendanciel
    (contrats aidés O-127, postes publics, accompagnement O-26b et O-77).
    La norme de dépense et les réductions d'exonérations (O-56, O-61)
@@ -2882,7 +3228,9 @@ sur 33) :
     les règles européennes du déficit (30) ; la contribution à 1,15 %
     uniforme redonne aussi la règle de dette (31), avec tout l'or
     l'équilibre de 2035 (32) (voir les options chiffrées).
-29. **Entretien et seuils (O-179, O-180).** L'enveloppe d'entretien ne
+29. **Entretien et seuils (O-179, O-180).** L'enveloppe d'entretien,
+    portée à 1,8 Md€ par an (maintenance renforcée : 1 Md€ de résorption,
+    0,8 Md€ d'entretien courant), ne
     couvre ni le rail (≈ 1,5 Md€ par an non financés) ni les bâtiments
     publics ; le passif suivi (≈ 12 Md€) est une borne basse. Le coût du
     lissage des seuils est un ordre de grandeur : sans microsimulation, le
@@ -2922,6 +3270,43 @@ sur 33) :
     0,1) : c'est le bas des estimations ; à 0,2, l'équilibre de 2035
     s'éloignerait encore. La BCE fixe le taux pour toute la zone : le
     modèle ne la fait pas réagir.
+30. **Plan ascenseurs (O-182).** 15 000 remplacements par an, c'est cinq
+    fois le rythme actuel et plus que les 11 000 appareils neufs posés
+    chaque année : la filière devra recruter vite, et les premières années
+    du plan glisseront ; la part importée (un quart) et l'effet d'aubaine
+    (19 %) sont des hypothèses. Le bénéfice principal (personnes âgées
+    maintenues chez elles, pannes évitées) n'est pas compté.
+31. **ZFE et Crit'Air (O-183).** Les 150 décès par an non évités sont la
+    valeur centrale d'études ex ante (30 à 350) qui supposent des ZFE
+    appliquées, ce qu'elles ne sont pas à Paris avant 2027 ; la
+    compensation par des électriques d'occasion (O-183c) tient la propriété
+    « air non dégradé » avec 22 décès de marge seulement. Supprimer la
+    vignette prive aussi les préfets de la circulation différenciée des
+    pics de pollution.
+32. **Premiers secours au lycée (O-184).** Les 600 décès évités à terme
+    sont un calcul sur l'écart de survie entre la France et le Danemark,
+    dont une fraction attribuée à l'école ; la preuve causale est faible
+    et l'effet met quinze ans à venir. La contrainte réelle est le nombre
+    de formateurs (10 élèves par formateur, 7 h) : 560 000 formations par
+    an doublent la charge des 7 000 enseignants formateurs.
+33. **Chirurgie réfractive (O-185).** Le coût dépend presque entièrement
+    de la demande induite (× 2,5 retenu, × 1,5 à × 4), jamais observée
+    puisqu'aucun pays ne rembourse l'acte ; l'économie publique sur
+    l'optique est négligeable (4 % de l'optique est remboursée), le gain
+    va aux ménages et aux complémentaires. Le tarif de 1 500 € peut tirer
+    les prix du marché (1 100 à 1 300 €) vers le haut ; l'offre
+    d'ophtalmologie peut se détourner des soins médicaux.
+34. **Avion de combat du futur (O-186).** Le coût retenu (30 Md€ de
+    développement, 2,1 Md€ par an) est une hypothèse médiane entre la
+    presse (25 à 35) et l'industriel (« nettement sous 50 ») ; aucun devis
+    officiel n'existe, et le Rafale a dérivé de 39,6 à 44 Md€. La série
+    (≈ 300 M$ l'unité pour le F-47 américain) et le maintien en condition
+    ne sont pas comptés avant 2035. La mesure cohabite avec O-43 (−1 Md€
+    par an sur la défense) : à arbitrer.
+35. **ESA (O-187).** Dépasser l'Allemagne suppose qu'elle ne surenchérisse
+    pas au prochain conseil (2028) ; le retour géographique n'est pas de
+    100 % et le CNES a dû annuler ≈ 190 M€ de crédits en 2025 : la hausse
+    doit être inscrite en loi de programmation de la recherche.
 
 ## Pistes pour compléter
 
@@ -2941,13 +3326,13 @@ O-83 et O-121).
 |---|---|---|---|---|
 | Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,09 pt | −0,06 pt | +1,0 |
 | Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,08 pt | −0,04 pt | +0,9 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,18 pt | −0,09 pt | +1,9 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,12 pt | −0,10 pt | +1,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,06 pt | −0,04 pt | +0,8 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,03 pt | −0,02 pt | +0,5 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,11 pt | −0,08 pt | +1,4 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,16 pt | −0,11 pt | +1,9 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,1 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,17 pt | −0,09 pt | +2,0 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,13 pt | −0,10 pt | +1,3 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,07 pt | −0,04 pt | +0,6 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,03 pt | −0,02 pt | +0,4 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,12 pt | −0,08 pt | +1,2 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,15 pt | −0,11 pt | +2,0 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,2 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
 chiffrage s'y ajouterait sans le corriger de ce recouvrement. La
@@ -2962,7 +3347,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 67 mesures sur 207 reposent au moins en partie sur une hypothèse ; les plus
+* 69 mesures sur 215 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,49 point, O-44 : −0,47 point, O-58 : −0,43 point, O-150 : −0,41 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
