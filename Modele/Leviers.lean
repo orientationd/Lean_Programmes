@@ -221,6 +221,14 @@ inductive Levier where
   (négatif = moins d'entrées). Population et population active suivent
   (part active des migrants du scénario). -/
   | migration (deltaMilliersParAn : Int)
+  /-- Offre de travail : `actifs` personnes de plus dans la population active
+  (seniors, parents de jeunes enfants, inactifs ramenés vers l'emploi ;
+  niveau ajouté à chaque application), dont `tauxEmploiPm` trouvent un
+  emploi l'année même et produisent (PIB par le volume d'heures) ; les
+  autres sont chômeurs jusqu'à l'emploi d'équilibre, puis réabsorbés au
+  rythme du scénario (`absorptionChomagePm`). Un effet d'aubaine se traite en
+  n'inscrivant que les actifs supplémentaires. -/
+  | offreTravail (actifs tauxEmploiPm : Int)
   /-- Objectif d'emplois annoncé par le programme pour cette mesure
   (personnes). Déclaratif : n'agit pas sur le modèle, mais la propriété
   « emplois annoncés réalisables » vérifie que la somme des objectifs tient
@@ -977,6 +985,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
   | .migration d, s => { s with migrationAnnuelleMilliers := s.migrationAnnuelleMilliers + d }
+  | .offreTravail d taux, s =>
+      let emplois := appliquerPm d taux
+      let equilibre := if s.actifs = 0 then 0 else d * s.emploiTotal / s.actifs
+      let s₁ : Etat := { s with actifs := s.actifs + d
+                                chomeursExcedentaires := s.chomeursExcedentaires + (equilibre - emplois) }
+      chocEmploi H emplois (ajouterEmploi H none emplois s₁)
   | .accueilTouristique zones cout hT hD, s =>
       let s₁ := appliquerInvestissement H .affairesEconomiques (zones * cout) s
       let s₂ := { s₁ with touristesMilliers := s₁.touristesMilliers + appliquerPm s₁.touristesMilliers hT
