@@ -9,9 +9,9 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,27 % du PIB | 3,61 % |
-| Dette publique | 156,7 % du PIB | 131,1 % |
-| Chômage | 7,90 % | 9,37 % |
+| Déficit public | 9,27 % du PIB | 3,64 % |
+| Dette publique | 156,7 % du PIB | 131,2 % |
+| Chômage | 7,90 % | 9,36 % |
 | Indice de développement humain | 0,9392 | 0,9412 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 275 Mt CO₂e |
 
@@ -19,9 +19,9 @@ Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,58 | 5,18 | 4,94 | 4,73 | 4,47 | 4,22 | 4,09 | 3,90 | 3,79 | 3,61 |
-| Offre | 5,57 | 5,10 | 4,83 | 4,62 | 4,38 | 4,16 | 4,07 | 3,94 | 3,90 | 3,79 |
-| Équilibre | 5,58 | 5,14 | 4,89 | 4,68 | 4,43 | 4,19 | 4,08 | 3,92 | 3,85 | 3,70 |
+| Demande | 5,58 | 5,18 | 4,95 | 4,74 | 4,49 | 4,24 | 4,11 | 3,92 | 3,82 | 3,64 |
+| Offre | 5,57 | 5,10 | 4,83 | 4,63 | 4,40 | 4,19 | 4,11 | 3,98 | 3,94 | 3,82 |
+| Équilibre | 5,58 | 5,14 | 4,89 | 4,68 | 4,45 | 4,22 | 4,11 | 3,95 | 3,87 | 3,72 |
 | Sans programme (demande) | 5,58 | 6,47 | 6,77 | 7,09 | 7,41 | 7,76 | 8,08 | 8,31 | 8,90 | 9,27 |
 
 Le déficit baisse chaque année sous les trois moteurs. Propriétés non
@@ -36,7 +36,7 @@ versions précédentes de ce README, calculés avec d'anciens modèles.
 
 ## Mesures par catégorie
 
-112 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
+115 mesures, en quinze catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -260,6 +260,7 @@ milliard aux États-Unis, BRI 2025), négligeable aux montants en jeu.
 | **O-96** Revenu minimum au niveau du SMIC net pendant les cinq premières années d'exploitation agricole | +0,05 pt | +1 700 | +0,1 |
 | **O-104** Coopérative d'État d'engrais azotés bas carbone : deux usines de 500 000 t, apport en capital de 2,6 Md€ de 2027 à 2035 | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-104b** Production de la coopérative d'engrais : première usine en service en 2031 | ≈ 0 | +200 | ≈ 0 |
+| **O-111** Bpifrance : 5 % des financements orientés vers des projets choisis par un vote en ligne | ≈ 0 | ≈ 0 | ≈ 0 |
 
 **O-09 — Démission indemnisée.** Six mois d'indemnités, une fois tous les cinq ans. Coût estimé 3 Md€/an
 (recours de 20 % sur 1,9 million de démissions de CDI, 1 300 €/mois) ;
@@ -419,6 +420,15 @@ nucléaire (la modulation baisse d'autant) ; la seconde produit après
 2035. Les importations d'engrais remplacées et la valeur ajoutée, plus
 forte par emploi que la moyenne, ne sont comptées qu'à travers les
 emplois.
+
+**O-111 — Bpifrance : 5 % des financements choisis par un vote en ligne.**
+Bpifrance a injecté 72 Md€ dans l'économie en 2025 (prêts, garanties,
+fonds propres, assurance export) : 3,6 Md€ par an seraient orientés vers
+des projets choisis par les citoyens, parmi des projets que la banque a
+instruits et jugés finançables (solvabilité, règles bancaires). Ce sont
+des opérations de la banque publique, pas des dépenses des
+administrations : le solde public ne change pas. Le coût de la plateforme
+de vote et un éventuel surcroît de pertes ne sont pas chiffrés.
 
 ### Retraites
 
@@ -958,6 +968,7 @@ places ouvertes ; l'hébergement reste payé par les résidents.
 | **O-105** Légalisation encadrée du cannabis après référendum : vente sous licence aux majeurs, 9 € le gramme | −0,03 pt | −1 500 | −0,1 |
 | **O-105b** Filière légale du cannabis : production et distribution sous licence (emplois) | −0,03 pt | +15 500 | +0,1 |
 | **O-106** Légalisation de la prostitution sur le modèle allemand après référendum : activité déclarée, établissements autorisés, fin de la pénalisation des clients | ≈ 0 | −200 | ≈ 0 |
+| **O-110** Police de proximité : 20 000 adjoints de sécurité et 6 700 policiers pour les encadrer | +0,06 pt | +6 100 | +0,1 |
 
 **O-10 — Moyens pour la justice.** +300 M€ par an (prud'hommes en
 priorité) ; les délais de justice ne sont pas modélisés.
@@ -1075,6 +1086,19 @@ ou finance une maison de prostitution : les établissements autorisés
 supposent de la dénoncer. Variante : estimation basse du nombre de
 personnes en Allemagne, 16 % déclarés (137 M€).
 
+**O-110 — Police de proximité.** Rétablie sur le modèle de 1998-2003, au
+chiffrage de l'Institut Montaigne (présidentielle 2022) : 20 000 adjoints
+de sécurité encadrés par 6 700 policiers titulaires, un pour trois comme
+alors ; coût complet chargé de 39 015 € par adjoint et 67 998 € par
+titulaire, pensions comprises : 1 235 M€ par an en année pleine, atteinte
+en cinq ans (670, 2 670, 10 700, 21 300 puis 26 700 agents). Les brigades
+anticriminalité sont maintenues, donc sans économie en regard. Locaux et
+véhicules ne sont pas comptés : l'Institut juge son chiffrage minimal. La
+police de proximité de 1998-2003 avait été supprimée en 2003, ses
+résultats jugés insuffisants (rotation des effectifs, recrutement,
+encadrement et formation) : l'encadrement par des titulaires répond à ces
+défauts. L'effet sur la délinquance n'est pas modélisé.
+
 ### Cybersécurité
 
 | Mesure | Déficit 2035 | Emplois 2035 | IDH (dix-millièmes) |
@@ -1156,6 +1180,7 @@ L'effet sur le solde vient surtout du surcroît d'heures travaillées
 |---|---|---|---|
 | **O-86** Liberté fiscale des collectivités : taux de taxe foncière sans plafond ni lien, taxe d'habitation rétablissable | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-87** Référendum d'initiative citoyenne | ≈ 0 | +700 | ≈ 0 |
+| **O-112** Titres de séjour : 500 agents de plus dans les préfectures pour réduire les délais | ≈ 0 | +100 | ≈ 0 |
 
 **O-86 — Liberté fiscale des collectivités.** Taxe foncière : les communes
 votent déjà leur taux, mais au plus 2,5 fois le taux moyen de l'année
@@ -1177,6 +1202,15 @@ Constitution) à préciser. Coût d'organisation : ≈ 200 M€ par référendum
 ≈ 100 M€ dématérialisé (ministre de l'Intérieur, 11 mai 2025). Hypothèse :
 un scrutin par an, non couplé à une élection. Variantes : scrutins
 dématérialisés ; scrutins couplés aux élections, sans coût propre.
+
+**O-112 — Titres de séjour : renfort des préfectures.** 4,33 millions de
+titres et documents de séjour valides fin 2024 (+56 % depuis 2014), plus de
+343 000 premiers titres en 2024 et 384 230 en 2025 ; les effectifs des
+préfectures n'ont pas suivi la demande (bleu budgétaire du programme 354).
+Le programme reprend la proposition de l'amendement II-333 au PLF 2026 :
+500 agents de plus, 25 M€ par an (50 000 € par agent). L'effet de délais
+plus courts sur l'emploi déclaré et les cotisations des étrangers
+titulaires n'est pas chiffré. Variante : 1 000 agents.
 
 ### Outre-mer
 
@@ -1256,35 +1290,35 @@ Options chiffrées (programme complet modifié, scénario central, 2035) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) |
 |---|---|---|---|---|
-| Programme actuel | 3,61 % | 9,37 % | 0,9412 | oui / oui / oui |
-| Sans O-84 (deuxième journée de solidarité) | 3,86 % | 9,40 % | 0,9410 | oui / oui / oui |
-| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,53 % | 9,19 % | 0,9412 | oui / oui / oui |
-| **C.** O-81 à +5 points (250 000 places) | 3,64 % | 9,35 % | 0,9424 | oui / oui / oui |
-| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,44 % | 9,39 % | 0,9411 | oui / oui / oui |
-| IS maintenu à 25 % (variante d'O-08) | 2,87 % | 9,43 % | 0,9411 | oui / oui / oui |
-| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,39 % | 9,93 % | 0,9405 | oui / oui / oui |
-| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,21 % | 10,46 % | 0,9398 | oui / oui / oui |
+| Programme actuel | 3,64 % | 9,36 % | 0,9412 | oui / oui / oui |
+| Sans O-84 (deuxième journée de solidarité) | 3,89 % | 9,38 % | 0,9410 | oui / oui / oui |
+| **B.** O-76 avec sortie à 1,6 SMIC et O-77 avec 15 000 conseillers | 3,56 % | 9,18 % | 0,9412 | oui / oui / oui |
+| **C.** O-81 à +5 points (250 000 places) | 3,66 % | 9,34 % | 0,9424 | oui / oui / oui |
+| IS à 17 % au lieu de 15 % (variante d'O-08) | 3,48 % | 9,37 % | 0,9412 | oui / oui / oui |
+| IS maintenu à 25 % (variante d'O-08) | 2,90 % | 9,42 % | 0,9411 | oui / oui / oui |
+| Norme de dépense renforcée de 100 pb (variante d'O-55) | 2,41 % | 9,92 % | 0,9405 | oui / oui / oui |
+| Norme de dépense renforcée de 200 pb (variante d'O-55) | 1,25 % | 10,45 % | 0,9398 | oui / oui / oui |
 
 1. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,11 point en 2034 (demande), 0,04 point en 2034 (offre), 0,07 point en 2034 (équilibre). Elle tient grâce à O-62
+   des marges minimales de 0,10 point en 2034 (demande), 0,04 point en 2034 (offre), 0,08 point en 2034 (équilibre). Elle tient grâce à O-62
    (niches réduites de 1,5 Md€ de plus par an de 2029 à 2035) et à O-84
    (deuxième journée de solidarité, −0,23 point en 2035) ; sans O-84,
-   le déficit 2035 serait de 3,86 %. Toute dépense nouvelle non financée
+   le déficit 2035 serait de 3,89 %. Toute dépense nouvelle non financée
    réduit ces marges : chaque piste de dépense est à apparier à une recette
    ou à une économie.
-2. **Chômage.** 9,37 % en 2035 contre 7,90 % sans programme. Premières
+2. **Chômage.** 9,36 % en 2035 contre 7,90 % sans programme. Premières
    causes : les réductions d'exonérations O-38, O-56 et O-61 (≈ 233 000 emplois)
    et la norme de dépense O-55 (≈ 220 000) ; l'IS à 15 % (O-08,
    +20 000), O-76 et O-77 (+44 000 et +44 000) et O-84 (+7 000)
    compensent en partie. Au-delà de 9 %, le complément de fin de droits de
-   l'assurance chômage se déclenche. L'option B le réduit (9,19 %) ;
+   l'assurance chômage se déclenche. L'option B le réduit (9,18 %) ;
    passer sous 9 % suppose d'alléger O-56 ou O-61, au prix d'un déficit
    plus élevé.
 3. **Déficit sous 3 % et règles européennes.** La baisse moyenne
    (≈ 0,2 point par an de 2026 à 2035) reste loin de l'ajustement de
    0,5 point par an du cadre européen. Les leviers évalués qui mènent sous
    3 % coûtent en emploi : la norme renforcée de 100 pb y parvient avec
-   presque 10 % de chômage. Le maintien de l'IS à 25 % y parvient aussi (2,87 %), mais
+   presque 10 % de chômage. Le maintien de l'IS à 25 % y parvient aussi (2,90 %), mais
    défait le choix d'O-08.
 4. **IDH.** L'éducation est le levier le plus fort (O-81) ; l'option C
    porte l'IDH à 0,9424.
@@ -1341,16 +1375,16 @@ sexuelles (P-07) et les allocations familiales dès le premier enfant
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,14 pt | −0,06 pt | +0,6 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,12 pt | −0,04 pt | +0,5 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,26 pt | −0,09 pt | +1,1 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,09 pt | +0,8 |
-| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,04 pt | +0,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,10 pt | −0,03 pt | +0,4 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,04 pt | −0,02 pt | +0,2 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,18 pt | −0,07 pt | +0,8 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,26 pt | −0,11 pt | +1,1 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | +0,00 pt | +0,1 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,15 pt | −0,07 pt | +0,6 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,13 pt | −0,04 pt | +0,5 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,25 pt | −0,09 pt | +1,1 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,16 pt | −0,10 pt | +0,8 |
+| École | 90 000 enseignants, AESH, infirmières et médecins scolaires (PCF, PC-12) | +0,09 pt | −0,05 pt | +0,4 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,10 pt | −0,04 pt | +0,4 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,05 pt | −0,02 pt | +0,2 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,19 pt | −0,08 pt | +0,8 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,25 pt | −0,11 pt | +1,1 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant), et PC-12
 recoupe O-88 (médecins scolaires) : leur chiffrage s'y ajouterait sans le
@@ -1363,11 +1397,11 @@ Autres domaines sans mesure, ni ici ni dans le modèle : grand âge au-delà
 d'O-84 et des places en Ehpad publics (O-109) : aide à domicile, métiers du
 grand âge ; petite enfance (places de crèche) ; biodiversité et eau en
 métropole ; énergies renouvelables (seul le nucléaire est chiffré, O-04) ;
-culture ; immigration et intégration.
+culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 40 mesures sur 112 reposent au moins en partie sur une hypothèse ; les plus
+* 40 mesures sur 115 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-44 : −0,44 point, O-58 : −0,39 point, O-14 : −0,46 point, O-07 : +0,37 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),

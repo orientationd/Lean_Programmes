@@ -1233,6 +1233,57 @@ theorem ehpad_valeurs :
     fonctionnementPlaceEhpadEuros = 16811 ∧ investissementEhpad = 1124 ∧
     fonctionnementEhpad = [174, 349, 524, 699, 874] := by decide
 
+/-- Police de proximité (O-110) : rétablie sur le modèle de 1998-2003, tel
+que l'a chiffrée l'Institut Montaigne (présidentielle 2022, proposition de
+rétablir la police de proximité) : 20 000 adjoints de sécurité encadrés par
+6 700 policiers titulaires (un pour trois, ratio de 1998-2003), au coût
+complet chargé de 39 015 € par adjoint et 67 998 € par titulaire (pensions
+comprises) : 1 235 M€ par an en année pleine (calcul). Montée en charge en
+cinq ans au calendrier de l'Institut (670, 2 670, 10 700, 21 300 puis
+26 700 agents). Les brigades anticriminalité sont maintenues : pas
+d'économie en regard. Fonctionnement et investissement (locaux, véhicules)
+non comptés : l'Institut juge lui-même son chiffrage minimal. -/
+def adjointsSecurite : Int := 20000
+def encadrantsProximite : Int := 6700
+def coutPoliceProximite : Int := (adjointsSecurite * 39015 + encadrantsProximite * 67998) / 1000000
+def agentsProximite : List Int := [670, 2670, 10700, 21300, adjointsSecurite + encadrantsProximite]
+def policeProximite : List Int :=
+  agentsProximite.map fun a => coutPoliceProximite * a / (adjointsSecurite + encadrantsProximite)
+
+theorem policeProximite_valeurs :
+    coutPoliceProximite = 1235 ∧ policeProximite = [30, 123, 494, 985, 1235] := by decide
+
+/-- Bpifrance (O-111) : 5 % des financements de la banque publique sont
+orientés vers des projets choisis par un vote en ligne des citoyens, parmi
+des projets instruits et jugés finançables par Bpifrance (solvabilité,
+règles bancaires). Bpifrance a injecté 72 Md€ dans l'économie en 2025
+(prêts, garanties, fonds propres, assurance export ; bilan annuel du
+17 février 2026) : 3,6 Md€ par an soumis au vote (calcul). Ce sont des
+opérations de la banque publique, pas des dépenses des administrations :
+la mesure ne change pas le solde public. Le coût de la plateforme de vote et
+un éventuel surcroît de pertes ne sont pas chiffrés. -/
+def financementsBpifrance : Int := 72000
+def partVoteBpifrancePct : Int := 5
+def financementsVotes : Int := financementsBpifrance * partVoteBpifrancePct / 100
+
+theorem financementsVotes_eq : financementsVotes = 3600 := by decide
+
+/-- Titres de séjour (O-112) : renfort des services des étrangers des
+préfectures pour réduire les délais. 4,33 millions de titres et documents
+de séjour valides fin 2024 (+56 % depuis 2014), plus de 343 000 premiers
+titres en 2024, un record hors 2021 (Sénat, avis sur le PLF 2026, 5 décembre
+2025) ; 384 230 premiers titres en 2025 (ministère de l'Intérieur). Les
+effectifs n'ont pas suivi la demande (exposé de l'amendement II-333 au PLF
+2026, d'après le bleu budgétaire du programme 354), qui proposait 500
+emplois de plus dans les préfectures pour 25 M€, soit 50 000 € par emploi
+(calcul) : le programme reprend ces 500 emplois. L'effet de délais plus
+courts sur l'emploi déclaré des étrangers titulaires n'est pas chiffré. -/
+def agentsPrefectures : Int := 500
+def coutAgentPrefectureEuros : Int := 25000000 / 500
+def renfortPrefectures : Int := agentsPrefectures * coutAgentPrefectureEuros / 1000000
+
+theorem renfortPrefectures_eq : coutAgentPrefectureEuros = 50000 ∧ renfortPrefectures = 25 := by decide
+
 /-- Rénovation énergétique en territoire rural (O-63) : l'aide à la
 rénovation (MaPrimeRénov', 13 000 € en moyenne en 2026) est majorée de 25 %
 dans les communes rurales, `bonusRenovationRurale` = 3 250 € par
@@ -2379,13 +2430,31 @@ def mesures : List Mesure := [
     titre := "Ehpad publics : fonctionnement des places ouvertes (soins et APA)"
     source := s!"Texte Orientation D, mesure 109 ; {fonctionnementPlaceEhpadEuros} € par place et par an à la charge des administrations (soins 12 755 €, APA 338 € par mois, 2019) : jusqu'à {fonctionnementEhpad.getLastD 0} M€ par an en 2032 (voir `fonctionnementEhpad`)"
     leviers := [.depenseEcheancier .sante fonctionnementEhpad]
-    debut := 1 }
+    debut := 1 },
+
+  { id := "O-110"
+    titre := "Police de proximité : 20 000 adjoints de sécurité et 6 700 policiers pour les encadrer"
+    source := s!"Texte Orientation D, mesure 110 ; chiffrage de l'Institut Montaigne (2022) : 39 015 € par adjoint, 67 998 € par titulaire, {coutPoliceProximite} M€ par an en année pleine, montée en charge en cinq ans ; BAC maintenues (voir `coutPoliceProximite`)"
+    leviers := [.depenseEcheancier .securiteJustice policeProximite,
+                .annonceEmplois (adjointsSecurite + encadrantsProximite)] },
+
+  { id := "O-111"
+    titre := "Bpifrance : 5 % des financements orientés vers des projets choisis par un vote en ligne"
+    source := s!"Texte Orientation D, mesure 111 ; {financementsBpifrance} M€ injectés par Bpifrance en 2025 : {financementsVotes} M€ par an soumis au vote, parmi des projets instruits par la banque ; opérations financières hors solde public (voir `financementsVotes`)"
+    leviers := [] },
+
+  { id := "O-112"
+    titre := "Titres de séjour : 500 agents de plus dans les préfectures pour réduire les délais"
+    source := s!"Texte Orientation D, mesure 112 ; {agentsPrefectures} emplois à {coutAgentPrefectureEuros} € (amendement II-333 au PLF 2026) : {renfortPrefectures} M€ par an (voir `renfortPrefectures`)"
+    leviers := [.depenseSur .fonctionnement renfortPrefectures, .annonceEmplois agentsPrefectures]
+    variantes := [
+      { nom := "1 000 agents", leviers := [.depenseSur .fonctionnement (2 * renfortPrefectures), .annonceEmplois (2 * agentsPrefectures)] }] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 15 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, TVA à 22 %, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
