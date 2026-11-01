@@ -193,7 +193,7 @@ rapporte, scénario par scénario.
 
 ## Mesures par catégorie
 
-215 mesures, en seize catégories. Effet de chaque mesure prise isolément en
+216 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -425,6 +425,7 @@ doublons, octobre 2026).
 | **O-164** Vente de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus | −0,57 pt | ≈ 0 | ≈ 0 |
 | **O-164b** Fin des versements exceptionnels de 2027 | +0,49 pt | ≈ 0 | ≈ 0 |
 | **O-170** Foncière de l'État : un quart des bureaux de l'État vendus en dix ans | −0,01 pt | −4 900 | −0,2 |
+| **O-188** Dès que le déficit est résorbé : la moitié de l'excédent rachète l'or vendu (jusqu'à la moitié du stock) et augmente les parts de l'État dans les entreprises, moitié-moitié ; l'autre moitié rembourse la dette | ≈ 0 | ≈ 0 | ≈ 0 |
 | **O-179** Dette cachée d'entretien et maintenance renforcée : ouvrages d'art, chaussées et voies navigables, 1,8 Md€ par an pendant douze ans (1 Md€ de résorption du retard, 0,8 Md€ d'entretien courant) | +0,02 pt | +7 900 | +0,2 |
 
 **O-15 — Logiciel libre dans l'État.** Migration de tous les logiciels et postes de l'État vers le libre :
@@ -726,6 +727,29 @@ Alenia Space ; ≈ 30 000 emplois spatiaux, dont 20 000 industriels).
 Dépense de recherche traitée comme intérieure (retour géographique proche
 de 90 % ; hypothèse). Effet au scénario central (moteur de demande) :
 déficit +0,02 point, ≈ +4 000 emplois ; aucune propriété ne change.
+
+**O-188 — Dès que le déficit est résorbé : rachat de l'or et montée de
+l'État au capital des entreprises.** Demande de l'auteur (novembre 2026).
+Nouveau levier du modèle commun, `placementExcedent` : dès qu'une année se
+termine en excédent, la moitié de l'excédent est placée l'année suivante
+(l'autre moitié rembourse la dette), pour moitié en rachat d'or par la
+Banque de France pour le compte de l'État, jusqu'à reconstituer la valeur
+de la moitié vendue par O-149 (≈ 128 Md€ au cours de 2025, les 1 218
+tonnes vendues ; hypothèse de cours constant), pour moitié en prises de
+participation dans les entreprises (Agence des participations de l'État,
+Bpifrance), qui rapportent des dividendes au rendement du portefeuille
+actuel. Ce sont des opérations financières : la dette baisse moitié moins,
+le déficit n'en est pas affecté, les dividendes l'améliorent un peu. Le
+schéma des actifs et de la dette montre ce que cela change : au lieu de
+rembourser, l'État reconstitue son patrimoine. Effet : nul au scénario
+central sous le moteur de demande, où le déficit n'est pas résorbé avant
+2035 (0,33 %) ; sous les moteurs d'offre et d'équilibre, l'excédent de
+2035 (0,2 et 0,05 % du PIB) n'est placé qu'après l'horizon. Dans les
+scénarios de croissance haute, l'excédent apparaît dès 2033 : ≈ 25 Md€
+d'or rachetés et ≈ 25 Md€ de participations prises d'ici 2035 avec un
+pétrole à 50 $, 19 et 19 Md€ au pétrole central ; la dette y reste ≈ 1,3
+point de PIB plus haute qu'en remboursant tout. Aucune propriété ne
+change.
 
 ### Travail, emploi et entreprises
 
@@ -2939,8 +2963,9 @@ d'usines par rapport au tendanciel ; le plan ascenseurs (O-182) et la
 suppression des ZFE et de Crit'Air (O-183), compensée par des électriques
 d'occasion pour les Crit'Air 5, les premiers secours au lycée (O-184) et
 le remboursement de la chirurgie réfractive (O-185), l'avion de combat du
-futur (O-186), le supplément à l'ESA (O-187) et la maintenance renforcée
-(O-179) n'en changent pas le compte.
+futur (O-186), le supplément à l'ESA (O-187), la maintenance renforcée
+(O-179) et le placement de l'excédent en or et en participations (O-188)
+n'en changent pas le compte.
 
 * *15 % de voitures électriques en 2030* : tenu (36/36) par le rétrofit
   massif (O-138, nouveau levier `retrofitElectrique`), qui ajoute des
@@ -3069,6 +3094,7 @@ sur 33) :
 | Sans l'avion de combat du futur (O-186) | 0,31 % | 8,79 % | 0,9406 | oui / oui / oui | 27 | — |
 | Sans le supplément à l'ESA (O-187) | 0,32 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
 | Entretien des infrastructures à 1 Md€ par an pendant dix ans (version précédente d'O-179) | 0,33 % | 8,79 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans le placement de l'excédent (O-188 : l'excédent rembourse la dette) | 0,33 % | 8,78 % | 0,9407 | oui / oui / oui | 27 | — |
 | Plan ascenseurs subventionné à 50 % (variante d'O-182) | 0,37 % | 8,76 % | 0,9407 | oui / oui / oui | 27 | — |
 | Avec l'électricité renouvelable à 40 % (O-148 à O-148c, retirée) et sans O-181 | 0,34 % | 8,82 % | 0,9407 | oui / oui / oui | 28 | — |
 | Sans la vente d'or (O-149) | 0,51 % | 8,78 % | 0,9407 | oui / oui / oui | 26 | — |
@@ -3087,7 +3113,7 @@ sur 33) :
 | Contribution sur le sol : taux unique de 0,5 % (version précédente d'O-151) | 0,15 % | 8,79 % | 0,9406 | oui / oui / oui | 27 | — |
 | Contribution sur le sol à 1,15 % uniforme (version d'octobre, 57 Md€) | -0,98 % | 8,89 % | 0,9405 | oui / oui / oui | 30 | — |
 | Barème par surface doublé (0,5 %, 1 %, 2 %) | -0,36 % | 8,83 % | 0,9406 | oui / oui / oui | 29 | — |
-| Vente de tout l'or et contribution sur le sol à 1,15 % uniforme (versions précédentes) | -1,13 % | 8,89 % | 0,9405 | oui / oui / oui | 31 | — |
+| Vente de tout l'or et contribution sur le sol à 1,15 % uniforme (versions précédentes) | -1,14 % | 8,89 % | 0,9405 | oui / oui / oui | 31 | — |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -3307,6 +3333,14 @@ sur 33) :
     pas au prochain conseil (2028) ; le retour géographique n'est pas de
     100 % et le CNES a dû annuler ≈ 190 M€ de crédits en 2025 : la hausse
     doit être inscrite en loi de programmation de la recherche.
+36. **Placement de l'excédent (O-188).** Racheter de l'or avec l'excédent
+    plutôt que rembourser garde la dette plus haute (≈ 1,3 point de PIB
+    dans les scénarios où il joue, la moitié de l'excédent étant placée) pour un actif sans rendement ; la
+    Banque de France décide seule de ses réserves (traité, art. 127 et
+    130) et le cours de l'or (4 000 $ l'once retenus) peut avoir monté
+    d'ici là : le nombre de tonnes rachetées n'est pas garanti. Les prises
+    de participation posent la question du contrôle de l'État sur les
+    entreprises concernées.
 
 ## Pistes pour compléter
 
@@ -3347,7 +3381,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 69 mesures sur 215 reposent au moins en partie sur une hypothèse ; les plus
+* 69 mesures sur 216 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,49 point, O-44 : −0,47 point, O-58 : −0,43 point, O-150 : −0,41 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
