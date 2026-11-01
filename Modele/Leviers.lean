@@ -207,6 +207,17 @@ inductive Levier where
   suscitées (effet d'aubaine), et chaque année les économies de fioul et de
   gaz (importations, accises, TVA, CO₂). -/
   | bonusRenovation (cible : Territoire) (bonusEuros : Int)
+  /-- Programme dédié de rénovations d'ampleur : `nombreParAn` logements
+  rénovés chaque année, aide de `aideEuros` par logement (dépense de
+  logement et environnement, travaux adressés à la construction ; la part
+  payée par les ménages n'est pas comptée). Chaque logement économise
+  `economieKWh` d'énergie finale par an, répartis entre fioul et gaz selon
+  les parts du territoire `cible` (sous-modèle rénovation) ; comme pour
+  `bonusRenovation`, les économies de chaque année s'ajoutent à celles des
+  années précédentes (importations, accises, TVA, CO₂ dans la projection).
+  Les rénovations sont supposées s'ajouter à la tendance (pas d'effet
+  d'aubaine). -/
+  | renovationsAmpleur (cible : Territoire) (nombreParAn : Int) (aideEuros : Int) (economieKWh : Int)
   /-- Investissement public outre-mer, échéancier de niveaux annuels (M€ de
   l'année d'entrée en vigueur ; le dernier niveau est reconduit, 0 pour
   arrêter). Emplois dans la construction ; la part importée de la dépense,
@@ -745,6 +756,15 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
         economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + mwh * R.partGaz cible / 1000 }
       effetDemande H (some .construction) travaux
         (effetDemande H none (appliquerPm transfert M.multiplicateurPrelevementsPm) s₁)
+  | .renovationsAmpleur cible n aide kwh, s =>
+      let R := H.energie.renovation
+      let travaux := n * aide / 1000000
+      let mwh := n * kwh / 1000
+      let s₁ : Etat := { s with
+        depensesF := s.depensesF.ajouter .logementEnvironnement travaux
+        economiesFioulMWhAnnuelles := s.economiesFioulMWhAnnuelles + mwh * R.partFioul cible / 1000
+        economiesGazMWhAnnuelles := s.economiesGazMWhAnnuelles + mwh * R.partGaz cible / 1000 }
+      effetDemande H (some .construction) travaux s₁
   | .investissementEcheancier _ [], s => s
   | .investissementEcheancier f (n :: reste), s =>
       let e : Echeance := { fonction := f, restants := reste, niveau := n, indice := 10000,
