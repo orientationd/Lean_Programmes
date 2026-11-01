@@ -600,7 +600,10 @@ PROPS_COURT = {"deficit-plafond": "Déficit sous plafond", "dette-non-degradee":
                "parc-electrique-2030": "15 % d'électriques 2030", "zan-enveloppe-2031": "ZAN 2021-2031",
                "ue-afir-2030": "UE : AFIR 2030", "ue-balance-courante": "UE : solde courant",
                "idh-non-degrade": "IDH non dégradé", "lpm-2024-2030": "LPM 2024-2030",
-               "ppe3-capacites-2030": "PPE3 : capacités 2030", "electricite-renouvelable-2030": "40 % d'électricité renouvelable"}
+               "ppe3-capacites-2030": "PPE3 : capacités 2030", "electricite-renouvelable-2030": "40 % d'électricité renouvelable",
+               "constitution-art-89": "Constitution inchangée", "constitution-ddhc-13": "DDHC 13 : non confiscatoire",
+               "constitution-preambule-11": "Préambule al. 11 : retraites", "constitution-preambule-13": "Préambule al. 13 : enseignement",
+               "constitution-lo-omt": "LO 2012 : solde structurel"}
 
 
 def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool = False) -> Table:
@@ -608,7 +611,7 @@ def table_proprietes(D: Donnees, moteur: str | None = None, avec_central: bool =
     de scénarios où la propriété tient, sous un moteur."""
     n = D.d["nbScenarios"]
     mid = moteur or D.standard
-    props = [q for q in D.props if not q["id"].startswith("ue-")]   # les propriétés UE ont leur page
+    props = [q for q in D.props if not q["id"].startswith("ue-") and not q["id"].startswith("constitution-")]   # pages à part
     ent = [f"Programme (sur {n} scénarios)"] + [PROPS_COURT.get(q["id"], q["titre"]) for q in props]
 
     def cellule(p, q):
@@ -1551,6 +1554,44 @@ def section_europe(D: Donnees) -> list:
     return out
 
 
+def section_constitution(D: Donnees) -> list:
+    n = D.d["nbScenarios"]
+    textes = D.d.get("textesConstitutionnels", [])
+    props = [q for q in D.props if q["id"].startswith("constitution-")]
+    if not textes or not props:
+        return []
+    out = [P("Constitution et lois organiques : les programmes y sont-ils conformes ?", "h1"),
+           P("Normes de rang constitutionnel ou organique traduites en garde-fous chiffrés (simplification "
+             "assumée, écrite avec la référence juridique et, le cas échéant, la jurisprudence du Conseil "
+             "constitutionnel). Deux critères reposent sur ce que le programme déclare : le taux marginal "
+             "maximal qu'il crée et les révisions de la Constitution qu'il exige. Une propriété perdue ne vaut pas "
+             "inconstitutionnalité : elle signale ce qu'un juge ou le Haut Conseil des finances publiques examinerait. "
+             f"Statut au scénario central (✓/✗) et nombre de scénarios sur {n} où le critère est respecté, "
+             f"moteur « {echap(D.nom_moteur(D.standard))} ».")]
+    rows = [[P(f"<b>{echap(t['titre'])}</b><br/>{echap(t['reference'])}", "cell"),
+             P(echap(t["critere"]), "cell")] for t in textes]
+    out.append(tableau(["Texte", "Critère vérifié"], rows, [0.55, 0.45], droite_des=9))
+    out.append(Spacer(1, 6))
+    ent = ["Programme"] + [PROPS_COURT.get(q["id"], q["titre"]) for q in props]
+    rows = []
+    for p in D.progs:
+        r = [nom_court(p["nom"])]
+        for q in props:
+            ok = p["central"][D.standard][q["id"]]
+            r.append(f"{'✓' if ok else '✗'}  {p['matrice'][D.standard][q['id']]}/{n}")
+        rows.append(r)
+    out.append(colorer_parts(tableau(ent, rows, [0.22] + [0.78 / len(props)] * len(props)),
+                             {(j + 1, i + 1): p["matrice"][D.standard][q["id"]] / n
+                              for i, p in enumerate(D.progs) for j, q in enumerate(props)}))
+    out.append(Spacer(1, 3))
+    out.append(legende_degrade(n))
+    out.append(P("Le solde structurel corrige le déficit de l'écart de production (écart de départ, trajectoire du "
+                 "scénario et effets de demande des mesures), à la semi-élasticité de 0,57 ; l'écart de production "
+                 "nourrit aussi l'inflation (courbe de Phillips, pente de 0,1). Les propriétés constitutionnelles "
+                 "figurent aussi dans la matrice complète du rapport.", "note"))
+    return out
+
+
 def section_main_doeuvre(D: Donnees) -> list:
     """Population active, immigration, emplois annoncés : la promesse tient-elle dans les bras disponibles ?"""
     a0, a1 = D.annees[0], D.annees[-1]
@@ -2181,6 +2222,8 @@ def construire(d: dict, sortie: Path, commit: str | None, moteur: str | None = N
     story += section_accidents(D)
     story.append(PageBreak())
     story += section_europe(D)
+    story.append(PageBreak())
+    story += section_constitution(D)
     story.append(PageBreak())
     story += section_budget(D)
     story.append(PageBreak())

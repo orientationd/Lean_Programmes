@@ -191,6 +191,35 @@ l'objectif de 40 % d'électricité renouvelable en 2030 (code de l'énergie,
 art. L.100-4) (`Proprietes/Lois.lean`). Un programme peut proposer de
 modifier une loi : la propriété signale alors l'écart.
 
+**Constitution et lois organiques.** Cinq garde-fous traduisent des normes
+de rang constitutionnel ou organique (`Hypotheses/Constitution.lean`,
+`Proprietes/Constitution.lean`, préfixe `constitution-`, page à part de la
+synthèse) : la Constitution n'a pas à être révisée (art. 89 ; une mesure qui
+l'exige le déclare par le levier `revisionConstitution`) ; le taux marginal
+maximal d'imposition d'un revenu reste sous 70 % (DDHC, art. 13 ; Conseil
+constitutionnel : 75 % censuré en 2012, 64,5 % admis en 2013 ; 55,4 % au
+départ pour un salaire, relevé par les mesures qui le déclarent, levier
+`tauxMarginalSommet`) ; la dépense de retraite en volume par personne de
+65 ans et plus et la dépense d'enseignement par habitant ne baissent pas
+de plus de 5 % (Préambule de 1946, al. 11 et 13) ; le déficit structurel
+est au plus de 0,4 % du PIB dix ans après le départ (objectif de moyen
+terme : loi organique n° 2012-1403, TSCG art. 3). Le déficit structurel
+corrige le déficit de l'écart de production, que le modèle suit désormais :
+écart de départ (≈ −0,5 point en 2025), trajectoire du scénario (croissance
+en volume moins potentielle) et effets de demande des mesures encore
+présents ; les chocs d'offre (heures, productivité, capital) déplacent le
+potentiel, pas l'écart. L'écart de production nourrit l'inflation par une
+courbe de Phillips (0,1 point d'inflation par point d'écart de l'année
+précédente, bas des estimations pour la zone euro ; nulle dans le
+rétro-test, où l'inflation est observée) : une consolidation qui creuse
+l'activité fait baisser les prix, donc le PIB nominal, et renchérit la dette
+en termes réels. Une propriété constitutionnelle perdue ne vaut pas
+inconstitutionnalité : elle signale ce que le Conseil constitutionnel ou le
+Haut Conseil des finances publiques examineraient. Non retenus faute de
+grandeur dans le modèle : l'autonomie financière des collectivités
+(art. 72-2), la sincérité des comptes (art. 47-2), l'égalité devant
+l'impôt hors caractère confiscatoire.
+
 ## Engagements, contrats et évaluation
 
 | | Engagements | Contrats de mesure | Évaluation |

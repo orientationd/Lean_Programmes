@@ -131,7 +131,15 @@ leur vignette Crit'Air (`vignetteCritAir`), dont dépendent les particules
 
 Accidents du travail : `preventionAccidents fondsMeur baissePm` (fonds
 publics et baisse du taux d'accidents ; le sous-modèle calcule coûts
-évités, journées rendues et décès). Textes européens : les propriétés
+évités, journées rendues et décès). Constitution : deux leviers
+déclaratifs, `tauxMarginalSommet pm` (taux marginal maximal d'imposition
+d'un revenu créé par la mesure, toutes impositions confondues ; l'état
+garde le plus haut) et `revisionConstitution article objet` (la mesure
+exige une révision) ; les propriétés `constitution-*`
+(`Proprietes/Constitution.lean`) les comparent à la jurisprudence et aux
+textes listés dans `Hypotheses/Constitution.lean`, avec le solde structurel
+(`Etat.deficitStructurelPb`, écart de production `Etat.ecartProductionPb`)
+et les dépenses par tête. Textes européens : les propriétés
 `ue-*` (`Proprietes/Europe.lean`) traduisent les règles listées dans
 `Hypotheses/Europe.lean` ; en ajouter une = un texte cité + un critère.
 
