@@ -3557,9 +3557,10 @@ def contributionEsaSupplement : Int := 630
 
 /-- Rachat de l'or et montée de l'État au capital des entreprises dès que le
 déficit est résorbé (O-188), demande de l'auteur (novembre 2026). Dès
-qu'une année se termine en excédent, l'excédent est placé l'année suivante
-(opération financière : la dette cesse de baisser d'autant, le déficit n'en
-est pas affecté) : pour moitié en rachat d'or par la Banque de France pour
+qu'une année se termine en excédent, la moitié de l'excédent est placée
+l'année suivante, l'autre moitié remboursant la dette (opération
+financière : la dette baisse moitié moins, le déficit n'en est pas
+affecté) : pour moitié en rachat d'or par la Banque de France pour
 le compte de l'État, jusqu'à reconstituer la valeur de la moitié vendue par
 O-149 (`valeurOr / 2`, ≈ 128 Md€ au cours de 2025 : les 1 218 tonnes
 vendues, hypothèse de cours constant), pour moitié en prises de
@@ -3569,7 +3570,7 @@ donne le rythme de 100 M€ par an sans attendre l'excédent). Au scénario
 central, le déficit n'est pas résorbé avant 2035 sous le moteur de demande
 (0,33 %) : la mesure ne joue que dans les scénarios favorables et sous les
 moteurs d'offre et d'équilibre (excédent à partir de 2034-2035). -/
-def partExcedentPlacePm : Int := 1000
+def partExcedentPlacePm : Int := 500
 def partOrPlacementPm : Int := 500
 
 def mesures : List Mesure := [
@@ -5016,8 +5017,8 @@ def mesures : List Mesure := [
     source := s!"Demande de l'auteur (novembre 2026) ; conseil ministériel de Brême, novembre 2025 : Allemagne 5,07 Md€ (5,4 aux conditions 2025), France 3,6 Md€ sur 2026-2028 (ESA, DLR, Sénat) ; {contributionEsaSupplement} M€ par an (voir `contributionEsaSupplement`)"
     leviers := [.depenseSur .affairesEconomiques contributionEsaSupplement] },
   { id := "O-188"
-    titre := "Dès que le déficit est résorbé : l'excédent rachète l'or vendu (jusqu'à la moitié du stock) et augmente les parts de l'État dans les entreprises, moitié-moitié"
-    source := s!"Demande de l'auteur (novembre 2026) ; excédent de l'année précédente placé en entier, {partOrPlacementPm / 10} % en or jusqu'à {valeurOr / 2} M€ (valeur 2025 de la moitié vendue par O-149), le reste en participations ; opérations financières, hors déficit (voir `partExcedentPlacePm`)"
+    titre := "Dès que le déficit est résorbé : la moitié de l'excédent rachète l'or vendu (jusqu'à la moitié du stock) et augmente les parts de l'État dans les entreprises, moitié-moitié ; l'autre moitié rembourse la dette"
+    source := s!"Demande de l'auteur (novembre 2026, « moitié de l'excédent seulement ») ; {partExcedentPlacePm / 10} % de l'excédent de l'année précédente placés, {partOrPlacementPm / 10} % en or jusqu'à {valeurOr / 2} M€ (valeur 2025 de la moitié vendue par O-149), le reste en participations ; opérations financières, hors déficit (voir `partExcedentPlacePm`)"
     leviers := [.placementExcedent partExcedentPlacePm partOrPlacementPm (valeurOr / 2)] }
 ]
 
