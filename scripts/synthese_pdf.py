@@ -1834,9 +1834,11 @@ def section_electricite(D: Donnees) -> list:
                                       nombre(sum(tend[i]["productionGwh"].values()) / 1000, 0))])
     rows.append(["Consommation"] + [x for i in jalons for x in ("", nombre(tend[i]["consommationGwh"] / 1000, 0))])
     rows.append(["Nucléaire modulé"] + [x for i in jalons for x in ("", nombre(tend[i].get("modulationGwh", 0) / 1000, 0))])
+    if any(e.get("ecretementGwh", 0) for e in tend):
+        rows.append(["Renouvelable écrêté"] + [x for i in jalons for x in ("", nombre(tend[i].get("ecretementGwh", 0) / 1000, 0))])
     out.append(KeepTogether([Spacer(1, 3), tableau(ent, rows, [0.22] + [0.13] * (2 * len(jalons)))]))
     ent = [f"{a1}", "Nucl. (GW)", "Éolien (GW)", "Solaire (GW)", "Autres (GW)",
-           "Produit", "Consommé", "Solde", "Modulé"]
+           "Produit", "Consommé", "Solde", "Modulé", "Écrêté"]
     rows = []
     for pid, nom in D.lignes():
         e = D.fin("central", pid)
@@ -1848,13 +1850,15 @@ def section_electricite(D: Donnees) -> list:
                      nombre(c["solaire"] / 1000, 1),
                      nombre((c["hydraulique"] + c["thermique"] + c["bioenergies"]) / 1000, 1),
                      nombre(prod, 1), nombre(cons, 1), signe(prod - cons, 1),
-                     nombre(gw_moyens(e.get("modulationGwh", 0)), 1)])
+                     nombre(gw_moyens(e.get("modulationGwh", 0)), 1),
+                     nombre(gw_moyens(e.get("ecretementGwh", 0)), 1)])
     out.append(Spacer(1, 4))
-    out.append(tableau(ent, rows, [0.25, 0.08, 0.08, 0.09, 0.09, 0.10, 0.11, 0.10, 0.10],
+    out.append(tableau(ent, rows, [0.23, 0.08, 0.08, 0.09, 0.09, 0.09, 0.10, 0.08, 0.08, 0.08],
                        surligner_premiere=True))
     out.append(P("Capacités installées en fin d'année ; « autres » : hydraulique, thermique fossile, "
-                 "bioénergies. Produit, consommé, solde (exportations et pompage) et production nucléaire "
-                 "modulée en GW moyens. La fin des soutiens aux nouvelles installations solaires et "
+                 "bioénergies. Produit, consommé, solde (exportations et pompage), production nucléaire "
+                 "modulée et production renouvelable écrêtée (programmes qui donnent la priorité au "
+                 "nucléaire : le surplus est retiré au solaire puis à l'éolien) en GW moyens. La fin des soutiens aux nouvelles installations solaires et "
                  "éoliennes (LR-04, RN-16) retire les volumes des appels d'offres de la PPE3 ; le nucléaire "
                  "module alors moins. Sources : RTE (bilans électriques 2023 à 2025, bilan prévisionnel "
                  "2025), décret PPE3 (voir Hypotheses/Electricite.lean).", "note"))
@@ -1921,7 +1925,8 @@ def section_energie_cout(D: Donnees) -> list:
                  "avec une élasticité de −0,10 (fourchette −0,05 à −0,20 dans la littérature : Marin et Vona ; "
                  "Fontagné, Martin et Orefice ; OCDE ; BCE), atteinte au tiers par an. Le coût est comparé à celui "
                  "qu'aurait le mix de départ aux mêmes prix du gaz et du CO<sub>2</sub> (les concurrents européens "
-                 "subissent ces prix-là) : seuls le mix et la modulation comptent. Un coût inférieur de 10 % attire "
+                 "subissent ces prix-là) : seuls le mix, la modulation du nucléaire et l'écrêtement des renouvelables "
+                 "comptent. Un coût inférieur de 10 % attire "
                  "donc, à terme, 1 % d'emplois industriels supplémentaires "
                  "(ouvertures, extensions, relocalisations) ; une hausse en fait partir. Ces emplois passent par "
                  "le canal emploi du modèle (production, salaires, cotisations) et s'ajoutent aux exportations."))

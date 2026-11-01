@@ -120,7 +120,11 @@ facteurs de charge observés par RTE, sur la capacité moyenne de l'année ;
 la consommation suit la trajectoire « décarbonation lente » du bilan
 prévisionnel 2025 de RTE, plus les voitures électriques du parc. La
 production que ni la consommation ni le solde exportateur maximal
-(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation). Le
+(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation) ou,
+si une mesure donne la priorité au nucléaire (`prioriteNucleaire`),
+écrêtée sur le solaire puis l'éolien (électricité non produite, donc non
+payée : hypothèse, les contrats de soutien récents ne rémunérant pas les
+heures de prix négatifs ; la part renouvelable baisse d'autant). Le
 modèle en déduit chaque année un coût d'équilibre de l'électricité des
 entreprises : coût complet du mix (nucléaire existant à coût annuel fixe,
 61 €/MWh pour 365 TWh, CRE ; renouvelables et cycles à gaz à leurs coûts
