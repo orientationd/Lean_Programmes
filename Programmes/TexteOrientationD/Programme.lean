@@ -3262,6 +3262,50 @@ plus tard) et coûts des travaux d'ouvrages d'art en hausse de 84 % de 2016
 def entretienInfrastructuresParAn : Int := 1000
 def anneesEntretien : Nat := 10
 
+/-- Suppression des effets de seuil (O-180), demande de l'auteur (novembre
+2026) : « rendre linéaire l'acquisition et la perte des droits, pour ne pas
+se sentir lésé en cas d'augmentation de revenu ». Règle : tout droit sous
+condition de ressources décroît de façon continue, jamais par marche, et la
+linéarisation part du dernier montant acquis (« par le haut », sans
+perdant). Marches identifiées (recherche documentaire de novembre 2026 ;
+déjà lissés : ARS, allocations familiales, CMG depuis septembre 2025,
+réversion, ASPA, AAH, RSA, prime d'activité, aides au logement, décote,
+CEHR) et coût d'un lissage par le haut, M€ par an (ordres de grandeur,
+hypothèses) :
+* complémentaire santé solidaire : participation proportionnelle au revenu
+  jusqu'à ≈ 18 000 € au lieu du double seuil (gratuite sous 10 421 €,
+  payante jusqu'à 14 069 €, puis rien : perte de 500 à 1 400 € par an ;
+  7,8 millions de bénéficiaires, DREES 2025) : 650 (300 à 1 000) ;
+* MaPrimeRénov' : taux d'aide continu au lieu des quatre catégories (saut
+  jusqu'à 14 000 € sur 40 000 € de travaux entre violet et rose, barème
+  Anah 2026) : 400 (100 à 400) ;
+* CSG des retraités : barème continu au lieu des taux 0, 3,8, 6,6 et
+  8,3 % (marches de 440 à 620 € par an, lissage de deux ans sur une seule
+  marche) : 350 (200 à 500) ;
+* bourses étudiantes : montant linéaire au lieu des huit échelons (marches
+  de 300 à 2 200 €) : 350 (étape 2 de la réforme de 2023, chiffrée puis
+  gelée en 2025) ; bourses de collège et de lycée : 100 ;
+* allocation de base et prime de naissance de la PAJE, complément familial
+  (marches de 1 060 à 2 360 €) : 350 (250 à 600) ;
+* chèque énergie : montant continu au lieu de quatre tranches : 150 ;
+* taxe foncière des plus de 75 ans et dégrèvements (seuils de revenu
+  fiscal, perte de 1 000 à 1 500 €) : sortie dégressive, 150 ;
+* allègements de cotisations à 3 SMIC et prime de partage de la valeur :
+  corrections paramétriques, coût non compté.
+Total ≈ 2,5 Md€ par an (1,5 à 3,5). Effet sur l'emploi : les taux marginaux
+effectifs au-dessus de 100 % ne touchent que 1,1 % des personnes en emploi
+(Insee Analyses n° 66, 2021) et la réponse aux barèmes de prestations est
+faible (élasticité ≈ 0,1, Sicsic 2022) : +0,01 à +0,1 % d'heures, trop
+faible et incertain pour être compté ; le gain est l'équité et le
+non-recours (66 % pour la C2S payante). Une microsimulation (Ines,
+TAXIPP) serait nécessaire pour compter les ménages au voisinage de chaque
+seuil : hors de portée du modèle agrégé. -/
+def lissageSeuilsFamille : Int := 350 + 100 + 350 + 150
+def lissageSeuilsSante : Int := 650
+def lissageSeuilsLogement : Int := 400
+def lissageSeuilsCsg : Int := 350
+def lissageSeuilsTaxeFonciere : Int := 150
+
 theorem pib_deux_valeurs :
     seniorsActifsParAn = 16087 ∧ meresEmploiParAn = 6250 ∧ postesCreche = [7500, 15000, 22500, 30000] ∧
     investissementCreche = [875, 875, 875, 875, 0] := by decide
@@ -4703,7 +4747,13 @@ def mesures : List Mesure := [
     titre := "Dette cachée d'entretien : rénovation accélérée des ouvrages d'art, chaussées et voies navigables, 1 Md€ par an pendant dix ans"
     source := s!"Demande de l'auteur (novembre 2026) ; retard d'entretien ≈ 12 Md€ fin 2025, +0,8 Md€ par an (Cerema 2025, Sénat 2022, audit 2018, Cour des comptes 2025) ; {entretienInfrastructuresParAn} M€ de travaux par an de 2027 à 2036, retirés du passif (voir `entretienInfrastructuresParAn`)"
     leviers := [.entretienPassifs .entretienInfrastructures .affairesEconomiques entretienInfrastructuresParAn]
-    repetitions := anneesEntretien }
+    repetitions := anneesEntretien },
+  { id := "O-180"
+    titre := "Suppression des effets de seuil : tout droit sous condition de ressources décroît de façon continue, sans marche (C2S, MaPrimeRénov', CSG des retraités, bourses, PAJE, chèque énergie, taxe foncière des aînés)"
+    source := s!"Demande de l'auteur (novembre 2026) ; lissage par le haut, sans perdant : prestations {lissageSeuilsFamille + lissageSeuilsSante + lissageSeuilsLogement} M€ par an, CSG {lissageSeuilsCsg} M€, taxe foncière {lissageSeuilsTaxeFonciere} M€ (ordres de grandeur, ≈ 2,5 Md€, fourchette 1,5 à 3,5) ; effet sur l'emploi non compté (voir `lissageSeuilsFamille`)"
+    leviers := [.depenseSur .famille lissageSeuilsFamille, .depenseSur .sante lissageSeuilsSante,
+                .depenseSur .logementEnvironnement lissageSeuilsLogement,
+                .prelevementSur .csgCrds (0 - lissageSeuilsCsg), .prelevementSur .taxeFonciere (0 - lissageSeuilsTaxeFonciere)] }
 ]
 
 def programme : Programme where
