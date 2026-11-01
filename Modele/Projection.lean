@@ -441,7 +441,18 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- thermique fossile
   let potentiel := ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).ajouter
     .thermique (0 - min s.dechargeStockageGwh ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).thermique)
-  let modulation := min potentiel.nucleaire (max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh))
+  let surplus := max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh)
+  -- priorité au nucléaire : écrêtement du solaire, puis de l'éolien
+  let ecretement : ParFiliere :=
+    if s.prioriteNucleaire then
+      let eSol := min surplus potentiel.solaire
+      let eTerre := min (surplus - eSol) potentiel.eolienTerrestre
+      let eMer := min (surplus - eSol - eTerre) potentiel.eolienMer
+      { solaire := eSol, eolienTerrestre := eTerre, eolienMer := eMer }
+    else {}
+  let modulation := min potentiel.nucleaire (surplus - ecretement.total)
+  let production := ((potentiel.ajouter .nucleaire (-modulation)).ajouter .solaire (-ecretement.solaire)
+    |>.ajouter .eolienTerrestre (-ecretement.eolienTerrestre)).ajouter .eolienMer (-ecretement.eolienMer)
   -- sols : consommation d'espaces (enveloppe du ZAN où s'imputent les
   -- surfaces des mesures, ou rythme d'avant la loi selon l'écart choisi par
   -- les mesures) ; emprise des installations nouvelles de solaire au sol et
@@ -457,10 +468,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let emissions := emissionsSuivantes H k s
   let s' : Etat := { s with
     capacitesMw := capacites
-    productionGwh := potentiel.ajouter .nucleaire (-modulation)
+    productionGwh := production
     modulationGwh := modulation
+    ecretementGwh := ecretement.total
     prixElectriciteEntreprisesEurosMWh := El.prixEntreprisesEurosMWh H.horizon (k + 1)
-      H.energie.prixBrentDollars H.energie.prixReferenceDollars (potentiel.ajouter .nucleaire (-modulation))
+      H.energie.prixBrentDollars H.energie.prixReferenceDollars production
     consommationBaseGwh := consoBase
     consommationGwh := consoElec
     surfacesAnneeHa := surfacesAnnee

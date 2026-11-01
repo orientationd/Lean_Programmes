@@ -454,6 +454,13 @@ inductive Levier where
   /-- Consommation d'électricité ajoutée par l'électrification d'usages,
   GWh/an (niveau, dès l'année). -/
   | consommationElectrique (gwhParAn : Int)
+  /-- Priorité au nucléaire : la production que ni la consommation ni le
+  solde exportateur maximal n'absorbent est écrêtée sur le solaire, puis
+  l'éolien terrestre, puis l'éolien en mer, avant toute modulation du
+  nucléaire. L'électricité écrêtée n'est pas produite donc pas payée
+  (hypothèse : les contrats de soutien récents ne rémunèrent pas les heures
+  de prix négatifs) ; le coût du mix baisse, la part renouvelable aussi. -/
+  | prioriteNucleaire
   /-- Stockage d'électricité (station de transfert d'énergie par pompage,
   souterraine ou non ; batteries) : `mw` MW de puissance, `heures` heures de
   stockage, `cyclesParAn` cycles complets par an, rendement aller-retour
@@ -1206,6 +1213,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .consommationElectrique g, s =>
       { s with consommationMesuresGwh := s.consommationMesuresGwh + g
                consommationGwh := s.consommationGwh + g }
+  | .prioriteNucleaire, s => { s with prioriteNucleaire := true }
   | .stockageElectrique mw h cycles rend g, s =>
       let charge := mw * h * cycles / 1000
       let restitue := charge * rend / 1000

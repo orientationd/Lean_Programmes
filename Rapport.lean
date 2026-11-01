@@ -182,6 +182,7 @@ def etatChamps (s : Etat) : List (String × Json) :=
     ("prixElectriciteEntreprisesEurosMWh", toJson s.prixElectriciteEntreprisesEurosMWh),
     ("emploisImplantationsEnergie", toJson s.emploisImplantationsEnergie),
     ("modulationGwh", toJson s.modulationGwh),
+    ("ecretementGwh", toJson s.ecretementGwh),
     ("surfacesHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesHa.get d))),
     ("surfacesAnneeHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesAnneeHa.get d))),
     ("ecartZanPm", toJson s.ecartZanPm),

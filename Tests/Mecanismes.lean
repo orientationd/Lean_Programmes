@@ -544,4 +544,20 @@ theorem cout_electricite_implantations :
       s3.emploi.industrie - a3.emploi.industrie < s3.emploisImplantationsEnergie - a3.emploisImplantationsEnergie + 1000 := by
   decide +kernel
 
+/-- Priorité au nucléaire : avec une capacité solaire massive, le surplus
+est écrêté sur le solaire, le nucléaire n'est plus modulé, et le coût de
+l'électricité est plus bas qu'avec la modulation (le coût fixe du
+nucléaire se répartit sur toute sa production) ; la production solaire
+retenue est moindre. -/
+theorem priorite_nucleaire :
+    let p := mesure (.capaciteElectrique .solaire 60000)
+    let q := { p with mesures := p.mesures ++ [{ id := "M-2", titre := "", source := "", leviers := [.prioriteNucleaire] }] }
+    let s3 := (Modele.Programme.trajectoire p D H 3 0 (etatDepart H)).getD 3 (etatDepart H)
+    let t3 := (Modele.Programme.trajectoire q D H 3 0 (etatDepart H)).getD 3 (etatDepart H)
+    0 < s3.modulationGwh ∧ s3.ecretementGwh = 0 ∧
+      t3.modulationGwh = 0 ∧ t3.ecretementGwh = s3.modulationGwh ∧
+      t3.productionGwh.solaire < s3.productionGwh.solaire ∧
+      t3.prixElectriciteEntreprisesEurosMWh < s3.prixElectriciteEntreprisesEurosMWh := by
+  decide +kernel
+
 end Tests.Mecanismes

@@ -1282,6 +1282,12 @@ structure Etat where
   /-- Production nucléaire écartée faute de débouchés (consommation et
   plafond du solde exportateur), GWh. -/
   modulationGwh : Int := 0
+  /-- Priorité au nucléaire (levier `prioriteNucleaire`) : la production en
+  surplus est écrêtée sur le solaire puis l'éolien, le nucléaire n'est
+  modulé qu'ensuite. -/
+  prioriteNucleaire : Bool := false
+  /-- Production renouvelable écrêtée faute de débouchés, GWh. -/
+  ecretementGwh : Int := 0
   /-- Coût complet moyen de l'électricité pour les entreprises l'année
   écoulée, €/MWh hors TVA (`Electricite.prixEntreprisesEurosMWh`) ; 0 avant
   la première projection. -/
