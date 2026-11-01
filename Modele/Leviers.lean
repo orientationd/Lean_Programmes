@@ -127,6 +127,16 @@ inductive Levier where
   part intérieure dans le secteur de la technologie, part importée aux
   importations ; aucune dépense publique. -/
   | investissementPriveTransition (techno : TechnoTransition) (niveaux : List Int)
+  /-- Déclaratif : le programme porte le taux marginal maximal d'imposition
+  d'un revenu (toutes impositions) à `pm` au moins (l'état garde le plus
+  haut). La propriété « DDHC art. 13 : imposition non confiscatoire » le
+  compare au seuil de la jurisprudence constitutionnelle. -/
+  | tauxMarginalSommet (pm : Int)
+  /-- Déclaratif : la mesure exige une révision de la Constitution
+  (`article`, p. ex. "art. 3", et `objet`). Une révision passe par l'article
+  89 (vote des deux assemblées puis référendum ou Congrès aux trois
+  cinquièmes) ; la propriété « Constitution inchangée » le signale. -/
+  | revisionConstitution (article objet : String)
   /-- Amende SRU automatique selon la part de logements sociaux manquants
   (barème et propriétés : `Modele/Logement.lean`). C'est un transfert des
   communes vers le FNAP et les établissements fonciers : **neutre sur le
@@ -211,6 +221,14 @@ inductive Levier where
   (négatif = moins d'entrées). Population et population active suivent
   (part active des migrants du scénario). -/
   | migration (deltaMilliersParAn : Int)
+  /-- Offre de travail : `actifs` personnes de plus dans la population active
+  (seniors, parents de jeunes enfants, inactifs ramenés vers l'emploi ;
+  niveau ajouté à chaque application), dont `tauxEmploiPm` trouvent un
+  emploi l'année même et produisent (PIB par le volume d'heures) ; les
+  autres sont chômeurs jusqu'à l'emploi d'équilibre, puis réabsorbés au
+  rythme du scénario (`absorptionChomagePm`). Un effet d'aubaine se traite en
+  n'inscrivant que les actifs supplémentaires. -/
+  | offreTravail (actifs tauxEmploiPm : Int)
   /-- Objectif d'emplois annoncé par le programme pour cette mesure
   (personnes). Déclaratif : n'agit pas sur le modèle, mais la propriété
   « emplois annoncés réalisables » vérifie que la somme des objectifs tient
@@ -277,6 +295,13 @@ inductive Levier where
   le seuil ; l'économie passe par le multiplicateur, pondérée par le
   moteur. Un programme n'a qu'un frein : un second levier le remplace. -/
   | freinDeficit (seuilPb : Int) (moderationPb : Int)
+  /-- Placement de l'excédent : dès que le budget de l'année précédente est
+  en excédent, `partPm` de cet excédent est placé, dont `partOrPm` en rachat
+  d'or (jusqu'à `plafondOrMeur` cumulés) et le reste en prises de
+  participation dans les entreprises (dividendes au rendement du
+  portefeuille de départ). Opérations financières : la dette ne baisse pas
+  d'autant, le déficit n'en est pas affecté. -/
+  | placementExcedent (partPm partOrPm plafondOrMeur : Int)
   /-- Recette à échéancier : impôt (`some i`, avec effet de demande pondéré
   comme un prélèvement) ou recette non fiscale (`none`, sans effet de
   demande : péages, redevances déjà acquittés par les usagers). Niveaux
@@ -365,6 +390,12 @@ inductive Levier where
   (« dettes cachées » : heures supplémentaires non payées…), payé l'année
   même comme des heures supplémentaires (dépense et déficit de l'année). -/
   | apurementPassifs (type : TypePassif) (fonction : Fonction) (partPm : Int)
+  /-- Résorption d'un retard d'entretien (`type`, en pratique
+  `entretienInfrastructures`) : `montant` M€ de travaux l'année même,
+  investissement d'une année (emplois dans la construction, capital public
+  au moteur d'offre), retirés du stock de passifs ; à répéter chaque année
+  (`repetitions`). -/
+  | entretienPassifs (type : TypePassif) (fonction : Fonction) (montant : Int)
   /-- Paiement au fil de l'eau de `partPm` des nouveaux passifs implicites
   du type `type` (heures supplémentaires payées l'année où elles sont
   faites) : dépense permanente, et le stock cesse de croître d'autant. -/
@@ -417,6 +448,14 @@ inductive Levier where
   `participationCiblePm` : coût des dépistages supplémentaires (santé), et
   décès évités par point de participation (axe économique). -/
   | depistageColorectal (participationCiblePm : Int)
+  /-- Décès annuels attribuables à la pollution de l'air ajoutés (`decesParAn`
+  positif : une règle qui améliorait l'air est supprimée) ou retirés
+  (négatif), en niveau ; les années de vie suivent (IDH). -/
+  | pollutionAir (decesParAn : Int)
+  /-- Baisse visée des décès d'une cause suivie (`CauseDeces`), pm des décès
+  attribuables de départ, atteinte au rythme du délai d'effet de la cause
+  (IDH par les années de vie) ; le coût passe par les autres leviers. -/
+  | baisseMortalite (cause : CauseDeces) (pm : Int)
   /-- Taux de scolarisation de chaque âge de 18 à 24 ans relevé de
   `hausseTauxPm` (places, bourses) : coût (dépense par étudiant) et durée
   attendue de scolarisation de l'IDH. -/
@@ -430,6 +469,13 @@ inductive Levier where
   /-- Consommation d'électricité ajoutée par l'électrification d'usages,
   GWh/an (niveau, dès l'année). -/
   | consommationElectrique (gwhParAn : Int)
+  /-- Priorité au nucléaire : la production que ni la consommation ni le
+  solde exportateur maximal n'absorbent est écrêtée sur le solaire, puis
+  l'éolien terrestre, puis l'éolien en mer, avant toute modulation du
+  nucléaire. L'électricité écrêtée n'est pas produite donc pas payée
+  (hypothèse : les contrats de soutien récents ne rémunèrent pas les heures
+  de prix négatifs) ; le coût du mix baisse, la part renouvelable aussi. -/
+  | prioriteNucleaire
   /-- Stockage d'électricité (station de transfert d'énergie par pompage,
   souterraine ou non ; batteries) : `mw` MW de puissance, `heures` heures de
   stockage, `cyclesParAn` cycles complets par an, rendement aller-retour
@@ -531,7 +577,11 @@ def chocPib (H : Scenario) (cible : Option Secteur) (dPib : Int) (s : Etat) : Et
 /-- Effet de demande d'une impulsion budgétaire signée (M€) : PIB via le
 multiplicateur, puis `chocPib`. -/
 def effetDemande (H : Scenario) (cible : Option Secteur) (impulsion : Int) (s : Etat) : Etat :=
-  chocPib H cible (appliquerPm impulsion H.eco.multiplicateurPm) s
+  let dPib := appliquerPm impulsion H.eco.multiplicateurPm
+  let s' := chocPib H cible dPib s
+  -- écart de demande suivi pour la résorption du moteur
+  { s' with ecartDemandeMeur := s'.ecartDemandeMeur + dPib
+            demandeCumuleeMeur := s'.demandeCumuleeMeur + dPib }
 
 /-- Stabilisateur automatique : la dépense d'indemnisation du chômage suit le
 nombre de chômeurs (écart à ceux que les dépenses inscrites couvrent déjà),
@@ -542,7 +592,9 @@ def stabilisateurChomage (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let d := if H.reference.etat.pib = 0 then 0
     else (chomeurs - s.chomeursComptes) * H.eco.coutParChomeurEuros * s.pib
       / (H.reference.etat.pib * 1000000)
-  effetDemande H none (appliquerPm d M.multiplicateurPrelevementsPm)
+  -- réponse automatique au chômage : pas suivie pour la résorption (elle se
+  -- retourne d'elle-même quand le chômage revient)
+  chocPib H none (appliquerPm (appliquerPm d M.multiplicateurPrelevementsPm) H.eco.multiplicateurPm)
     { s with depensesF := s.depensesF.ajouter .famille d, chomeursComptes := chomeurs }
 
 /-- Part des achats non électriques qu'une aide de `aideEuros` rend
@@ -924,6 +976,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                                 depensesF := s.depensesF.ajouter tech.fonction n
                                 importations := s.importations + n * (1000 - part) / 1000 }
       effetDemande H (some tech.secteur) (appliquerPm (n * (part - subst) / 1000) (poidsEcheance H e)) s'
+  | .tauxMarginalSommet pm, s => { s with tauxMarginalSommetPm := max s.tauxMarginalSommetPm pm }
+  | .revisionConstitution a o, s => { s with revisionsConstitution := s.revisionsConstitution ++ [s!"{a} ({o})"] }
   | .investissementPriveTransition _ [], s => s
   | .investissementPriveTransition tech (n :: reste), s =>
       let part := partInterieure H (H.energie.partImporteeTransitionPm.get tech)
@@ -959,6 +1013,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .depenseSecteur sec m, s => appliquerDepense H (some sec) .nonVentile m s
   | .pretEtat m, s => { s with operationsFinancieres := s.operationsFinancieres + m }
   | .migration d, s => { s with migrationAnnuelleMilliers := s.migrationAnnuelleMilliers + d }
+  | .offreTravail d taux, s =>
+      let emplois := appliquerPm d taux
+      let equilibre := if s.actifs = 0 then 0 else d * s.emploiTotal / s.actifs
+      let s₁ : Etat := { s with actifs := s.actifs + d
+                                chomeursExcedentaires := s.chomeursExcedentaires + (equilibre - emplois) }
+      chocEmploi H emplois (ajouterEmploi H none emplois s₁)
   | .accueilTouristique zones cout hT hD, s =>
       let s₁ := appliquerInvestissement H .affairesEconomiques (zones * cout) s
       let s₂ := { s₁ with touristesMilliers := s₁.touristesMilliers + appliquerPm s₁.touristesMilliers hT
@@ -1014,6 +1074,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
   | .freinDeficit seuil m, s =>
       { s with freinDeficitSeuilPb := seuil, freinDeficitPb := m }
+  | .placementExcedent part partOr plafond, s =>
+      { s with placementExcedentPm := part, partOrPlacementPm := partOr, plafondOrRacheteMeur := plafond }
   | .recetteEcheancier _ [], s => s
   | .recetteEcheancier i (n :: reste), s =>
       let e : EcheanceRecette := { impot := i, restants := reste, niveau := n, indice := 10000 }
@@ -1089,6 +1151,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let montant := s.passifs.get t * part / 1000
       remunerationUneAnnee M H .heuresSup f montant
         { s with passifs := s.passifs.ajouter t (-montant) }
+  | .entretienPassifs t f montant, s =>
+      let m := max 0 (min montant (s.passifs.get t))
+      let e : Echeance := { fonction := f, restants := [0], niveau := montant, indice := 10000,
+                            secteur := some .construction }
+      appliquerInvestissement H f montant
+        { s with echeances := s.echeances ++ [e], passifs := s.passifs.ajouter t (-m) }
   | .paiementFluxPassifs t f part, s =>
       let montant := s.fluxPassifs.get t * part / 1000
       let e : Echeance := { fonction := f, restants := [], niveau := montant, indice := 10000,
@@ -1147,6 +1215,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       appliquerDepense H Fonction.sante.secteur .sante cout
         { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter .cancerColorectal
                    (points * H.eco.baisseDecesColorectalParPointPm / 10) }
+  | .baisseMortalite c pm, s =>
+      { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter c pm }
+  | .pollutionAir d, s =>
+      { s with decesPollutionAir := max 0 (s.decesPollutionAir + d)
+               anneesVieGagneesParAn := s.anneesVieGagneesParAn
+                 - d * H.demo.anneesVieParDecesPollutionDixiemes / 10 }
   | .scolarisationJeunes h, s =>
       let etudiants := 7 * H.eco.jeunesParGenerationMilliers * h   -- milliers × pm → personnes
       appliquerDepense H Fonction.enseignement.secteur .enseignement
@@ -1162,6 +1236,7 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .consommationElectrique g, s =>
       { s with consommationMesuresGwh := s.consommationMesuresGwh + g
                consommationGwh := s.consommationGwh + g }
+  | .prioriteNucleaire, s => { s with prioriteNucleaire := true }
   | .stockageElectrique mw h cycles rend g, s =>
       let charge := mw * h * cycles / 1000
       let restitue := charge * rend / 1000

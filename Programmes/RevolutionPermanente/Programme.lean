@@ -92,7 +92,8 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .enseignement coutRevenuEtudiant] },
   { id := "RP-08", titre := "Suppression de la présidence de la République et du Sénat"
     source := s!"Poligraph (20 août 2026) ; RP, 1er juin 2026 : assemblée unique élue pour deux ans, élus payés au salaire médian ; dotations supprimées : {dotationsSupprimees} M€ par an (voir `dotationsSupprimees`) ; Conseil constitutionnel et rémunération des élus non chiffrés"
-    leviers := [.economieSur .fonctionnement dotationsSupprimees] }
+    leviers := [.economieSur .fonctionnement dotationsSupprimees,
+                .revisionConstitution "titres II, IV et XVI" "suppression de la présidence de la République et du Sénat, assemblée unique"] }
 ]
 
 def programme : Programme where

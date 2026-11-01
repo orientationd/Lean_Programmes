@@ -91,6 +91,14 @@ rendementPm gCo2ParKwh` (la restitution remplace le thermique fossile de
 pointe, la charge est prise au nucléaire, les pertes s'ajoutent à la
 consommation).
 
+Moteurs : outre les multiplicateurs, l'effet des prélèvements sur la
+croissance et le canal du capital, un moteur fixe la résorption des effets
+de demande des mesures (`resorptionDemandePm`, part de l'écart résorbée
+chaque année au-delà de la part durable `partDemandeDurablePm`). Toute
+impulsion passée par `effetDemande` est suivie ; les chocs d'offre
+(heures, productivité, activité perdue, canal du capital) et la réponse
+automatique au chômage ne le sont pas.
+
 Règle budgétaire : `freinDeficit seuilPb moderationPb` durcit la norme de
 dépense des fonctions pilotables l'année qui suit un déficit au-dessus du
 seuil (frein automatique, qui ne joue que dans les scénarios concernés).
@@ -123,11 +131,22 @@ leur vignette Crit'Air (`vignetteCritAir`), dont dépendent les particules
 
 Accidents du travail : `preventionAccidents fondsMeur baissePm` (fonds
 publics et baisse du taux d'accidents ; le sous-modèle calcule coûts
-évités, journées rendues et décès). Textes européens : les propriétés
+évités, journées rendues et décès). Constitution : deux leviers
+déclaratifs, `tauxMarginalSommet pm` (taux marginal maximal d'imposition
+d'un revenu créé par la mesure, toutes impositions confondues ; l'état
+garde le plus haut) et `revisionConstitution article objet` (la mesure
+exige une révision) ; les propriétés `constitution-*`
+(`Proprietes/Constitution.lean`) les comparent à la jurisprudence et aux
+textes listés dans `Hypotheses/Constitution.lean`, avec le solde structurel
+(`Etat.deficitStructurelPb`, écart de production `Etat.ecartProductionPb`)
+et les dépenses par tête. Textes européens : les propriétés
 `ue-*` (`Proprietes/Europe.lean`) traduisent les règles listées dans
 `Hypotheses/Europe.lean` ; en ajouter une = un texte cité + un critère.
 
-Marché du travail : la loi d'Okun est exprimée en chômage ; les emplois
+Offre de travail : `offreTravail actifs tauxEmploiPm` (seniors, parents,
+inactifs ramenés vers l'emploi : actifs en plus, dont une part en emploi
+l'année même, le reste réabsorbé au rythme du scénario) ; n'inscrire que
+les actifs supplémentaires, nets de l'aubaine. Marché du travail : la loi d'Okun est exprimée en chômage ; les emplois
 s'en déduisent avec l'effet de flexion (`emploisPourChomeurs`,
 `chocDemandeTravail`). Les chocs d'offre de
 travail des mesures (âge de départ, migrations, réallocations par
@@ -151,11 +170,34 @@ transfert aux ménages, sans emplois publics en plus ; recruter reste un
 cachées »), suivis par type (`TypePassif` : `.heuresSupPolice`,
 `.heuresSupHopital`) : `apurementPassifs type fonction partPm` paie une
 part du stock l'année même, `paiementFluxPassifs type fonction partPm`
-paie le flux au fil de l'eau ; le rapport donne chaque stock et la dette
+paie le flux au fil de l'eau ; `entretienPassifs type fonction montant`
+résorbe un retard d'entretien (`.entretienInfrastructures` : ouvrages
+d'art, chaussées, voies navigables, ≈ 12 Md€ fin 2025 et +0,8 Md€ par an)
+par des travaux d'une année (emplois dans la construction, capital
+public), à répéter ; le rapport donne chaque stock et la dette
 étendue. Investissement échelonné (bâtiments, équipements) :
 `investissementEcheancier fonction niveaux` (emplois dans la construction,
 dernier niveau reconduit, 0 pour arrêter) ; le fonctionnement des
 équipements livrés est un `depenseEcheancier` à part.
+Coût de l'électricité des entreprises (`Electricite.prixEntreprisesEurosMWh`,
+`Hypotheses/Electricite.lean` : coûts par filière, prix du gaz et du CO₂,
+marge, réseau, taxes, prix 2024 des autres pays pour la synthèse) et
+facteur d'implantation (`elasticiteEmploiIndustrielPrixElecPm`,
+`ajustementImplantationsPm`, état `emploisImplantationsEnergie`) : l'écart
+de coût au mix de départ, aux mêmes prix du gaz et du CO₂, déplace des
+emplois industriels par `chocEmploi` ; mettre l'élasticité à 0 pour
+isoler un mécanisme (scénario `base` des tests, rétro-test). Levier
+`prioriteNucleaire` (sans paramètre) : le surplus est écrêté sur le
+solaire, l'éolien terrestre puis l'éolien en mer avant toute modulation
+du nucléaire (état `prioriteNucleaire`, `ecretementGwh`). `pollutionAir
+decesParAn` : décès attribuables à la pollution de l'air ajoutés (règle
+supprimée) ou retirés, en niveau, années de vie suivies. Technologie de
+transition `ascenseur` (pose dans la construction, un quart importé, aide
+aux propriétaires sans capital public). `placementExcedent partPm partOrPm
+plafondOrMeur` : dès qu'une année finit en excédent, une part en est placée
+l'année suivante en rachat d'or (plafonné, état `orRacheteMeur`) et en
+prises de participation (dividendes au rendement de départ) ; opérations
+financières, dans la dette, hors déficit.
 Incidence des prélèvements : l'effet d'un prélèvement sur la demande est
 le niveau moyen du moteur (`multiplicateurPrelevementsPm`) réparti selon
 l'impôt (`incidencePrelevementPm`, axe économique) : la TVA et les

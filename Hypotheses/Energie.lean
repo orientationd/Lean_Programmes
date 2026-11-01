@@ -345,11 +345,17 @@ recherche documentaire d'octobre 2026, valeurs centrales.
 * Bioéthanol (E85) : 100 (solde extérieur des biocarburants essence
   positif, ADEME 2024).
 * Biogaz (captage en décharge, fosses couvertes) : 350 (moteurs et torchères
-  importés ; hypothèse). -/
+  importés ; hypothèse).
+* Ascenseurs (remplacement et modernisation) : 250 (matériel ≈ la moitié du
+  coût d'une opération, le reste en pose, études et main-d'œuvre ; sur le
+  matériel, Otis fabrique à Gien ≈ 13 000 appareils et kits par an, les
+  autres grands fabricants importent ; 85 % des pièces viennent de France
+  ou d'Europe selon la Fédération des Ascenseurs ; hypothèse : moitié du
+  matériel importée). -/
 def partImporteeTransition : ParTechno :=
   { pompeAChaleur := 450, vehiculeElectrique := 750, vehiculeUtilitaire := 620, solaire := 340,
     eolien := 600, renovation := 200, reseauChaleur := 200, hvo := 800, biogazole := 550,
-    bioethanol := 100, biogaz := 350 }
+    bioethanol := 100, biogaz := 350, ascenseur := 250 }
 
 /-- Achats d'équipements fossiles remplacés par la dépense de transition,
 pm de la dépense saisie (champ `substitutionBruneTransitionPm`).

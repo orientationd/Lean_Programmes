@@ -173,13 +173,14 @@ end ParTranche
 
 /-- Causes de décès sur lesquelles agissent des leviers de santé publique. -/
 inductive CauseDeces where
-  | tabac | alcool | cancerColorectal
+  | tabac | alcool | cancerColorectal | arretCardiaque
   deriving Repr, DecidableEq, Inhabited
 
 namespace CauseDeces
-def tous : List CauseDeces := [.tabac, .alcool, .cancerColorectal]
+def tous : List CauseDeces := [.tabac, .alcool, .cancerColorectal, .arretCardiaque]
 def id : CauseDeces → String
   | .tabac => "tabac" | .alcool => "alcool" | .cancerColorectal => "cancerColorectal"
+  | .arretCardiaque => "arretCardiaque"
 end CauseDeces
 
 /-- Une valeur par cause de décès. -/
@@ -187,16 +188,19 @@ structure ParCause where
   tabac : Int := 0
   alcool : Int := 0
   cancerColorectal : Int := 0
+  arretCardiaque : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParCause
 def get (v : ParCause) : CauseDeces → Int
   | .tabac => v.tabac | .alcool => v.alcool | .cancerColorectal => v.cancerColorectal
+  | .arretCardiaque => v.arretCardiaque
 def ajouter (v : ParCause) (c : CauseDeces) (d : Int) : ParCause :=
   match c with
   | .tabac => { v with tabac := v.tabac + d }
   | .alcool => { v with alcool := v.alcool + d }
   | .cancerColorectal => { v with cancerColorectal := v.cancerColorectal + d }
+  | .arretCardiaque => { v with arretCardiaque := v.arretCardiaque + d }
 /-- Toutes les composantes sont dans `[lo, hi]`. -/
 def toutEntre (v : ParCause) (lo hi : Int) : Bool :=
   CauseDeces.tous.all fun c => decide (lo ≤ v.get c ∧ v.get c ≤ hi)
@@ -879,12 +883,16 @@ inductive TypePassif where
   | heuresSupPolice
   /-- Heures supplémentaires non payées ni récupérées à l'hôpital public. -/
   | heuresSupHopital
+  /-- Retard d'entretien des infrastructures publiques (ouvrages d'art,
+  chaussées, voies navigables) : travaux nécessaires non faits. -/
+  | entretienInfrastructures
   deriving Repr, DecidableEq, Inhabited
 
 /-- Un montant par type de passif implicite, M€. -/
 structure ParPassif where
   police : Int := 0
   hopital : Int := 0
+  infrastructures : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParPassif
@@ -892,13 +900,15 @@ namespace ParPassif
 def get (v : ParPassif) : TypePassif → Int
   | .heuresSupPolice => v.police
   | .heuresSupHopital => v.hopital
+  | .entretienInfrastructures => v.infrastructures
 
 def ajouter (v : ParPassif) (t : TypePassif) (d : Int) : ParPassif :=
   match t with
   | .heuresSupPolice => { v with police := v.police + d }
   | .heuresSupHopital => { v with hopital := v.hopital + d }
+  | .entretienInfrastructures => { v with infrastructures := v.infrastructures + d }
 
-def total (v : ParPassif) : Int := v.police + v.hopital
+def total (v : ParPassif) : Int := v.police + v.hopital + v.infrastructures
 
 theorem total_ajouter (v : ParPassif) (t : TypePassif) (d : Int) :
     (v.ajouter t d).total = v.total + d := by
@@ -1089,6 +1099,33 @@ structure Etat where
   investissementPublicMesures : ParFonction := ParFonction.depuis (fun _ => 0)
   capitalPublicMesures : Int := 0
   effetCapitalPublicPpm : Int := 0
+  /-- Effets de demande des mesures (impulsions passées par
+  `effetDemande`), M€ courants : écart de PIB qu'il en reste
+  (`ecartDemandeMeur`) et somme des écarts initiaux (`demandeCumuleeMeur`),
+  tous deux indexés sur le PIB nominal ; la résorption du moteur
+  (`resorptionDemandePm`) referme chaque année une part de l'écart au-delà
+  de sa part durable. -/
+  ecartDemandeMeur : Int := 0
+  demandeCumuleeMeur : Int := 0
+  /-- Écart de production cumulé dû à la trajectoire du scénario (croissance
+  en volume moins croissance potentielle, années passées), pb du PIB ; avec
+  l'écart de départ et les effets de demande des mesures, il forme l'écart
+  de production (`Etat.ecartProductionPb`), dont dépendent l'inflation
+  (courbe de Phillips) et le solde structurel. -/
+  ecartCycleScenarioPb : Int := 0
+  /-- Taux marginal maximal d'imposition d'un revenu, toutes impositions
+  confondues (impôt sur le revenu, contribution exceptionnelle sur les hauts
+  revenus, CSG-CRDS ou prélèvements sociaux), pm. Départ : 554 pour un
+  salaire (barème à 45 %, contribution de 4 % au-delà de 500 000 €, CSG-CRDS
+  de 9,7 % dont 6,8 points déductibles : 9,7 + 49 × (1 − 0,068) ≈ 55,4 %,
+  calcul ; hors cotisations) ; 340 pour un revenu du capital (prélèvement
+  forfaitaire de 30 % et contribution de 4 %). Les mesures le relèvent par
+  le levier `tauxMarginalSommet` (déclaratif : le modèle ne connaît pas les
+  barèmes). -/
+  tauxMarginalSommetPm : Int := 554
+  /-- Articles de la Constitution dont le programme déclare qu'il doit les
+  réviser (levier `revisionConstitution`). -/
+  revisionsConstitution : List String := []
   /-- Canal du capital des entreprises : écart du taux effectif d'IS fixé par
   les mesures au taux du scénario, pb ; variation des recettes d'IS due à ce
   taux (réponse de l'assiette comprise), M€ courants, qui croît comme l'IS ;
@@ -1180,6 +1217,18 @@ structure Etat where
   elles accroissent la dette sans entrer dans le déficit (opérations
   financières) et augmentent le portefeuille. -/
   investissementsParticipations : Int := 0
+  /-- Placement de l'excédent (levier `placementExcedent`) : part de
+  l'excédent budgétaire de l'année précédente placée, pm (0 : inactif), et
+  part de ce placement consacrée au rachat d'or, le reste à des prises de
+  participation ; plafond cumulé du rachat d'or, M€. -/
+  placementExcedentPm : Int := 0
+  partOrPlacementPm : Int := 0
+  plafondOrRacheteMeur : Int := 0
+  /-- Placements de l'année écoulée (or, participations), M€, et or racheté
+  cumulé, M€ : opérations financières, dans la dette, pas dans le déficit. -/
+  placementOrAnnee : Int := 0
+  placementParticipationsAnnee : Int := 0
+  orRacheteMeur : Int := 0
   /-- Calendrier légal de l'âge de départ : hausses des années suivantes,
   mois par an (tête = année prochaine). -/
   calendrierAgeLegal : List Int := []
@@ -1249,6 +1298,19 @@ structure Etat where
   /-- Production nucléaire écartée faute de débouchés (consommation et
   plafond du solde exportateur), GWh. -/
   modulationGwh : Int := 0
+  /-- Priorité au nucléaire (levier `prioriteNucleaire`) : la production en
+  surplus est écrêtée sur le solaire puis l'éolien, le nucléaire n'est
+  modulé qu'ensuite. -/
+  prioriteNucleaire : Bool := false
+  /-- Production renouvelable écrêtée faute de débouchés, GWh. -/
+  ecretementGwh : Int := 0
+  /-- Coût complet moyen de l'électricité pour les entreprises l'année
+  écoulée, €/MWh hors TVA (`Electricite.prixEntreprisesEurosMWh`) ; 0 avant
+  la première projection. -/
+  prixElectriciteEntreprisesEurosMWh : Int := 0
+  /-- Emplois industriels gagnés (perdus) par le facteur d'implantation lié
+  au prix réel de l'électricité, cumul (niveau atteint). -/
+  emploisImplantationsEnergie : Int := 0
   /-- Consommation d'électricité hors voitures électriques et hors mesures,
   GWh (tendance du scénario). -/
   consommationBaseGwh : Int := 0
@@ -1365,12 +1427,13 @@ def soldePrimaire (s : Etat) : Int := s.recettes - s.depensesPrimaires
 /-- Déficit en pb du PIB. -/
 def deficitPb (s : Etat) : Int := ratioPb s.deficit s.pib
 
+
 /-- Dette publique (Maastricht) en fin d'année, M€ : celle de fin d'année
 précédente, plus le déficit de l'année (mesures comprises), les opérations
 financières et l'ajustement dette-déficit de l'année. -/
 def dette (s : Etat) : Int :=
   s.detteDebut + s.deficit + s.operationsFinancieres + s.investissementsParticipations
-    + s.ajustementDetteAnnee
+    + s.placementOrAnnee + s.placementParticipationsAnnee + s.ajustementDetteAnnee
 
 /-- Émissions totales, Mt CO₂e (arrondi au Mt le plus proche). -/
 def emissionsMt (s : Etat) : Int := (s.emissionsKt.total + 500) / 1000
@@ -1401,7 +1464,7 @@ d'année précédente plus le déficit, les opérations financières et
 l'ajustement de l'année. -/
 theorem dette_identite (s : Etat) :
     s.dette - s.detteDebut = s.deficit + s.operationsFinancieres + s.investissementsParticipations
-      + s.ajustementDetteAnnee := by
+      + s.placementOrAnnee + s.placementParticipationsAnnee + s.ajustementDetteAnnee := by
   simp [dette]; omega
 
 /-- Emploi total, personnes. -/

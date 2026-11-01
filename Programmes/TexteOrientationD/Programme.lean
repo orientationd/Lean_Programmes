@@ -2697,7 +2697,12 @@ Le rythme total (≈ 14 GW de solaire par an avec la tendance, soit 33 GW de plu
 double du record de 2025 (5,9 GW) : risque élevé, d'abord sur le
 raccordement (≈ 10 % du territoire saturé, délais de plus de cinq ans,
 Connaissance des énergies, juillet 2026). Le solaire en plus remplace du
-nucléaire dans le modèle, pas du gaz : pas d'effet sur les émissions. -/
+nucléaire dans le modèle, pas du gaz : pas d'effet sur les émissions.
+
+Mesure retirée en novembre 2026 avec la priorité au nucléaire (O-181) :
+sans modulation, ce solaire aurait été écrêté aux quatre cinquièmes et la
+part de 40 % n'est plus atteignable ; les constantes restent (O-163c
+renvoie à l'estimation de la sobriété). -/
 def solaireSolParAnMw : Int := 4500
 def solaireToitParAnMw : Int := 3750
 def soutienToitEurosMWh : Int := (8298 - 66 * (100 - 32)) / 100
@@ -2769,25 +2774,55 @@ theorem fonds_valeurs : reservesConverties = 72300 ∧ revenusPerdus = 1807 := b
 (octobre 2026), sur le modèle de l'impôt foncier danois (« grundskyld » :
 23,2 Md DKK en 2024, ≈ 0,8 % du PIB, Danmarks Statistik) et des théories de
 Henry George : impôt sur la seule valeur des terrains, pas sur les
-constructions. Assiette : terrains bâtis hors administrations publiques,
-5 826 Md€ fin 2024 (6 729 Md€ en tout, Insee Première n° 2081) ; abattement
-de 50 000 € de terrain sur la résidence principale de ≈ 17,7 millions de
-propriétaires occupants (30,6 millions de résidences principales, 58 %
-occupées par leur propriétaire, Insee ; calcul) ; taux de 0,5 %. Loi en
-2027, évaluation de masse en 2028 à partir des ventes (DVF), demi-taux en
-2029, plein taux en 2030 ; report de paiement possible jusqu'à la
-succession pour les retraités modestes. Le moins distorsif des impôts : il
-ne frappe ni le travail ni la construction, et pénalise la rétention
-foncière (comme O-140) ; les prix des terrains baisseraient une fois pour
-toutes. Acceptabilité très faible ; s'ajoute à la taxe foncière. -/
+constructions. Depuis novembre 2026, à la demande de l'auteur, le taux est
+**progressif selon la surface de la parcelle** par logement ou local (en
+collectif, parcelle répartie au prorata des surfaces habitables, méthode du
+SDES), et les terrains **agricoles et industriels sont exclus** : les
+terres agricoles ne sont pas des terrains bâtis (comptes de patrimoine) ;
+les terrains industriels et logistiques, ≈ 200 Md€ (100 à 300 : ≈ 60 % des
+450 000 ha de zones d'activité à 40 à 80 €/m², calcul, Cerema 2022), sont
+retirés de l'assiette. Assiette : terrains bâtis hors administrations
+publiques, 5 826 Md€ fin 2024 (ménages 4 043, sociétés non financières
+1 596, sociétés financières 186 ; Insee Première n° 2081), moins
+l'industriel : ≈ 5 600 Md€, répartis en trois classes de surface par
+logement ou local (calcul, hypothèses sur les répartitions ; médiane de
+732 m² pour les maisons et 68 m² pour les appartements, SDES, empreinte
+foncière 2022 ; maisons : 35 % sous 500 m², 51 % de 500 à 2 000, 14 %
+au-delà, enquête Logement 2013 ; la valeur d'un terrain est à peu près la
+même quelle que soit sa taille, le prix du m² décroissant avec la surface,
+EPTB) : ≈ 3 450 Md€ sous 500 m², ≈ 1 600 Md€ de 500 à 2 000 m², ≈ 580 Md€
+au-delà de 2 000 m² (fourchettes 3 100-3 700, 1 350-1 900, 400-800).
+Barème (hypothèse, modèle taïwanais pour le critère de surface) : 0,25 %,
+0,5 % et 1 % de la valeur de la parcelle selon sa classe ; abattement de
+50 000 € de terrain sur la résidence principale de ≈ 17,7 millions de
+propriétaires occupants (30,6 millions de résidences principales, 58 %,
+Insee), imputé pour 70 % à la première classe et 30 % à la deuxième
+(hypothèse). Loi en 2027, évaluation de masse en 2028 à partir des ventes
+(DVF), demi-taux en 2029, plein taux en 2030 ; report de paiement possible
+jusqu'à la succession pour les retraités modestes. Le moins distorsif des
+impôts : il ne frappe ni le travail ni la construction, et pénalise la
+rétention foncière (comme O-140) ; la progressivité par surface épargne les
+appartements et frappe surtout le rural peu dense, où le mètre carré vaut
+peu : l'essentiel du produit vient des petites parcelles. Version
+précédente : taux unique de 0,5 % (24,7 Md€), porté à 1,15 % puis 0,575 %
+par O-169, retirée. Acceptabilité faible ; s'ajoute à la taxe foncière. -/
 def valeurSolHorsApu : Int := 5826000
+def valeurSolIndustriel : Int := 200000
+def valeurSolClasses : List Int := [3450000, 1600000, 580000]
+def tauxSolClassesPcm : List Int := [250, 500, 1000]
 def proprietairesOccupantsMilliers : Int := 30600 * 58 / 100
 def abattementSolEuros : Int := 50000
-def tauxSolPdm : Int := 50
+def abattementSol : Int := proprietairesOccupantsMilliers * abattementSolEuros / 1000
+def abattementSolClassesPm : List Int := [700, 300, 0]
 def contributionSol : Int :=
-  (valeurSolHorsApu - proprietairesOccupantsMilliers * abattementSolEuros / 1000) * tauxSolPdm / 10000
+  (List.range 3).foldl (fun acc k =>
+    acc + (valeurSolClasses.getD k 0 - abattementSol * abattementSolClassesPm.getD k 0 / 1000)
+      * tauxSolClassesPcm.getD k 0 / 100000) 0
+/-- Taux moyen apparent, pour dix mille (information : ≈ 0,34 %). -/
+def tauxSolPdm : Int := contributionSol * 10000 / (valeurSolHorsApu - valeurSolIndustriel)
 
-theorem sol_valeurs : contributionSol = 24693 := by decide
+theorem sol_valeurs : valeurSolClasses.foldl (· + ·) 0 = valeurSolHorsApu - valeurSolIndustriel + 4000 ∧
+    abattementSol = 887400 ∧ contributionSol = 19540 ∧ tauxSolPdm = 34 := by decide
 
 /-- Fin de l'effacement des plus-values latentes au décès (O-152), mesure
 originale en France (octobre 2026) : à la transmission, les plus-values
@@ -2962,13 +2997,14 @@ def soutienSolaireSupplement : List Int :=
       * demiAnnees / 2 * productionSolaireGwhParGw / 1000000
 
 /-- Finances pour l'équilibre en 2035, la règle européenne de −1 point de
-dette par an et le financement du paquet climat (O-164 à O-169), demande
+dette par an et le financement du paquet climat (O-164 à O-171), demande
 de l'auteur (octobre 2026). Au rang qui décide (neuvième meilleur des
 dix-huit scénarios économiques), il manquait ≈ 0,5 point de déficit en
 2030, ≈ 0,8 point en 2035 et ≈ 6,5 points de dette, plus ≈ 15 Md€ par an
 pour le climat. Trois familles : opérations sur la dette sans effet sur
 l'activité (O-164), recettes à faible effet sur la demande (O-167, O-168,
-O-170, O-171), contribution sur le sol relevée (O-169). Essai : la
+O-170, O-171), contribution sur le sol relevée (O-169, retirée en novembre
+2026 au profit du barème progressif d'O-151). Essai : la
 consolidation des réserves de l'Agirc-Arrco, du RCI et du Fonds de garantie
 des dépôts, un dividende exceptionnel du fonds d'épargne de la Caisse des
 dépôts et le droit d'entrée des concessions hydroélectriques permettraient
@@ -3016,19 +3052,6 @@ def ttfElargie : Int := 1500
 def prelevementFondsEpargne : Int := 1600
 def redevanceFrequences : Int := 300
 
-/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 0,575 %,
-même assiette et même calendrier. Elle était portée à 1,15 % ; l'auteur la
-réduit de moitié (octobre 2026 : « réduit la contribution sur le sol de
-moitié »), pour l'acceptabilité. Taux du supplément en pour cent mille
-(0,075 %). Avec O-151, la contribution rapporte ≈ 28 Md€ par an à plein
-taux au lieu de ≈ 57 Md€ (calcul). À 1,15 %, comme dès 1 %, les impôts sur
-l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de l'OCDE (Danemark :
-7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-Galles du Sud : 1,6 à 2 %
-au-delà de 1,075 M A$, résidence principale exonérée) : acceptabilité très
-faible. -/
-def tauxSolSupplementPcm : Int := 75
-def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPcm / (tauxSolPdm * 10)
-
 /-- Transition décrite finement (leviers `transitionEcologique`,
 `investissementTransition`, `investissementPriveTransition` du modèle
 commun) : paramètres propres aux mesures du programme, recherche
@@ -3074,6 +3097,230 @@ def chauffageGazKt : Int := (3780 + 1150) * 600 / 1000 + 450
 def chauffageFioulKt : Int := (3780 + 1150) * 400 / 1000
 def biofioulKt : Int := 1630
 
+/-- Mesures originales pour le PIB (O-172 à O-174), demande de l'auteur
+(octobre 2026) : « trouve des moyens d'augmenter le PIB et garder les
+propriétés », mesures originales. Dans le modèle commun, le PIB monte
+surtout par les heures travaillées, la population active et la
+productivité ; recherche documentaire d'octobre 2026.
+
+Budget réglementaire (O-172) : les coûts administratifs imposés aux
+entreprises valent au moins 3 % du PIB (≈ 60 Md€ par an, chiffre du
+gouvernement repris par le Sénat, rapport d'information n° 743, juin 2023,
+p. 12 ; jusqu'au double selon le même rapport). La Commission européenne
+estimait qu'une baisse de 25 % de coûts valant 3,5 % du PIB relèverait le
+PIB de ≈ 1,4 % à moyen terme (communication COM(2007)23, §1.1, modèle
+WorldScan du CPB ; jusqu'à 1,8 % avec QUEST) : ≈ 1,6 point de PIB par point
+de coûts supprimés (calcul). Pour la France : 25 % de 3 % = 0,75 point,
+soit ≈ +1,2 % de PIB ; la moitié seulement est retenue, car les
+simplifications annoncées se réalisent mal (43 % des mesures du Conseil de
+la simplification non effectives, Sénat 2017, repris par l'iFRAP ;
+hypothèse) : +0,6 % de PIB, par cinquièmes de 2027 à 2031. Autorité
+indépendante de mesure des coûts (modèle néerlandais ATR) : 30 M€ par an
+(hypothèse). -/
+def coutAdministratifPibPb : Int := 300
+def baisseCoutsAdministratifsPm : Int := 250
+def rendementPibSimplificationPm : Int := 1600
+def realisationSimplificationPm : Int := 500
+def anneesSimplification : Nat := 5
+def gainSimplificationParAnPb : Int :=
+  coutAdministratifPibPb * baisseCoutsAdministratifsPm / 1000 * rendementPibSimplificationPm / 1000
+    * realisationSimplificationPm / 1000 / anneesSimplification
+def autoriteNormes : Int := 30
+
+/-- Visa diplômé France (O-173) : droit au séjour et au travail de trois
+ans, sans autorisation de travail, pour tout diplômé de master ou de
+doctorat d'un établissement français (modèle de la Graduate Route
+britannique de 2021 et du permis post-diplôme canadien). ≈ 118 000
+premiers titres étudiants en 2025 (DGEF, juin 2026) ; cinq ans après leur
+arrivée, 21 % des étudiants étrangers sont encore en France avec un statut
+économique (CAE, note n° 67, novembre 2021, p. 12). +10 points de rétention
+(hypothèse) : ≈ 11 800 personnes de plus par an dans le solde migratoire,
+actives à la part des migrants du scénario (60 %, prudent pour des
+diplômés). Contribution budgétaire des immigrés : de −0,5 à +0,5 % du PIB
+(CAE, p. 6) ; le FMI trouve jusqu'à +2 % de PIB par habitant à long terme
+par point de migrants dans la population adulte (Jaumotte et al., 2016). -/
+def premiersTitresEtudiants : Int := 118000
+def hausseRetentionDiplomesPm : Int := 100
+def visaDiplomeMilliersParAn : Int := premiersTitresEtudiants * hausseRetentionDiplomesPm / 1000 / 1000
+
+/-- Droit au rachat des RTT (O-174) : le salarié peut exiger le paiement de
+cinq jours de RTT par an, majorés de 10 % (aujourd'hui, l'employeur peut
+refuser ; rachat possible jusqu'au 31 décembre 2026, avec déduction de
+cotisations patronales), sans exonération : neutre pour les finances
+publiques. 8 millions de salariés ont des RTT, 13 jours en moyenne
+(Institut Montaigne, 2022, d'après l'Insee et le Sénat) ; recours de la
+moitié (hypothèse, milieu de la fourchette de 25 à 100 % de l'Institut
+Montaigne) ; 7 heures par jour ; ≈ 45 milliards d'heures travaillées par an
+(≈ 30 millions d'emplois × 1 500 h, calcul) : ≈ +0,3 % d'heures. Risque :
+la détaxation des heures supplémentaires de 2007 a relevé les heures
+déclarées, pas les heures réelles (Cahuc et Carcillo, 2011). -/
+def salariesRttMilliers : Int := 8000
+def joursRachetables : Int := 5
+def recoursRachatPm : Int := 500
+def heuresParJour : Int := 7
+def heuresTravailleesMillions : Int := 45000
+def heuresRachatPm : Int :=
+  salariesRttMilliers * 1000 * joursRachetables * recoursRachatPm / 1000 * heuresParJour * 1000
+    / (heuresTravailleesMillions * 1000000)
+
+theorem pib_originales_valeurs :
+    gainSimplificationParAnPb = 12 ∧ visaDiplomeMilliersParAn = 11 ∧ heuresRachatPm = 3 := by decide
+
+/-- Deuxième série de mesures pour le PIB (O-175 à O-178), demande de
+l'auteur (novembre 2026) : « cherche des solutions pour augmenter le PIB en
+respectant les propriétés le plus possible ». Dans le modèle, le PIB monte
+par la productivité, les heures et la population active en emploi ; le
+levier `offreTravail` (actifs supplémentaires, part en emploi) a été ajouté
+pour les seniors et les parents. Recherche documentaire de novembre 2026.
+
+Concurrence (O-175) : liberté d'installation des notaires, huissiers,
+pharmacies et taxis (fin du numerus clausus et des licences), ouverture du
+capital des professions du droit et de la santé, tarifs réglementés revus
+tous les deux ans, fin des monopoles de distribution (pièces détachées
+visibles, médicaments sans ordonnance en grande surface). Repère : pour la
+loi croissance et activité de 2015, l'OCDE estimait +0,3 % de PIB potentiel
+à cinq ans et +0,4 % à dix ans (note remise au ministre le 18 septembre
+2015, cinq blocs de mesures) ; une réforme « typique » de la réglementation
+des marchés de produits vaut +0,7 % de PIB par habitant à cinq ans (Égert
+et Gal, OCDE, document de travail n° 1354, 2016). La mesure, plus large que
+la loi de 2015, en reprend le chiffrage, prudent : +6 pb de PIB par an de
+2027 à 2031, puis +2 pb par an de 2032 à 2036. Coût public : nul
+(indemnisation des offices non chiffrée, hypothèse). -/
+def concurrenceGainParAnPb : Int := 6
+def concurrenceGainSuitePb : Int := 2
+def anneesConcurrence : Nat := 5
+
+/-- Emploi des seniors (O-176) : surcote doublée (2,5 % par trimestre au
+lieu de 1,25 %) de l'âge légal à 67 ans, et cumul emploi-retraite libre dès
+l'âge légal dans les métiers en tension. 4,29 millions de 60-64 ans
+(Insee, 1er janvier 2025) ; taux d'emploi de 42,4 % (Dares, 2024) contre
+56,5 % en moyenne dans l'OCDE (Panorama des pensions 2025). Effets mesurés :
+la surcote de 2003 a relevé de 7,5 points (+16 %) la probabilité de
+travailler après 60 ans chez les éligibles (Benallah, Économie et
+Statistique n° 441-442, 2011) ; la suppression du plafond de cumul aux
+États-Unis, +0,8 à 2 points de participation des 65-69 ans (Song et
+Manchester, 2007). Retenu : +1,5 point de taux d'emploi des 60-64 ans
+(fourchette 0,8 à 2,5 ; hypothèse), soit ≈ 65 000 emplois par quarts de
+2027 à 2030, 90 % en emploi dès l'année (ce sont des personnes qui
+prolongent leur activité). Coût : 14 % des nouveaux retraités du régime
+général liquident avec surcote (8,5 à 9,5 trimestres, DREES) ; doubler la
+surcote ≈ +0,1 Md€ par cohorte, cumulatif (calcul), soit 1 Md€ par an au
+bout de dix ans. -/
+def seniorsActifsParAn : Int := 4290000 * 15 / 1000 / 4
+def seniorsTauxEmploiPm : Int := 900
+def surcoteCoutParCohorte : Int := 100
+
+/-- Petite enfance (O-177) : 100 000 places de crèche de plus de 2027 à
+2030 et droit opposable à une place dès un an (le service public de la
+petite enfance visait +100 000 places en 2027 et +200 000 en 2030, annonce
+du 1er juin 2023 ; les places ont baissé de 0,6 % en 2023). Taux d'emploi
+des mères d'un enfant de moins de trois ans : 73 %, 70 % et 49 % selon le
+nombre d'enfants, contre 79, 84 et 66 % quand le plus jeune a trois ans
+(DREES, REPSS Famille 2024). Effets causaux : +10 points de couverture →
++3,4 à 3,7 points d'emploi des mères en Allemagne (Bauernschuster et
+Schlotter, 2015), +1,1 point en France pour la PAJE de 2004 (Givord et
+Marbot, 2015), ≈ 0 en Norvège (garde informelle remplacée) : 0,1 à 0,35
+emploi de mère par place, 0,25 retenu (hypothèse) : +25 000 mères en
+emploi, par quarts. Emplois directs : 0,3 équivalent temps plein par place
+(hypothèse ; coût de revient de 19 450 € par place et par an, CNAF 2024,
+dont ≈ 70 % de personnel) : 30 000 postes à 45 000 € ; investissement de
+35 000 € par place (hypothèse) : 875 M€ par an. -/
+def placesCrecheParAn : Int := 25000
+def meresParPlacePm : Int := 250
+def meresEmploiParAn : Int := placesCrecheParAn * meresParPlacePm / 1000
+def postesParPlacePm : Int := 300
+def postesCreche : List Int := (List.range 4).map fun (k : Nat) => placesCrecheParAn * postesParPlacePm / 1000 * (Int.ofNat k + 1)
+def investissementCrecheParPlace : Int := 35000
+def investissementCreche : List Int :=
+  (List.replicate 4 (placesCrecheParAn * investissementCrecheParPlace / 1000000)) ++ [0]
+
+/-- Temps partiel subi (O-178) : droit au temps complet (l'employeur accepte
+la demande de passage à temps plein ou justifie d'un motif économique,
+comme la loi néerlandaise de 2016 sur le travail flexible) et heures
+complémentaires majorées de 25 % dès la première. 4,3 millions de salariés
+à temps partiel (17,6 %), 23,1 heures par semaine, 21,3 % « faute de temps
+complet » (Insee, enquête Emploi 2025) ; sous-emploi : 4,3 % des personnes
+en emploi (≈ 1,3 million). Un quart du temps partiel subi résorbé en cinq
+ans (≈ 300 000 personnes, +12 heures par semaine) vaudrait ≈ +100 000
+équivalents temps plein ; la moitié retenue (hypothèse, les heures
+déclarées pouvant dépasser les heures réelles) : +2 ‰ d'heures par emploi,
+par moitiés en 2027 et 2028. Coût public nul. -/
+def heuresTempsPartielPm : Int := 1
+
+/-- Dette cachée d'entretien (O-179), demande de l'auteur (novembre 2026) :
+« rénovation des ouvrages d'art accélérée, maintenance en général,
+enveloppe de 1 milliard par an ». Le modèle commun suit depuis novembre
+2026 un passif « retard d'entretien des infrastructures » : ≈ 12 Md€ fin
+2025 (ouvrages d'art routiers ≈ 6 Md€, dont 3,3 Md€ pour les ponts et murs
+des petites communes, Cerema, Programme national ponts, bilan d'octobre
+2025 ; chaussées nationales ≈ 4,5 Md€ ; voies navigables 1,1 Md€), qui
+grossit de ≈ 0,8 Md€ par an (`Hypotheses.Reference`). L'enveloppe de
+1 Md€ par an pendant dix ans (fonds ponts des collectivités et entretien
+courant : 0,5 Md€ ; chaussées nationales : 0,35 Md€ ; voies navigables :
+0,15 Md€) résorbe ≈ 10 Md€ sur ≈ 20 Md€ de retard cumulé en 2035 ; travaux
+publics : ≈ 5,5 emplois directs par million d'euros (FNTP, calcul) ; un
+entretien différé coûte ≈ 3 fois plus en curatif (audit du réseau routier
+national, 2018). Limite : capacité des maîtrises d'ouvrage communales (la
+moitié des ouvrages subventionnés en 2023 sans travaux engagés deux ans
+plus tard) et coûts des travaux d'ouvrages d'art en hausse de 84 % de 2016
+à 2023.
+
+Maintenance renforcée (demande de l'auteur, novembre 2026) : l'enveloppe
+passe à 1,8 Md€ par an pendant douze ans, soit 1 Md€ de résorption du
+retard et 0,8 Md€ d'entretien courant égal au flux annuel de dégradation :
+le stock cesse de croître et se résorbe de 1 Md€ par an, à zéro vers 2038 ;
+l'État remplace ensuite l'enveloppe par l'entretien courant seul. -/
+def entretienInfrastructuresParAn : Int := 1800
+def anneesEntretien : Nat := 12
+
+/-- Suppression des effets de seuil (O-180), demande de l'auteur (novembre
+2026) : « rendre linéaire l'acquisition et la perte des droits, pour ne pas
+se sentir lésé en cas d'augmentation de revenu ». Règle : tout droit sous
+condition de ressources décroît de façon continue, jamais par marche, et la
+linéarisation part du dernier montant acquis (« par le haut », sans
+perdant). Marches identifiées (recherche documentaire de novembre 2026 ;
+déjà lissés : ARS, allocations familiales, CMG depuis septembre 2025,
+réversion, ASPA, AAH, RSA, prime d'activité, aides au logement, décote,
+CEHR) et coût d'un lissage par le haut, M€ par an (ordres de grandeur,
+hypothèses) :
+* complémentaire santé solidaire : participation proportionnelle au revenu
+  jusqu'à ≈ 18 000 € au lieu du double seuil (gratuite sous 10 421 €,
+  payante jusqu'à 14 069 €, puis rien : perte de 500 à 1 400 € par an ;
+  7,8 millions de bénéficiaires, DREES 2025) : 650 (300 à 1 000) ;
+* MaPrimeRénov' : taux d'aide continu au lieu des quatre catégories (saut
+  jusqu'à 14 000 € sur 40 000 € de travaux entre violet et rose, barème
+  Anah 2026) : 400 (100 à 400) ;
+* CSG des retraités : barème continu au lieu des taux 0, 3,8, 6,6 et
+  8,3 % (marches de 440 à 620 € par an, lissage de deux ans sur une seule
+  marche) : 350 (200 à 500) ;
+* bourses étudiantes : montant linéaire au lieu des huit échelons (marches
+  de 300 à 2 200 €) : 350 (étape 2 de la réforme de 2023, chiffrée puis
+  gelée en 2025) ; bourses de collège et de lycée : 100 ;
+* allocation de base et prime de naissance de la PAJE, complément familial
+  (marches de 1 060 à 2 360 €) : 350 (250 à 600) ;
+* chèque énergie : montant continu au lieu de quatre tranches : 150 ;
+* taxe foncière des plus de 75 ans et dégrèvements (seuils de revenu
+  fiscal, perte de 1 000 à 1 500 €) : sortie dégressive, 150 ;
+* allègements de cotisations à 3 SMIC et prime de partage de la valeur :
+  corrections paramétriques, coût non compté.
+Total ≈ 2,5 Md€ par an (1,5 à 3,5). Effet sur l'emploi : les taux marginaux
+effectifs au-dessus de 100 % ne touchent que 1,1 % des personnes en emploi
+(Insee Analyses n° 66, 2021) et la réponse aux barèmes de prestations est
+faible (élasticité ≈ 0,1, Sicsic 2022) : +0,01 à +0,1 % d'heures, trop
+faible et incertain pour être compté ; le gain est l'équité et le
+non-recours (66 % pour la C2S payante). Une microsimulation (Ines,
+TAXIPP) serait nécessaire pour compter les ménages au voisinage de chaque
+seuil : hors de portée du modèle agrégé. -/
+def lissageSeuilsFamille : Int := 350 + 100 + 350 + 150
+def lissageSeuilsSante : Int := 650
+def lissageSeuilsLogement : Int := 400
+def lissageSeuilsCsg : Int := 350
+def lissageSeuilsTaxeFonciere : Int := 150
+
+theorem pib_deux_valeurs :
+    seniorsActifsParAn = 16087 ∧ meresEmploiParAn = 6250 ∧ postesCreche = [7500, 15000, 22500, 30000] ∧
+    investissementCreche = [875, 875, 875, 875, 0] := by decide
+
 /-- Foncière de l'État (O-170) : cession d'un quart des bureaux de l'État
 en dix ans (23 millions de m², valeur comptable 73,7 Md€ ; cessions de
 0,2 à 0,3 Md€ par an aujourd'hui ; projet de foncière de l'État, Sénat,
@@ -3092,13 +3339,239 @@ theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 �
     chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
     soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧
     devisesVendues = 14200 ∧ chauffageGazKt + chauffageFioulKt + biofioulKt = chauffageKt ∧
-    investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 ∧
-    contributionSolSupplement = 3703 := by decide
+    investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
 avec le même partage en chèque énergie. -/
 def multipleCarboneEssai : Int := 8
+
+/-- Plan de rénovation des ascenseurs (O-182), demande de l'auteur
+(novembre 2026). Parc : 661 000 ascenseurs en 2025, dont ≈ 25 % de plus
+de 40 ans (≈ 165 000) et 40 % de plus de 25 ans ; ≈ 2 900 remplacements
+complets par an (taux de renouvellement de 0,45 %, plus de deux siècles
+pour renouveler le parc) ; 1,5 million de pannes par an, 126 000
+personnes bloquées en cabine ; 17 200 salariés, chiffre d'affaires de
+2,83 Md€ (Fédération des Ascenseurs 2025-2026 ; rapport AN n° 704, janvier
+2025). Le plan remplace les 165 000 appareils de plus de 40 ans en onze
+ans (15 000 par an, cinq fois le rythme actuel ; la filière installe
+11 000 appareils neufs par an et recrute 1 000 à 2 000 personnes par an :
+risque d'exécution élevé les premières années), à 75 000 € par appareil
+(remplacement complet : ≈ 30 000 € pour cinq niveaux, jusqu'à 300 000 €
+pour une tour ; moyenne pondérée, hypothèse). L'État subventionne 30 % des
+travaux (taux de MaPrimeRénov' Copropriété ; ANAH pour les copropriétés,
+ANRU-PNRU3 pour le logement social), soit 338 M€ par an ; les
+copropriétés et les bailleurs financent le reste (prêts de la Banque des
+Territoires), 70 % de 12 100 appareils réellement supplémentaires (les
+2 900 remplacements tendanciels sont subventionnés sans être ajoutés :
+effet d'aubaine de 19 %), soit 635 M€ par an d'investissement privé
+déclenché. Chaque appareil remplacé consomme ≈ 2 000 kWh de moins par an
+(≈ 3 400 kWh pour un appareil ancien, ≈ 1 200 pour un récent ; Fédération
+des Ascenseurs, Kone) et appelle ≈ 40 % de dépannages en moins (bailleur
+ayant remplacé 200 appareils sur 700, 2026). Non comptés : pannes évitées,
+personnes âgées maintenues à domicile, accidents (≈ 1 décès par an). -/
+def ascenseursAnciens : Int := 165000
+def remplacementsAscenseursParAn : Int := 15000
+def remplacementsAscenseursTendanciels : Int := 2900
+def coutRemplacementAscenseurEuros : Int := 75000
+def partEtatAscenseursPm : Int := 300
+def economieAscenseurKwh : Int := 2000
+def anneesPlanAscenseurs : Nat := 11
+def travauxAscenseursParAn : Int := remplacementsAscenseursParAn * coutRemplacementAscenseurEuros / 1000000
+def subventionAscenseursParAn : Int := travauxAscenseursParAn * partEtatAscenseursPm / 1000
+def investissementPriveAscenseurs : Int :=
+  (remplacementsAscenseursParAn - remplacementsAscenseursTendanciels) * coutRemplacementAscenseurEuros
+    * (1000 - partEtatAscenseursPm) / 1000 / 1000000
+def economieAscenseursGwhParAn : Int :=
+  (remplacementsAscenseursParAn - remplacementsAscenseursTendanciels) * economieAscenseurKwh / 1000000
+
+theorem ascenseurs_eq : travauxAscenseursParAn = 1125 ∧ subventionAscenseursParAn = 337 ∧
+    investissementPriveAscenseurs = 635 ∧ economieAscenseursGwhParAn = 24 ∧
+    remplacementsAscenseursParAn * anneesPlanAscenseurs = ascenseursAnciens := by decide
+
+/-- Suppression des zones à faibles émissions à terme et de la vignette
+Crit'Air (O-183), demande de l'auteur (novembre 2026). Droit en vigueur :
+loi Climat et résilience de 2021 (ZFE obligatoires dans les agglomérations
+de plus de 150 000 habitants ; Crit'Air 3 interdites à Paris et Lyon
+depuis le 1er janvier 2025, sanctions à Lyon depuis juillet 2026, à Paris
+pas avant 2027) ; l'abrogation votée dans la loi de simplification (avril
+2026) a été censurée comme cavalier législatif (Conseil constitutionnel,
+21 mai 2026) ; la proposition de loi d'abrogation n'a pas été votée le
+8 octobre 2026. La mesure abroge les ZFE au 1er janvier 2029 (deux ans
+pour les alternatives) et la vignette Crit'Air (la circulation différenciée
+des pics de pollution, 0 à 3 jours par an, revient à l'alternance des
+plaques). Effet sanitaire : les ZFE accélèrent le renouvellement du parc
+(+5,8 points de Crit'Air 1 et E en deux ans, −4,6 points de NOx du parc,
+Insee Analyses n° 124, août 2026) ; décès évités à terme par l'ensemble des
+ZFE, si elles étaient appliquées : ≈ 150 par an (fourchette 30 à 350 ;
+Airparif 2024 : −2,2 % des 5 040 décès attribuables du Grand Paris pour
+l'étape Crit'Air 3 ; ORS Île-de-France 2018 : 110 à 340). Le modèle
+compte ces décès non évités, par tiers de 2029 à 2031, sur les 40 000
+décès attribuables aux particules fines du tendanciel. Finances : aides
+spécifiques aux ZFE de l'État inférieures à 5 M€ par an depuis la fin de la
+prime à la conversion (Sénat 2023) ; vignette (3,85 €, ≈ 2,5 millions par
+an) au coût de fabrication, sans recette nette ; contrôle automatisé non
+chiffré publiquement (pas d'économie comptée). Les 0,5 million de voitures
+Crit'Air 3 et plus des territoires de Paris et Lyon (SDES 2024, attrition
+d'un cinquième par an) ne sont plus remplacées par anticipation : dépense
+des ménages reportée, sans effet net compté ; effet sur le parc électrique
+négligeable (le renouvellement induit va surtout vers l'essence Crit'Air
+1). -/
+def decesZfeNonEvitesParAn : Int := 50
+def anneesZfe : Nat := 3
+def economieAidesZfe : Int := 5
+
+/-- Compensation sanitaire de la fin des ZFE (O-183c) : 10 000 voitures
+Crit'Air 5 ou non classées de plus par an remplacées par une électrique
+d'occasion récente (12 000 € : hypothèse, prix moyen d'une citadine
+électrique de trois à cinq ans ; part importée comme O-01), de 2029 à 2035
+(sept vagues, 70 000 voitures), en plus des 90 000 d'O-01 : 160 000 des
+1,2 million de Crit'Air 5 et non classées du parc. Le modèle en déduit
+≈ 47 décès évités par an en 2035 (6,75 par vague de 10 000), de quoi
+rester sous la mortalité du tendanciel après les ≈ 150 décès des ZFE. -/
+def remplacementOccasion : Remplacement :=
+  { remplacement with prixUnitaire := 12000 }
+def vaguesOccasion : Nat := 7
+
+/-- Formation aux premiers secours obligatoire au lycée (O-184), demande de
+l'auteur (novembre 2026). Droit : l'article L. 312-13-1 du code de
+l'éducation (loi « citoyen sauveteur » du 3 juillet 2020) prévoit
+l'apprentissage des gestes pendant la scolarité obligatoire, sans le lycée
+ni objectif chiffré ; ≈ 30 % des élèves de 3e sont certifiés PSC1
+(2022-2023, ministère ; 44 % en 2017-2018), aucun suivi au lycée ; la
+proposition de loi Castiglione (100 % des 3e en 2030) a été retirée en
+mai 2025. La mesure : formation PSC (7 h) en seconde pour les élèves non
+certifiés et recyclage de 3 h en terminale pour tous. Effectifs (DEPP,
+rentrée 2025) : 802 500 entrants au lycée (seconde générale et
+technologique 558 700, seconde professionnelle 184 700, CAP 59 100), dont
+≈ 70 % sans PSC1, soit 560 000 ; 684 000 élèves de terminale. Coût : 60 €
+par formation complète (tarif moyen, ministère, 2023 ; 35 à 40 € en
+interne avec les 7 000 enseignants formateurs) et 27 € par recyclage
+(3 h : calcul au prorata), soit 34 + 18 = 52 M€ par an, arrondis à 50 M€
+avec le matériel et la formation des formateurs (il faudrait les
+doubler) ; dépense d'enseignement. Effet : 46 000 arrêts cardiaques
+extrahospitaliers par an, survie ≈ 7 %, réanimation par un témoin dans
+36 % des cas (RéAC, ARLoD 2024) contre 45 % au Danemark après la formation
+scolaire de 2005 (21 % avant) et plus de 80 % en Norvège ; porter la survie
+à 10-14 % éviterait 1 400 à 3 200 décès par an toutes mesures confondues ;
+part attribuable à la seule formation lycéenne : 20 à 40 %, soit 300 à
+1 300 décès par an à plein régime (calcul), retenus à 600, soit 1,5 % des
+40 000 décès de la cause, atteints en quinze ans (≈ 300 par an en 2035).
+Preuve causale faible (GRADE), mise en œuvre partielle des lois scolaires
+ailleurs (Danemark : 28 % des classes formées huit ans après la loi). -/
+def elevesSecondeAFormer : Int := 560000
+def elevesTerminale : Int := 684000
+def coutPscEuros : Int := 60
+def coutRecyclagePscEuros : Int := 27
+def depensePremiersSecours : Int := 50
+def baisseDecesArretCardiaquePm : Int := 15
+
+theorem premiers_secours_eq :
+    (elevesSecondeAFormer * coutPscEuros + elevesTerminale * coutRecyclagePscEuros) / 1000000 = 52 ∧
+    40000 * baisseDecesArretCardiaquePm / 1000 = 600 := by decide
+
+/-- Remboursement de la chirurgie réfractive (O-185 : Lasik, PKR, SMILE,
+implants), demande de l'auteur (novembre 2026). Aujourd'hui hors
+nomenclature (acte « de confort », TVA à 20 %), prise en charge par les
+complémentaires pour quatre assurés sur cinq (305 € par œil en moyenne,
+DREES 2024) ; 150 000 à 200 000 yeux opérés par an (ANSM 2021, Revue du
+Praticien 2021 ; retenu 180 000), 1 000 à 2 000 € par œil au laser
+(retenu 1 300) ; aucun pays ne rembourse l'acte de routine (Pays-Bas :
+indications médicales strictes). La mesure : tarif de responsabilité de
+1 500 € par œil remboursé à 70 % (1 050 €), le reste pris par les
+complémentaires sous contrat responsable. Demande : reste à charge
+quasi nul, 3 % des amétropes opérés et 15 % intéressés (KCE 2013), flux
+multiplié par 2,5 (fourchette 1,5 à 4) en trois ans, limité par l'offre
+(5 800 ophtalmologistes, 130 lasers) : 180 000, 270 000 puis 450 000 yeux
+par an, soit 189, 326 (à mi-montée) puis 473 M€ par an. Économie sur l'optique
+remboursée : faible, l'Assurance maladie ne finance que 345 M€ des 8,3 Md€
+d'optique (4 %, DREES 2024), ≈ 20 € par an et par opéré, soit ≈ 4,5 M€ par
+cohorte de 225 000 opérés (calcul), déduite de la dépense ; les économies
+des complémentaires (≈ 150 € par porteur et par an) et des ménages ne sont
+pas publiques. TVA perdue sur l'activité existante : 234 M€ × 1/6 = 39 M€
+par an (calcul ; les actes induits n'en payaient pas). Non comptés :
+retouches (11 % à dix ans), presbytie après 45 ans, éviction de l'activité
+médicale des ophtalmologistes (cataracte, rétine) vers le réfractif. -/
+def yeuxOperesParAn : Int := 180000
+def multiplicateurChirurgieRefractivePm : Int := 2500
+def tarifResponsabiliteOeilEuros : Int := 1500
+def tauxRemboursementOeilPm : Int := 700
+def economieOptiqueParCohorte : Int := 45    -- dixièmes de M€ par an et par cohorte
+def tvaPerdueChirurgieRefractive : Int := yeuxOperesParAn * 1300 / 6 / 1000000
+def depenseOeil : Int := tarifResponsabiliteOeilEuros * tauxRemboursementOeilPm / 1000
+/-- Yeux remboursés par année : montée en charge en trois ans. -/
+def yeuxRembourses (k : Nat) : Int :=
+  let plein := yeuxOperesParAn * multiplicateurChirurgieRefractivePm / 1000
+  if k = 0 then yeuxOperesParAn else if k = 1 then (yeuxOperesParAn + plein) / 2 else plein
+/-- Dépense nette de l'année `k`, M€ : remboursements moins l'optique
+économisée par les cohortes déjà opérées. -/
+def depenseChirurgieRefractive (k : Nat) : Int :=
+  yeuxRembourses k * depenseOeil / 1000000 - Int.ofNat k * economieOptiqueParCohorte / 10
+def chirurgieRefractiveNiveaux : List Int := (List.range 10).map depenseChirurgieRefractive
+
+theorem chirurgie_refractive_eq : depenseOeil = 1050 ∧ tvaPerdueChirurgieRefractive = 39 ∧
+    chirurgieRefractiveNiveaux = [189, 326, 463, 459, 454, 450, 445, 441, 436, 432] := by decide
+
+/-- Avion de combat du futur de sixième génération (O-186), demande de
+l'auteur (novembre 2026). Le pilier « avion » du SCAF franco-allemand a été
+abandonné en juin 2026 (constat d'échec Macron-Merz, ILA Berlin ; seuls les
+drones et le réseau de combat survivent) ; la France développe seule l'ACF
+avec Dassault, Safran et Thales : démonstration lancée en 2027,
+développement à partir de 2029, démonstrateur en vol en 2031-2032,
+service vers 2040 (ministre des Armées, 8 octobre 2026 ; chef d'état-major
+de l'armée de l'air, 14 octobre 2026). Crédits inscrits : 2,74 Md€
+d'autorisations d'engagement et 558 M€ de crédits de paiement en 2027
+(PLF 2027, programme 146), dans une LPM actualisée (loi n° 2026-791) qui
+n'avait budgété le SCAF qu'à hauteur de ≈ 0,5 Md€ par an. Coût d'un
+programme national : « nettement en dessous de 50 Md€ » selon Dassault,
+25 à 35 Md€ de développement sur 2027-2040 selon la presse spécialisée
+(1,8 à 2,5 Md€ par an), le Rafale ayant coûté 44 Md€ (prix 2011) pour le
+développement et la série ; le GCAP britannico-italo-japonais vise 2035
+(Italie : 18,6 Md€ pour les phases 1 et 2). La mesure sécurise le
+financement à 2,1 Md€ par an en rythme de croisière (30 Md€ sur quatorze
+ans, hypothèse médiane) en ajoutant à la trajectoire de la LPM, qui
+monte de 0,56 à ≈ 0,9 Md€ par an de crédits de paiement (hypothèse), la
+différence : 0,3 Md€ en 2027, 0,6 en 2028, 1,0 en 2029, 1,2 Md€ par an
+de 2030 à 2035, en dépense de défense (industrie nationale : Dassault,
+Safran, Thales ; part importée de la dépense de défense du modèle). Elle
+contredit en partie O-43 (−1 Md€ par an sur la défense), gardé : le
+programme arbitre entre les équipements. -/
+def avionCombatFutur : List Int := [300, 600, 1000, 1200]
+
+/-- Contribution à l'Agence spatiale européenne dépassant l'allemande
+(O-187), demande de l'auteur (novembre 2026). Conseil ministériel de Brême
+(novembre 2025, 22,3 Md€ souscrits sur 2026-2028) : Allemagne 5,07 Md€
+(5,4 aux conditions économiques de 2025, 23 %), France 3,6 Md€ (16 %, +12 %
+par rapport à 2022), Italie 3,5, Espagne 1,85, Royaume-Uni 1,7 (ESA, DLR,
+Sénat, avis PLF 2026 ; la France contribuait ≈ 1,07 Md€ par an en 2024,
+plus de la moitié du programme 193). Dépasser l'Allemagne aux conditions
+courantes demande ≈ 1,9 Md€ de plus sur trois ans : 630 M€ par an à partir
+de 2027, souscrits aux programmes optionnels (lanceurs, Ariane 6 et
+European Launcher Challenge, observation de la Terre, exploration,
+connectivité), au bénéfice de la filière française par le retour
+géographique (ArianeGroup, Airbus Defence and Space, Thales Alenia Space ;
+≈ 30 000 emplois spatiaux, dont 20 000 industriels) ; dépense d'affaires
+économiques (recherche), traitée comme une dépense intérieure (le retour
+géographique de l'ESA approche 90 % ; hypothèse). -/
+def contributionEsaSupplement : Int := 630
+
+/-- Rachat de l'or et montée de l'État au capital des entreprises dès que le
+déficit est résorbé (O-188), demande de l'auteur (novembre 2026). Dès
+qu'une année se termine en excédent, la moitié de l'excédent est placée
+l'année suivante, l'autre moitié remboursant la dette (opération
+financière : la dette baisse moitié moins, le déficit n'en est pas
+affecté) : pour moitié en rachat d'or par la Banque de France pour
+le compte de l'État, jusqu'à reconstituer la valeur de la moitié vendue par
+O-149 (`valeurOr / 2`, ≈ 128 Md€ au cours de 2025 : les 1 218 tonnes
+vendues, hypothèse de cours constant), pour moitié en prises de
+participation dans les entreprises (Agence des participations de l'État,
+Bpifrance ; dividendes au rendement du portefeuille actuel, O-47 en
+donne le rythme de 100 M€ par an sans attendre l'excédent). Au scénario
+central, le déficit n'est pas résorbé avant 2035 sous le moteur de demande
+(0,33 %) : la mesure ne joue que dans les scénarios favorables et sous les
+moteurs d'offre et d'équilibre (excédent à partir de 2034-2035). -/
+def partExcedentPlacePm : Int := 500
+def partOrPlacementPm : Int := 500
 
 def mesures : List Mesure := [
   { id := "O-01"
@@ -3476,7 +3949,9 @@ def mesures : List Mesure := [
   { id := "O-46"
     titre := "CSG progressive pour les hauts revenus : +2 points au-delà de 100 000 € par an"
     source := s!"Texte Orientation D, mesure 46 ; +{pointsCsgHauts} points sur la part des revenus d'activité et de remplacement au-delà de {seuilCsgHauts} € ; 1 point de CSG = 17 Md€ (FIPECO 2024) ; {partAssietteAuDelaPm / 10} % de l'assiette au-delà du seuil (hypothèse) : {rendementCsgHauts} M€"
-    leviers := [.prelevementSur .csgCrds rendementCsgHauts]
+    leviers := [.prelevementSur .csgCrds rendementCsgHauts,
+                -- taux marginal d'un salaire : 55,4 % + 2 points de CSG (calcul)
+                .tauxMarginalSommet 574]
     debut := 0 },
 
   { id := "O-47"
@@ -3512,7 +3987,10 @@ def mesures : List Mesure := [
   { id := "O-51"
     titre := "Fin du prélèvement forfaitaire unique : revenus du capital au barème de l'impôt sur le revenu"
     source := s!"Texte Orientation D, mesure 51 ; Institut Montaigne : +3,2 à 3,6 Md€ à comportements inchangés, −0,7 Md€ si l'assiette revient à 2017 ; retenu {finPfu} M€"
-    leviers := [.prelevementSur .ir finPfu]
+    leviers := [.prelevementSur .ir finPfu,
+                -- revenus du capital au barème : 45 % + 4 % de contribution sur
+                -- les hauts revenus + 17,2 % de prélèvements sociaux = 66,2 % (calcul)
+                .tauxMarginalSommet 662]
     debut := 0
     variantes := [{ nom := "assiette des dividendes revenue à 2017 (−0,7 Md€)", leviers := [.prelevementSur .ir (-700)] }] },
 
@@ -3752,7 +4230,8 @@ def mesures : List Mesure := [
   { id := "O-87"
     titre := "Référendum d'initiative citoyenne"
     source := s!"Texte Orientation D, mesure 87 ; révision constitutionnelle ; {coutReferendum} M€ par scrutin non dématérialisé (ministre de l'Intérieur, 11 mai 2025) ; hypothèse : un scrutin par an, non couplé à une élection (voir `coutReferendum`)"
-    leviers := [.depenseSur .fonctionnement coutReferendum]
+    leviers := [.depenseSur .fonctionnement coutReferendum,
+                .revisionConstitution "art. 11 et 89" "référendum d'initiative citoyenne"]
     variantes := [
       { nom := "scrutins dématérialisés (100 M€)", leviers := [.depenseSur .fonctionnement (coutReferendum / 2)] },
       { nom := "scrutins couplés aux élections (sans coût d'organisation propre)", leviers := [] }] },
@@ -4236,26 +4715,6 @@ def mesures : List Mesure := [
     leviers := [.investissementEcheancier .affairesEconomiques metroAccessible]
     variantes := [{ nom := "variante réaliste : ligne 6 et 50 stations de correspondance en 2035 (≈ 34 % des stations parisiennes), le reste vers 2045-2050", leviers :=
       [.investissementEcheancier .affairesEconomiques metroAccessibleRealiste] }] },
-  { id := "O-148"
-    titre := "Électricité renouvelable à 40 % en 2030 : projets solaires déjà candidats retenus, ombrières, éolien renouvelé"
-    source := s!"Mesure originale (octobre 2026) ; {solaireSolParAnMw} MW de solaire au sol et {solaireToitParAnMw} MW sur toitures et ombrières par an de 2027 à 2030 en plus de la tendance (appels d'offres d'octobre 2026 : 8,34 GW candidats pour 0,925 GW retenus ; bâtiments, juin 2026 : 1 559 MWc pour 300), {eolienRenouveleParAnMw} MW d'éolien terrestre par an ; soutien {soutienRenouvelables} M€ ; rythme total ≈ 14 GW de solaire par an, plus du double du record : risque élevé (raccordement) (voir `solaireSolParAnMw`)"
-    leviers := [.capaciteElectrique .solaire solaireSolParAnMw, .solaireToiture solaireToitParAnMw,
-                .capaciteElectrique .eolienTerrestre eolienRenouveleParAnMw,
-                .investissementPriveTransition .solaire ((List.replicate 4 (investissementSolaire solaireSolParAnMw solaireToitParAnMw)) ++ [0]),
-                .investissementPriveTransition .eolien ((List.replicate 4 (eolienRenouveleParAnMw * capexEolienMeurParMw / 100)) ++ [0]),
-                .depenseEcheancier .affairesEconomiques soutienRenouvelables] },
-  { id := "O-148b"
-    titre := "Électricité renouvelable : fin du rattrapage (33 GW de solaire et 1,6 GW d'éolien installés)"
-    source := "Quatre années d'installation (2027 à 2030)"
-    leviers := [.capaciteElectrique .solaire (0 - solaireSolParAnMw), .solaireToiture (0 - solaireToitParAnMw),
-                .capaciteElectrique .eolienTerrestre (0 - eolienRenouveleParAnMw)]
-    debut := 4 },
-  { id := "O-148c"
-    titre := "Sobriété électrique : éclairage public à LED et éteint la nuit, pompes à chaleur air-air à la place des convecteurs"
-    source := s!"−{sobrieteParAnGwh} GWh par an de 2027 à 2030 (−6 TWh en 2030 : ≈ −2 TWh d'éclairage public, ≈ −4 TWh pour un million de logements) ; {investissementSobriete} M€ par an (estimations)"
-    leviers := [.consommationElectrique (0 - sobrieteParAnGwh),
-                .investissementTransition .pompeAChaleur [investissementSobriete, 0]]
-    repetitions := 4 },
   { id := "O-149"
     titre := "Vente de la moitié de l'or de la Banque de France (2027-2032), plus-value versée à l'État pour réduire la dette"
     source := s!"Mesure originale (octobre 2026) ; 2 436,8 t (≈ {valeurOr} M€ à 4 000 $ l'once) ; la moitié vendue en six ans (deux tiers, puis tout l'or, dans les versions précédentes), plus-value (coût d'entrée de 246,37 € l'once, 1999) de {plusValueOrParAn} M€ par an versée à l'État ; opération financière (Eurostat, 1997) : la dette baisse, pas le déficit ; risque juridique élevé (BCE) (voir `onceOrMillions`)"
@@ -4276,11 +4735,11 @@ def mesures : List Mesure := [
     leviers := [.pretEtat (reservesConverties / 2)]
     debut := 2 },
   { id := "O-151"
-    titre := "Contribution nationale de 0,5 % sur la valeur du sol (modèle danois), abattement de 50 000 € sur la résidence principale"
-    source := s!"Mesure originale (octobre 2026) ; terrains bâtis hors administrations : 5 826 Md€ fin 2024 (Insee), abattement de 50 000 € pour ≈ {proprietairesOccupantsMilliers} milliers de propriétaires occupants ; {contributionSol} M€ à plein taux (2030), demi-taux en 2029 ; Danemark : ≈ 0,8 % du PIB (voir `valeurSolHorsApu`)"
+    titre := "Contribution nationale sur la valeur du sol, progressive selon la surface de la parcelle (0,25 %, 0,5 %, 1 %), terrains agricoles et industriels exclus"
+    source := s!"Mesure originale (octobre 2026), barème par surface demandé par l'auteur (novembre 2026) ; terrains bâtis hors administrations et hors industriel ≈ 5 600 Md€ (Insee, Cerema, SDES), classes de 500 et 2 000 m² par logement ; abattement de 50 000 € pour ≈ {proprietairesOccupantsMilliers} milliers de propriétaires occupants ; {contributionSol} M€ à plein taux (2030, taux moyen de 0,34 %), demi-taux en 2029 (voir `valeurSolClasses`)"
     leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSol / 2, contributionSol]]
-    variantes := [{ nom := "taux de 0,25 %", leviers :=
-      [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSol / 4, contributionSol / 2]] }] },
+    variantes := [{ nom := "taux unique de 0,5 % (version précédente, 24,7 Md€)", leviers :=
+      [.recetteEcheancier (some .taxeFonciere) [0, 0, 24693 / 2, 24693]] }] },
   { id := "O-152"
     titre := "Fin de l'effacement des plus-values latentes au décès (modèle canadien)"
     source := s!"Mesure originale en France (octobre 2026) ; ≈ {plusValuesDeces} M€ par an (Terra Nova, 2022) (voir `plusValuesDeces`)"
@@ -4297,7 +4756,7 @@ def mesures : List Mesure := [
   { id := "O-154"
     titre := "Vote obligatoire, vote blanc compté parmi les suffrages exprimés, tirage au sort au-delà de 50 % de blancs"
     source := "Demande de l'auteur (octobre 2026) ; révision constitutionnelle (articles 3, 6 et 24) ; contravention de 1re classe (38 € au plus ; Belgique 50 €, Australie 20 dollars australiens, Sénat, 2022) ; blancs : 6,35 % des votants au second tour de 2022 ; amendes ≈ 50 M€ par scrutin au plus : sans effet budgétaire mesurable (voir `voteObligatoirePourMemoire`)"
-    leviers := [] },
+    leviers := [.revisionConstitution "art. 3 et 24" "vote blanc parmi les suffrages exprimés et tirage au sort des sièges"] },
   { id := "O-155"
     titre := "Sobriété routière : 110 km/h sur autoroute, 100 sur voies rapides, poids lourds à 80, télétravail de deux jours, semaine de quatre jours dans la fonction publique"
     source := s!"Demande de l'auteur (octobre 2026), sans toucher au prix du carburant ; −{sobrieteRoutiereKt} kt dans les transports et −{sobrieteRoutiereBatimentsKt} kt dans les bâtiments en 2030 (Espagne 2011, A62, Umweltbundesamt 2023, ADEME, Insee) (voir `sobrieteRoutiereKt`)"
@@ -4416,7 +4875,7 @@ def mesures : List Mesure := [
     debut := 4 },
   { id := "O-163c"
     titre := "Électricité : sobriété supplémentaire (PAC air-air à la place des convecteurs)"
-    source := s!"−{sobrieteSupplementGwh} GWh par an de 2027 à 2030 ; 400 M€ par an (estimation, comme O-148c)"
+    source := s!"−{sobrieteSupplementGwh} GWh par an de 2027 à 2030 ; 400 M€ par an (estimation, comme l'ancienne O-148c)"
     leviers := [.consommationElectrique (0 - sobrieteSupplementGwh), .investissementTransition .pompeAChaleur [400, 0]]
     repetitions := anneesMonteeClimat },
   { id := "O-164"
@@ -4439,10 +4898,6 @@ def mesures : List Mesure := [
     source := s!"Demande de l'auteur (octobre 2026) ; TTF {ttfElargie} M€ (modèle italien) ; fonds d'épargne {prelevementFondsEpargne} M€ ; fréquences {redevanceFrequences} M€ (Ofcom) (voir `ttfElargie`)"
     leviers := [.recetteEcheancier (some .autres) [ttfElargie],
                 .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
-  { id := "O-169"
-    titre := "Contribution sur la valeur du sol portée à 0,575 % (O-151), moitié de 1,15 %"
-    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; réduite de moitié par l'auteur (1,15 % auparavant) pour l'acceptabilité (voir `tauxSolSupplementPcm`)"
-    leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] },
   { id := "O-170"
     titre := "Foncière de l'État : un quart des bureaux de l'État vendus en dix ans"
     source := s!"Demande de l'auteur (octobre 2026) ; {cessionsBureaux} M€ par an (Sénat, PLF 2025 : 23 millions de m², 73,7 Md€) ; sans reprise en location (voir `cessionsBureaux`)"
@@ -4450,13 +4905,127 @@ def mesures : List Mesure := [
   { id := "O-171"
     titre := "Confiscation des avoirs criminels sans condamnation (directive (UE) 2024/1260)"
     source := s!"Demande de l'auteur (octobre 2026) ; {avoirsConfisques} M€ (2025 : 212 M€ confisqués, ministère de la Justice) (voir `avoirsConfisques`)"
-    leviers := [.recetteEcheancier none avoirsConfisques] }
+    leviers := [.recetteEcheancier none avoirsConfisques] },
+  { id := "O-172"
+    titre := "Budget réglementaire : coûts administratifs des entreprises réduits de 25 % en cinq ans, une norme créée pour deux supprimées, autorité indépendante de mesure"
+    source := s!"Demande de l'auteur (octobre 2026) ; coûts administratifs ≥ 3 % du PIB (Sénat, 2023) ; −25 % → ≈ +1,2 % de PIB (Commission européenne, COM(2007)23, calcul), moitié retenue : +{gainSimplificationParAnPb} pb de PIB par an de 2027 à 2031 ; autorité : {autoriteNormes} M€ par an (voir `coutAdministratifPibPb`)"
+    leviers := [.automatisation gainSimplificationParAnPb 0 0]
+    repetitions := anneesSimplification },
+  { id := "O-172b"
+    titre := "Budget réglementaire : autorité indépendante de mesure des coûts"
+    source := s!"{autoriteNormes} M€ par an (hypothèse, modèle néerlandais ATR)"
+    leviers := [.depenseSur .fonctionnement autoriteNormes] },
+  { id := "O-173"
+    titre := "Visa diplômé France : trois ans de séjour et de travail pour tout diplômé de master ou de doctorat d'un établissement français"
+    source := s!"Demande de l'auteur (octobre 2026) ; 118 000 premiers titres étudiants (2025), rétention de 21 % portée à 31 % (CAE, 2021 ; hypothèse) : +{visaDiplomeMilliersParAn} milliers par an au solde migratoire (voir `premiersTitresEtudiants`)"
+    leviers := [.migration visaDiplomeMilliersParAn] },
+  { id := "O-174"
+    titre := "Droit au rachat de cinq jours de RTT par an, majorés de 10 %, sans exonération"
+    source := s!"Demande de l'auteur (octobre 2026) ; 8 millions de salariés à RTT, recours de moitié (hypothèse) : +{heuresRachatPm} ‰ d'heures par emploi ; neutre pour les finances publiques (voir `salariesRttMilliers`)"
+    leviers := [.dureeTravail heuresRachatPm] },
+  { id := "O-175"
+    titre := "Concurrence : liberté d'installation des notaires, huissiers, pharmacies et taxis, capital des professions ouvert, tarifs réglementés revus, fin des monopoles de distribution"
+    source := s!"Demande de l'auteur (novembre 2026) ; OCDE (2015) : +0,3 % de PIB à cinq ans, +0,4 % à dix ans pour la loi croissance et activité : +{concurrenceGainParAnPb} pb par an de 2027 à 2031, +{concurrenceGainSuitePb} pb ensuite ; coût public nul (voir `concurrenceGainParAnPb`)"
+    leviers := [.automatisation concurrenceGainParAnPb 0 0]
+    repetitions := anneesConcurrence },
+  { id := "O-175b"
+    titre := "Concurrence : effets de long terme (2032-2036)"
+    source := s!"+{concurrenceGainSuitePb} pb de PIB par an"
+    leviers := [.automatisation concurrenceGainSuitePb 0 0]
+    debut := anneesConcurrence
+    repetitions := anneesConcurrence },
+  { id := "O-176"
+    titre := "Emploi des seniors : surcote doublée de l'âge légal à 67 ans, cumul emploi-retraite libre dans les métiers en tension"
+    source := s!"Demande de l'auteur (novembre 2026) ; +1,5 point de taux d'emploi des 60-64 ans (Benallah 2011, Song et Manchester 2007 ; hypothèse) : +{seniorsActifsParAn} actifs par an de 2027 à 2030, 90 % en emploi ; surcote : +{surcoteCoutParCohorte} M€ par cohorte, cumulatif (voir `seniorsActifsParAn`)"
+    leviers := [.offreTravail seniorsActifsParAn seniorsTauxEmploiPm,
+                .depenseSur .retraites surcoteCoutParCohorte]
+    repetitions := 4 },
+  { id := "O-176b"
+    titre := "Emploi des seniors : coût cumulé de la surcote après 2030"
+    source := s!"+{surcoteCoutParCohorte} M€ par cohorte"
+    leviers := [.depenseSur .retraites surcoteCoutParCohorte]
+    debut := 4
+    repetitions := 6 },
+  { id := "O-177"
+    titre := "Petite enfance : 100 000 places de crèche de plus (2027-2030), droit opposable à une place dès un an"
+    source := s!"Demande de l'auteur (novembre 2026) ; 0,25 mère en emploi par place (Bauernschuster et Schlotter 2015, Givord et Marbot 2015 ; hypothèse) : +{meresEmploiParAn} par an ; {postesCreche.getLastD 0} postes à 45 000 € en 2030 ; investissement {investissementCreche.getD 0 0} M€ par an (voir `placesCrecheParAn`)"
+    leviers := [.offreTravail meresEmploiParAn 900]
+    repetitions := 4 },
+  { id := "O-177b"
+    titre := "Petite enfance : postes et investissement des crèches"
+    source := s!"{postesCreche.getLastD 0} postes en 2030 (0,3 ETP par place), {investissementCreche.getD 0 0} M€ d'investissement par an de 2027 à 2030"
+    leviers := [.creationPostes .famille postesCreche 45000,
+                .investissementEcheancier .famille investissementCreche] },
+  { id := "O-178"
+    titre := "Droit au temps complet : passage à temps plein de droit sauf motif économique, heures complémentaires majorées de 25 % dès la première"
+    source := s!"Demande de l'auteur (novembre 2026) ; 0,9 million de temps partiels subis (Insee 2025) ; un huitième résorbé (hypothèse) : +{2 * heuresTempsPartielPm} ‰ d'heures par emploi, par moitiés en 2027 et 2028 ; coût public nul (voir `heuresTempsPartielPm`)"
+    leviers := [.dureeTravail heuresTempsPartielPm]
+    repetitions := 2 },
+  { id := "O-179"
+    titre := "Dette cachée d'entretien et maintenance renforcée : ouvrages d'art, chaussées et voies navigables, 1,8 Md€ par an pendant douze ans (1 Md€ de résorption du retard, 0,8 Md€ d'entretien courant)"
+    source := s!"Demande de l'auteur (novembre 2026, « maintenance renforcée des infrastructures ») ; retard d'entretien ≈ 12 Md€ fin 2025, +0,8 Md€ par an (Cerema 2025, Sénat 2022, audit 2018, Cour des comptes 2025) ; {entretienInfrastructuresParAn} M€ de travaux par an de 2027 à 2038, retirés du passif, qui cesse de croître (voir `entretienInfrastructuresParAn`)"
+    leviers := [.entretienPassifs .entretienInfrastructures .affairesEconomiques entretienInfrastructuresParAn]
+    repetitions := anneesEntretien },
+  { id := "O-180"
+    titre := "Suppression des effets de seuil : tout droit sous condition de ressources décroît de façon continue, sans marche (C2S, MaPrimeRénov', CSG des retraités, bourses, PAJE, chèque énergie, taxe foncière des aînés)"
+    source := s!"Demande de l'auteur (novembre 2026) ; lissage par le haut, sans perdant : prestations {lissageSeuilsFamille + lissageSeuilsSante + lissageSeuilsLogement} M€ par an, CSG {lissageSeuilsCsg} M€, taxe foncière {lissageSeuilsTaxeFonciere} M€ (ordres de grandeur, ≈ 2,5 Md€, fourchette 1,5 à 3,5) ; effet sur l'emploi non compté (voir `lissageSeuilsFamille`)"
+    leviers := [.depenseSur .famille lissageSeuilsFamille, .depenseSur .sante lissageSeuilsSante,
+                .depenseSur .logementEnvironnement lissageSeuilsLogement,
+                .prelevementSur .csgCrds (0 - lissageSeuilsCsg), .prelevementSur .taxeFonciere (0 - lissageSeuilsTaxeFonciere)] },
+  { id := "O-181"
+    titre := "Pas de modulation du nucléaire : la production en surplus est écrêtée sur le solaire et l'éolien, le parc nucléaire produit à plein"
+    source := "Demande de l'auteur (novembre 2026) : « pas de modulation du nucléaire ». Le nucléaire existant est à coût annuel fixe (61 €/MWh pour 365 TWh, CRE 2025) : chaque TWh modulé renchérit le reste ; les contrats de soutien récents ne rémunèrent pas les heures de prix négatifs (lignes directrices CEEAG 2022, cahiers des charges des appels d'offres depuis 2021-2024), l'électricité écrêtée n'est donc pas payée (hypothèse ; les contrats anciens restent indemnisés, non compté). Le volume écrêté n'entre pas dans la part renouvelable."
+    leviers := [.prioriteNucleaire] },
+  { id := "O-182"
+    titre := "Plan de rénovation des ascenseurs : remplacement des 165 000 appareils de plus de 40 ans en onze ans, subvention de 30 % (ANAH, ANRU), prêts de la Banque des Territoires pour le reste"
+    source := s!"Demande de l'auteur (novembre 2026) ; {remplacementsAscenseursParAn} remplacements par an à {coutRemplacementAscenseurEuros} € (Fédération des Ascenseurs 2025-2026, rapport AN n° 704), subvention {subventionAscenseursParAn} M€ par an, investissement privé déclenché {investissementPriveAscenseurs} M€ par an (aubaine : {remplacementsAscenseursTendanciels} remplacements tendanciels), −{economieAscenseursGwhParAn} GWh par an d'électricité par cohorte (voir `ascenseursAnciens`)"
+    leviers := [.investissementTransition .ascenseur (List.replicate anneesPlanAscenseurs subventionAscenseursParAn ++ [0]),
+                .investissementPriveTransition .ascenseur (List.replicate anneesPlanAscenseurs investissementPriveAscenseurs ++ [0]),
+                .consommationElectrique (0 - economieAscenseursGwhParAn)]
+    repetitions := anneesPlanAscenseurs },
+  { id := "O-183"
+    titre := "Suppression des zones à faibles émissions au 1er janvier 2029 et de la vignette Crit'Air"
+    source := s!"Demande de l'auteur (novembre 2026) ; loi Climat et résilience 2021, censure du 21 mai 2026, Insee Analyses n° 124 (août 2026), Airparif 2024, ORS-IDF 2018 ; {decesZfeNonEvitesParAn} décès par an non évités pendant {anneesZfe} ans (≈ 150 à terme, fourchette 30 à 350), {economieAidesZfe} M€ d'aides par an économisés (voir `decesZfeNonEvitesParAn`)"
+    leviers := [.economieSur .affairesEconomiques economieAidesZfe]
+    debut := 2 },
+  { id := "O-183b"
+    titre := "Suppression des ZFE : décès non évités par le renouvellement du parc que les ZFE auraient accéléré (par tiers, 2029 à 2031)"
+    source := s!"{decesZfeNonEvitesParAn} décès par an pendant {anneesZfe} ans, ≈ 150 à terme (Airparif 2024, ORS-IDF 2018, Insee 2026 ; voir `decesZfeNonEvitesParAn`)"
+    leviers := [.pollutionAir decesZfeNonEvitesParAn]
+    debut := 2
+    repetitions := anneesZfe },
+  { id := "O-183c"
+    titre := "Compensation de la fin des ZFE : 10 000 voitures Crit'Air 5 de plus remplacées chaque année par une électrique d'occasion récente, de 2029 à 2035"
+    source := s!"Demande de l'auteur (novembre 2026) ; {remplacementOccasion.nombre} voitures par an à {remplacementOccasion.prixUnitaire} € (hypothèse) pendant {vaguesOccasion} ans, Crit'Air 5 et non classées (1,2 million au 1er janvier 2026, SDES) ; voir `remplacementOccasion`"
+    leviers := [.remplacementVehicules remplacementOccasion]
+    debut := 2
+    repetitions := vaguesOccasion },
+  { id := "O-184"
+    titre := "Formation aux premiers secours obligatoire au lycée : PSC de 7 h en seconde pour les élèves non certifiés, recyclage de 3 h en terminale"
+    source := s!"Demande de l'auteur (novembre 2026) ; {elevesSecondeAFormer} élèves à {coutPscEuros} € et {elevesTerminale} recyclages à {coutRecyclagePscEuros} € (DEPP 2025, ministère 2023), {depensePremiersSecours} M€ par an ; {40000 * baisseDecesArretCardiaquePm / 1000} décès par arrêt cardiaque évités par an à plein régime en quinze ans (RéAC, Wissenberg et al. 2013 ; calcul, incertain ; voir `elevesSecondeAFormer`)"
+    leviers := [.depenseSur .enseignement depensePremiersSecours, .baisseMortalite .arretCardiaque baisseDecesArretCardiaquePm] },
+  { id := "O-185"
+    titre := "Remboursement de la chirurgie réfractive (Lasik, PKR, SMILE, implants) : tarif de responsabilité de 1 500 € par œil pris en charge à 70 %"
+    source := s!"Demande de l'auteur (novembre 2026) ; {yeuxOperesParAn} yeux par an aujourd'hui (ANSM, Revue du Praticien), flux × 2,5 en trois ans (hypothèse d'après KCE 2013), {depenseOeil} € par œil, dépense nette {chirurgieRefractiveNiveaux.headD 0} à {chirurgieRefractiveNiveaux.getD 2 0} M€ par an moins l'optique économisée, TVA perdue {tvaPerdueChirurgieRefractive} M€ (voir `yeuxOperesParAn`)"
+    leviers := [.depenseEcheancier .sante chirurgieRefractiveNiveaux, .prelevementSur .tva (0 - tvaPerdueChirurgieRefractive)] },
+  { id := "O-186"
+    titre := "Avion de combat du futur de sixième génération, programme national (Dassault, Safran, Thales) : financement sécurisé à 2,1 Md€ par an, démonstrateur en 2031, service vers 2040"
+    source := s!"Demande de l'auteur (novembre 2026) ; abandon du pilier avion du SCAF en juin 2026, ACF national (ministère des Armées, octobre 2026) ; PLF 2027 : 558 M€ de crédits de paiement ; coût de développement 25 à 35 Md€ sur 2027-2040 (presse spécialisée ; Dassault : « nettement sous 50 Md€ ») ; complément à la LPM : {avionCombatFutur} M€ (voir `avionCombatFutur`)"
+    leviers := [.depenseEcheancier .defense avionCombatFutur] },
+  { id := "O-187"
+    titre := "Contribution à l'Agence spatiale européenne portée au-dessus de l'allemande : +630 M€ par an souscrits aux programmes optionnels"
+    source := s!"Demande de l'auteur (novembre 2026) ; conseil ministériel de Brême, novembre 2025 : Allemagne 5,07 Md€ (5,4 aux conditions 2025), France 3,6 Md€ sur 2026-2028 (ESA, DLR, Sénat) ; {contributionEsaSupplement} M€ par an (voir `contributionEsaSupplement`)"
+    leviers := [.depenseSur .affairesEconomiques contributionEsaSupplement] },
+  { id := "O-188"
+    titre := "Dès que le déficit est résorbé : la moitié de l'excédent rachète l'or vendu (jusqu'à la moitié du stock) et augmente les parts de l'État dans les entreprises, moitié-moitié ; l'autre moitié rembourse la dette"
+    source := s!"Demande de l'auteur (novembre 2026, « moitié de l'excédent seulement ») ; {partExcedentPlacePm / 10} % de l'excédent de l'année précédente placés, {partOrPlacementPm / 10} % en or jusqu'à {valeurOr / 2} M€ (valeur 2025 de la moitié vendue par O-149), le reste en participations ; opérations financières, hors déficit (voir `partExcedentPlacePm`)"
+    leviers := [.placementExcedent partExcedentPlacePm partOrPlacementPm (valeurOr / 2)] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, électricité renouvelable à 40 %, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État, vote obligatoire et vote blanc reconnu, paquet climat sans signal-prix sur le carburant et son financement."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, priorité au nucléaire sans modulation, plan de rénovation des ascenseurs, suppression des ZFE et de Crit'Air, premiers secours au lycée, chirurgie réfractive remboursée, avion de combat de sixième génération, contribution à l'ESA au-dessus de l'allemande, rachat de l'or et participations dès l'excédent, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État, vote obligatoire et vote blanc reconnu, paquet climat sans signal-prix sur le carburant et son financement."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures

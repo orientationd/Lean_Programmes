@@ -31,7 +31,14 @@ def avecPremiereAnnee (volume prix conso taux : Int) : Scenario :=
       croissanceVolumeAnneesPb := [volume], inflationAnneesPb := [prix],
       inflationConsoAnneesPb := [conso], tauxMarginalAnneesPb := [taux] } }
 
-def base : Scenario := avecPremiereAnnee H.eco.croissancePotentiellePb H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb
+/-- Même scénario, à l'écart de production de départ nul (la courbe de
+Phillips n'y ajoute rien la première année) et sans facteur d'implantation
+(le coût de l'électricité ne déplace pas d'emplois industriels). -/
+def base : Scenario :=
+  let S := avecPremiereAnnee H.eco.croissancePotentiellePb H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb
+  { S with eco := { S.eco with ecartProductionDepartPb := 0 }
+           energie := { S.energie with electricite := { S.energie.electricite with
+             elasticiteEmploiIndustrielPrixElecPm := 0 } } }
 
 /-- Première année projetée. -/
 def an1 (S : Scenario) : Etat := anneeSuivante D S (etatDepart S)
@@ -423,6 +430,165 @@ theorem eviction_substitution :
     let pac := depart (mesure (.investissementTransition .pompeAChaleur [1000]))
     let pac0 := (mesure (.investissementTransition .pompeAChaleur [1000])).etatInitial D H0
     priv.pib < pub.pib ∧ pac.pib < pac0.pib := by
+  decide +kernel
+
+/-- Résorption des effets de demande : sous un moteur identique au moteur de
+demande mais où il ne reste à long terme que 20 % de l'effet de demande, la
+part qui s'en va se résorbant de 5 % par an, une dépense d'un point de PIB
+relève encore le PIB au bout de cinq ans, mais moins qu'avec des effets
+permanents ; ≈ 0,2 + 0,8 × 0,95⁵ ≈ 82 % de l'écart initial (fourchette
+large : l'emploi et les recettes suivent). -/
+theorem resorption_demande :
+    let R : Moteur := { D with resorptionDemandePm := 50, partDemandeDurablePm := 200 }
+    let un := (etatDepart H).pib / 100
+    let p := mesure (.depenseSur .enseignement un)
+    let ecart (M : Moteur) : Int := (p.resultatA M H 5).pib - (tendancielAn M H 5).pib
+    0 < ecart R ∧ ecart R < ecart D ∧ 70 * ecart D ≤ 100 * ecart R ∧ 100 * ecart R ≤ 90 * ecart D := by
+  decide +kernel
+
+/-! ## Écart de production, courbe de Phillips, solde structurel -/
+
+/-- Courbe de Phillips : avec un écart de production de départ de −1 point
+et une pente de 0,1, l'inflation de la première année (prix à la
+consommation, et déflateur donc PIB nominal) est plus basse de 10 pb que la
+trajectoire ; à pente nulle, elle la suit. -/
+theorem phillips :
+    let creux : Scenario := { base with eco := { base.eco with ecartProductionDepartPb := -100 } }
+    let plat : Scenario := { creux with eco := { creux.eco with pentePhillipsPm := 0 } }
+    (an1 creux).inflationConsoPb + 10 = (an1 plat).inflationConsoPb ∧
+      (an1 creux).pib < (an1 plat).pib ∧ (an1 plat).inflationConsoPb = plat.eco.inflationConsoA 0 := by
+  decide +kernel
+
+/-- Solde structurel : une dépense d'un point de PIB relève l'écart de
+production de son effet de demande ; les recettes qu'elle induit sont
+conjoncturelles, si bien que le déficit structurel se creuse de plus que le
+déficit effectif (≈ de la dépense entière) ; une mesure d'offre (heures) ne
+touche pas l'écart. -/
+theorem solde_structurel :
+    let s0 := etatDepart H
+    let un := s0.pib / 100
+    let p := depart (mesure (.depenseSur .enseignement un))
+    let h := depart (mesure (.dureeTravail 10))
+    p.ecartProductionPb H > s0.ecartProductionPb H ∧
+      p.deficitStructurelPb H - s0.deficitStructurelPb H > p.deficitPb - s0.deficitPb ∧
+      90 ≤ p.deficitStructurelPb H - s0.deficitStructurelPb H ∧ p.deficitStructurelPb H - s0.deficitStructurelPb H ≤ 105 ∧
+      h.ecartProductionPb H = s0.ecartProductionPb H := by
+  decide +kernel
+
+/-- Déclarations constitutionnelles : le taux marginal maximal garde le plus
+haut des taux déclarés ; une révision déclarée est conservée. -/
+theorem declarations_constitution :
+    let s0 := etatDepart H
+    let p := depart (mesure (.tauxMarginalSommet 662))
+    let q := (mesure (.tauxMarginalSommet 300)).etatInitial D H
+    let r := depart (mesure (.revisionConstitution "art. 3" "essai"))
+    p.tauxMarginalSommetPm = 662 ∧ q.tauxMarginalSommetPm = s0.tauxMarginalSommetPm ∧
+      r.revisionsConstitution.length = 1 ∧ s0.revisionsConstitution = [] := by
+  decide +kernel
+
+/-- Offre de travail : 100 000 actifs de plus dont 90 % en emploi ajoutent
+≈ 90 000 emplois l'année même (PIB par les heures, ≈ +0,2 %) et 100 000
+actifs, et laissent l'écart à l'emploi d'équilibre (≈ 7 % de chômage sur
+les 10 000 restants) en chômeurs excédentaires à réabsorber ; le taux de
+chômage ne bouge pas. -/
+theorem offre_travail :
+    let s0 := etatDepart H
+    let p := depart (mesure (.offreTravail 100000 900))
+    100000 ≤ p.actifs - s0.actifs ∧ p.actifs - s0.actifs ≤ 100500 ∧
+      90000 ≤ p.emploiTotal - s0.emploiTotal ∧ p.emploiTotal - s0.emploiTotal ≤ 90500 ∧
+      5000 ≤ p.pib - s0.pib ∧ p.pib - s0.pib ≤ 7000 ∧
+      1500 ≤ p.chomeursExcedentaires - s0.chomeursExcedentaires ∧
+      p.chomeursExcedentaires - s0.chomeursExcedentaires ≤ 3000 ∧
+      p.chomagePb = s0.chomagePb := by
+  decide +kernel
+
+/-- Retard d'entretien : 1 Md€ de travaux retire 1 Md€ du passif
+d'infrastructures et crée des emplois dans la construction l'année même ;
+le passif ne descend pas sous zéro ; sans mesure, le stock grossit du flux
+annuel (0,8 Md€, indexé). -/
+theorem entretien_passifs :
+    let s0 := etatDepart H
+    let p := depart (mesure (.entretienPassifs .entretienInfrastructures .affairesEconomiques 1000))
+    let q := depart (mesure (.entretienPassifs .entretienInfrastructures .affairesEconomiques 100000))
+    let t := tendancielAn D H 1
+    s0.passifs.infrastructures - p.passifs.infrastructures = 1000 ∧
+      0 < p.emploi.construction - s0.emploi.construction ∧
+      q.passifs.infrastructures = 0 ∧
+      800 ≤ t.passifs.infrastructures - s0.passifs.infrastructures ∧
+      t.passifs.infrastructures - s0.passifs.infrastructures ≤ 850 := by
+  decide +kernel
+
+/-! ## Coût de l'électricité des entreprises et facteur d'implantation -/
+
+/-- Coût d'équilibre de l'électricité des entreprises : au départ, entre
+110 et 140 €/MWh (121 calculés : 62 de fourniture au coût complet du mix,
+15 de marge, 31 de réseau, 13 de taxes ; prix observé 2024 : 165, 2025 :
+149, portés par les contrats de la crise). Un cycle à gaz coûte 100 €/MWh
+au Brent de référence (gaz 35 / 0,55 + 0,37 × 75 + 10). Une capacité solaire
+massive, qui force la modulation du nucléaire à coût fixe, relève le coût
+et, par le facteur d'implantation, retire des emplois industriels par rapport
+au tendanciel. -/
+theorem cout_electricite_implantations :
+    let El := H.energie.electricite
+    let p0 := El.prixEntreprisesEurosMWh H.horizon 0 H.energie.prixReferenceDollars
+      H.energie.prixReferenceDollars H.reference.etat.productionGwh
+    let p := mesure (.capaciteElectrique .solaire 60000)
+    let t := Modele.Programme.trajectoire p D H 3 0 (etatDepart H)
+    let a := Modele.trajectoire D H 3 (etatDepart H)
+    let s3 := t.getD 3 (etatDepart H)
+    let a3 := a.getD 3 (etatDepart H)
+    110 ≤ p0 ∧ p0 ≤ 140 ∧
+      El.coutThermiqueEurosMWh H.horizon 0 H.energie.prixReferenceDollars H.energie.prixReferenceDollars = 100 ∧
+      a3.prixElectriciteEntreprisesEurosMWh < s3.prixElectriciteEntreprisesEurosMWh ∧
+      s3.emploisImplantationsEnergie < a3.emploisImplantationsEnergie ∧
+      s3.emploi.industrie - a3.emploi.industrie < s3.emploisImplantationsEnergie - a3.emploisImplantationsEnergie + 1000 := by
+  decide +kernel
+
+/-- Priorité au nucléaire : avec une capacité solaire massive, le surplus
+est écrêté sur le solaire, le nucléaire n'est plus modulé, et le coût de
+l'électricité est plus bas qu'avec la modulation (le coût fixe du
+nucléaire se répartit sur toute sa production) ; la production solaire
+retenue est moindre. -/
+theorem priorite_nucleaire :
+    let p := mesure (.capaciteElectrique .solaire 60000)
+    let q := { p with mesures := p.mesures ++ [{ id := "M-2", titre := "", source := "", leviers := [.prioriteNucleaire] }] }
+    let s3 := (Modele.Programme.trajectoire p D H 3 0 (etatDepart H)).getD 3 (etatDepart H)
+    let t3 := (Modele.Programme.trajectoire q D H 3 0 (etatDepart H)).getD 3 (etatDepart H)
+    0 < s3.modulationGwh ∧ s3.ecretementGwh = 0 ∧
+      t3.modulationGwh = 0 ∧ t3.ecretementGwh = s3.modulationGwh ∧
+      t3.productionGwh.solaire < s3.productionGwh.solaire ∧
+      t3.prixElectriciteEntreprisesEurosMWh < s3.prixElectriciteEntreprisesEurosMWh := by
+  decide +kernel
+
+/-- Pollution de l'air : `pollutionAir d` ajoute `d` décès attribuables et
+retire les années de vie correspondantes (11 par décès) ; l'investissement
+de transition en ascenseurs crée des emplois dans la construction et
+envoie un quart de la dépense aux importations, plus le contenu importé de
+la demande intérieure induite. -/
+theorem pollution_air_ascenseurs :
+    let s0 := etatDepart H
+    let z := depart (mesure (.pollutionAir 150))
+    let a := depart (mesure (.investissementTransition .ascenseur [1000]))
+    z.decesPollutionAir - s0.decesPollutionAir = 150 ∧
+      s0.anneesVieGagneesParAn - z.anneesVieGagneesParAn = 150 * 11 ∧
+      0 < a.emploi.construction - s0.emploi.construction ∧
+      250 ≤ a.importations - s0.importations ∧ a.importations - s0.importations < 350 := by
+  decide +kernel
+
+/-- État de départ avec un excédent de 10 Md€ l'année écoulée. -/
+def excedentDix : Etat :=
+  { etatDepart H with autresRecettes := (etatDepart H).autresRecettes + (etatDepart H).deficit + 10000 }
+
+/-- Placement de l'excédent : avec un excédent de 10 Md€ l'année précédente,
+la moitié est placée en or (plafonné ici à 3 Md€, le reste va aux
+participations : 7 Md€) ; la dette de fin d'année est plus haute d'autant,
+moins les dividendes des participations, qui réduisent le déficit. -/
+theorem placement_excedent :
+    let p := anneeSuivante D H { excedentDix with placementExcedentPm := 1000, partOrPlacementPm := 500,
+                                                   plafondOrRacheteMeur := 3000 }
+    let q := anneeSuivante D H excedentDix
+    p.orRacheteMeur = 3000 ∧ p.placementParticipationsAnnee = 7000 ∧
+      9000 < p.dette - q.dette ∧ p.dette - q.dette ≤ 10000 ∧ p.deficit < q.deficit := by
   decide +kernel
 
 end Tests.Mecanismes

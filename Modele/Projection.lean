@@ -204,7 +204,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     ratioPb (e.impots.total - appliquerPm e.isTauxMeur M.canalCapitalPm - e.smicPrelevementsMeur) e.pib
   let volume := H.eco.croissanceVolumeA k
     - appliquerPm (poGeneriquePb s - poGeneriquePb ref) M.elasticiteCroissancePoPm
-  let prix := H.eco.inflationA k
+  -- courbe de Phillips : l'écart de production de l'année précédente
+  -- (trajectoire du scénario et effets de demande des mesures) tire les prix
+  let phillips := appliquerPm (s.ecartProductionPb H) H.eco.pentePhillipsPm
+  let prix := H.eco.inflationA k + phillips
   let croissance := volume + prix + volume * prix / 10000
   -- variation de l'écart de production : croissance en volume au-delà de la
   -- croissance potentielle (loi d'Okun, élasticités des prélèvements)
@@ -297,8 +300,15 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     + (croissance + H.eco.excesPatrimoineParDecesPb) * H.eco.elasticiteDroitsSuccessionPm / 1000
   -- participations de l'État : valorisation au rythme du PIB nominal, plus les
   -- prises de participation ; dividendes au rendement du portefeuille de départ
+  -- placement de l'excédent de l'année précédente (levier
+  -- `placementExcedent`) : rachat d'or jusqu'au plafond, le reste en prises
+  -- de participation ; opérations financières (dette, pas déficit)
+  let excedent := max 0 (0 - s.deficit)
+  let placement := if s.placementExcedentPm = 0 then 0 else excedent * s.placementExcedentPm / 1000
+  let orAchat := min (placement * s.partOrPlacementPm / 1000) (max 0 (s.plafondOrRacheteMeur - s.orRacheteMeur))
+  let participationsAchat := placement - orAchat
   let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
-    + s.investissementsParticipations
+    + s.investissementsParticipations + participationsAchat
   let dividendes := if ref.participationsEtat = 0 then s.dividendesEtat
     else participations * ref.dividendesEtat / ref.participationsEtat
   -- recettes non fiscales hors dividendes : acycliques, elles suivent le PIB
@@ -369,7 +379,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let emploi1 := emploi0 + emploiTendance + emploisOkun
   let productivite := H.eco.croissancePotentielleA k - (if emploi0 = 0 then 0 else emploiTendance * 10000 / emploi0)
 
-  let pc := H.eco.inflationConsoA k
+  let pc := H.eco.inflationConsoA k + phillips
   let prixSalaires := (A.retardSalairesPm * s.inflationConsoPb + (1000 - A.retardSalairesPm) * pc) / 1000
   let tauxRemuneration := productivite + prixSalaires + productivite * prixSalaires / 10000
   -- masse salariale : tendance (emploi tendanciel, rémunération par emploi)
@@ -438,7 +448,18 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   -- thermique fossile
   let potentiel := ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).ajouter
     .thermique (0 - min s.dechargeStockageGwh ((s.capacitesMw.moyenne capacites).production El.facteurChargePm).thermique)
-  let modulation := min potentiel.nucleaire (max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh))
+  let surplus := max 0 (potentiel.total - consoElec - El.ecartProductionMaxGwh)
+  -- priorité au nucléaire : écrêtement du solaire, puis de l'éolien
+  let ecretement : ParFiliere :=
+    if s.prioriteNucleaire then
+      let eSol := min surplus potentiel.solaire
+      let eTerre := min (surplus - eSol) potentiel.eolienTerrestre
+      let eMer := min (surplus - eSol - eTerre) potentiel.eolienMer
+      { solaire := eSol, eolienTerrestre := eTerre, eolienMer := eMer }
+    else {}
+  let modulation := min potentiel.nucleaire (surplus - ecretement.total)
+  let production := ((potentiel.ajouter .nucleaire (-modulation)).ajouter .solaire (-ecretement.solaire)
+    |>.ajouter .eolienTerrestre (-ecretement.eolienTerrestre)).ajouter .eolienMer (-ecretement.eolienMer)
   -- sols : consommation d'espaces (enveloppe du ZAN où s'imputent les
   -- surfaces des mesures, ou rythme d'avant la loi selon l'écart choisi par
   -- les mesures) ; emprise des installations nouvelles de solaire au sol et
@@ -454,8 +475,11 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let emissions := emissionsSuivantes H k s
   let s' : Etat := { s with
     capacitesMw := capacites
-    productionGwh := potentiel.ajouter .nucleaire (-modulation)
+    productionGwh := production
     modulationGwh := modulation
+    ecretementGwh := ecretement.total
+    prixElectriciteEntreprisesEurosMWh := El.prixEntreprisesEurosMWh H.horizon (k + 1)
+      H.energie.prixBrentDollars H.energie.prixReferenceDollars production
     consommationBaseGwh := consoBase
     consommationGwh := consoElec
     surfacesAnneeHa := surfacesAnnee
@@ -480,6 +504,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     isTauxMeur := if s.impots.impotSocietes = 0 then 0
       else s.isTauxMeur * impots.impotSocietes / s.impots.impotSocietes
     pib := pib
+    -- les écarts de demande suivent le PIB nominal
+    ecartDemandeMeur := s.ecartDemandeMeur + appliquerPb s.ecartDemandeMeur croissance
+    demandeCumuleeMeur := s.demandeCumuleeMeur + appliquerPb s.demandeCumuleeMeur croissance
     impots := impots
     remunerationParEmploiEuros := remuneration
     consommationMenages := s.consommationMenages + appliquerPb s.consommationMenages gConso
@@ -493,7 +520,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     tauxMarginalCourantPb := tauxCible
     tauxEmissionPb := emission
     chargeIndexationMeur := indexation
-    inflationConsoPb := H.eco.inflationConsoA k
+    inflationConsoPb := H.eco.inflationConsoA k + phillips
+    ecartCycleScenarioPb := s.ecartCycleScenarioPb + (H.eco.croissanceVolumeA k - H.eco.croissancePotentielleA k)
     rang := k + 1
     partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
     economieInteretsNumeriqueMeur := economieNum
@@ -503,14 +531,21 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     allegementsTranche := s.allegementsTranche.croitre croissance
     -- passifs implicites : le stock s'accroît du flux, qui suit les salaires
     passifs := { police := s.passifs.police + s.fluxPassifs.police
-                 hopital := s.passifs.hopital + s.fluxPassifs.hopital }
+                 hopital := s.passifs.hopital + s.fluxPassifs.hopital
+                 infrastructures := s.passifs.infrastructures + s.fluxPassifs.infrastructures }
+    -- le retard d'entretien suit les prix des travaux (déflateur) ; les
+    -- heures suivent les salaires
     fluxPassifs := { police := s.fluxPassifs.police + appliquerPb s.fluxPassifs.police croissance
-                     hopital := s.fluxPassifs.hopital + appliquerPb s.fluxPassifs.hopital croissance }
+                     hopital := s.fluxPassifs.hopital + appliquerPb s.fluxPassifs.hopital croissance
+                     infrastructures := s.fluxPassifs.infrastructures + appliquerPb s.fluxPassifs.infrastructures prix }
     -- dette de fin d'année : `Etat.dette` (déficit final de l'année, mesures
     -- comprises)
     detteDebut := dette
     ajustementDetteAnnee := 0
     participationsEtat := participations
+    placementOrAnnee := orAchat
+    placementParticipationsAnnee := participationsAchat
+    orRacheteMeur := s.orRacheteMeur + orAchat
     dividendesEtat := dividendes
     emissionsKt := emissions.1
     effetPrixTransportsPpm := emissions.2.1
@@ -665,6 +700,31 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let investissementAnnee := s.investissementPublicMesures.total
     + (s.echeances.filter (fun e => e.secteur = some .construction ∧ !e.privee ∧ e.capitalPublic)).foldl (fun a e => a + e.niveau) 0
   let s₇ := canalCapital M H prix investissementAnnee s₇
+  -- facteur d'implantation : l'emploi industriel répond, avec retard, au
+  -- coût de l'électricité des entreprises, comparé à ce que coûterait le mix
+  -- de départ aux mêmes prix du gaz et du CO₂ (les concurrents, sur le même
+  -- marché du gaz et des quotas, sont supposés subir ces prix-là) : seul
+  -- l'effet du mix et de la modulation compte ; la production gagnée est
+  -- exportée ou remplace des importations
+  let s₇ :=
+    let p0 := El.prixEntreprisesEurosMWh H.horizon (k + 1) H.energie.prixBrentDollars
+      H.energie.prixReferenceDollars H.reference.etat.productionGwh
+    let p1 := s₇.prixElectriciteEntreprisesEurosMWh
+    if p0 ≤ 0 then s₇ else
+    let ecartPm := p1 * 1000 / p0 - 1000
+    let cible := s₇.emploi.industrie * El.elasticiteEmploiIndustrielPrixElecPm * ecartPm / 1000000
+    let d := (cible - s₇.emploisImplantationsEnergie) * El.ajustementImplantationsPm / 1000
+    if d = 0 then s₇ else
+    let s₈ := chocEmploi H d (chocDemandeTravail H (some .industrie) d s₇)
+    { s₈ with exportations := s₈.exportations + (s₈.pib - s₇.pib)
+              emploisImplantationsEnergie := s₇.emploisImplantationsEnergie + d }
+  -- résorption des effets de demande des mesures : l'activité revient vers
+  -- son potentiel ; une part de l'écart au-delà de sa part durable se
+  -- referme (emploi et recettes suivent), sans être suivie comme impulsion
+  let resorption := (s₇.ecartDemandeMeur - appliquerPm s₇.demandeCumuleeMeur M.partDemandeDurablePm)
+    * M.resorptionDemandePm / 1000
+  let s₇ := if resorption = 0 then s₇
+    else { chocPib H none (0 - resorption) s₇ with ecartDemandeMeur := s₇.ecartDemandeMeur - resorption }
   -- stabilisateur automatique : l'indemnisation suit les chômeurs de fin
   -- d'année (cycle, tendance et mesures de l'année)
   let s₈ := stabilisateurChomage M H s₇
@@ -684,6 +744,9 @@ def etatDepart (H : Scenario) : Etat :=
                     tauxMarginalCourantPb := H.eco.tauxMarginalPb
                     electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers
                     decesMilliers := H.demo.decesMilliers
+                    -- coût d'équilibre de l'électricité des entreprises au mix de départ
+                    prixElectriciteEntreprisesEurosMWh := H.energie.electricite.prixEntreprisesEurosMWh H.horizon 0
+                      H.energie.prixBrentDollars H.energie.prixReferenceDollars s.productionGwh
   }
   let s := chocPib H none dPib s
   -- les chômeurs de départ (choc pétrolier compris) sont ceux que couvrent les

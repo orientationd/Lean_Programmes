@@ -56,7 +56,17 @@ de capital public déprécié de 5 % par an, élasticité de la production de
 ans) et au taux d'IS (coût du capital des entreprises : +0,10 % de PIB à long
 terme par point de taux en moins, atteint à 61 % en dix ans) ; il joue
 entièrement au moteur d'offre, pour moitié au moteur « Exemple équilibre »,
-pas au moteur de demande. Le moteur fixe l'effet moyen
+pas au moteur de demande. Les effets de demande des mesures s'estompent
+sous les moteurs d'offre et d'équilibre, quand l'activité revient vers son
+potentiel : pour un point de PIB de dépense publique, le PIB est plus haut
+de 1 point à 5 ans et de 0,2 à long terme dans Mésange, de 0,90 à 5 ans,
+0,80 à 10 ans et 0,45 à long terme dans ThreeME (DG Trésor, Trésor-Éco
+n° 394, juillet 2026). Le moteur d'offre garde 20 % de l'effet à long
+terme et résorbe le reste de 5 % par an ; le moteur d'équilibre en garde la
+moitié et résorbe l'autre de 3 % par an ; le moteur de demande garde des
+effets permanents (cas limite). Sur dix ans, l'écart reste modeste : la
+résorption relève le PIB 2035 du Texte Orientation D de 0,2 point sous le
+moteur d'offre. Le moteur fixe l'effet moyen
 d'un prélèvement sur la demande ; l'axe économique le répartit selon l'impôt
 (TVA, IR, CSG au-dessus de la moyenne ; IS, successions, patrimoine bien
 en dessous). Les allègements de cotisations patronales passent par le coût
@@ -110,7 +120,25 @@ facteurs de charge observés par RTE, sur la capacité moyenne de l'année ;
 la consommation suit la trajectoire « décarbonation lente » du bilan
 prévisionnel 2025 de RTE, plus les voitures électriques du parc. La
 production que ni la consommation ni le solde exportateur maximal
-(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation). La
+(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation) ou,
+si une mesure donne la priorité au nucléaire (`prioriteNucleaire`),
+écrêtée sur le solaire puis l'éolien (électricité non produite, donc non
+payée : hypothèse, les contrats de soutien récents ne rémunérant pas les
+heures de prix négatifs ; la part renouvelable baisse d'autant). Le
+modèle en déduit chaque année un coût d'équilibre de l'électricité des
+entreprises : coût complet du mix (nucléaire existant à coût annuel fixe,
+61 €/MWh pour 365 TWh, CRE ; renouvelables et cycles à gaz à leurs coûts
+complets, le gaz indexé sur le Brent du scénario, le CO₂ de 75 à 120 €/t),
+plus marge de fourniture, réseau et taxes (≈ 121 €/MWh au départ, contre
+165 observés en 2024 et 149 en 2025, encore portés par les contrats de la
+crise : c'est un coût d'équilibre, pas un prix de marché). La synthèse le
+compare aux prix observés en 2024 dans les autres pays (UE-27, Allemagne,
+États-Unis…). Facteur d'implantation : l'emploi manufacturier répond à
+l'écart entre ce coût et celui du mix de départ aux mêmes prix du gaz et
+du CO₂ (élasticité −0,10, atteinte au tiers par an ; la production gagnée
+est exportée) — plus de renouvelables qui forcent la modulation du
+nucléaire à coût fixe renchérissent le mix et font partir des usines, et
+inversement. La
 consommation d'espaces naturels, agricoles et forestiers (ENAF) suit
 l'enveloppe du zéro artificialisation nette (ZAN : la moitié de 2011-2021
 sur 2021-2031, données du Cerema) : ce qu'il en reste fin 2025 permet
@@ -180,6 +208,35 @@ de la programmation pluriannuelle de l'énergie (décret n° 2026-76) et
 l'objectif de 40 % d'électricité renouvelable en 2030 (code de l'énergie,
 art. L.100-4) (`Proprietes/Lois.lean`). Un programme peut proposer de
 modifier une loi : la propriété signale alors l'écart.
+
+**Constitution et lois organiques.** Cinq garde-fous traduisent des normes
+de rang constitutionnel ou organique (`Hypotheses/Constitution.lean`,
+`Proprietes/Constitution.lean`, préfixe `constitution-`, page à part de la
+synthèse) : la Constitution n'a pas à être révisée (art. 89 ; une mesure qui
+l'exige le déclare par le levier `revisionConstitution`) ; le taux marginal
+maximal d'imposition d'un revenu reste sous 70 % (DDHC, art. 13 ; Conseil
+constitutionnel : 75 % censuré en 2012, 64,5 % admis en 2013 ; 55,4 % au
+départ pour un salaire, relevé par les mesures qui le déclarent, levier
+`tauxMarginalSommet`) ; la dépense de retraite en volume par personne de
+65 ans et plus et la dépense d'enseignement par habitant ne baissent pas
+de plus de 5 % (Préambule de 1946, al. 11 et 13) ; le déficit structurel
+est au plus de 0,4 % du PIB dix ans après le départ (objectif de moyen
+terme : loi organique n° 2012-1403, TSCG art. 3). Le déficit structurel
+corrige le déficit de l'écart de production, que le modèle suit désormais :
+écart de départ (≈ −0,5 point en 2025), trajectoire du scénario (croissance
+en volume moins potentielle) et effets de demande des mesures encore
+présents ; les chocs d'offre (heures, productivité, capital) déplacent le
+potentiel, pas l'écart. L'écart de production nourrit l'inflation par une
+courbe de Phillips (0,1 point d'inflation par point d'écart de l'année
+précédente, bas des estimations pour la zone euro ; nulle dans le
+rétro-test, où l'inflation est observée) : une consolidation qui creuse
+l'activité fait baisser les prix, donc le PIB nominal, et renchérit la dette
+en termes réels. Une propriété constitutionnelle perdue ne vaut pas
+inconstitutionnalité : elle signale ce que le Conseil constitutionnel ou le
+Haut Conseil des finances publiques examineraient. Non retenus faute de
+grandeur dans le modèle : l'autonomie financière des collectivités
+(art. 72-2), la sincérité des comptes (art. 47-2), l'égalité devant
+l'impôt hors caractère confiscatoire.
 
 ## Engagements, contrats et évaluation
 

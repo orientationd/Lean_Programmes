@@ -221,6 +221,37 @@ structure Electricite where
   partSolaireSolPm : Int
   haParMwSolaireCentiemes : Int
   haParMwEolienCentiemes : Int
+  /-- Coût de l'électricité pour les entreprises (indicateur de la synthèse
+  et facteur d'implantation industrielle). Coût complet du nucléaire
+  existant à sa production de référence, €/MWh, et cette production, GWh :
+  le coût annuel est fixe, la modulation renchérit le MWh produit. Coûts
+  complets des autres filières, €/MWh (le thermique est traité à part) ;
+  cycle à gaz : prix du gaz à la référence du Brent, €/MWh, divisé par le
+  rendement, plus le CO₂ (prix la première année et à l'horizon, €/t,
+  interpolés) fois le facteur d'émission, plus les coûts fixes. S'y
+  ajoutent la marge de fourniture (commercialisation, capacité, certificats
+  d'économies d'énergie), le réseau et les taxes moyennes des entreprises,
+  €/MWh. -/
+  coutNucleaireEurosMWh : Int := 61
+  productionReferenceNucleaireGwh : Int := 365000
+  coutFiliereEurosMWh : ParFiliere := {}
+  prixGazReferenceEurosMWh : Int := 35
+  rendementCycleGazPm : Int := 550
+  prixCo2DepartEurosT : Int := 75
+  prixCo2HorizonEurosT : Int := 120
+  co2CycleGazKgMWh : Int := 370
+  coutFixeThermiqueEurosMWh : Int := 10
+  margeFournitureEurosMWh : Int := 15
+  reseauEntreprisesEurosMWh : Int := 31
+  taxesEntreprisesEurosMWh : Int := 13
+  /-- Prix observés chez des pays de comparaison (année de référence),
+  €/MWh hors TVA, pour la synthèse : (pays, électricité, gaz). -/
+  prixComparaison : List (String × Int × Int) := []
+  /-- Facteur d'implantation : élasticité de l'emploi industriel au prix
+  réel de l'électricité des entreprises, pm (négative), et part de l'écart à
+  la cible rattrapée chaque année, pm. -/
+  elasticiteEmploiIndustrielPrixElecPm : Int := -100
+  ajustementImplantationsPm : Int := 333
   sources : List String
   deriving Repr
 
@@ -228,6 +259,36 @@ namespace Electricite
 
 /-- Installations tendancielles de l'année `k + 1`, MW. -/
 def ajoutsA (E : Electricite) (k : Nat) : ParFiliere := E.ajoutsTendanceMw.getD k E.ajoutsLongTermeMw
+
+/-- Prix du CO₂ l'année `k`, €/t (interpolation linéaire sur `horizon`
+années). -/
+def prixCo2A (E : Electricite) (horizon k : Nat) : Int :=
+  if horizon = 0 then E.prixCo2DepartEurosT
+  else E.prixCo2DepartEurosT + (E.prixCo2HorizonEurosT - E.prixCo2DepartEurosT) * (min k horizon : Int) / horizon
+
+/-- Coût variable et fixe d'un cycle à gaz, €/MWh, pour un Brent à
+`brent` dollars contre `brentReference`. -/
+def coutThermiqueEurosMWh (E : Electricite) (horizon k : Nat) (brent brentReference : Int) : Int :=
+  let gaz := if brentReference = 0 then E.prixGazReferenceEurosMWh
+    else E.prixGazReferenceEurosMWh * brent / brentReference
+  (if E.rendementCycleGazPm = 0 then 0 else gaz * 1000 / E.rendementCycleGazPm)
+    + E.prixCo2A horizon k * E.co2CycleGazKgMWh / 1000 + E.coutFixeThermiqueEurosMWh
+
+/-- Coût complet moyen de l'électricité pour les entreprises, €/MWh hors
+TVA : coût du mix produit (nucléaire à coût annuel fixe), marge de
+fourniture, réseau, taxes. -/
+def prixEntreprisesEurosMWh (E : Electricite) (horizon k : Nat) (brent brentReference : Int)
+    (production : ParFiliere) : Int :=
+  let total := production.total
+  if total ≤ 0 then 0 else
+  let nucleaire := E.coutNucleaireEurosMWh * E.productionReferenceNucleaireGwh
+  let c := E.coutFiliereEurosMWh
+  let autres := production.hydraulique * c.hydraulique + production.eolienTerrestre * c.eolienTerrestre
+    + production.eolienMer * c.eolienMer + production.solaire * c.solaire
+    + production.bioenergies * c.bioenergies
+    + production.thermique * E.coutThermiqueEurosMWh horizon k brent brentReference
+  (nucleaire + autres) / total + E.margeFournitureEurosMWh + E.reseauEntreprisesEurosMWh
+    + E.taxesEntreprisesEurosMWh
 
 end Electricite
 
@@ -321,6 +382,7 @@ et sa fonction de dépense (`TechnoTransition.secteur`,
 inductive TechnoTransition where
   | pompeAChaleur | vehiculeElectrique | vehiculeUtilitaire | solaire | eolien
   | renovation | reseauChaleur | hvo | biogazole | bioethanol | biogaz
+  | ascenseur
   deriving Repr, DecidableEq, Inhabited
 
 /-- Valeur par technologie de la transition. -/
@@ -336,6 +398,7 @@ structure ParTechno where
   biogazole : Int
   bioethanol : Int
   biogaz : Int
+  ascenseur : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParTechno
@@ -352,6 +415,7 @@ def get (v : ParTechno) : TechnoTransition → Int
   | .biogazole => v.biogazole
   | .bioethanol => v.bioethanol
   | .biogaz => v.biogaz
+  | .ascenseur => v.ascenseur
 
 end ParTechno
 
@@ -364,13 +428,14 @@ souvent importés ; la fabrication (industrie) pour les véhicules et le HVO ;
 l'agriculture pour le biogazole de colza et le bioéthanol, dont la valeur
 intérieure est surtout agricole. -/
 def secteur : TechnoTransition → Secteur
-  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur | .biogaz => .construction
+  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur | .biogaz
+  | .ascenseur => .construction
   | .vehiculeElectrique | .vehiculeUtilitaire | .hvo => .industrie
   | .biogazole | .bioethanol => .agriculture
 
 /-- Fonction de dépense publique (COFOG agrégée). -/
 def fonction : TechnoTransition → Fonction
-  | .pompeAChaleur | .renovation | .reseauChaleur | .biogaz => .logementEnvironnement
+  | .pompeAChaleur | .renovation | .reseauChaleur | .biogaz | .ascenseur => .logementEnvironnement
   | .vehiculeElectrique | .vehiculeUtilitaire | .solaire | .eolien | .hvo | .biogazole
   | .bioethanol => .affairesEconomiques
 
@@ -384,7 +449,7 @@ comptabilité nationale). -/
 def capitalPublic : TechnoTransition → Bool
   | .reseauChaleur | .solaire | .eolien | .biogaz => true
   | .pompeAChaleur | .renovation | .vehiculeElectrique | .vehiculeUtilitaire | .hvo
-  | .biogazole | .bioethanol => false
+  | .biogazole | .bioethanol | .ascenseur => false
 
 end TechnoTransition
 
@@ -648,6 +713,17 @@ structure Economie where
   renonçant à d'autres dépenses privées (autres investissements,
   consommation), retirée de l'effet de demande. -/
   evictionInvestissementPrivePm : Int
+  /-- Courbe de Phillips : pb d'inflation (déflateur et prix à la
+  consommation) ajoutés par pb d'écart de production de l'année précédente,
+  pm (`0` : inflation exogène, comme dans le rétro-test). -/
+  pentePhillipsPm : Int := 0
+  /-- Écart de production de l'année de départ, pb du PIB potentiel (négatif
+  : activité sous son potentiel). -/
+  ecartProductionDepartPb : Int := 0
+  /-- Semi-élasticité du solde public à l'écart de production, pm : part de
+  l'écart qui se retrouve dans le solde (solde structurel = solde − semi-
+  élasticité × écart). -/
+  semiElasticiteSoldePm : Int := 570
   /-- Inflation annuelle (déflateur du PIB), pb : sépare le volume des prix
   pour le RNB par habitant de l'IDH. -/
   inflationPb : Int
@@ -1138,5 +1214,20 @@ instance (H : Scenario) : Decidable H.ValideEmissions := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario
+
+
+/-- Écart de production, pb du PIB : écart de départ du scénario, écart
+cumulé de la trajectoire (croissance en volume moins potentielle) et
+effets de demande des mesures encore présents (`ecartDemandeMeur`) ; les
+chocs d'offre des mesures (heures, productivité, capital) déplacent le
+potentiel, pas l'écart. -/
+def Etat.ecartProductionPb (H : Scenario) (s : Etat) : Int :=
+  H.eco.ecartProductionDepartPb + s.ecartCycleScenarioPb + ratioPb s.ecartDemandeMeur s.pib
+
+/-- Déficit structurel, pb du PIB : déficit corrigé de la part conjoncturelle
+(semi-élasticité du solde à l'écart de production, axe économique). Un
+écart négatif creuse le déficit effectif, pas le structurel. -/
+def Etat.deficitStructurelPb (H : Scenario) (s : Etat) : Int :=
+  s.deficitPb + s.ecartProductionPb H * H.eco.semiElasticiteSoldePm / 1000
 
 end Modele

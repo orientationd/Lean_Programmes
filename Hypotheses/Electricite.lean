@@ -112,6 +112,63 @@ def sources : List String := [
   "Connaissance des énergies, parc éolien français : 2,9 MW par turbine neuve en 2023"
 ]
 
+/-- Coûts complets par filière, €/MWh (champ `coutFiliereEurosMWh`) :
+éolien terrestre 86,62 et solaire ≈ 80 (au sol 74,13, sur toiture 96,48 ;
+derniers appels d'offres instruits, CRE, communiqué du 18 février 2026),
+éolien en mer 100 (entre les 44 €/MWh de Dunkerque et les 130 à 150 des
+premiers parcs ; hypothèse), hydraulique 30 (parc amorti, concessions ;
+hypothèse), bioénergies 120 (tarifs biomasse et biogaz ; hypothèse). Le
+nucléaire existant est à coût annuel fixe : 61 €/MWh pour 365 TWh (coût
+complet 2026-2028 de 60,3 €2026/MWh, CRE, 30 septembre 2025 ; RTE retient
+61 €2024/MWh). Cycle à gaz : gaz à 35 €/MWh pour un Brent à 63 $ (TTF
+34,65 €/MWh en 2024, 36,33 en 2025, indexé sur le Brent, hypothèse :
+indexation entière, borne haute), rendement 55 %, 0,37 t de CO₂ par MWh,
+CO₂ à 75 €/t en 2025 (quotas à 71 € en 2024, 77 en 2025) et 120 €/t à
+l'horizon (RTE : 80 à 120 €/t en 2030 ; hypothèse haute), 10 €/MWh de
+coûts fixes. Marge de fourniture 15 €/MWh (commercialisation, capacité,
+certificats d'économies d'énergie ; hypothèse), réseau 31 €/MWh et taxes
+13 €/MWh (prix moyen des entreprises en 2024 : 164,6 €/MWh hors TVA, dont
+fourniture 121, réseau 31, taxes 13, SDES, « Prix de l'électricité en France
+et dans l'Union européenne en 2024 »). Le coût complet du mix est inférieur
+au prix moyen payé en 2024-2025, qui portait encore les contrats de la
+crise de 2022 (fourniture 105 €/MWh en 2025) : l'indicateur est un coût
+d'équilibre, pas un prix de marché ; RTE attend un coût complet moyen de
+≈ 80 €2024/MWh consommé en 2030-2035 (bilan prévisionnel, analyse
+économique, juillet 2026). -/
+def coutsFilieres : ParFiliere :=
+  { nucleaire := 61, hydraulique := 30, eolienTerrestre := 87, eolienMer := 100,
+    solaire := 80, thermique := 0, bioenergies := 120 }
+
+/-- Prix de l'électricité et du gaz des entreprises en 2024, €/MWh hors TVA
+(champ `prixComparaison`, pour le graphique de la synthèse ; 0 = non
+disponible). Électricité : France 165 et UE-27 178 (SDES 2024, toutes
+tranches) ; Allemagne 236, Italie 207, Espagne 138, Pologne 210, Pays-Bas
+210, Belgique 179, Suède 90 (Eurostat nrg_pc_205, bande 500 à 2 000 MWh,
+moyennes 2024 toutes taxes et TVA comprises reprises par Apiar Data,
+ramenées hors TVA au taux national : calcul, approximatif) ; Royaume-Uni
+265 (très gros consommateurs, second semestre 2024, taxes comprises, DESNZ,
+22,32 p/kWh : calcul) ; États-Unis 75 (8,13 c$/kWh, EIA, à 1,08 $/€ :
+calcul) ; Corée ≈ 120 (173 won/kWh, KEPCO, décembre 2024 : calcul). Gaz :
+France 64,7 et UE-27 59,4 (SDES 2024, non-ménages) ; Allemagne 71,3 et
+Belgique 48,1, Suède 106,5 (Eurostat, second semestre 2025) ; États-Unis
+≈ 13 (Henry Hub 2,21 $/MMBtu en 2024, ≈ 7 €/MWh, plus livraison ;
+incertain). -/
+def prixComparaison2024 : List (String × Int × Int) :=
+  [("France", 165, 65), ("UE-27", 178, 59), ("Allemagne", 236, 71), ("Italie", 207, 0),
+   ("Espagne", 138, 0), ("Pologne", 210, 0), ("Pays-Bas", 210, 0), ("Belgique", 179, 48),
+   ("Suède", 90, 106), ("Royaume-Uni", 265, 0), ("États-Unis", 75, 13), ("Corée", 120, 0)]
+
+/-- Facteur d'implantation : élasticité de l'emploi manufacturier au prix
+de l'électricité de −0,10 (fourchette −0,05 à −0,20 : Marin et Vona, 2021,
+établissements français 1997-2015, −0,08 ; Fontagné, Martin et Orefice,
+CEPR 2023, −0,15 ; Dechezleprêtre et al., OCDE 2020, −0,07 ; Bijnens et
+al., BCE 2021, −0,1 à −0,2 ; Eurochambres 2025, −0,10 à −0,15 à deux ans),
+atteinte au tiers chaque année (horizon de deux à trois ans). Les
+concurrents sont supposés à prix réel constant : seule l'évolution
+française compte. -/
+def elasticiteEmploiIndustrielPrixElec : Int := -100
+def ajustementImplantations : Int := 333
+
 def electriciteFrance : Electricite where
   facteurChargePm :=
     { nucleaire := 661, hydraulique := 273, eolienTerrestre := 231, eolienMer := 388,
@@ -124,6 +181,10 @@ def electriciteFrance : Electricite where
   partSolaireSolPm := 2000 * 1000 / ajouts2030.solaire
   haParMwSolaireCentiemes := 150
   haParMwEolienCentiemes := 38 * 100 / 290
+  coutFiliereEurosMWh := coutsFilieres
+  prixComparaison := prixComparaison2024
+  elasticiteEmploiIndustrielPrixElecPm := elasticiteEmploiIndustrielPrixElec
+  ajustementImplantationsPm := ajustementImplantations
   sources := sources
 
 /-- Contrôles des calculs annoncés dans le docstring. -/
