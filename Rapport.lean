@@ -174,6 +174,7 @@ def etatChamps (s : Etat) : List (String × Json) :=
     ("emissionsMt", toJson s.emissionsMt), ("ageLegalMois", toJson s.ageLegalMois),
     ("passifsImplicites", toJson s.passifsImplicites), ("detteEtenduePb", toJson s.detteEtenduePb),
     ("passifsPolice", toJson s.passifs.police), ("passifsHopital", toJson s.passifs.hopital),
+    ("passifsInfrastructures", toJson s.passifs.infrastructures),
     ("emissionsSecteursKt", Json.mkObj <| SecteurGes.tous.map fun g => (g.id, toJson (s.emissionsKt.get g))),
     ("capacitesMw", Json.mkObj <| Filiere.tous.map fun f => (f.id, toJson (s.capacitesMw.get f))),
     ("productionGwh", Json.mkObj <| Filiere.tous.map fun f => (f.id, toJson (s.productionGwh.get f))),

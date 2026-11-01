@@ -879,12 +879,16 @@ inductive TypePassif where
   | heuresSupPolice
   /-- Heures supplémentaires non payées ni récupérées à l'hôpital public. -/
   | heuresSupHopital
+  /-- Retard d'entretien des infrastructures publiques (ouvrages d'art,
+  chaussées, voies navigables) : travaux nécessaires non faits. -/
+  | entretienInfrastructures
   deriving Repr, DecidableEq, Inhabited
 
 /-- Un montant par type de passif implicite, M€. -/
 structure ParPassif where
   police : Int := 0
   hopital : Int := 0
+  infrastructures : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParPassif
@@ -892,13 +896,15 @@ namespace ParPassif
 def get (v : ParPassif) : TypePassif → Int
   | .heuresSupPolice => v.police
   | .heuresSupHopital => v.hopital
+  | .entretienInfrastructures => v.infrastructures
 
 def ajouter (v : ParPassif) (t : TypePassif) (d : Int) : ParPassif :=
   match t with
   | .heuresSupPolice => { v with police := v.police + d }
   | .heuresSupHopital => { v with hopital := v.hopital + d }
+  | .entretienInfrastructures => { v with infrastructures := v.infrastructures + d }
 
-def total (v : ParPassif) : Int := v.police + v.hopital
+def total (v : ParPassif) : Int := v.police + v.hopital + v.infrastructures
 
 theorem total_ajouter (v : ParPassif) (t : TypePassif) (d : Int) :
     (v.ajouter t d).total = v.total + d := by

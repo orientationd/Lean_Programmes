@@ -510,9 +510,13 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     allegementsTranche := s.allegementsTranche.croitre croissance
     -- passifs implicites : le stock s'accroît du flux, qui suit les salaires
     passifs := { police := s.passifs.police + s.fluxPassifs.police
-                 hopital := s.passifs.hopital + s.fluxPassifs.hopital }
+                 hopital := s.passifs.hopital + s.fluxPassifs.hopital
+                 infrastructures := s.passifs.infrastructures + s.fluxPassifs.infrastructures }
+    -- le retard d'entretien suit les prix des travaux (déflateur) ; les
+    -- heures suivent les salaires
     fluxPassifs := { police := s.fluxPassifs.police + appliquerPb s.fluxPassifs.police croissance
-                     hopital := s.fluxPassifs.hopital + appliquerPb s.fluxPassifs.hopital croissance }
+                     hopital := s.fluxPassifs.hopital + appliquerPb s.fluxPassifs.hopital croissance
+                     infrastructures := s.fluxPassifs.infrastructures + appliquerPb s.fluxPassifs.infrastructures prix }
     -- dette de fin d'année : `Etat.dette` (déficit final de l'année, mesures
     -- comprises)
     detteDebut := dette

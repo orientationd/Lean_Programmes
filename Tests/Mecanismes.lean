@@ -499,4 +499,20 @@ theorem offre_travail :
       p.chomagePb = s0.chomagePb := by
   decide +kernel
 
+/-- Retard d'entretien : 1 Md€ de travaux retire 1 Md€ du passif
+d'infrastructures et crée des emplois dans la construction l'année même ;
+le passif ne descend pas sous zéro ; sans mesure, le stock grossit du flux
+annuel (0,8 Md€, indexé). -/
+theorem entretien_passifs :
+    let s0 := etatDepart H
+    let p := depart (mesure (.entretienPassifs .entretienInfrastructures .affairesEconomiques 1000))
+    let q := depart (mesure (.entretienPassifs .entretienInfrastructures .affairesEconomiques 100000))
+    let t := tendancielAn D H 1
+    s0.passifs.infrastructures - p.passifs.infrastructures = 1000 ∧
+      0 < p.emploi.construction - s0.emploi.construction ∧
+      q.passifs.infrastructures = 0 ∧
+      800 ≤ t.passifs.infrastructures - s0.passifs.infrastructures ∧
+      t.passifs.infrastructures - s0.passifs.infrastructures ≤ 850 := by
+  decide +kernel
+
 end Tests.Mecanismes

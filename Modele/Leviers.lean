@@ -383,6 +383,12 @@ inductive Levier where
   (« dettes cachées » : heures supplémentaires non payées…), payé l'année
   même comme des heures supplémentaires (dépense et déficit de l'année). -/
   | apurementPassifs (type : TypePassif) (fonction : Fonction) (partPm : Int)
+  /-- Résorption d'un retard d'entretien (`type`, en pratique
+  `entretienInfrastructures`) : `montant` M€ de travaux l'année même,
+  investissement d'une année (emplois dans la construction, capital public
+  au moteur d'offre), retirés du stock de passifs ; à répéter chaque année
+  (`repetitions`). -/
+  | entretienPassifs (type : TypePassif) (fonction : Fonction) (montant : Int)
   /-- Paiement au fil de l'eau de `partPm` des nouveaux passifs implicites
   du type `type` (heures supplémentaires payées l'année où elles sont
   faites) : dépense permanente, et le stock cesse de croître d'autant. -/
@@ -1121,6 +1127,12 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       let montant := s.passifs.get t * part / 1000
       remunerationUneAnnee M H .heuresSup f montant
         { s with passifs := s.passifs.ajouter t (-montant) }
+  | .entretienPassifs t f montant, s =>
+      let m := max 0 (min montant (s.passifs.get t))
+      let e : Echeance := { fonction := f, restants := [0], niveau := montant, indice := 10000,
+                            secteur := some .construction }
+      appliquerInvestissement H f montant
+        { s with echeances := s.echeances ++ [e], passifs := s.passifs.ajouter t (-m) }
   | .paiementFluxPassifs t f part, s =>
       let montant := s.fluxPassifs.get t * part / 1000
       let e : Echeance := { fonction := f, restants := [], niveau := montant, indice := 10000,

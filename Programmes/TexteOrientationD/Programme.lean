@@ -3242,6 +3242,26 @@ déclarées pouvant dépasser les heures réelles) : +2 ‰ d'heures par emploi,
 par moitiés en 2027 et 2028. Coût public nul. -/
 def heuresTempsPartielPm : Int := 1
 
+/-- Dette cachée d'entretien (O-179), demande de l'auteur (novembre 2026) :
+« rénovation des ouvrages d'art accélérée, maintenance en général,
+enveloppe de 1 milliard par an ». Le modèle commun suit depuis novembre
+2026 un passif « retard d'entretien des infrastructures » : ≈ 12 Md€ fin
+2025 (ouvrages d'art routiers ≈ 6 Md€, dont 3,3 Md€ pour les ponts et murs
+des petites communes, Cerema, Programme national ponts, bilan d'octobre
+2025 ; chaussées nationales ≈ 4,5 Md€ ; voies navigables 1,1 Md€), qui
+grossit de ≈ 0,8 Md€ par an (`Hypotheses.Reference`). L'enveloppe de
+1 Md€ par an pendant dix ans (fonds ponts des collectivités et entretien
+courant : 0,5 Md€ ; chaussées nationales : 0,35 Md€ ; voies navigables :
+0,15 Md€) résorbe ≈ 10 Md€ sur ≈ 20 Md€ de retard cumulé en 2035 ; travaux
+publics : ≈ 5,5 emplois directs par million d'euros (FNTP, calcul) ; un
+entretien différé coûte ≈ 3 fois plus en curatif (audit du réseau routier
+national, 2018). Limite : capacité des maîtrises d'ouvrage communales (la
+moitié des ouvrages subventionnés en 2023 sans travaux engagés deux ans
+plus tard) et coûts des travaux d'ouvrages d'art en hausse de 84 % de 2016
+à 2023. -/
+def entretienInfrastructuresParAn : Int := 1000
+def anneesEntretien : Nat := 10
+
 theorem pib_deux_valeurs :
     seniorsActifsParAn = 16087 ∧ meresEmploiParAn = 6250 ∧ postesCreche = [7500, 15000, 22500, 30000] ∧
     investissementCreche = [875, 875, 875, 875, 0] := by decide
@@ -4678,7 +4698,12 @@ def mesures : List Mesure := [
     titre := "Droit au temps complet : passage à temps plein de droit sauf motif économique, heures complémentaires majorées de 25 % dès la première"
     source := s!"Demande de l'auteur (novembre 2026) ; 0,9 million de temps partiels subis (Insee 2025) ; un huitième résorbé (hypothèse) : +{2 * heuresTempsPartielPm} ‰ d'heures par emploi, par moitiés en 2027 et 2028 ; coût public nul (voir `heuresTempsPartielPm`)"
     leviers := [.dureeTravail heuresTempsPartielPm]
-    repetitions := 2 }
+    repetitions := 2 },
+  { id := "O-179"
+    titre := "Dette cachée d'entretien : rénovation accélérée des ouvrages d'art, chaussées et voies navigables, 1 Md€ par an pendant dix ans"
+    source := s!"Demande de l'auteur (novembre 2026) ; retard d'entretien ≈ 12 Md€ fin 2025, +0,8 Md€ par an (Cerema 2025, Sénat 2022, audit 2018, Cour des comptes 2025) ; {entretienInfrastructuresParAn} M€ de travaux par an de 2027 à 2036, retirés du passif (voir `entretienInfrastructuresParAn`)"
+    leviers := [.entretienPassifs .entretienInfrastructures .affairesEconomiques entretienInfrastructuresParAn]
+    repetitions := anneesEntretien }
 ]
 
 def programme : Programme where

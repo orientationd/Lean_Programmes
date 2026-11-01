@@ -345,6 +345,31 @@ stock stable entre 2021 et 2022). Les comptes épargne-temps (≈ 2,6 Md€,
 provisionnés au moins en partie) ne sont pas comptés. -/
 def passifsHopital2025 : Int := 720
 
+/-- Retard d'entretien des infrastructures de transport hors rail, M€ :
+ouvrages d'art routiers ≈ 6 Md€ (ponts et murs des communes de moins de
+10 000 habitants : 3,3 Md€ de remise en état dont 0,8 Md€ d'urgences,
+Cerema, Programme national ponts, bilan au 31 octobre 2025, 52 799
+ouvrages évalués, 28 % des ponts en bon état ; départements : ≈ 10 000
+ponts en mauvais état à ≈ 120 000 €, ≈ 1,2 Md€, calcul, Sénat, rapport
+n° 669, 2022 ; État : 854 ponts, retard de 89 M€ en 2022 ; fourchette 4,5 à
+8 Md€), chaussées du réseau routier national non concédé ≈ 4,5 Md€ (besoin
+de 1,3 Md€ par an de 2022 à 2037 pour revenir à l'état de 2017 contre ≈ 1
+Md€ dépensé, audit IMDM-Nibuxs 2018, Cour des comptes 2022 ; calcul),
+voies navigables 1,1 Md€ de « dette grise » (Cour des comptes, février
+2025) ; total ≈ 12 Md€ ; le rail (≈ 1,5 Md€ par an de régénération non
+financés, Conseil d'orientation des infrastructures 2023) et les bâtiments
+publics (universités ≈ 7 Md€, écoles jusqu'à 50 Md€ avec l'énergie) ne sont
+pas comptés, faute de stock établi. -/
+def passifsInfrastructures2025 : Int := 12000
+
+/-- Accroissement annuel du retard d'entretien, M€ par an : ouvrages d'art
+≈ 0,4 Md€ (entretien courant communal 140 M€ et fonds de 130 M€ par an
+demandés par le Sénat, départements en baisse de 9 % en 2024, Observatoire
+national de la route), chaussées nationales ≈ 0,3 Md€ (1,3 Md€ nécessaires
+contre ≈ 1 Md€), voies navigables ≈ 0,1 Md€ (Cour des comptes 2025) :
+≈ 0,8 Md€ par an, indexés sur les prix des travaux. -/
+def fluxPassifsInfrastructures : Int := 800
+
 /-- Émissions territoriales 2025 par secteur, kt CO₂e hors puits (Citepa,
 inventaire Secten publié le 16 juin 2026, estimation 2025 ; déchets : niveau
 2024, non réestimé). Total 359,5 Mt ; 367,0 Mt en 2024, 546,9 Mt en 1990. -/
@@ -400,7 +425,9 @@ def reference2026 : Reference where
     electrificationAnnuelleMilliers := 0
     bornesAnnuellesMilliers := 0
     participationsEtat := 209100   -- portefeuille de l'APE, valeur estimée au 30 juin 2025 (86 entités)
-    passifs := { police := passifsPolice2025, hopital := passifsHopital2025 }  -- heures supplémentaires non payées
+    passifs := { police := passifsPolice2025, hopital := passifsHopital2025,
+                 infrastructures := passifsInfrastructures2025 }  -- heures supplémentaires non payées, retard d'entretien
+    fluxPassifs := { infrastructures := fluxPassifsInfrastructures }
     cdhrMeur := 400                -- contribution différentielle sur les hauts revenus, encaissements 2025
     allegementsTranche := { bas := 64950, intermediaire := 8850, haut := 1200 }  -- allègements généraux ≈ 75 Md€, répartis selon la RGDU 2026 (calcul)
     esperanceVieTendanceCentiemes := 8355  -- 83,3 ans en 2023 (PNUD, RDH 2025) + 0,25 (INSEE : 82,85 → 83,1 de 2023 à 2025)

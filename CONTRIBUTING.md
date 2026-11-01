@@ -170,7 +170,11 @@ transfert aux ménages, sans emplois publics en plus ; recruter reste un
 cachées »), suivis par type (`TypePassif` : `.heuresSupPolice`,
 `.heuresSupHopital`) : `apurementPassifs type fonction partPm` paie une
 part du stock l'année même, `paiementFluxPassifs type fonction partPm`
-paie le flux au fil de l'eau ; le rapport donne chaque stock et la dette
+paie le flux au fil de l'eau ; `entretienPassifs type fonction montant`
+résorbe un retard d'entretien (`.entretienInfrastructures` : ouvrages
+d'art, chaussées, voies navigables, ≈ 12 Md€ fin 2025 et +0,8 Md€ par an)
+par des travaux d'une année (emplois dans la construction, capital
+public), à répéter ; le rapport donne chaque stock et la dette
 étendue. Investissement échelonné (bâtiments, équipements) :
 `investissementEcheancier fonction niveaux` (emplois dans la construction,
 dernier niveau reconduit, 0 pour arrêter) ; le fonctionnement des
