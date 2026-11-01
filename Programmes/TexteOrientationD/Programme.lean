@@ -3415,6 +3415,18 @@ def decesZfeNonEvitesParAn : Int := 50
 def anneesZfe : Nat := 3
 def economieAidesZfe : Int := 5
 
+/-- Compensation sanitaire de la fin des ZFE (O-183c) : 10 000 voitures
+Crit'Air 5 ou non classées de plus par an remplacées par une électrique
+d'occasion récente (12 000 € : hypothèse, prix moyen d'une citadine
+électrique de trois à cinq ans ; part importée comme O-01), de 2029 à 2035
+(sept vagues, 70 000 voitures), en plus des 90 000 d'O-01 : 160 000 des
+1,2 million de Crit'Air 5 et non classées du parc. Le modèle en déduit
+≈ 47 décès évités par an en 2035 (6,75 par vague de 10 000), de quoi
+rester sous la mortalité du tendanciel après les ≈ 150 décès des ZFE. -/
+def remplacementOccasion : Remplacement :=
+  { remplacement with prixUnitaire := 12000 }
+def vaguesOccasion : Nat := 7
+
 def mesures : List Mesure := [
   { id := "O-01"
     titre := "Remplacement gratuit par l'État de 10 000 voitures parmi les plus polluantes chaque année"
@@ -4835,7 +4847,13 @@ def mesures : List Mesure := [
     source := s!"{decesZfeNonEvitesParAn} décès par an pendant {anneesZfe} ans, ≈ 150 à terme (Airparif 2024, ORS-IDF 2018, Insee 2026 ; voir `decesZfeNonEvitesParAn`)"
     leviers := [.pollutionAir decesZfeNonEvitesParAn]
     debut := 2
-    repetitions := anneesZfe }
+    repetitions := anneesZfe },
+  { id := "O-183c"
+    titre := "Compensation de la fin des ZFE : 10 000 voitures Crit'Air 5 de plus remplacées chaque année par une électrique d'occasion récente, de 2029 à 2035"
+    source := s!"Demande de l'auteur (novembre 2026) ; {remplacementOccasion.nombre} voitures par an à {remplacementOccasion.prixUnitaire} € (hypothèse) pendant {vaguesOccasion} ans, Crit'Air 5 et non classées (1,2 million au 1er janvier 2026, SDES) ; voir `remplacementOccasion`"
+    leviers := [.remplacementVehicules remplacementOccasion]
+    debut := 2
+    repetitions := vaguesOccasion }
 ]
 
 def programme : Programme where
