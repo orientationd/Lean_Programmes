@@ -143,7 +143,10 @@ et les dépenses par tête. Textes européens : les propriétés
 `ue-*` (`Proprietes/Europe.lean`) traduisent les règles listées dans
 `Hypotheses/Europe.lean` ; en ajouter une = un texte cité + un critère.
 
-Marché du travail : la loi d'Okun est exprimée en chômage ; les emplois
+Offre de travail : `offreTravail actifs tauxEmploiPm` (seniors, parents,
+inactifs ramenés vers l'emploi : actifs en plus, dont une part en emploi
+l'année même, le reste réabsorbé au rythme du scénario) ; n'inscrire que
+les actifs supplémentaires, nets de l'aubaine. Marché du travail : la loi d'Okun est exprimée en chômage ; les emplois
 s'en déduisent avec l'effet de flexion (`emploisPourChomeurs`,
 `chocDemandeTravail`). Les chocs d'offre de
 travail des mesures (âge de départ, migrations, réallocations par

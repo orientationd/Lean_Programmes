@@ -483,4 +483,20 @@ theorem declarations_constitution :
       r.revisionsConstitution.length = 1 ∧ s0.revisionsConstitution = [] := by
   decide +kernel
 
+/-- Offre de travail : 100 000 actifs de plus dont 90 % en emploi ajoutent
+≈ 90 000 emplois l'année même (PIB par les heures, ≈ +0,2 %) et 100 000
+actifs, et laissent l'écart à l'emploi d'équilibre (≈ 7 % de chômage sur
+les 10 000 restants) en chômeurs excédentaires à réabsorber ; le taux de
+chômage ne bouge pas. -/
+theorem offre_travail :
+    let s0 := etatDepart H
+    let p := depart (mesure (.offreTravail 100000 900))
+    100000 ≤ p.actifs - s0.actifs ∧ p.actifs - s0.actifs ≤ 100500 ∧
+      90000 ≤ p.emploiTotal - s0.emploiTotal ∧ p.emploiTotal - s0.emploiTotal ≤ 90500 ∧
+      5000 ≤ p.pib - s0.pib ∧ p.pib - s0.pib ≤ 7000 ∧
+      1500 ≤ p.chomeursExcedentaires - s0.chomeursExcedentaires ∧
+      p.chomeursExcedentaires - s0.chomeursExcedentaires ≤ 3000 ∧
+      p.chomagePb = s0.chomagePb := by
+  decide +kernel
+
 end Tests.Mecanismes

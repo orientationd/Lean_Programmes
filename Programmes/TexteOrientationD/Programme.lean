@@ -3143,6 +3143,91 @@ def heuresRachatPm : Int :=
 theorem pib_originales_valeurs :
     gainSimplificationParAnPb = 12 ∧ visaDiplomeMilliersParAn = 11 ∧ heuresRachatPm = 3 := by decide
 
+/-- Deuxième série de mesures pour le PIB (O-175 à O-178), demande de
+l'auteur (novembre 2026) : « cherche des solutions pour augmenter le PIB en
+respectant les propriétés le plus possible ». Dans le modèle, le PIB monte
+par la productivité, les heures et la population active en emploi ; le
+levier `offreTravail` (actifs supplémentaires, part en emploi) a été ajouté
+pour les seniors et les parents. Recherche documentaire de novembre 2026.
+
+Concurrence (O-175) : liberté d'installation des notaires, huissiers,
+pharmacies et taxis (fin du numerus clausus et des licences), ouverture du
+capital des professions du droit et de la santé, tarifs réglementés revus
+tous les deux ans, fin des monopoles de distribution (pièces détachées
+visibles, médicaments sans ordonnance en grande surface). Repère : pour la
+loi croissance et activité de 2015, l'OCDE estimait +0,3 % de PIB potentiel
+à cinq ans et +0,4 % à dix ans (note remise au ministre le 18 septembre
+2015, cinq blocs de mesures) ; une réforme « typique » de la réglementation
+des marchés de produits vaut +0,7 % de PIB par habitant à cinq ans (Égert
+et Gal, OCDE, document de travail n° 1354, 2016). La mesure, plus large que
+la loi de 2015, en reprend le chiffrage, prudent : +6 pb de PIB par an de
+2027 à 2031, puis +2 pb par an de 2032 à 2036. Coût public : nul
+(indemnisation des offices non chiffrée, hypothèse). -/
+def concurrenceGainParAnPb : Int := 6
+def concurrenceGainSuitePb : Int := 2
+def anneesConcurrence : Nat := 5
+
+/-- Emploi des seniors (O-176) : surcote doublée (2,5 % par trimestre au
+lieu de 1,25 %) de l'âge légal à 67 ans, et cumul emploi-retraite libre dès
+l'âge légal dans les métiers en tension. 4,29 millions de 60-64 ans
+(Insee, 1er janvier 2025) ; taux d'emploi de 42,4 % (Dares, 2024) contre
+56,5 % en moyenne dans l'OCDE (Panorama des pensions 2025). Effets mesurés :
+la surcote de 2003 a relevé de 7,5 points (+16 %) la probabilité de
+travailler après 60 ans chez les éligibles (Benallah, Économie et
+Statistique n° 441-442, 2011) ; la suppression du plafond de cumul aux
+États-Unis, +0,8 à 2 points de participation des 65-69 ans (Song et
+Manchester, 2007). Retenu : +1,5 point de taux d'emploi des 60-64 ans
+(fourchette 0,8 à 2,5 ; hypothèse), soit ≈ 65 000 emplois par quarts de
+2027 à 2030, 90 % en emploi dès l'année (ce sont des personnes qui
+prolongent leur activité). Coût : 14 % des nouveaux retraités du régime
+général liquident avec surcote (8,5 à 9,5 trimestres, DREES) ; doubler la
+surcote ≈ +0,1 Md€ par cohorte, cumulatif (calcul), soit 1 Md€ par an au
+bout de dix ans. -/
+def seniorsActifsParAn : Int := 4290000 * 15 / 1000 / 4
+def seniorsTauxEmploiPm : Int := 900
+def surcoteCoutParCohorte : Int := 100
+
+/-- Petite enfance (O-177) : 100 000 places de crèche de plus de 2027 à
+2030 et droit opposable à une place dès un an (le service public de la
+petite enfance visait +100 000 places en 2027 et +200 000 en 2030, annonce
+du 1er juin 2023 ; les places ont baissé de 0,6 % en 2023). Taux d'emploi
+des mères d'un enfant de moins de trois ans : 73 %, 70 % et 49 % selon le
+nombre d'enfants, contre 79, 84 et 66 % quand le plus jeune a trois ans
+(DREES, REPSS Famille 2024). Effets causaux : +10 points de couverture →
++3,4 à 3,7 points d'emploi des mères en Allemagne (Bauernschuster et
+Schlotter, 2015), +1,1 point en France pour la PAJE de 2004 (Givord et
+Marbot, 2015), ≈ 0 en Norvège (garde informelle remplacée) : 0,1 à 0,35
+emploi de mère par place, 0,25 retenu (hypothèse) : +25 000 mères en
+emploi, par quarts. Emplois directs : 0,3 équivalent temps plein par place
+(hypothèse ; coût de revient de 19 450 € par place et par an, CNAF 2024,
+dont ≈ 70 % de personnel) : 30 000 postes à 45 000 € ; investissement de
+35 000 € par place (hypothèse) : 875 M€ par an. -/
+def placesCrecheParAn : Int := 25000
+def meresParPlacePm : Int := 250
+def meresEmploiParAn : Int := placesCrecheParAn * meresParPlacePm / 1000
+def postesParPlacePm : Int := 300
+def postesCreche : List Int := (List.range 4).map fun (k : Nat) => placesCrecheParAn * postesParPlacePm / 1000 * (Int.ofNat k + 1)
+def investissementCrecheParPlace : Int := 35000
+def investissementCreche : List Int :=
+  (List.replicate 4 (placesCrecheParAn * investissementCrecheParPlace / 1000000)) ++ [0]
+
+/-- Temps partiel subi (O-178) : droit au temps complet (l'employeur accepte
+la demande de passage à temps plein ou justifie d'un motif économique,
+comme la loi néerlandaise de 2016 sur le travail flexible) et heures
+complémentaires majorées de 25 % dès la première. 4,3 millions de salariés
+à temps partiel (17,6 %), 23,1 heures par semaine, 21,3 % « faute de temps
+complet » (Insee, enquête Emploi 2025) ; sous-emploi : 4,3 % des personnes
+en emploi (≈ 1,3 million). Un quart du temps partiel subi résorbé en cinq
+ans (≈ 300 000 personnes, +12 heures par semaine) vaudrait ≈ +100 000
+équivalents temps plein ; la moitié retenue (hypothèse, les heures
+déclarées pouvant dépasser les heures réelles) : +2 ‰ d'heures par emploi,
+par moitiés en 2027 et 2028. Coût public nul. -/
+def heuresTempsPartielPm : Int := 1
+
+theorem pib_deux_valeurs :
+    seniorsActifsParAn = 16087 ∧ meresEmploiParAn = 6250 ∧ postesCreche = [7500, 15000, 22500, 30000] ∧
+    investissementCreche = [875, 875, 875, 875, 0] := by decide
+
 /-- Foncière de l'État (O-170) : cession d'un quart des bureaux de l'État
 en dix ans (23 millions de m², valeur comptable 73,7 Md€ ; cessions de
 0,2 à 0,3 Md€ par an aujourd'hui ; projet de foncière de l'État, Sénat,
@@ -4542,7 +4627,45 @@ def mesures : List Mesure := [
   { id := "O-174"
     titre := "Droit au rachat de cinq jours de RTT par an, majorés de 10 %, sans exonération"
     source := s!"Demande de l'auteur (octobre 2026) ; 8 millions de salariés à RTT, recours de moitié (hypothèse) : +{heuresRachatPm} ‰ d'heures par emploi ; neutre pour les finances publiques (voir `salariesRttMilliers`)"
-    leviers := [.dureeTravail heuresRachatPm] }
+    leviers := [.dureeTravail heuresRachatPm] },
+  { id := "O-175"
+    titre := "Concurrence : liberté d'installation des notaires, huissiers, pharmacies et taxis, capital des professions ouvert, tarifs réglementés revus, fin des monopoles de distribution"
+    source := s!"Demande de l'auteur (novembre 2026) ; OCDE (2015) : +0,3 % de PIB à cinq ans, +0,4 % à dix ans pour la loi croissance et activité : +{concurrenceGainParAnPb} pb par an de 2027 à 2031, +{concurrenceGainSuitePb} pb ensuite ; coût public nul (voir `concurrenceGainParAnPb`)"
+    leviers := [.automatisation concurrenceGainParAnPb 0 0]
+    repetitions := anneesConcurrence },
+  { id := "O-175b"
+    titre := "Concurrence : effets de long terme (2032-2036)"
+    source := s!"+{concurrenceGainSuitePb} pb de PIB par an"
+    leviers := [.automatisation concurrenceGainSuitePb 0 0]
+    debut := anneesConcurrence
+    repetitions := anneesConcurrence },
+  { id := "O-176"
+    titre := "Emploi des seniors : surcote doublée de l'âge légal à 67 ans, cumul emploi-retraite libre dans les métiers en tension"
+    source := s!"Demande de l'auteur (novembre 2026) ; +1,5 point de taux d'emploi des 60-64 ans (Benallah 2011, Song et Manchester 2007 ; hypothèse) : +{seniorsActifsParAn} actifs par an de 2027 à 2030, 90 % en emploi ; surcote : +{surcoteCoutParCohorte} M€ par cohorte, cumulatif (voir `seniorsActifsParAn`)"
+    leviers := [.offreTravail seniorsActifsParAn seniorsTauxEmploiPm,
+                .depenseSur .retraites surcoteCoutParCohorte]
+    repetitions := 4 },
+  { id := "O-176b"
+    titre := "Emploi des seniors : coût cumulé de la surcote après 2030"
+    source := s!"+{surcoteCoutParCohorte} M€ par cohorte"
+    leviers := [.depenseSur .retraites surcoteCoutParCohorte]
+    debut := 4
+    repetitions := 6 },
+  { id := "O-177"
+    titre := "Petite enfance : 100 000 places de crèche de plus (2027-2030), droit opposable à une place dès un an"
+    source := s!"Demande de l'auteur (novembre 2026) ; 0,25 mère en emploi par place (Bauernschuster et Schlotter 2015, Givord et Marbot 2015 ; hypothèse) : +{meresEmploiParAn} par an ; {postesCreche.getLastD 0} postes à 45 000 € en 2030 ; investissement {investissementCreche.getD 0 0} M€ par an (voir `placesCrecheParAn`)"
+    leviers := [.offreTravail meresEmploiParAn 900]
+    repetitions := 4 },
+  { id := "O-177b"
+    titre := "Petite enfance : postes et investissement des crèches"
+    source := s!"{postesCreche.getLastD 0} postes en 2030 (0,3 ETP par place), {investissementCreche.getD 0 0} M€ d'investissement par an de 2027 à 2030"
+    leviers := [.creationPostes .famille postesCreche 45000,
+                .investissementEcheancier .famille investissementCreche] },
+  { id := "O-178"
+    titre := "Droit au temps complet : passage à temps plein de droit sauf motif économique, heures complémentaires majorées de 25 % dès la première"
+    source := s!"Demande de l'auteur (novembre 2026) ; 0,9 million de temps partiels subis (Insee 2025) ; un huitième résorbé (hypothèse) : +{2 * heuresTempsPartielPm} ‰ d'heures par emploi, par moitiés en 2027 et 2028 ; coût public nul (voir `heuresTempsPartielPm`)"
+    leviers := [.dureeTravail heuresTempsPartielPm]
+    repetitions := 2 }
 ]
 
 def programme : Programme where
