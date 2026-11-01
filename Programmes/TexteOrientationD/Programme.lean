@@ -2769,25 +2769,55 @@ theorem fonds_valeurs : reservesConverties = 72300 ∧ revenusPerdus = 1807 := b
 (octobre 2026), sur le modèle de l'impôt foncier danois (« grundskyld » :
 23,2 Md DKK en 2024, ≈ 0,8 % du PIB, Danmarks Statistik) et des théories de
 Henry George : impôt sur la seule valeur des terrains, pas sur les
-constructions. Assiette : terrains bâtis hors administrations publiques,
-5 826 Md€ fin 2024 (6 729 Md€ en tout, Insee Première n° 2081) ; abattement
-de 50 000 € de terrain sur la résidence principale de ≈ 17,7 millions de
-propriétaires occupants (30,6 millions de résidences principales, 58 %
-occupées par leur propriétaire, Insee ; calcul) ; taux de 0,5 %. Loi en
-2027, évaluation de masse en 2028 à partir des ventes (DVF), demi-taux en
-2029, plein taux en 2030 ; report de paiement possible jusqu'à la
-succession pour les retraités modestes. Le moins distorsif des impôts : il
-ne frappe ni le travail ni la construction, et pénalise la rétention
-foncière (comme O-140) ; les prix des terrains baisseraient une fois pour
-toutes. Acceptabilité très faible ; s'ajoute à la taxe foncière. -/
+constructions. Depuis novembre 2026, à la demande de l'auteur, le taux est
+**progressif selon la surface de la parcelle** par logement ou local (en
+collectif, parcelle répartie au prorata des surfaces habitables, méthode du
+SDES), et les terrains **agricoles et industriels sont exclus** : les
+terres agricoles ne sont pas des terrains bâtis (comptes de patrimoine) ;
+les terrains industriels et logistiques, ≈ 200 Md€ (100 à 300 : ≈ 60 % des
+450 000 ha de zones d'activité à 40 à 80 €/m², calcul, Cerema 2022), sont
+retirés de l'assiette. Assiette : terrains bâtis hors administrations
+publiques, 5 826 Md€ fin 2024 (ménages 4 043, sociétés non financières
+1 596, sociétés financières 186 ; Insee Première n° 2081), moins
+l'industriel : ≈ 5 600 Md€, répartis en trois classes de surface par
+logement ou local (calcul, hypothèses sur les répartitions ; médiane de
+732 m² pour les maisons et 68 m² pour les appartements, SDES, empreinte
+foncière 2022 ; maisons : 35 % sous 500 m², 51 % de 500 à 2 000, 14 %
+au-delà, enquête Logement 2013 ; la valeur d'un terrain est à peu près la
+même quelle que soit sa taille, le prix du m² décroissant avec la surface,
+EPTB) : ≈ 3 450 Md€ sous 500 m², ≈ 1 600 Md€ de 500 à 2 000 m², ≈ 580 Md€
+au-delà de 2 000 m² (fourchettes 3 100-3 700, 1 350-1 900, 400-800).
+Barème (hypothèse, modèle taïwanais pour le critère de surface) : 0,25 %,
+0,5 % et 1 % de la valeur de la parcelle selon sa classe ; abattement de
+50 000 € de terrain sur la résidence principale de ≈ 17,7 millions de
+propriétaires occupants (30,6 millions de résidences principales, 58 %,
+Insee), imputé pour 70 % à la première classe et 30 % à la deuxième
+(hypothèse). Loi en 2027, évaluation de masse en 2028 à partir des ventes
+(DVF), demi-taux en 2029, plein taux en 2030 ; report de paiement possible
+jusqu'à la succession pour les retraités modestes. Le moins distorsif des
+impôts : il ne frappe ni le travail ni la construction, et pénalise la
+rétention foncière (comme O-140) ; la progressivité par surface épargne les
+appartements et frappe surtout le rural peu dense, où le mètre carré vaut
+peu : l'essentiel du produit vient des petites parcelles. Version
+précédente : taux unique de 0,5 % (24,7 Md€), porté à 1,15 % puis 0,575 %
+par O-169, retirée. Acceptabilité faible ; s'ajoute à la taxe foncière. -/
 def valeurSolHorsApu : Int := 5826000
+def valeurSolIndustriel : Int := 200000
+def valeurSolClasses : List Int := [3450000, 1600000, 580000]
+def tauxSolClassesPcm : List Int := [250, 500, 1000]
 def proprietairesOccupantsMilliers : Int := 30600 * 58 / 100
 def abattementSolEuros : Int := 50000
-def tauxSolPdm : Int := 50
+def abattementSol : Int := proprietairesOccupantsMilliers * abattementSolEuros / 1000
+def abattementSolClassesPm : List Int := [700, 300, 0]
 def contributionSol : Int :=
-  (valeurSolHorsApu - proprietairesOccupantsMilliers * abattementSolEuros / 1000) * tauxSolPdm / 10000
+  (List.range 3).foldl (fun acc k =>
+    acc + (valeurSolClasses.getD k 0 - abattementSol * abattementSolClassesPm.getD k 0 / 1000)
+      * tauxSolClassesPcm.getD k 0 / 100000) 0
+/-- Taux moyen apparent, pour dix mille (information : ≈ 0,34 %). -/
+def tauxSolPdm : Int := contributionSol * 10000 / (valeurSolHorsApu - valeurSolIndustriel)
 
-theorem sol_valeurs : contributionSol = 24693 := by decide
+theorem sol_valeurs : valeurSolClasses.foldl (· + ·) 0 = valeurSolHorsApu - valeurSolIndustriel + 4000 ∧
+    abattementSol = 887400 ∧ contributionSol = 19540 ∧ tauxSolPdm = 34 := by decide
 
 /-- Fin de l'effacement des plus-values latentes au décès (O-152), mesure
 originale en France (octobre 2026) : à la transmission, les plus-values
@@ -2962,13 +2992,14 @@ def soutienSolaireSupplement : List Int :=
       * demiAnnees / 2 * productionSolaireGwhParGw / 1000000
 
 /-- Finances pour l'équilibre en 2035, la règle européenne de −1 point de
-dette par an et le financement du paquet climat (O-164 à O-169), demande
+dette par an et le financement du paquet climat (O-164 à O-171), demande
 de l'auteur (octobre 2026). Au rang qui décide (neuvième meilleur des
 dix-huit scénarios économiques), il manquait ≈ 0,5 point de déficit en
 2030, ≈ 0,8 point en 2035 et ≈ 6,5 points de dette, plus ≈ 15 Md€ par an
 pour le climat. Trois familles : opérations sur la dette sans effet sur
 l'activité (O-164), recettes à faible effet sur la demande (O-167, O-168,
-O-170, O-171), contribution sur le sol relevée (O-169). Essai : la
+O-170, O-171), contribution sur le sol relevée (O-169, retirée en novembre
+2026 au profit du barème progressif d'O-151). Essai : la
 consolidation des réserves de l'Agirc-Arrco, du RCI et du Fonds de garantie
 des dépôts, un dividende exceptionnel du fonds d'épargne de la Caisse des
 dépôts et le droit d'entrée des concessions hydroélectriques permettraient
@@ -3015,19 +3046,6 @@ def finDutreil : Int := 2000
 def ttfElargie : Int := 1500
 def prelevementFondsEpargne : Int := 1600
 def redevanceFrequences : Int := 300
-
-/-- Contribution sur le sol relevée (O-169) : de 0,5 % (O-151) à 0,575 %,
-même assiette et même calendrier. Elle était portée à 1,15 % ; l'auteur la
-réduit de moitié (octobre 2026 : « réduit la contribution sur le sol de
-moitié »), pour l'acceptabilité. Taux du supplément en pour cent mille
-(0,075 %). Avec O-151, la contribution rapporte ≈ 28 Md€ par an à plein
-taux au lieu de ≈ 57 Md€ (calcul). À 1,15 %, comme dès 1 %, les impôts sur
-l'immobilier atteindraient ≈ 3,3 % du PIB, au sommet de l'OCDE (Danemark :
-7,4 ‰ en moyenne sur 80 % de la valeur ; Nouvelle-Galles du Sud : 1,6 à 2 %
-au-delà de 1,075 M A$, résidence principale exonérée) : acceptabilité très
-faible. -/
-def tauxSolSupplementPcm : Int := 75
-def contributionSolSupplement : Int := contributionSol * tauxSolSupplementPcm / (tauxSolPdm * 10)
 
 /-- Transition décrite finement (leviers `transitionEcologique`,
 `investissementTransition`, `investissementPriveTransition` du modèle
@@ -3246,8 +3264,7 @@ theorem paquet_ultra_valeurs : sobrieteRoutiereKt = 3860 ∧ flottesKt = 6580 �
     chauffageKt = 7010 ∧ tertiaireKt = 3600 ∧ energieKt = 2230 ∧ agricultureKt = 7000 ∧
     soutienSolaireSupplement = [25, 75, 126, 177, 202] ∧
     devisesVendues = 14200 ∧ chauffageGazKt + chauffageFioulKt + biofioulKt = chauffageKt ∧
-    investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 ∧
-    contributionSolSupplement = 3703 := by decide
+    investissementSolaire solaireSolParAnMw solaireToitParAnMw = 7102 := by decide
 
 /-- Essai d'octobre 2026 (variante d'O-124) : hausse de la composante
 carbone multipliée par 8, soit 44,6 + 8 × 55,4 = 487,8 €/t en 2030 (calcul),
@@ -4436,11 +4453,11 @@ def mesures : List Mesure := [
     leviers := [.pretEtat (reservesConverties / 2)]
     debut := 2 },
   { id := "O-151"
-    titre := "Contribution nationale de 0,5 % sur la valeur du sol (modèle danois), abattement de 50 000 € sur la résidence principale"
-    source := s!"Mesure originale (octobre 2026) ; terrains bâtis hors administrations : 5 826 Md€ fin 2024 (Insee), abattement de 50 000 € pour ≈ {proprietairesOccupantsMilliers} milliers de propriétaires occupants ; {contributionSol} M€ à plein taux (2030), demi-taux en 2029 ; Danemark : ≈ 0,8 % du PIB (voir `valeurSolHorsApu`)"
+    titre := "Contribution nationale sur la valeur du sol, progressive selon la surface de la parcelle (0,25 %, 0,5 %, 1 %), terrains agricoles et industriels exclus"
+    source := s!"Mesure originale (octobre 2026), barème par surface demandé par l'auteur (novembre 2026) ; terrains bâtis hors administrations et hors industriel ≈ 5 600 Md€ (Insee, Cerema, SDES), classes de 500 et 2 000 m² par logement ; abattement de 50 000 € pour ≈ {proprietairesOccupantsMilliers} milliers de propriétaires occupants ; {contributionSol} M€ à plein taux (2030, taux moyen de 0,34 %), demi-taux en 2029 (voir `valeurSolClasses`)"
     leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSol / 2, contributionSol]]
-    variantes := [{ nom := "taux de 0,25 %", leviers :=
-      [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSol / 4, contributionSol / 2]] }] },
+    variantes := [{ nom := "taux unique de 0,5 % (version précédente, 24,7 Md€)", leviers :=
+      [.recetteEcheancier (some .taxeFonciere) [0, 0, 24693 / 2, 24693]] }] },
   { id := "O-152"
     titre := "Fin de l'effacement des plus-values latentes au décès (modèle canadien)"
     source := s!"Mesure originale en France (octobre 2026) ; ≈ {plusValuesDeces} M€ par an (Terra Nova, 2022) (voir `plusValuesDeces`)"
@@ -4599,10 +4616,6 @@ def mesures : List Mesure := [
     source := s!"Demande de l'auteur (octobre 2026) ; TTF {ttfElargie} M€ (modèle italien) ; fonds d'épargne {prelevementFondsEpargne} M€ ; fréquences {redevanceFrequences} M€ (Ofcom) (voir `ttfElargie`)"
     leviers := [.recetteEcheancier (some .autres) [ttfElargie],
                 .recetteEcheancier none [prelevementFondsEpargne + redevanceFrequences]] },
-  { id := "O-169"
-    titre := "Contribution sur la valeur du sol portée à 0,575 % (O-151), moitié de 1,15 %"
-    source := s!"Demande de l'auteur (octobre 2026) ; +{contributionSolSupplement} M€ à plein taux en 2030 ; réduite de moitié par l'auteur (1,15 % auparavant) pour l'acceptabilité (voir `tauxSolSupplementPcm`)"
-    leviers := [.recetteEcheancier (some .taxeFonciere) [0, 0, contributionSolSupplement / 2, contributionSolSupplement]] },
   { id := "O-170"
     titre := "Foncière de l'État : un quart des bureaux de l'État vendus en dix ans"
     source := s!"Demande de l'auteur (octobre 2026) ; {cessionsBureaux} M€ par an (Sénat, PLF 2025 : 23 millions de m², 73,7 Md€) ; sans reprise en location (voir `cessionsBureaux`)"
