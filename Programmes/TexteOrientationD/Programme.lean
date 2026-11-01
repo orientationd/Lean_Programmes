@@ -3427,6 +3427,85 @@ def remplacementOccasion : Remplacement :=
   { remplacement with prixUnitaire := 12000 }
 def vaguesOccasion : Nat := 7
 
+/-- Formation aux premiers secours obligatoire au lycée (O-184), demande de
+l'auteur (novembre 2026). Droit : l'article L. 312-13-1 du code de
+l'éducation (loi « citoyen sauveteur » du 3 juillet 2020) prévoit
+l'apprentissage des gestes pendant la scolarité obligatoire, sans le lycée
+ni objectif chiffré ; ≈ 30 % des élèves de 3e sont certifiés PSC1
+(2022-2023, ministère ; 44 % en 2017-2018), aucun suivi au lycée ; la
+proposition de loi Castiglione (100 % des 3e en 2030) a été retirée en
+mai 2025. La mesure : formation PSC (7 h) en seconde pour les élèves non
+certifiés et recyclage de 3 h en terminale pour tous. Effectifs (DEPP,
+rentrée 2025) : 802 500 entrants au lycée (seconde générale et
+technologique 558 700, seconde professionnelle 184 700, CAP 59 100), dont
+≈ 70 % sans PSC1, soit 560 000 ; 684 000 élèves de terminale. Coût : 60 €
+par formation complète (tarif moyen, ministère, 2023 ; 35 à 40 € en
+interne avec les 7 000 enseignants formateurs) et 27 € par recyclage
+(3 h : calcul au prorata), soit 34 + 18 = 52 M€ par an, arrondis à 50 M€
+avec le matériel et la formation des formateurs (il faudrait les
+doubler) ; dépense d'enseignement. Effet : 46 000 arrêts cardiaques
+extrahospitaliers par an, survie ≈ 7 %, réanimation par un témoin dans
+36 % des cas (RéAC, ARLoD 2024) contre 45 % au Danemark après la formation
+scolaire de 2005 (21 % avant) et plus de 80 % en Norvège ; porter la survie
+à 10-14 % éviterait 1 400 à 3 200 décès par an toutes mesures confondues ;
+part attribuable à la seule formation lycéenne : 20 à 40 %, soit 300 à
+1 300 décès par an à plein régime (calcul), retenus à 600, soit 1,5 % des
+40 000 décès de la cause, atteints en quinze ans (≈ 300 par an en 2035).
+Preuve causale faible (GRADE), mise en œuvre partielle des lois scolaires
+ailleurs (Danemark : 28 % des classes formées huit ans après la loi). -/
+def elevesSecondeAFormer : Int := 560000
+def elevesTerminale : Int := 684000
+def coutPscEuros : Int := 60
+def coutRecyclagePscEuros : Int := 27
+def depensePremiersSecours : Int := 50
+def baisseDecesArretCardiaquePm : Int := 15
+
+theorem premiers_secours_eq :
+    (elevesSecondeAFormer * coutPscEuros + elevesTerminale * coutRecyclagePscEuros) / 1000000 = 52 ∧
+    40000 * baisseDecesArretCardiaquePm / 1000 = 600 := by decide
+
+/-- Remboursement de la chirurgie réfractive (O-185 : Lasik, PKR, SMILE,
+implants), demande de l'auteur (novembre 2026). Aujourd'hui hors
+nomenclature (acte « de confort », TVA à 20 %), prise en charge par les
+complémentaires pour quatre assurés sur cinq (305 € par œil en moyenne,
+DREES 2024) ; 150 000 à 200 000 yeux opérés par an (ANSM 2021, Revue du
+Praticien 2021 ; retenu 180 000), 1 000 à 2 000 € par œil au laser
+(retenu 1 300) ; aucun pays ne rembourse l'acte de routine (Pays-Bas :
+indications médicales strictes). La mesure : tarif de responsabilité de
+1 500 € par œil remboursé à 70 % (1 050 €), le reste pris par les
+complémentaires sous contrat responsable. Demande : reste à charge
+quasi nul, 3 % des amétropes opérés et 15 % intéressés (KCE 2013), flux
+multiplié par 2,5 (fourchette 1,5 à 4) en trois ans, limité par l'offre
+(5 800 ophtalmologistes, 130 lasers) : 180 000, 270 000 puis 450 000 yeux
+par an, soit 189, 326 (à mi-montée) puis 473 M€ par an. Économie sur l'optique
+remboursée : faible, l'Assurance maladie ne finance que 345 M€ des 8,3 Md€
+d'optique (4 %, DREES 2024), ≈ 20 € par an et par opéré, soit ≈ 4,5 M€ par
+cohorte de 225 000 opérés (calcul), déduite de la dépense ; les économies
+des complémentaires (≈ 150 € par porteur et par an) et des ménages ne sont
+pas publiques. TVA perdue sur l'activité existante : 234 M€ × 1/6 = 39 M€
+par an (calcul ; les actes induits n'en payaient pas). Non comptés :
+retouches (11 % à dix ans), presbytie après 45 ans, éviction de l'activité
+médicale des ophtalmologistes (cataracte, rétine) vers le réfractif. -/
+def yeuxOperesParAn : Int := 180000
+def multiplicateurChirurgieRefractivePm : Int := 2500
+def tarifResponsabiliteOeilEuros : Int := 1500
+def tauxRemboursementOeilPm : Int := 700
+def economieOptiqueParCohorte : Int := 45    -- dixièmes de M€ par an et par cohorte
+def tvaPerdueChirurgieRefractive : Int := yeuxOperesParAn * 1300 / 6 / 1000000
+def depenseOeil : Int := tarifResponsabiliteOeilEuros * tauxRemboursementOeilPm / 1000
+/-- Yeux remboursés par année : montée en charge en trois ans. -/
+def yeuxRembourses (k : Nat) : Int :=
+  let plein := yeuxOperesParAn * multiplicateurChirurgieRefractivePm / 1000
+  if k = 0 then yeuxOperesParAn else if k = 1 then (yeuxOperesParAn + plein) / 2 else plein
+/-- Dépense nette de l'année `k`, M€ : remboursements moins l'optique
+économisée par les cohortes déjà opérées. -/
+def depenseChirurgieRefractive (k : Nat) : Int :=
+  yeuxRembourses k * depenseOeil / 1000000 - Int.ofNat k * economieOptiqueParCohorte / 10
+def chirurgieRefractiveNiveaux : List Int := (List.range 10).map depenseChirurgieRefractive
+
+theorem chirurgie_refractive_eq : depenseOeil = 1050 ∧ tvaPerdueChirurgieRefractive = 39 ∧
+    chirurgieRefractiveNiveaux = [189, 326, 463, 459, 454, 450, 445, 441, 436, 432] := by decide
+
 def mesures : List Mesure := [
   { id := "O-01"
     titre := "Remplacement gratuit par l'État de 10 000 voitures parmi les plus polluantes chaque année"
@@ -4853,13 +4932,21 @@ def mesures : List Mesure := [
     source := s!"Demande de l'auteur (novembre 2026) ; {remplacementOccasion.nombre} voitures par an à {remplacementOccasion.prixUnitaire} € (hypothèse) pendant {vaguesOccasion} ans, Crit'Air 5 et non classées (1,2 million au 1er janvier 2026, SDES) ; voir `remplacementOccasion`"
     leviers := [.remplacementVehicules remplacementOccasion]
     debut := 2
-    repetitions := vaguesOccasion }
+    repetitions := vaguesOccasion },
+  { id := "O-184"
+    titre := "Formation aux premiers secours obligatoire au lycée : PSC de 7 h en seconde pour les élèves non certifiés, recyclage de 3 h en terminale"
+    source := s!"Demande de l'auteur (novembre 2026) ; {elevesSecondeAFormer} élèves à {coutPscEuros} € et {elevesTerminale} recyclages à {coutRecyclagePscEuros} € (DEPP 2025, ministère 2023), {depensePremiersSecours} M€ par an ; {40000 * baisseDecesArretCardiaquePm / 1000} décès par arrêt cardiaque évités par an à plein régime en quinze ans (RéAC, Wissenberg et al. 2013 ; calcul, incertain ; voir `elevesSecondeAFormer`)"
+    leviers := [.depenseSur .enseignement depensePremiersSecours, .baisseMortalite .arretCardiaque baisseDecesArretCardiaquePm] },
+  { id := "O-185"
+    titre := "Remboursement de la chirurgie réfractive (Lasik, PKR, SMILE, implants) : tarif de responsabilité de 1 500 € par œil pris en charge à 70 %"
+    source := s!"Demande de l'auteur (novembre 2026) ; {yeuxOperesParAn} yeux par an aujourd'hui (ANSM, Revue du Praticien), flux × 2,5 en trois ans (hypothèse d'après KCE 2013), {depenseOeil} € par œil, dépense nette {chirurgieRefractiveNiveaux.headD 0} à {chirurgieRefractiveNiveaux.getD 2 0} M€ par an moins l'optique économisée, TVA perdue {tvaPerdueChirurgieRefractive} M€ (voir `yeuxOperesParAn`)"
+    leviers := [.depenseEcheancier .sante chirurgieRefractiveNiveaux, .prelevementSur .tva (0 - tvaPerdueChirurgieRefractive)] }
 ]
 
 def programme : Programme where
   id := "TexteOrientationD"
   nom := "Texte Orientation D"
-  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, priorité au nucléaire sans modulation, plan de rénovation des ascenseurs, suppression des ZFE et de Crit'Air, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État, vote obligatoire et vote blanc reconnu, paquet climat sans signal-prix sur le carburant et son financement."
+  description := "Texte Orientation D : remplacement des voitures les plus polluantes, amendes SRU proportionnelles, attributions HLM vérifiables par preuve ZK, six EPR2, prime à l'électrique et bornes, retraite à la durée cotisée sans âge légal, IS à 20 %, démission indemnisée, moyens pour la justice, lignes nouvelles ferroviaires, qualité d'accueil touristique, conduite autonome avec indemnisation des taxis par cohorte d'âge, prévention des accidents du travail, logiciel libre, universités (dette, reconstruction, Parcoursup, places), économies et recettes (apprentissage, commande publique, médicament, fraude), dette numérique en stablecoin exonérée de PFU, enseignants (+2 %/an), automatisation des contrôles administratifs, simplification pour les généralistes, désindexation des très hautes retraites, taxe sur les jets privés, agriculture électrique, DPE et climatisation dans les quartiers historiques, urbanisme des quartiers de gare, TER 24 h sur 24, redressement compatible PS (CSG sur les gros héritages, taxe numérique, cotisations, fraude, niches, patrimoine, norme de dépense), défense −1 Md€, 174 trimestres, lutte contre la fraude fiscale, CSG progressive pour les hauts revenus, participations dans les entreprises stratégiques, fin des concessions autoroutières, hauts fonctionnaires −5 %, revenus des élus, fin du PFU, rachats d'actions, cabinets de conseil, trajectoire de baisse continue du déficit (CRDS prolongée, norme renforcée, aides aux entreprises, niches, durée de cotisation), CVAE maintenue et contribution des grandes entreprises pérennisée, rénovation majorée en zone rurale, eau potable et électricité pour tous dans les outre-mer, remboursement des dettes cachées (heures supplémentaires des policiers, RIFSEEP des enseignants), CIR recentré, assurance-vie au barème, contribution des poids lourds, kérosène des vols intérieurs, défiscalisation des heures supplémentaires réduite de moitié, heures supplémentaires non payées des hôpitaux, 100 000 places de prison en cellule individuelle, allègements recentrés sous 2 SMIC, accompagnement renforcé des demandeurs d'emploi, prix minimum de l'alcool, prix du tabac, dépistage du cancer colorectal, scolarisation des 18-24 ans, loi intégrale contre les violences sexistes et sexuelles, allocations familiales dès le premier enfant, deuxième journée de solidarité pour l'autonomie, santé mentale, liberté fiscale des collectivités (taxe foncière, taxe d'habitation), référendum d'initiative citoyenne, médecins scolaires, fin de l'octroi de mer, pompes à chaleur gratuites en zone rurale, zones d'électrification industrielle hors ZAN, aides à l'installation dans les déserts médicaux, minimum de pension agricole, emplois aidés dans l'industrie, divisions régionales de cybersécurité de la police, revenu minimum des nouveaux exploitants agricoles, prime à l'installation des médecins à Mayotte et en Guyane, accompagnement des entreprises en cybersécurité, amendes automatiques en cas de fuite de données massive, douaniers et contrôles des importations, liberté d'installation des médecins et contribution des zones bien dotées, cotisations salariales réduites outre-mer, aide au GNR agricole dégressive, coopérative d'État d'engrais bas carbone, légalisation du cannabis et de la prostitution après référendum, TVA à 23 %, 11 % et 6,5 %, rénovation des passoires des villes moyennes, décarbonation des sites industriels, places en Ehpad publics, police de proximité, financements de Bpifrance orientés par un vote en ligne, renfort des préfectures pour les titres de séjour, réponse aux demandes mémorielles de l'Algérie, remboursement de la dette d'Haïti, restitutions et reconnaissance d'actes coloniaux en Afrique, zones commerciales densifiées, fret ferroviaire doublé, autoroutes à vitesse libre sur certains tronçons, plan contre les fuites d'eau, aides à domicile revalorisées, 90 000 postes à l'école, cotisations salariales réduites d'un demi-point, aide ciblée au solaire sur toiture, composante carbone remise sur sa trajectoire, amendes proportionnelles aux revenus, contrats aidés non marchands, leasing social électrique, rémunération des dirigeants d'institutions publiques −20 %, un commissariat dans chaque ville de plus de 30 000 habitants, indemnisation forfaitaire des blessés d'interventions de police, escroqueries remboursées au double par l'escroc, second porte-avions, lancements de satellites sur lanceurs européens, plan méthane des déchets, plan azote et effluents d'élevage, déchetteries gratuites pour tous, rétrofit électrique massif, drones de masse et bouclier anti-drones, captation des plus-values d'urbanisme, contribution sur la rémunération des réserves bancaires, biokérosène pour les vols intérieurs, frein automatique au déficit, centrales des outre-mer au bioliquide, fin du soutien aux cogénérations au gaz, pôles régionaux solaire, stockage hydraulique souterrain et chaleur, métro entièrement accessible aux personnes handicapées en 2035, priorité au nucléaire sans modulation, plan de rénovation des ascenseurs, suppression des ZFE et de Crit'Air, premiers secours au lycée, chirurgie réfractive remboursée, vente d'une partie de l'or, consolidation des réserves publiques, contribution sur la valeur du sol, plus-values au décès, trésorerie de l'État, vote obligatoire et vote blanc reconnu, paquet climat sans signal-prix sur le carburant et son financement."
   mainteneurs := ["@orientationd"]
   source := "Programme de orientation_d (texte en cours de rédaction)"
   mesures := mesures
