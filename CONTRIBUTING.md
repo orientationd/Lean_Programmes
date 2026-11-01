@@ -189,7 +189,11 @@ emplois industriels par `chocEmploi` ; mettre l'élasticité à 0 pour
 isoler un mécanisme (scénario `base` des tests, rétro-test). Levier
 `prioriteNucleaire` (sans paramètre) : le surplus est écrêté sur le
 solaire, l'éolien terrestre puis l'éolien en mer avant toute modulation
-du nucléaire (état `prioriteNucleaire`, `ecretementGwh`).
+du nucléaire (état `prioriteNucleaire`, `ecretementGwh`). `pollutionAir
+decesParAn` : décès attribuables à la pollution de l'air ajoutés (règle
+supprimée) ou retirés, en niveau, années de vie suivies. Technologie de
+transition `ascenseur` (pose dans la construction, un quart importé, aide
+aux propriétaires sans capital public).
 Incidence des prélèvements : l'effet d'un prélèvement sur la demande est
 le niveau moyen du moteur (`multiplicateurPrelevementsPm`) réparti selon
 l'impôt (`incidencePrelevementPm`, axe économique) : la TVA et les
