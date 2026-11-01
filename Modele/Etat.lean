@@ -173,13 +173,14 @@ end ParTranche
 
 /-- Causes de décès sur lesquelles agissent des leviers de santé publique. -/
 inductive CauseDeces where
-  | tabac | alcool | cancerColorectal
+  | tabac | alcool | cancerColorectal | arretCardiaque
   deriving Repr, DecidableEq, Inhabited
 
 namespace CauseDeces
-def tous : List CauseDeces := [.tabac, .alcool, .cancerColorectal]
+def tous : List CauseDeces := [.tabac, .alcool, .cancerColorectal, .arretCardiaque]
 def id : CauseDeces → String
   | .tabac => "tabac" | .alcool => "alcool" | .cancerColorectal => "cancerColorectal"
+  | .arretCardiaque => "arretCardiaque"
 end CauseDeces
 
 /-- Une valeur par cause de décès. -/
@@ -187,16 +188,19 @@ structure ParCause where
   tabac : Int := 0
   alcool : Int := 0
   cancerColorectal : Int := 0
+  arretCardiaque : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParCause
 def get (v : ParCause) : CauseDeces → Int
   | .tabac => v.tabac | .alcool => v.alcool | .cancerColorectal => v.cancerColorectal
+  | .arretCardiaque => v.arretCardiaque
 def ajouter (v : ParCause) (c : CauseDeces) (d : Int) : ParCause :=
   match c with
   | .tabac => { v with tabac := v.tabac + d }
   | .alcool => { v with alcool := v.alcool + d }
   | .cancerColorectal => { v with cancerColorectal := v.cancerColorectal + d }
+  | .arretCardiaque => { v with arretCardiaque := v.arretCardiaque + d }
 /-- Toutes les composantes sont dans `[lo, hi]`. -/
 def toutEntre (v : ParCause) (lo hi : Int) : Bool :=
   CauseDeces.tous.all fun c => decide (lo ≤ v.get c ∧ v.get c ≤ hi)

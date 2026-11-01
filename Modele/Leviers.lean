@@ -445,6 +445,10 @@ inductive Levier where
   positif : une règle qui améliorait l'air est supprimée) ou retirés
   (négatif), en niveau ; les années de vie suivent (IDH). -/
   | pollutionAir (decesParAn : Int)
+  /-- Baisse visée des décès d'une cause suivie (`CauseDeces`), pm des décès
+  attribuables de départ, atteinte au rythme du délai d'effet de la cause
+  (IDH par les années de vie) ; le coût passe par les autres leviers. -/
+  | baisseMortalite (cause : CauseDeces) (pm : Int)
   /-- Taux de scolarisation de chaque âge de 18 à 24 ans relevé de
   `hausseTauxPm` (places, bourses) : coût (dépense par étudiant) et durée
   attendue de scolarisation de l'IDH. -/
@@ -1202,6 +1206,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       appliquerDepense H Fonction.sante.secteur .sante cout
         { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter .cancerColorectal
                    (points * H.eco.baisseDecesColorectalParPointPm / 10) }
+  | .baisseMortalite c pm, s =>
+      { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter c pm }
   | .pollutionAir d, s =>
       { s with decesPollutionAir := max 0 (s.decesPollutionAir + d)
                anneesVieGagneesParAn := s.anneesVieGagneesParAn

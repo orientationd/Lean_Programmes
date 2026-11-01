@@ -14,21 +14,31 @@ open Modele
 décès (Santé publique France, février 2026) ; alcool 41 000 en 2015, dont
 16 000 cancers (Santé publique France, BEH 2019 ; pas de mise à jour) ;
 cancer colorectal ≈ 17 000 (Barré et al., Revue d'épidémiologie et de santé
-publique, 2020). -/
-def decesAttribuables2025 : ParCause := { tabac := 68000, alcool := 41000, cancerColorectal := 17000 }
+publique, 2020) ; arrêt cardiaque extrahospitalier ≈ 40 000 décès (40 000 à
+50 000 arrêts par an, survie de l'ordre de 5 à 8 % ; registre RéAC,
+Fédération française de cardiologie). -/
+def decesAttribuables2025 : ParCause :=
+  { tabac := 68000, alcool := 41000, cancerColorectal := 17000, arretCardiaque := 40000 }
 
 /-- Années de vie perdues par décès, dixièmes d'année (hypothèses : âge moyen
 au décès par cause non publié) : 15 ans pour le tabac et l'alcool, 12 pour
 le cancer colorectal. Pollution de l'air : 11 ans, calés sur l'estimation de
 Santé publique France (40 000 décès attribuables aux PM2,5, ≈ 8 mois
 d'espérance de vie : 0,67 an × 651 000 décès / 40 000). Accidents du
-travail mortels : 30 ans (hypothèse). -/
-def anneesVieParDeces : ParCause := { tabac := 150, alcool := 150, cancerColorectal := 120 }
+travail mortels : 30 ans (hypothèse). Arrêt cardiaque extrahospitalier :
+12 ans (âge moyen ≈ 65-70 ans, survivants avec séquelles possibles ;
+hypothèse). -/
+def anneesVieParDeces : ParCause :=
+  { tabac := 150, alcool := 150, cancerColorectal := 120, arretCardiaque := 120 }
 
 /-- Délai pour que l'effet d'une mesure sur la mortalité soit complet, années
 (hypothèses : les cancers dus au tabac répondent en 10 à 30 ans, ceux de
-l'alcool plus vite, le dépistage en quelques années). -/
-def delaisEffet : ParCause := { tabac := 20, alcool := 10, cancerColorectal := 8 }
+l'alcool plus vite, le dépistage en quelques années ; une formation
+scolaire aux premiers secours n'agit qu'à mesure que les générations
+formées peuplent les lieux des arrêts cardiaques : 15 ans pour l'effet
+complet, hypothèse d'après le Danemark, où le taux de réanimation par un
+témoin a doublé en dix ans après la formation obligatoire de 2005). -/
+def delaisEffet : ParCause := { tabac := 20, alcool := 10, cancerColorectal := 8, arretCardiaque := 15 }
 
 def centrale : Demographie where
   id := "demo-centrale"
