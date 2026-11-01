@@ -382,6 +382,7 @@ et sa fonction de dépense (`TechnoTransition.secteur`,
 inductive TechnoTransition where
   | pompeAChaleur | vehiculeElectrique | vehiculeUtilitaire | solaire | eolien
   | renovation | reseauChaleur | hvo | biogazole | bioethanol | biogaz
+  | ascenseur
   deriving Repr, DecidableEq, Inhabited
 
 /-- Valeur par technologie de la transition. -/
@@ -397,6 +398,7 @@ structure ParTechno where
   biogazole : Int
   bioethanol : Int
   biogaz : Int
+  ascenseur : Int := 0
   deriving Repr, DecidableEq, Inhabited
 
 namespace ParTechno
@@ -413,6 +415,7 @@ def get (v : ParTechno) : TechnoTransition → Int
   | .biogazole => v.biogazole
   | .bioethanol => v.bioethanol
   | .biogaz => v.biogaz
+  | .ascenseur => v.ascenseur
 
 end ParTechno
 
@@ -425,13 +428,14 @@ souvent importés ; la fabrication (industrie) pour les véhicules et le HVO ;
 l'agriculture pour le biogazole de colza et le bioéthanol, dont la valeur
 intérieure est surtout agricole. -/
 def secteur : TechnoTransition → Secteur
-  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur | .biogaz => .construction
+  | .pompeAChaleur | .solaire | .eolien | .renovation | .reseauChaleur | .biogaz
+  | .ascenseur => .construction
   | .vehiculeElectrique | .vehiculeUtilitaire | .hvo => .industrie
   | .biogazole | .bioethanol => .agriculture
 
 /-- Fonction de dépense publique (COFOG agrégée). -/
 def fonction : TechnoTransition → Fonction
-  | .pompeAChaleur | .renovation | .reseauChaleur | .biogaz => .logementEnvironnement
+  | .pompeAChaleur | .renovation | .reseauChaleur | .biogaz | .ascenseur => .logementEnvironnement
   | .vehiculeElectrique | .vehiculeUtilitaire | .solaire | .eolien | .hvo | .biogazole
   | .bioethanol => .affairesEconomiques
 
@@ -445,7 +449,7 @@ comptabilité nationale). -/
 def capitalPublic : TechnoTransition → Bool
   | .reseauChaleur | .solaire | .eolien | .biogaz => true
   | .pompeAChaleur | .renovation | .vehiculeElectrique | .vehiculeUtilitaire | .hvo
-  | .biogazole | .bioethanol => false
+  | .biogazole | .bioethanol | .ascenseur => false
 
 end TechnoTransition
 
