@@ -3263,9 +3263,15 @@ entretien différé coûte ≈ 3 fois plus en curatif (audit du réseau routier
 national, 2018). Limite : capacité des maîtrises d'ouvrage communales (la
 moitié des ouvrages subventionnés en 2023 sans travaux engagés deux ans
 plus tard) et coûts des travaux d'ouvrages d'art en hausse de 84 % de 2016
-à 2023. -/
-def entretienInfrastructuresParAn : Int := 1000
-def anneesEntretien : Nat := 10
+à 2023.
+
+Maintenance renforcée (demande de l'auteur, novembre 2026) : l'enveloppe
+passe à 1,8 Md€ par an pendant douze ans, soit 1 Md€ de résorption du
+retard et 0,8 Md€ d'entretien courant égal au flux annuel de dégradation :
+le stock cesse de croître et se résorbe de 1 Md€ par an, à zéro vers 2038 ;
+l'État remplace ensuite l'enveloppe par l'entretien courant seul. -/
+def entretienInfrastructuresParAn : Int := 1800
+def anneesEntretien : Nat := 12
 
 /-- Suppression des effets de seuil (O-180), demande de l'auteur (novembre
 2026) : « rendre linéaire l'acquisition et la perte des droits, pour ne pas
@@ -4895,8 +4901,8 @@ def mesures : List Mesure := [
     leviers := [.dureeTravail heuresTempsPartielPm]
     repetitions := 2 },
   { id := "O-179"
-    titre := "Dette cachée d'entretien : rénovation accélérée des ouvrages d'art, chaussées et voies navigables, 1 Md€ par an pendant dix ans"
-    source := s!"Demande de l'auteur (novembre 2026) ; retard d'entretien ≈ 12 Md€ fin 2025, +0,8 Md€ par an (Cerema 2025, Sénat 2022, audit 2018, Cour des comptes 2025) ; {entretienInfrastructuresParAn} M€ de travaux par an de 2027 à 2036, retirés du passif (voir `entretienInfrastructuresParAn`)"
+    titre := "Dette cachée d'entretien et maintenance renforcée : ouvrages d'art, chaussées et voies navigables, 1,8 Md€ par an pendant douze ans (1 Md€ de résorption du retard, 0,8 Md€ d'entretien courant)"
+    source := s!"Demande de l'auteur (novembre 2026, « maintenance renforcée des infrastructures ») ; retard d'entretien ≈ 12 Md€ fin 2025, +0,8 Md€ par an (Cerema 2025, Sénat 2022, audit 2018, Cour des comptes 2025) ; {entretienInfrastructuresParAn} M€ de travaux par an de 2027 à 2038, retirés du passif, qui cesse de croître (voir `entretienInfrastructuresParAn`)"
     leviers := [.entretienPassifs .entretienInfrastructures .affairesEconomiques entretienInfrastructuresParAn]
     repetitions := anneesEntretien },
   { id := "O-180"
