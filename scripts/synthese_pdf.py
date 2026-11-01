@@ -1919,8 +1919,10 @@ def section_energie_cout(D: Donnees) -> list:
     out.append(png(barres_pays_energie(D)))
     out.append(P("<b>Facteur d'implantation.</b> L'emploi manufacturier répond au prix réel de l'électricité "
                  "avec une élasticité de −0,10 (fourchette −0,05 à −0,20 dans la littérature : Marin et Vona ; "
-                 "Fontagné, Martin et Orefice ; OCDE ; BCE), atteinte au tiers par an. Une baisse de 10 % du coût "
-                 "réel par rapport au départ attire donc, à terme, 1 % d'emplois industriels supplémentaires "
+                 "Fontagné, Martin et Orefice ; OCDE ; BCE), atteinte au tiers par an. Le coût est comparé à celui "
+                 "qu'aurait le mix de départ aux mêmes prix du gaz et du CO<sub>2</sub> (les concurrents européens "
+                 "subissent ces prix-là) : seuls le mix et la modulation comptent. Un coût inférieur de 10 % attire "
+                 "donc, à terme, 1 % d'emplois industriels supplémentaires "
                  "(ouvertures, extensions, relocalisations) ; une hausse en fait partir. Ces emplois passent par "
                  "le canal emploi du modèle (production, salaires, cotisations) et s'ajoutent aux exportations."))
     ans = [D.annees[2], D.annees[5], D.annees[-1]]
@@ -1934,15 +1936,15 @@ def section_energie_cout(D: Donnees) -> list:
         pib_par_emploi = e["pib"] / e["emploiTotal"] if e.get("emploiTotal") else 0
         rows.append([nom] + [nombre(tr[i]["prixElectriciteEntreprisesEurosMWh"]) for i in idx]
                     + [signe(emp / 1000, 1) + NBSP + "k", signe(emp * pib_par_emploi / 1000, 1) + NBSP + "Md€"])
-    out.append(Spacer(1, 3))
-    out.append(tableau(ent, rows, [0.30, 0.12, 0.12, 0.12, 0.17, 0.17], surligner_premiere=True))
-    out.append(P("Implantations : emplois manufacturiers cumulés créés (+) ou perdus (−) par le facteur "
+    out.append(KeepTogether([Spacer(1, 3),
+                             tableau(ent, rows, [0.30, 0.12, 0.12, 0.12, 0.17, 0.17], surligner_premiere=True),
+                             P("Implantations : emplois manufacturiers cumulés créés (+) ou perdus (−) par le facteur "
                  "d'implantation ; PIB associé : ces emplois multipliés par le PIB par emploi de l'année "
                  "(calcul, ordre de grandeur ; l'effet exact passe par le canal emploi). Les niveaux étrangers sont "
                  "des prix 2024 observés, hors TVA (SDES pour la France et l'UE-27 ; Eurostat, bande 500 à 2 000 "
                  "MWh, repris par Apiar Data et ramenés hors TVA ; DESNZ, EIA, KEPCO), non des projections : la "
                  "comparaison est entre un coût d'équilibre français projeté et des prix étrangers constants. "
-                 "Sources et hypothèses : Hypotheses/Electricite.lean.", "note"))
+                 "Sources et hypothèses : Hypotheses/Electricite.lean.", "note")]))
     return out
 
 

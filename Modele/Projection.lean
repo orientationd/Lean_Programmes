@@ -722,6 +722,9 @@ def etatDepart (H : Scenario) : Etat :=
                     tauxMarginalCourantPb := H.eco.tauxMarginalPb
                     electrificationTendanceMilliers := H.energie.electrificationTendancielleMilliers
                     decesMilliers := H.demo.decesMilliers
+                    -- coût d'équilibre de l'électricité des entreprises au mix de départ
+                    prixElectriciteEntreprisesEurosMWh := H.energie.electricite.prixEntreprisesEurosMWh H.horizon 0
+                      H.energie.prixBrentDollars H.energie.prixReferenceDollars s.productionGwh
   }
   let s := chocPib H none dPib s
   -- les chômeurs de départ (choc pétrolier compris) sont ceux que couvrent les
