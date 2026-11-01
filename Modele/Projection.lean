@@ -459,6 +459,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     capacitesMw := capacites
     productionGwh := potentiel.ajouter .nucleaire (-modulation)
     modulationGwh := modulation
+    prixElectriciteEntreprisesEurosMWh := El.prixEntreprisesEurosMWh H.horizon (k + 1)
+      H.energie.prixBrentDollars H.energie.prixReferenceDollars (potentiel.ajouter .nucleaire (-modulation))
     consommationBaseGwh := consoBase
     consommationGwh := consoElec
     surfacesAnneeHa := surfacesAnnee
@@ -676,6 +678,24 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let investissementAnnee := s.investissementPublicMesures.total
     + (s.echeances.filter (fun e => e.secteur = some .construction ∧ !e.privee ∧ e.capitalPublic)).foldl (fun a e => a + e.niveau) 0
   let s₇ := canalCapital M H prix investissementAnnee s₇
+  -- facteur d'implantation : l'emploi industriel répond, avec retard, au
+  -- coût de l'électricité des entreprises, comparé à ce que coûterait le mix
+  -- de départ aux mêmes prix du gaz et du CO₂ (les concurrents, sur le même
+  -- marché du gaz et des quotas, sont supposés subir ces prix-là) : seul
+  -- l'effet du mix et de la modulation compte ; la production gagnée est
+  -- exportée ou remplace des importations
+  let s₇ :=
+    let p0 := El.prixEntreprisesEurosMWh H.horizon (k + 1) H.energie.prixBrentDollars
+      H.energie.prixReferenceDollars H.reference.etat.productionGwh
+    let p1 := s₇.prixElectriciteEntreprisesEurosMWh
+    if p0 ≤ 0 then s₇ else
+    let ecartPm := p1 * 1000 / p0 - 1000
+    let cible := s₇.emploi.industrie * El.elasticiteEmploiIndustrielPrixElecPm * ecartPm / 1000000
+    let d := (cible - s₇.emploisImplantationsEnergie) * El.ajustementImplantationsPm / 1000
+    if d = 0 then s₇ else
+    let s₈ := chocEmploi H d (chocDemandeTravail H (some .industrie) d s₇)
+    { s₈ with exportations := s₈.exportations + (s₈.pib - s₇.pib)
+              emploisImplantationsEnergie := s₇.emploisImplantationsEnergie + d }
   -- résorption des effets de demande des mesures : l'activité revient vers
   -- son potentiel ; une part de l'écart au-delà de sa part durable se
   -- referme (emploi et recettes suivent), sans être suivie comme impulsion

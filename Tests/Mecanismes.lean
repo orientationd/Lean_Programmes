@@ -31,11 +31,14 @@ def avecPremiereAnnee (volume prix conso taux : Int) : Scenario :=
       croissanceVolumeAnneesPb := [volume], inflationAnneesPb := [prix],
       inflationConsoAnneesPb := [conso], tauxMarginalAnneesPb := [taux] } }
 
-/-- Même scénario, à l'écart de production de départ nul : la courbe de
-Phillips n'y ajoute rien la première année. -/
+/-- Même scénario, à l'écart de production de départ nul (la courbe de
+Phillips n'y ajoute rien la première année) et sans facteur d'implantation
+(le coût de l'électricité ne déplace pas d'emplois industriels). -/
 def base : Scenario :=
   let S := avecPremiereAnnee H.eco.croissancePotentiellePb H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb
-  { S with eco := { S.eco with ecartProductionDepartPb := 0 } }
+  { S with eco := { S.eco with ecartProductionDepartPb := 0 }
+           energie := { S.energie with electricite := { S.energie.electricite with
+             elasticiteEmploiIndustrielPrixElecPm := 0 } } }
 
 /-- Première année projetée. -/
 def an1 (S : Scenario) : Etat := anneeSuivante D S (etatDepart S)
@@ -513,6 +516,32 @@ theorem entretien_passifs :
       q.passifs.infrastructures = 0 ∧
       800 ≤ t.passifs.infrastructures - s0.passifs.infrastructures ∧
       t.passifs.infrastructures - s0.passifs.infrastructures ≤ 850 := by
+  decide +kernel
+
+/-! ## Coût de l'électricité des entreprises et facteur d'implantation -/
+
+/-- Coût d'équilibre de l'électricité des entreprises : au départ, entre
+110 et 140 €/MWh (121 calculés : 62 de fourniture au coût complet du mix,
+15 de marge, 31 de réseau, 13 de taxes ; prix observé 2024 : 165, 2025 :
+149, portés par les contrats de la crise). Un cycle à gaz coûte 100 €/MWh
+au Brent de référence (gaz 35 / 0,55 + 0,37 × 75 + 10). Une capacité solaire
+massive, qui force la modulation du nucléaire à coût fixe, relève le coût
+et, par le facteur d'implantation, retire des emplois industriels par rapport
+au tendanciel. -/
+theorem cout_electricite_implantations :
+    let El := H.energie.electricite
+    let p0 := El.prixEntreprisesEurosMWh H.horizon 0 H.energie.prixReferenceDollars
+      H.energie.prixReferenceDollars H.reference.etat.productionGwh
+    let p := mesure (.capaciteElectrique .solaire 60000)
+    let t := Modele.Programme.trajectoire p D H 3 0 (etatDepart H)
+    let a := Modele.trajectoire D H 3 (etatDepart H)
+    let s3 := t.getD 3 (etatDepart H)
+    let a3 := a.getD 3 (etatDepart H)
+    110 ≤ p0 ∧ p0 ≤ 140 ∧
+      El.coutThermiqueEurosMWh H.horizon 0 H.energie.prixReferenceDollars H.energie.prixReferenceDollars = 100 ∧
+      a3.prixElectriciteEntreprisesEurosMWh < s3.prixElectriciteEntreprisesEurosMWh ∧
+      s3.emploisImplantationsEnergie < a3.emploisImplantationsEnergie ∧
+      s3.emploi.industrie - a3.emploi.industrie < s3.emploisImplantationsEnergie - a3.emploisImplantationsEnergie + 1000 := by
   decide +kernel
 
 end Tests.Mecanismes

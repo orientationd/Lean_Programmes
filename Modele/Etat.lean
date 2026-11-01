@@ -1282,6 +1282,13 @@ structure Etat where
   /-- Production nucléaire écartée faute de débouchés (consommation et
   plafond du solde exportateur), GWh. -/
   modulationGwh : Int := 0
+  /-- Coût complet moyen de l'électricité pour les entreprises l'année
+  écoulée, €/MWh hors TVA (`Electricite.prixEntreprisesEurosMWh`) ; 0 avant
+  la première projection. -/
+  prixElectriciteEntreprisesEurosMWh : Int := 0
+  /-- Emplois industriels gagnés (perdus) par le facteur d'implantation lié
+  au prix réel de l'électricité, cumul (niveau atteint). -/
+  emploisImplantationsEnergie : Int := 0
   /-- Consommation d'électricité hors voitures électriques et hors mesures,
   GWh (tendance du scénario). -/
   consommationBaseGwh : Int := 0

@@ -219,9 +219,11 @@ la dette (part indexée, renouvellement) de fin d'année `o`. -/
 def scenarioRetro (H : Scenario) (e : Etat) (o s : AnneeObservee) : Scenario :=
   { H with
     reference := { H.reference with etat := e, annee := o.annee }
-    -- électrification du parc : celle d'aujourd'hui ne vaut pas pour le passé
+    -- électrification du parc : celle d'aujourd'hui ne vaut pas pour le passé ;
+    -- l'emploi est observé : pas de facteur d'implantation
     energie := { H.energie with electrificationTendancielleMilliers := 0, hausseElectrificationMilliers := 0,
-                                ajustementPrixEmissionsPm := 0 }
+                                ajustementPrixEmissionsPm := 0,
+                                electricite := { H.energie.electricite with elasticiteEmploiIndustrielPrixElecPm := 0 } }
     eco := { H.eco with
       -- le PIB est observé : il contient déjà les effets de demande
       multiplicateurPm := 0

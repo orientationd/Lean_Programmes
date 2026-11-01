@@ -179,6 +179,14 @@ public), à répéter ; le rapport donne chaque stock et la dette
 `investissementEcheancier fonction niveaux` (emplois dans la construction,
 dernier niveau reconduit, 0 pour arrêter) ; le fonctionnement des
 équipements livrés est un `depenseEcheancier` à part.
+Coût de l'électricité des entreprises (`Electricite.prixEntreprisesEurosMWh`,
+`Hypotheses/Electricite.lean` : coûts par filière, prix du gaz et du CO₂,
+marge, réseau, taxes, prix 2024 des autres pays pour la synthèse) et
+facteur d'implantation (`elasticiteEmploiIndustrielPrixElecPm`,
+`ajustementImplantationsPm`, état `emploisImplantationsEnergie`) : l'écart
+de coût au mix de départ, aux mêmes prix du gaz et du CO₂, déplace des
+emplois industriels par `chocEmploi` ; mettre l'élasticité à 0 pour
+isoler un mécanisme (scénario `base` des tests, rétro-test).
 Incidence des prélèvements : l'effet d'un prélèvement sur la demande est
 le niveau moyen du moteur (`multiplicateurPrelevementsPm`) réparti selon
 l'impôt (`incidencePrelevementPm`, axe économique) : la TVA et les

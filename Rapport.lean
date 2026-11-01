@@ -179,6 +179,8 @@ def etatChamps (s : Etat) : List (String × Json) :=
     ("capacitesMw", Json.mkObj <| Filiere.tous.map fun f => (f.id, toJson (s.capacitesMw.get f))),
     ("productionGwh", Json.mkObj <| Filiere.tous.map fun f => (f.id, toJson (s.productionGwh.get f))),
     ("consommationGwh", toJson s.consommationGwh),
+    ("prixElectriciteEntreprisesEurosMWh", toJson s.prixElectriciteEntreprisesEurosMWh),
+    ("emploisImplantationsEnergie", toJson s.emploisImplantationsEnergie),
     ("modulationGwh", toJson s.modulationGwh),
     ("surfacesHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesHa.get d))),
     ("surfacesAnneeHa", Json.mkObj <| Destination.tous.map fun d => (d.id, toJson (s.surfacesAnneeHa.get d))),
@@ -477,6 +479,8 @@ def rapportSyntheseJson : Json :=
     ("textesConstitutionnels", Json.arr <| Hypotheses.Constitution.textes.toArray.map fun t =>
       Json.mkObj [("id", toJson t.id), ("titre", toJson t.titre), ("reference", toJson t.reference),
         ("critere", toJson t.critere)]),
+    ("prixEnergieComparaison", Json.arr <| Hypotheses.Electricite.electriciteFrance.prixComparaison.toArray.map fun (pays, elec, gaz) =>
+      Json.mkObj [("pays", toJson pays), ("electriciteEurosMWh", toJson elec), ("gazEurosMWh", toJson gaz)]),
     ("hypotheses", Json.mkObj [
       ("reference", Json.mkObj [("description", toJson Hypotheses.reference2026.description),
         ("sources", sourcesJson Hypotheses.reference2026.sources)]),

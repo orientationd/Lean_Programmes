@@ -120,7 +120,21 @@ facteurs de charge observés par RTE, sur la capacité moyenne de l'année ;
 la consommation suit la trajectoire « décarbonation lente » du bilan
 prévisionnel 2025 de RTE, plus les voitures électriques du parc. La
 production que ni la consommation ni le solde exportateur maximal
-(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation). La
+(≈ 100 TWh, RTE) n'absorbent est retirée au nucléaire (modulation). Le
+modèle en déduit chaque année un coût d'équilibre de l'électricité des
+entreprises : coût complet du mix (nucléaire existant à coût annuel fixe,
+61 €/MWh pour 365 TWh, CRE ; renouvelables et cycles à gaz à leurs coûts
+complets, le gaz indexé sur le Brent du scénario, le CO₂ de 75 à 120 €/t),
+plus marge de fourniture, réseau et taxes (≈ 121 €/MWh au départ, contre
+165 observés en 2024 et 149 en 2025, encore portés par les contrats de la
+crise : c'est un coût d'équilibre, pas un prix de marché). La synthèse le
+compare aux prix observés en 2024 dans les autres pays (UE-27, Allemagne,
+États-Unis…). Facteur d'implantation : l'emploi manufacturier répond à
+l'écart entre ce coût et celui du mix de départ aux mêmes prix du gaz et
+du CO₂ (élasticité −0,10, atteinte au tiers par an ; la production gagnée
+est exportée) — plus de renouvelables qui forcent la modulation du
+nucléaire à coût fixe renchérissent le mix et font partir des usines, et
+inversement. La
 consommation d'espaces naturels, agricoles et forestiers (ENAF) suit
 l'enveloppe du zéro artificialisation nette (ZAN : la moitié de 2011-2021
 sur 2021-2031, données du Cerema) : ce qu'il en reste fin 2025 permet
