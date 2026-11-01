@@ -378,7 +378,10 @@ def mesures : List Mesure := [
     leviers := [.depenseSur .securiteJustice 350] },
   { id := "L-47", titre := "Impôt sur le revenu à 14 tranches"
     source := "L'Avenir en commun 2025 ; « au cours du mandat », non chiffré en 2026 ; chiffrage du parti en 2022 : 10 Md€ de baisse et 5 Md€ de hausse, soit −5 Md€ nets (calcul) ; crédit d'impôt par enfant à la place du quotient familial et CSG progressive non chiffrés"
-    leviers := [.prelevementSur .ir (-5000)] },
+    leviers := [.prelevementSur .ir (-5000),
+                -- tranche à 90 % au-delà de 400 000 € (L'Avenir en commun, 2017 et 2022 ;
+                -- reconduite en 2025, hypothèse) : au-dessus du seuil censuré en 2012 (75 %)
+                .tauxMarginalSommet 900] },
   { id := "L-48", titre := "Cotisation vieillesse : +0,25 point par an pendant le quinquennat"
     source := s!"L'Avenir en commun 2025 (via Votons 2027) ; non chiffré : {quartDePointCotisations} M€ par quart de point (voir `quartDePointCotisations`), {cotisationVieillesse.getLastD 0} M€ en 2031"
     leviers := [.recetteEcheancier (some .cotisations) cotisationVieillesse] },

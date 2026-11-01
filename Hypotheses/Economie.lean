@@ -611,6 +611,23 @@ def evictionInvestissementPriveHaute : Int := 200
 def evictionInvestissementPriveCentrale : Int := 400
 def evictionInvestissementPriveBasse : Int := 600
 
+/-- Écart de production et courbe de Phillips (champs
+`ecartProductionDepartPb`, `pentePhillipsPm`, `semiElasticiteSoldePm`).
+Écart de production de 2025 : ≈ −0,5 point de PIB potentiel (ordre de
+grandeur des estimations du Gouvernement, rapport économique, social et
+financier annexé au PLF 2026, et de la Commission européenne, prévisions
+d'automne 2025 ; hypothèse). Pente de la courbe de Phillips : 0,1 point
+d'inflation par point d'écart de production de l'année précédente, bas de
+la fourchette des estimations pour la zone euro (0,1 à 0,3 : BCE,
+Occasional Paper n° 181, « Low inflation in the euro area », 2017 ;
+hypothèse, la France n'étant qu'une partie de la zone dont la BCE fixe le
+taux). Semi-élasticité du solde public : 0,57 (loi de programmation des
+finances publiques 2023-2027, rapport annexé ; Commission européenne, 0,6).
+Le rétro-test garde l'inflation observée (pente nulle par défaut). -/
+def ecartProductionDepart2025Pb : Int := -50
+def pentePhillips : Int := 100
+def semiElasticiteSolde : Int := 570
+
 /-- Élasticité de l'emploi au coût du travail par tranche, pm (voir le
 docstring du module). -/
 def elasticitesCoutTravail : ParTranche := { bas := 400, intermediaire := 250, haut := 50 }
@@ -770,6 +787,9 @@ def centrale : Economie where
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
   evictionInvestissementPrivePm := evictionInvestissementPriveCentrale
+  pentePhillipsPm := pentePhillips
+  ecartProductionDepartPb := ecartProductionDepart2025Pb
+  semiElasticiteSoldePm := semiElasticiteSolde
   inflationPb := 175
   elasticitePrixTabacPm := 400
   accisesTabacMeur := 13200
@@ -866,6 +886,9 @@ def croissanceBasse : Economie where
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
   evictionInvestissementPrivePm := evictionInvestissementPriveBasse
+  pentePhillipsPm := pentePhillips
+  ecartProductionDepartPb := ecartProductionDepart2025Pb
+  semiElasticiteSoldePm := semiElasticiteSolde
   inflationPb := 125
   elasticitePrixTabacPm := 400
   accisesTabacMeur := 13200
@@ -962,6 +985,9 @@ def croissanceHaute : Economie where
   incidenceDepensePm := incidenceDepenses
   incidenceInvestissementPm := 1250
   evictionInvestissementPrivePm := evictionInvestissementPriveHaute
+  pentePhillipsPm := pentePhillips
+  ecartProductionDepartPb := ecartProductionDepart2025Pb
+  semiElasticiteSoldePm := semiElasticiteSolde
   inflationPb := 200
   elasticitePrixTabacPm := 400
   accisesTabacMeur := 13200

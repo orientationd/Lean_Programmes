@@ -473,6 +473,9 @@ def rapportSyntheseJson : Json :=
     ("textesEuropeens", Json.arr <| Hypotheses.Europe.textes.toArray.map fun t =>
       Json.mkObj [("id", toJson t.id), ("titre", toJson t.titre), ("reference", toJson t.reference),
         ("critere", toJson t.critere)]),
+    ("textesConstitutionnels", Json.arr <| Hypotheses.Constitution.textes.toArray.map fun t =>
+      Json.mkObj [("id", toJson t.id), ("titre", toJson t.titre), ("reference", toJson t.reference),
+        ("critere", toJson t.critere)]),
     ("hypotheses", Json.mkObj [
       ("reference", Json.mkObj [("description", toJson Hypotheses.reference2026.description),
         ("sources", sourcesJson Hypotheses.reference2026.sources)]),

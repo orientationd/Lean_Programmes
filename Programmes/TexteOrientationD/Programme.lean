@@ -3545,7 +3545,9 @@ def mesures : List Mesure := [
   { id := "O-46"
     titre := "CSG progressive pour les hauts revenus : +2 points au-delà de 100 000 € par an"
     source := s!"Texte Orientation D, mesure 46 ; +{pointsCsgHauts} points sur la part des revenus d'activité et de remplacement au-delà de {seuilCsgHauts} € ; 1 point de CSG = 17 Md€ (FIPECO 2024) ; {partAssietteAuDelaPm / 10} % de l'assiette au-delà du seuil (hypothèse) : {rendementCsgHauts} M€"
-    leviers := [.prelevementSur .csgCrds rendementCsgHauts]
+    leviers := [.prelevementSur .csgCrds rendementCsgHauts,
+                -- taux marginal d'un salaire : 55,4 % + 2 points de CSG (calcul)
+                .tauxMarginalSommet 574]
     debut := 0 },
 
   { id := "O-47"
@@ -3581,7 +3583,10 @@ def mesures : List Mesure := [
   { id := "O-51"
     titre := "Fin du prélèvement forfaitaire unique : revenus du capital au barème de l'impôt sur le revenu"
     source := s!"Texte Orientation D, mesure 51 ; Institut Montaigne : +3,2 à 3,6 Md€ à comportements inchangés, −0,7 Md€ si l'assiette revient à 2017 ; retenu {finPfu} M€"
-    leviers := [.prelevementSur .ir finPfu]
+    leviers := [.prelevementSur .ir finPfu,
+                -- revenus du capital au barème : 45 % + 4 % de contribution sur
+                -- les hauts revenus + 17,2 % de prélèvements sociaux = 66,2 % (calcul)
+                .tauxMarginalSommet 662]
     debut := 0
     variantes := [{ nom := "assiette des dividendes revenue à 2017 (−0,7 Md€)", leviers := [.prelevementSur .ir (-700)] }] },
 
@@ -3821,7 +3826,8 @@ def mesures : List Mesure := [
   { id := "O-87"
     titre := "Référendum d'initiative citoyenne"
     source := s!"Texte Orientation D, mesure 87 ; révision constitutionnelle ; {coutReferendum} M€ par scrutin non dématérialisé (ministre de l'Intérieur, 11 mai 2025) ; hypothèse : un scrutin par an, non couplé à une élection (voir `coutReferendum`)"
-    leviers := [.depenseSur .fonctionnement coutReferendum]
+    leviers := [.depenseSur .fonctionnement coutReferendum,
+                .revisionConstitution "art. 11 et 89" "référendum d'initiative citoyenne"]
     variantes := [
       { nom := "scrutins dématérialisés (100 M€)", leviers := [.depenseSur .fonctionnement (coutReferendum / 2)] },
       { nom := "scrutins couplés aux élections (sans coût d'organisation propre)", leviers := [] }] },
@@ -4366,7 +4372,7 @@ def mesures : List Mesure := [
   { id := "O-154"
     titre := "Vote obligatoire, vote blanc compté parmi les suffrages exprimés, tirage au sort au-delà de 50 % de blancs"
     source := "Demande de l'auteur (octobre 2026) ; révision constitutionnelle (articles 3, 6 et 24) ; contravention de 1re classe (38 € au plus ; Belgique 50 €, Australie 20 dollars australiens, Sénat, 2022) ; blancs : 6,35 % des votants au second tour de 2022 ; amendes ≈ 50 M€ par scrutin au plus : sans effet budgétaire mesurable (voir `voteObligatoirePourMemoire`)"
-    leviers := [] },
+    leviers := [.revisionConstitution "art. 3 et 24" "vote blanc parmi les suffrages exprimés et tirage au sort des sièges"] },
   { id := "O-155"
     titre := "Sobriété routière : 110 km/h sur autoroute, 100 sur voies rapides, poids lourds à 80, télétravail de deux jours, semaine de quatre jours dans la fonction publique"
     source := s!"Demande de l'auteur (octobre 2026), sans toucher au prix du carburant ; −{sobrieteRoutiereKt} kt dans les transports et −{sobrieteRoutiereBatimentsKt} kt dans les bâtiments en 2030 (Espagne 2011, A62, Umweltbundesamt 2023, ADEME, Insee) (voir `sobrieteRoutiereKt`)"

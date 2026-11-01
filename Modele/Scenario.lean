@@ -648,6 +648,17 @@ structure Economie where
   renonçant à d'autres dépenses privées (autres investissements,
   consommation), retirée de l'effet de demande. -/
   evictionInvestissementPrivePm : Int
+  /-- Courbe de Phillips : pb d'inflation (déflateur et prix à la
+  consommation) ajoutés par pb d'écart de production de l'année précédente,
+  pm (`0` : inflation exogène, comme dans le rétro-test). -/
+  pentePhillipsPm : Int := 0
+  /-- Écart de production de l'année de départ, pb du PIB potentiel (négatif
+  : activité sous son potentiel). -/
+  ecartProductionDepartPb : Int := 0
+  /-- Semi-élasticité du solde public à l'écart de production, pm : part de
+  l'écart qui se retrouve dans le solde (solde structurel = solde − semi-
+  élasticité × écart). -/
+  semiElasticiteSoldePm : Int := 570
   /-- Inflation annuelle (déflateur du PIB), pb : sépare le volume des prix
   pour le RNB par habitant de l'IDH. -/
   inflationPb : Int
@@ -1138,5 +1149,20 @@ instance (H : Scenario) : Decidable H.ValideEmissions := inferInstance
 instance (H : Scenario) : Decidable H.Valide := instDecidableAnd
 
 end Scenario
+
+
+/-- Écart de production, pb du PIB : écart de départ du scénario, écart
+cumulé de la trajectoire (croissance en volume moins potentielle) et
+effets de demande des mesures encore présents (`ecartDemandeMeur`) ; les
+chocs d'offre des mesures (heures, productivité, capital) déplacent le
+potentiel, pas l'écart. -/
+def Etat.ecartProductionPb (H : Scenario) (s : Etat) : Int :=
+  H.eco.ecartProductionDepartPb + s.ecartCycleScenarioPb + ratioPb s.ecartDemandeMeur s.pib
+
+/-- Déficit structurel, pb du PIB : déficit corrigé de la part conjoncturelle
+(semi-élasticité du solde à l'écart de production, axe économique). Un
+écart négatif creuse le déficit effectif, pas le structurel. -/
+def Etat.deficitStructurelPb (H : Scenario) (s : Etat) : Int :=
+  s.deficitPb + s.ecartProductionPb H * H.eco.semiElasticiteSoldePm / 1000
 
 end Modele

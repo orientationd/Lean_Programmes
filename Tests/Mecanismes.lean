@@ -31,7 +31,11 @@ def avecPremiereAnnee (volume prix conso taux : Int) : Scenario :=
       croissanceVolumeAnneesPb := [volume], inflationAnneesPb := [prix],
       inflationConsoAnneesPb := [conso], tauxMarginalAnneesPb := [taux] } }
 
-def base : Scenario := avecPremiereAnnee H.eco.croissancePotentiellePb H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb
+/-- Même scénario, à l'écart de production de départ nul : la courbe de
+Phillips n'y ajoute rien la première année. -/
+def base : Scenario :=
+  let S := avecPremiereAnnee H.eco.croissancePotentiellePb H.eco.inflationPb H.eco.inflationPb H.eco.tauxMarginalPb
+  { S with eco := { S.eco with ecartProductionDepartPb := 0 } }
 
 /-- Première année projetée. -/
 def an1 (S : Scenario) : Etat := anneeSuivante D S (etatDepart S)
@@ -437,6 +441,46 @@ theorem resorption_demande :
     let p := mesure (.depenseSur .enseignement un)
     let ecart (M : Moteur) : Int := (p.resultatA M H 5).pib - (tendancielAn M H 5).pib
     0 < ecart R ∧ ecart R < ecart D ∧ 70 * ecart D ≤ 100 * ecart R ∧ 100 * ecart R ≤ 90 * ecart D := by
+  decide +kernel
+
+/-! ## Écart de production, courbe de Phillips, solde structurel -/
+
+/-- Courbe de Phillips : avec un écart de production de départ de −1 point
+et une pente de 0,1, l'inflation de la première année (prix à la
+consommation, et déflateur donc PIB nominal) est plus basse de 10 pb que la
+trajectoire ; à pente nulle, elle la suit. -/
+theorem phillips :
+    let creux : Scenario := { base with eco := { base.eco with ecartProductionDepartPb := -100 } }
+    let plat : Scenario := { creux with eco := { creux.eco with pentePhillipsPm := 0 } }
+    (an1 creux).inflationConsoPb + 10 = (an1 plat).inflationConsoPb ∧
+      (an1 creux).pib < (an1 plat).pib ∧ (an1 plat).inflationConsoPb = plat.eco.inflationConsoA 0 := by
+  decide +kernel
+
+/-- Solde structurel : une dépense d'un point de PIB relève l'écart de
+production de son effet de demande ; les recettes qu'elle induit sont
+conjoncturelles, si bien que le déficit structurel se creuse de plus que le
+déficit effectif (≈ de la dépense entière) ; une mesure d'offre (heures) ne
+touche pas l'écart. -/
+theorem solde_structurel :
+    let s0 := etatDepart H
+    let un := s0.pib / 100
+    let p := depart (mesure (.depenseSur .enseignement un))
+    let h := depart (mesure (.dureeTravail 10))
+    p.ecartProductionPb H > s0.ecartProductionPb H ∧
+      p.deficitStructurelPb H - s0.deficitStructurelPb H > p.deficitPb - s0.deficitPb ∧
+      90 ≤ p.deficitStructurelPb H - s0.deficitStructurelPb H ∧ p.deficitStructurelPb H - s0.deficitStructurelPb H ≤ 105 ∧
+      h.ecartProductionPb H = s0.ecartProductionPb H := by
+  decide +kernel
+
+/-- Déclarations constitutionnelles : le taux marginal maximal garde le plus
+haut des taux déclarés ; une révision déclarée est conservée. -/
+theorem declarations_constitution :
+    let s0 := etatDepart H
+    let p := depart (mesure (.tauxMarginalSommet 662))
+    let q := (mesure (.tauxMarginalSommet 300)).etatInitial D H
+    let r := depart (mesure (.revisionConstitution "art. 3" "essai"))
+    p.tauxMarginalSommetPm = 662 ∧ q.tauxMarginalSommetPm = s0.tauxMarginalSommetPm ∧
+      r.revisionsConstitution.length = 1 ∧ s0.revisionsConstitution = [] := by
   decide +kernel
 
 end Tests.Mecanismes

@@ -204,7 +204,10 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     ratioPb (e.impots.total - appliquerPm e.isTauxMeur M.canalCapitalPm - e.smicPrelevementsMeur) e.pib
   let volume := H.eco.croissanceVolumeA k
     - appliquerPm (poGeneriquePb s - poGeneriquePb ref) M.elasticiteCroissancePoPm
-  let prix := H.eco.inflationA k
+  -- courbe de Phillips : l'écart de production de l'année précédente
+  -- (trajectoire du scénario et effets de demande des mesures) tire les prix
+  let phillips := appliquerPm (s.ecartProductionPb H) H.eco.pentePhillipsPm
+  let prix := H.eco.inflationA k + phillips
   let croissance := volume + prix + volume * prix / 10000
   -- variation de l'écart de production : croissance en volume au-delà de la
   -- croissance potentielle (loi d'Okun, élasticités des prélèvements)
@@ -369,7 +372,7 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
   let emploi1 := emploi0 + emploiTendance + emploisOkun
   let productivite := H.eco.croissancePotentielleA k - (if emploi0 = 0 then 0 else emploiTendance * 10000 / emploi0)
 
-  let pc := H.eco.inflationConsoA k
+  let pc := H.eco.inflationConsoA k + phillips
   let prixSalaires := (A.retardSalairesPm * s.inflationConsoPb + (1000 - A.retardSalairesPm) * pc) / 1000
   let tauxRemuneration := productivite + prixSalaires + productivite * prixSalaires / 10000
   -- masse salariale : tendance (emploi tendanciel, rémunération par emploi)
@@ -496,7 +499,8 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     tauxMarginalCourantPb := tauxCible
     tauxEmissionPb := emission
     chargeIndexationMeur := indexation
-    inflationConsoPb := H.eco.inflationConsoA k
+    inflationConsoPb := H.eco.inflationConsoA k + phillips
+    ecartCycleScenarioPb := s.ecartCycleScenarioPb + (H.eco.croissanceVolumeA k - H.eco.croissancePotentielleA k)
     rang := k + 1
     partDetteNumeriquePm := min s.cibleDetteNumeriquePm (s.partDetteNumeriquePm + s.rythmeDetteNumeriquePm)
     economieInteretsNumeriqueMeur := economieNum

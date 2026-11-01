@@ -225,6 +225,9 @@ def scenarioRetro (H : Scenario) (e : Etat) (o s : AnneeObservee) : Scenario :=
     eco := { H.eco with
       -- le PIB est observé : il contient déjà les effets de demande
       multiplicateurPm := 0
+      -- l'inflation est observée : pas de courbe de Phillips
+      pentePhillipsPm := 0
+      ecartProductionDepartPb := 0
       -- émissions (non comparées au passé) : ni écart d'activité ni effet du
       -- prix du pétrole
       elasticitesEmissionsActivitePm :=

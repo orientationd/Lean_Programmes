@@ -1097,6 +1097,25 @@ structure Etat where
   de sa part durable. -/
   ecartDemandeMeur : Int := 0
   demandeCumuleeMeur : Int := 0
+  /-- Écart de production cumulé dû à la trajectoire du scénario (croissance
+  en volume moins croissance potentielle, années passées), pb du PIB ; avec
+  l'écart de départ et les effets de demande des mesures, il forme l'écart
+  de production (`Etat.ecartProductionPb`), dont dépendent l'inflation
+  (courbe de Phillips) et le solde structurel. -/
+  ecartCycleScenarioPb : Int := 0
+  /-- Taux marginal maximal d'imposition d'un revenu, toutes impositions
+  confondues (impôt sur le revenu, contribution exceptionnelle sur les hauts
+  revenus, CSG-CRDS ou prélèvements sociaux), pm. Départ : 554 pour un
+  salaire (barème à 45 %, contribution de 4 % au-delà de 500 000 €, CSG-CRDS
+  de 9,7 % dont 6,8 points déductibles : 9,7 + 49 × (1 − 0,068) ≈ 55,4 %,
+  calcul ; hors cotisations) ; 340 pour un revenu du capital (prélèvement
+  forfaitaire de 30 % et contribution de 4 %). Les mesures le relèvent par
+  le levier `tauxMarginalSommet` (déclaratif : le modèle ne connaît pas les
+  barèmes). -/
+  tauxMarginalSommetPm : Int := 554
+  /-- Articles de la Constitution dont le programme déclare qu'il doit les
+  réviser (levier `revisionConstitution`). -/
+  revisionsConstitution : List String := []
   /-- Canal du capital des entreprises : écart du taux effectif d'IS fixé par
   les mesures au taux du scénario, pb ; variation des recettes d'IS due à ce
   taux (réponse de l'assiette comprise), M€ courants, qui croît comme l'IS ;
@@ -1372,6 +1391,7 @@ def soldePrimaire (s : Etat) : Int := s.recettes - s.depensesPrimaires
 
 /-- Déficit en pb du PIB. -/
 def deficitPb (s : Etat) : Int := ratioPb s.deficit s.pib
+
 
 /-- Dette publique (Maastricht) en fin d'année, M€ : celle de fin d'année
 précédente, plus le déficit de l'année (mesures comprises), les opérations

@@ -5,6 +5,7 @@ import Hypotheses.Droit
 import Hypotheses.Scenarios
 import Hypotheses.Moteurs
 import Hypotheses.Europe
+import Hypotheses.Constitution
 import Hypotheses.Communes
 import Hypotheses.Automobile
 import Hypotheses.Historique

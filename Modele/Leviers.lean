@@ -127,6 +127,16 @@ inductive Levier where
   part intérieure dans le secteur de la technologie, part importée aux
   importations ; aucune dépense publique. -/
   | investissementPriveTransition (techno : TechnoTransition) (niveaux : List Int)
+  /-- Déclaratif : le programme porte le taux marginal maximal d'imposition
+  d'un revenu (toutes impositions) à `pm` au moins (l'état garde le plus
+  haut). La propriété « DDHC art. 13 : imposition non confiscatoire » le
+  compare au seuil de la jurisprudence constitutionnelle. -/
+  | tauxMarginalSommet (pm : Int)
+  /-- Déclaratif : la mesure exige une révision de la Constitution
+  (`article`, p. ex. "art. 3", et `objet`). Une révision passe par l'article
+  89 (vote des deux assemblées puis référendum ou Congrès aux trois
+  cinquièmes) ; la propriété « Constitution inchangée » le signale. -/
+  | revisionConstitution (article objet : String)
   /-- Amende SRU automatique selon la part de logements sociaux manquants
   (barème et propriétés : `Modele/Logement.lean`). C'est un transfert des
   communes vers le FNAP et les établissements fonciers : **neutre sur le
@@ -930,6 +940,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
                                 depensesF := s.depensesF.ajouter tech.fonction n
                                 importations := s.importations + n * (1000 - part) / 1000 }
       effetDemande H (some tech.secteur) (appliquerPm (n * (part - subst) / 1000) (poidsEcheance H e)) s'
+  | .tauxMarginalSommet pm, s => { s with tauxMarginalSommetPm := max s.tauxMarginalSommetPm pm }
+  | .revisionConstitution a o, s => { s with revisionsConstitution := s.revisionsConstitution ++ [s!"{a} ({o})"] }
   | .investissementPriveTransition _ [], s => s
   | .investissementPriveTransition tech (n :: reste), s =>
       let part := partInterieure H (H.energie.partImporteeTransitionPm.get tech)
