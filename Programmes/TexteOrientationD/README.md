@@ -9,19 +9,19 @@ Scénario central, 2035, moteur de demande :
 
 | | Sans programme | Texte Orientation D |
 |---|---|---|
-| Déficit public | 9,87 % du PIB | 0,21 % |
-| Dette publique | 160,5 % du PIB | 107,8 % |
-| Chômage | 7,91 % | 8,90 % |
-| Indice de développement humain | 0,9388 | 0,9405 |
+| Déficit public | 9,87 % du PIB | 0,27 % |
+| Dette publique | 160,5 % du PIB | 108,1 % |
+| Chômage | 7,91 % | 8,87 % |
+| Indice de développement humain | 0,9388 | 0,9406 |
 | Émissions de gaz à effet de serre | 296 Mt CO₂e | 226 Mt CO₂e |
 
 Trajectoire du déficit (% du PIB) :
 
 | Moteur | 2026 | 2027 | 2028 | 2029 | 2030 | 2031 | 2032 | 2033 | 2034 | 2035 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Demande | 5,62 | 4,66 | 4,10 | 3,30 | 2,52 | 1,90 | 1,48 | 1,08 | 0,58 | 0,21 |
-| Offre | 5,61 | 4,59 | 3,94 | 3,07 | 2,23 | 1,55 | 1,08 | 0,64 | 0,09 | -0,33 |
-| Équilibre | 5,61 | 4,62 | 4,01 | 3,17 | 2,35 | 1,69 | 1,23 | 0,80 | 0,26 | -0,15 |
+| Demande | 5,62 | 4,72 | 4,15 | 3,36 | 2,58 | 1,95 | 1,54 | 1,13 | 0,64 | 0,27 |
+| Offre | 5,61 | 4,65 | 3,99 | 3,13 | 2,28 | 1,60 | 1,13 | 0,68 | 0,13 | -0,29 |
+| Équilibre | 5,61 | 4,68 | 4,06 | 3,22 | 2,40 | 1,74 | 1,28 | 0,84 | 0,31 | -0,11 |
 | Sans programme (demande) | 5,62 | 6,56 | 6,94 | 7,31 | 7,68 | 8,07 | 8,46 | 8,77 | 9,41 | 9,87 |
 
 Le déficit baisse chaque année sous les trois moteurs et passe sous 3 % en
@@ -42,7 +42,7 @@ PIB potentiel.
 
 ## Mesures par catégorie
 
-207 mesures, en seize catégories. Effet de chaque mesure prise isolément en
+209 mesures, en seize catégories. Effet de chaque mesure prise isolément en
 2035 (scénario central, moteur de demande) : écart au tendanciel du
 déficit public (en points de PIB ; négatif = déficit réduit), de l'emploi
 et de l'indice de développement humain. Les effets ne s'additionnent pas
@@ -272,6 +272,7 @@ doublons, octobre 2026).
 | **O-164** Vente de la moitié des devises et versement de la réserve RRRODE ; trésorerie de l'État réduite de 15 Md€ de plus | −0,56 pt | ≈ 0 | ≈ 0 |
 | **O-164b** Fin des versements exceptionnels de 2027 | +0,49 pt | ≈ 0 | ≈ 0 |
 | **O-170** Foncière de l'État : un quart des bureaux de l'État vendus en dix ans | −0,01 pt | −4 900 | −0,2 |
+| **O-179** Dette cachée d'entretien : rénovation accélérée des ouvrages d'art, chaussées et voies navigables, 1 Md€ par an pendant dix ans | +0,02 pt | +4 300 | +0,1 |
 
 **O-15 — Logiciel libre dans l'État.** Migration de tous les logiciels et postes de l'État vers le libre :
 900 M€ de migration (comptés en une fois) puis 400 M€/an d'économies de
@@ -500,10 +501,32 @@ de l'auteur (octobre 2026). Trois familles :
   0,575 % en tout) est retiré en novembre 2026 ; O-151 devient progressive
   selon la surface de la parcelle (≈ 19,5 Md€ par an).
 
-Effet au scénario central (moteur de demande), avec la moitié de l'or, la contribution sur le sol progressive par surface (≈ 19,5 Md€), les mesures pour le PIB (O-172 à O-178) et la courbe de Phillips : déficit de 2,52 % en 2030 et de 0,21 % en 2035, dette de 107,8 % du PIB en 2035 (99,8 % avec tout l'or, 1,15 % uniforme et une inflation exogène). Le déficit passe sous 3 % en 2030 et en 2035 et la dette reste stabilisée ; l'équilibre de 2035, la règle de −1 point de dette par an et, sous le moteur de demande, les règles européennes du déficit sont perdus. **Risques** : la BCE doit être consultée sur la vente de l'or,
+Effet au scénario central (moteur de demande), avec la moitié de l'or, la contribution sur le sol progressive par surface (≈ 19,5 Md€), les mesures pour le PIB (O-172 à O-178), l'entretien des infrastructures (O-179), la suppression des effets de seuil (O-180) et la courbe de Phillips : déficit de 2,58 % en 2030 et de 0,27 % en 2035, dette de 108,1 % du PIB en 2035 (99,8 % avec tout l'or, 1,15 % uniforme et une inflation exogène). Le déficit passe sous 3 % en 2030 et en 2035 et la dette reste stabilisée ; l'équilibre de 2035, la règle de −1 point de dette par an et, sous le moteur de demande, les règles européennes du déficit sont perdus. **Risques** : la BCE doit être consultée sur la vente de l'or,
 des devises et de la réserve RRRODE ; la France garderait la moitié de son
 or ; ces opérations baissent la dette brute, pas la dette nette ; la
 contribution sur le sol reste mal acceptée.
+
+**O-179 — Dette cachée d'entretien : ouvrages d'art, chaussées, voies
+navigables.** Demande de l'auteur (novembre 2026) : « rénovation des
+ouvrages d'art accélérée, maintenance en général, enveloppe de 1 milliard
+par an ». Le modèle commun suit désormais un passif « retard d'entretien
+des infrastructures », qui entre dans la dette étendue : ≈ 12 Md€ fin 2025
+(ouvrages d'art routiers ≈ 6 Md€, dont 3,3 Md€ pour les ponts et murs des
+communes de moins de 10 000 habitants, 28 % des ponts seulement en bon
+état, Cerema, Programme national ponts, octobre 2025 ; chaussées du réseau
+national ≈ 4,5 Md€, audit de 2018 et Cour des comptes 2022 ; voies
+navigables 1,1 Md€, Cour des comptes 2025), et qui grossit de ≈ 0,8 Md€ par
+an. Le rail (≈ 1,5 Md€ par an non financés) et les bâtiments publics ne
+sont pas comptés. L'enveloppe de 1 Md€ par an de 2027 à 2036 (fonds ponts
+des collectivités et entretien courant 0,5 Md€, chaussées 0,35, voies
+navigables 0,15) est un investissement d'une année renouvelé : emplois
+dans la construction (≈ 5,5 emplois directs par million d'euros, FNTP),
+capital public au moteur d'offre, et ≈ 10 Md€ retirés du passif sur dix
+ans, soit la moitié du retard cumulé en 2035. Un entretien différé coûte
+≈ 3 fois plus en curatif (audit de 2018). Limites : capacité des maîtrises
+d'ouvrage communales (la moitié des ouvrages subventionnés en 2023 étaient
+sans travaux deux ans plus tard) et coûts des travaux d'ouvrages d'art en
+hausse de 84 % de 2016 à 2023.
 
 ### Travail, emploi et entreprises
 
@@ -2080,6 +2103,7 @@ seuil de 1 Md€ de chiffre d'affaires ; dissuasion complète, sans recette.
 | **O-84** Deuxième journée de solidarité : sept heures de plus par an, contribution des employeurs affectée à l'autonomie | −0,32 pt | +900 | +1,3 |
 | **O-177** Petite enfance : 100 000 places de crèche de plus (2027-2030), droit opposable à une place dès un an | −0,05 pt | +22 600 | +0,2 |
 | **O-177b** Petite enfance : postes et investissement des crèches | +0,03 pt | +28 100 | +0,2 |
+| **O-180** Suppression des effets de seuil : tout droit sous condition de ressources décroît de façon continue, sans marche (C2S, MaPrimeRénov', CSG des retraités, bourses, PAJE, chèque énergie, taxe foncière des aînés) | +0,06 pt | +9 000 | +0,5 |
 
 **O-83 — Allocations familiales dès le premier enfant : 70 € par mois.**
 Proposition de loi adoptée en première lecture le 5 juin 2025 ; 2,8 Md€
@@ -2103,6 +2127,43 @@ défavorable « à ce stade »). Elle revient à du travail non rémunéré :
 point politique à trancher.
 L'effet sur le solde vient surtout du surcroît d'heures travaillées
 (activité, assiettes), la contribution étant dépensée.
+
+**O-180 — Suppression des effets de seuil.** Demande de l'auteur (novembre
+2026) : « rendre linéaire l'acquisition et la perte des droits, pour ne pas
+se sentir lésé en cas d'augmentation de revenu ». Règle : tout droit sous
+condition de ressources décroît de façon continue, jamais par marche, et la
+linéarisation part du dernier montant acquis (« par le haut », sans
+perdant). Beaucoup de droits sont déjà lissés (allocation de rentrée,
+allocations familiales, garde d'enfant depuis septembre 2025, réversion,
+ASPA, AAH, RSA, prime d'activité, aides au logement, décote). Marches
+restantes, et coût d'un lissage, par an :
+
+* complémentaire santé solidaire : double seuil (gratuite sous 10 421 €,
+  payante jusqu'à 14 069 €, puis rien, soit 500 à 1 400 € perdus ; 7,8
+  millions de bénéficiaires, 66 % de non-recours à la version payante) :
+  participation proportionnelle au revenu, ≈ 650 M€ ;
+* MaPrimeRénov' : quatre catégories de revenus, jusqu'à 14 000 € d'aide
+  perdus sur 40 000 € de travaux au passage de « violet » à « rose » :
+  taux continu, ≈ 400 M€ ;
+* CSG des retraités : taux de 0, 3,8, 6,6 et 8,3 % selon le revenu
+  (marches de 440 à 620 € par an) : barème continu, ≈ 350 M€ ;
+* bourses étudiantes (huit échelons, marches de 300 à 2 200 €) : montant
+  linéaire, 350 M€ (deuxième étape de la réforme de 2023, chiffrée puis
+  gelée en 2025) ; bourses de collège et de lycée, ≈ 100 M€ ;
+* allocation de base et prime de naissance de la PAJE, complément familial
+  (marches de 1 060 à 2 360 €) : ≈ 350 M€ ; chèque énergie (quatre
+  tranches) : ≈ 150 M€ ; taxe foncière des plus de 75 ans (exonération
+  perdue d'un coup, 1 000 à 1 500 €) : sortie dégressive, ≈ 150 M€ ;
+* allègements de cotisations à 3 SMIC et prime de partage de la valeur :
+  corrections paramétriques, non comptées.
+
+≈ 2,5 Md€ par an (1,5 à 3,5). L'effet sur l'emploi n'est pas compté : les
+taux marginaux effectifs au-dessus de 100 % ne touchent que 1,1 % des
+personnes en emploi (Insee, 2021) et la réponse aux barèmes de prestations
+est faible (+0,01 à +0,1 % d'heures) ; le gain est l'équité et le
+non-recours. Le modèle agrégé ne sait pas compter les ménages au voisinage
+de chaque seuil : il faudrait une microsimulation (Ines, TAXIPP), hors de
+sa portée ; le coût est donc un ordre de grandeur.
 
 ### Institutions et collectivités locales
 
@@ -2381,14 +2442,14 @@ au moins un moteur) :
 
 | Propriété | Demande | Offre | Équilibre |
 |---|---|---|---|
-| Déficit sous le plafond juridique | 26/36 | 29/36 | 28/36 |
+| Déficit sous le plafond juridique | 26/36 | 28/36 | 28/36 |
 | Dette/PIB non dégradée | 36/36 | 36/36 | 36/36 |
 | Chômage non dégradé | 36/36 | 36/36 | 36/36 |
 | Émissions sous 300 Mt (SNBC-2) | 36/36 | 36/36 | 36/36 |
-| Déficit sous 3 % en 2035 | 30/36 | 30/36 | 30/36 |
-| Budget à l'équilibre en 2035 ⚠ | 12/36 | 16/36 | 16/36 |
+| Déficit sous 3 % en 2035 | 30/36 | 32/36 | 32/36 |
+| Budget à l'équilibre en 2035 ⚠ | 10/36 | 16/36 | 16/36 |
 | Déficit en baisse chaque année | 30/36 | 30/36 | 30/36 |
-| Dette/PIB stabilisée en 2035 | 22/36 | 22/36 | 22/36 |
+| Dette/PIB stabilisée en 2035 | 20/36 | 22/36 | 24/36 |
 | Mortalité liée à l'air non dégradée | 36/36 | 36/36 | 36/36 |
 | Bornes suffisantes en 2035 | 36/36 | 36/36 | 36/36 |
 | Emplois annoncés réalisables | 36/36 | 36/36 | 36/36 |
@@ -2402,9 +2463,9 @@ au moins un moteur) :
 | LPM 2024-2030 : crédits de défense | 36/36 | 36/36 | 36/36 |
 | PPE3 : capacités renouvelables 2030 | 36/36 | 36/36 | 36/36 |
 | Code de l'énergie : 40 % d'électricité renouvelable en 2030 | 36/36 | 36/36 | 36/36 |
-| UE : déficit sous 3 % ⚠ | 16/36 | 22/36 | 20/36 |
-| UE : ajustement 0,5 pt/an ⚠ | 16/36 | 22/36 | 20/36 |
-| UE : dette −1 pt/an ⚠ | 12/36 | 16/36 | 16/36 |
+| UE : déficit sous 3 % ⚠ | 16/36 | 20/36 | 20/36 |
+| UE : ajustement 0,5 pt/an ⚠ | 16/36 | 20/36 | 20/36 |
+| UE : dette −1 pt/an ⚠ | 10/36 | 16/36 | 14/36 |
 | UE : climat 2030 | 36/36 | 36/36 | 36/36 |
 | UE : répartition de l'effort 2030 | 24/36 | 24/36 | 24/36 |
 | UE : recharge (AFIR) 2030 | 36/36 | 36/36 | 36/36 |
@@ -2485,7 +2546,8 @@ reprises (24), quatre des cinq propriétés constitutionnelles sont tenues
 (28 sur 33), la deuxième série pour le PIB (O-175 à O-178) rend à
 nouveau les règles européennes (30 sur 33), et le barème progressif de la
 contribution sur le sol, qui rapporte ≈ 9 Md€ de moins, les reprend (28
-sur 33).
+sur 33) ; l'entretien des infrastructures (O-179) et la suppression des
+effets de seuil (O-180), ≈ 3,5 Md€ par an, n'en changent pas le compte.
 
 * *15 % de voitures électriques en 2030* : tenu (36/36) par le rétrofit
   massif (O-138, nouveau levier `retrofitElectrique`), qui ajoute des
@@ -2543,14 +2605,14 @@ les trois moteurs. Cinq ne le sont pas :
   le référendum d'initiative citoyenne (O-87) et le tirage au sort des
   sièges (O-154) exigent une révision, que le programme déclare ; sans ces
   deux mesures, 29 propriétés.
-* *Budget à l'équilibre en 2035* : 12 à 16 scénarios sur 36 (déficit de
-  0,21 % au scénario central, de 0,53 % au neuvième scénario sous le moteur
+* *Budget à l'équilibre en 2035* : 10 à 16 scénarios sur 36 (déficit de
+  0,27 % au scénario central, de 0,57 % au neuvième scénario sous le moteur
   d'offre).
-* *UE : déficit sous 3 %* et *UE : ajustement de 0,5 point par an* : 16,
-  22 et 20 scénarios sur 36 ; tenues sous les moteurs d'offre et
-  d'équilibre, perdues de justesse sous le moteur de demande depuis le
-  barème progressif de la contribution sur le sol.
-* *UE : dette −1 point par an* : 12 à 16 scénarios sur 36 (−2,2 points en
+* *UE : déficit sous 3 %* et *UE : ajustement de 0,5 point par an* : 16 et
+  20 scénarios sur 36 ; tenues sous les moteurs d'offre et d'équilibre,
+  perdues de justesse sous le moteur de demande depuis le barème
+  progressif de la contribution sur le sol.
+* *UE : dette −1 point par an* : 10 à 16 scénarios sur 36 (−1,8 point en
   dix ans au rang décisif, pour −10).
 
 Les quatre garde-fous constitutionnels chiffrés (imposition non
@@ -2561,7 +2623,7 @@ demande, neuvième des dix-huit scénarios) :
 * *Solde structurel* (loi organique de 2012) : 24 à 28 scénarios sur 36.
 * *Répartition de l'effort 2030* : 209,3 Mt pour 210,5 (24 scénarios sur
   36) ; sans le volet agricole (O-161), elle est perdue.
-* *Déficit sous le plafond juridique* : 26 à 29 scénarios sur 36.
+* *Déficit sous le plafond juridique* : 26 à 28 scénarios sur 36.
 * *Déficit en baisse chaque année* : 30 scénarios sur 36.
 * *40 % d'électricité renouvelable* : 40,2 % au neuvième scénario, grâce à
   O-146, O-148 et O-163.
@@ -2574,43 +2636,45 @@ sur 33) :
 
 | Option | Déficit | Chômage | IDH | Baisse chaque année (demande / offre / équilibre) | Propriétés à 18/36 | Propriétés visées perdues |
 |---|---|---|---|---|---|---|
-| Programme actuel | 0,21 % | 8,90 % | 0,9405 | oui / oui / oui | 28 | — |
-| IS à 15 % (texte initial d'O-08) | 0,56 % | 8,87 % | 0,9406 | oui / oui / oui | 28 | — |
-| Norme de 100 pb (version précédente d'O-55) | 1,21 % | 8,34 % | 0,9414 | oui / oui / oui | 26 | — |
-| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | -0,48 % | 8,93 % | 0,9405 | oui / oui / oui | 30 | — |
-| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | -0,28 % | 8,80 % | 0,9404 | oui / oui / oui | 30 | — |
-| O-26 avec suppressions de postes (version précédente) | 0,24 % | 9,15 % | 0,9404 | oui / oui / oui | 28 | — |
-| O-38 au prorata (version précédente) | 0,23 % | 8,95 % | 0,9405 | oui / oui / oui | 28 | — |
-| O-108 à 2 Mt par an (version précédente) | 0,21 % | 8,90 % | 0,9405 | oui / oui / oui | 30 | — |
-| Sans O-127 (contrats aidés) | 0,50 % | 9,21 % | 0,9404 | oui / oui / oui | 28 | — |
-| IS maintenu à 25 % (variante d'O-08) | -0,08 % | 8,93 % | 0,9404 | oui / oui / oui | 30 | — |
-| Norme renforcée de 100 pb de plus (variante d'O-55) | -0,63 % | 9,41 % | 0,9396 | oui / oui / oui | 30 | — |
-| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 0,20 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Sans le rétrofit électrique (O-138) | 0,20 % | 8,90 % | 0,9405 | oui / oui / oui | 29 | SNBC-3 : 15 % de voitures électriques en 2030 |
-| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 0,25 % | 8,90 % | 0,9405 | oui / oui / oui | 28 | — |
-| Biokérosène compté au prorata des ventes (variante d'O-142) | 0,21 % | 8,90 % | 0,9405 | oui / oui / oui | 28 | — |
-| Sans le frein automatique (O-143) | 0,21 % | 8,90 % | 0,9405 | oui / oui / oui | 28 | — |
-| Frein à 4,5 % et 2 points (variante d'O-143) | -0,03 % | 9,04 % | 0,9402 | oui / oui / oui | 30 | — |
-| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 0,23 % | 8,90 % | 0,9405 | oui / oui / oui | 30 | — |
-| Sans les pôles régionaux (O-146 à O-146d) | 0,21 % | 8,91 % | 0,9405 | oui / oui / oui | 27 | — |
-| Métro accessible : variante réaliste (O-147) | 0,20 % | 8,94 % | 0,9404 | oui / oui / oui | 28 | — |
-| Sans le métro accessible (O-147) | 0,19 % | 8,95 % | 0,9404 | oui / oui / oui | 30 | — |
-| Sans l'électricité renouvelable à 40 % (O-148 à O-148c) | 0,25 % | 8,92 % | 0,9404 | oui / oui / oui | 27 | — |
-| Sans la vente d'or (O-149) | 0,38 % | 8,90 % | 0,9405 | oui / oui / oui | 27 | — |
-| Sans la contribution sur le sol (O-151) | 0,91 % | 8,85 % | 0,9406 | oui / oui / oui | 27 | — |
-| Sans le paquet climat (O-155 à O-163) | 0,03 % | 8,97 % | 0,9403 | oui / oui / oui | 26 | — |
-| Sans le rachat du cheptel et l'agriculture (O-161) | 0,15 % | 8,88 % | 0,9405 | oui / oui / oui | 29 | — |
-| Sans le référendum d'initiative citoyenne ni le tirage au sort (O-87, O-154 : Constitution inchangée) | 0,21 % | 8,91 % | 0,9405 | oui / oui / oui | 29 | — |
-| Sans la deuxième série pour le PIB (O-175 à O-178) | 0,73 % | 9,00 % | 0,9401 | oui / oui / oui | 27 | — |
-| Concurrence au chiffrage large de l'OCDE (O-175 : +0,7 % à cinq ans) | -0,11 % | 8,90 % | 0,9407 | oui / oui / oui | 30 | — |
-| Sans les mesures originales pour le PIB (O-172 à O-174) | 0,96 % | 8,92 % | 0,9401 | oui / oui / oui | 27 | — |
-| Budget réglementaire réalisé en entier (O-172 : +1,2 % de PIB) | -0,26 % | 8,89 % | 0,9408 | oui / oui / oui | 30 | — |
-| Sans les devises, la réserve RRRODE ni la trésorerie (O-164) | 0,28 % | 8,90 % | 0,9405 | oui / oui / oui | 28 | — |
-| Vente de tout l'or (version précédente d'O-149 et O-164) | 0,05 % | 8,90 % | 0,9405 | oui / oui / oui | 30 | — |
-| Contribution sur le sol : taux unique de 0,5 % (version précédente d'O-151) | 0,04 % | 8,92 % | 0,9405 | oui / oui / oui | 30 | — |
-| Contribution sur le sol à 1,15 % uniforme (version d'octobre, 57 Md€) | -1,08 % | 9,01 % | 0,9403 | oui / oui / oui | 31 | — |
-| Barème par surface doublé (0,5 %, 1 %, 2 %) | -0,47 % | 8,96 % | 0,9404 | oui / oui / oui | 30 | — |
-| Vente de tout l'or et contribution sur le sol à 1,15 % uniforme (versions précédentes) | -1,24 % | 9,01 % | 0,9403 | oui / oui / oui | 32 | — |
+| Programme actuel | 0,27 % | 8,87 % | 0,9406 | oui / oui / oui | 28 | — |
+| IS à 15 % (texte initial d'O-08) | 0,61 % | 8,84 % | 0,9406 | oui / oui / oui | 30 | — |
+| Norme de 100 pb (version précédente d'O-55) | 1,27 % | 8,31 % | 0,9415 | oui / oui / oui | 26 | — |
+| Avec la taxe Zucman à 20 Md€ (O-126, retirée) | -0,43 % | 8,89 % | 0,9405 | oui / oui / oui | 30 | — |
+| Compensation : IS maintenu à 25 %, sans O-122, 300 000 contrats aidés | -0,23 % | 8,77 % | 0,9405 | oui / oui / oui | 30 | — |
+| O-26 avec suppressions de postes (version précédente) | 0,30 % | 9,11 % | 0,9405 | oui / oui / oui | 28 | — |
+| O-38 au prorata (version précédente) | 0,29 % | 8,91 % | 0,9406 | oui / oui / oui | 28 | — |
+| O-108 à 2 Mt par an (version précédente) | 0,27 % | 8,87 % | 0,9405 | oui / oui / oui | 28 | — |
+| Sans O-127 (contrats aidés) | 0,45 % | 9,19 % | 0,9404 | oui / oui / oui | 28 | — |
+| IS maintenu à 25 % (variante d'O-08) | -0,01 % | 8,90 % | 0,9405 | oui / oui / oui | 30 | — |
+| Norme renforcée de 100 pb de plus (variante d'O-55) | -0,57 % | 9,37 % | 0,9397 | oui / oui / oui | 30 | — |
+| Sans le plan méthane, le plan azote et les déchetteries gratuites (O-135 à O-137) | 0,27 % | 8,87 % | 0,9405 | oui / oui / oui | 27 | — |
+| Sans le rétrofit électrique (O-138) | 0,26 % | 8,87 % | 0,9405 | oui / oui / oui | 27 | SNBC-3 : 15 % de voitures électriques en 2030 |
+| Sans la contribution sur les réserves bancaires (O-141, risque juridique) | 0,32 % | 8,86 % | 0,9406 | oui / oui / oui | 28 | — |
+| Biokérosène compté au prorata des ventes (variante d'O-142) | 0,27 % | 8,87 % | 0,9406 | oui / oui / oui | 28 | — |
+| Sans le frein automatique (O-143) | 0,27 % | 8,87 % | 0,9406 | oui / oui / oui | 28 | — |
+| Frein à 4,5 % et 2 points (variante d'O-143) | 0,03 % | 9,00 % | 0,9403 | oui / oui / oui | 30 | — |
+| Obligation sur les flottes au lieu du rétrofit (variante d'O-138) | 0,29 % | 8,87 % | 0,9405 | oui / oui / oui | 28 | — |
+| Sans les pôles régionaux (O-146 à O-146d) | 0,28 % | 8,87 % | 0,9405 | oui / oui / oui | 27 | — |
+| Métro accessible : variante réaliste (O-147) | 0,26 % | 8,90 % | 0,9405 | oui / oui / oui | 28 | — |
+| Sans le métro accessible (O-147) | 0,25 % | 8,91 % | 0,9405 | oui / oui / oui | 28 | — |
+| Sans l'électricité renouvelable à 40 % (O-148 à O-148c) | 0,30 % | 8,88 % | 0,9405 | oui / oui / oui | 27 | — |
+| Sans la vente d'or (O-149) | 0,44 % | 8,87 % | 0,9406 | oui / oui / oui | 27 | — |
+| Sans la contribution sur le sol (O-151) | 0,97 % | 8,81 % | 0,9407 | oui / oui / oui | 27 | — |
+| Sans le paquet climat (O-155 à O-163) | 0,08 % | 8,93 % | 0,9403 | oui / oui / oui | 26 | — |
+| Sans le rachat du cheptel et l'agriculture (O-161) | 0,21 % | 8,85 % | 0,9406 | oui / oui / oui | 29 | — |
+| Sans le référendum d'initiative citoyenne ni le tirage au sort (O-87, O-154 : Constitution inchangée) | 0,27 % | 8,87 % | 0,9406 | oui / oui / oui | 29 | — |
+| Sans l'entretien des infrastructures (O-179) | 0,27 % | 8,88 % | 0,9405 | oui / oui / oui | 28 | — |
+| Sans la suppression des effets de seuil (O-180) | 0,22 % | 8,89 % | 0,9405 | oui / oui / oui | 28 | — |
+| Sans la deuxième série pour le PIB (O-175 à O-178) | 0,79 % | 8,96 % | 0,9402 | oui / oui / oui | 27 | — |
+| Concurrence au chiffrage large de l'OCDE (O-175 : +0,7 % à cinq ans) | -0,05 % | 8,86 % | 0,9408 | oui / oui / oui | 30 | — |
+| Sans les mesures originales pour le PIB (O-172 à O-174) | 1,01 % | 8,88 % | 0,9402 | oui / oui / oui | 27 | — |
+| Budget réglementaire réalisé en entier (O-172 : +1,2 % de PIB) | -0,21 % | 8,86 % | 0,9409 | oui / oui / oui | 30 | — |
+| Sans les devises, la réserve RRRODE ni la trésorerie (O-164) | 0,34 % | 8,87 % | 0,9406 | oui / oui / oui | 28 | — |
+| Vente de tout l'or (version précédente d'O-149 et O-164) | 0,10 % | 8,87 % | 0,9406 | oui / oui / oui | 30 | — |
+| Contribution sur le sol : taux unique de 0,5 % (version précédente d'O-151) | 0,09 % | 8,88 % | 0,9405 | oui / oui / oui | 30 | — |
+| Contribution sur le sol à 1,15 % uniforme (version d'octobre, 57 Md€) | -1,02 % | 8,97 % | 0,9404 | oui / oui / oui | 31 | — |
+| Barème par surface doublé (0,5 %, 1 %, 2 %) | -0,41 % | 8,92 % | 0,9405 | oui / oui / oui | 30 | — |
+| Vente de tout l'or et contribution sur le sol à 1,15 % uniforme (versions précédentes) | -1,18 % | 8,97 % | 0,9404 | oui / oui / oui | 32 | — |
 
 1. **Amendements d'octobre 2026.** Revenir sur l'un d'eux fait perdre au
    moins une propriété (dernière colonne), sauf pour O-38 : sans la taxe
@@ -2638,9 +2702,9 @@ sur 33) :
    (variantes). Pour les déchetteries : recettes perdues sur les
    professionnels et dépôts sauvages évités, faute de données nationales.
 4. **Baisse du déficit chaque année.** Tenue sous les trois moteurs, avec
-   des marges minimales de 0,37 point en 2035 (demande), 0,42 point en 2035 (offre), 0,41 point en 2035 (équilibre). Sans la deuxième journée de
-   solidarité (O-84), le déficit 2035 serait de 0,48 %.
-5. **Chômage.** 8,90 % en 2035 contre 7,91 % sans programme : la propriété
+   des marges minimales de 0,37 point en 2035 (demande), 0,42 point en 2035 (offre), 0,42 point en 2035 (équilibre). Sans la deuxième journée de
+   solidarité (O-84), le déficit 2035 serait de 0,54 %.
+5. **Chômage.** 8,87 % en 2035 contre 7,91 % sans programme : la propriété
    porte sur 2030, où le programme fait légèrement mieux que le tendanciel
    (contrats aidés O-127, postes publics, accompagnement O-26b et O-77).
    La norme de dépense et les réductions d'exonérations (O-56, O-61)
@@ -2750,6 +2814,13 @@ sur 33) :
     les règles européennes du déficit (30) ; la contribution à 1,15 %
     uniforme redonne aussi la règle de dette (31), avec tout l'or
     l'équilibre de 2035 (32) (voir les options chiffrées).
+29. **Entretien et seuils (O-179, O-180).** L'enveloppe d'entretien ne
+    couvre ni le rail (≈ 1,5 Md€ par an non financés) ni les bâtiments
+    publics ; le passif suivi (≈ 12 Md€) est une borne basse. Le coût du
+    lissage des seuils est un ordre de grandeur : sans microsimulation, le
+    nombre de ménages au voisinage de chaque seuil n'est pas connu, et un
+    lissage « par le haut » crée des bénéficiaires nouveaux au-dessus des
+    anciens plafonds (C2S jusqu'à ≈ 18 000 €), que certains contesteront.
 23. **O-118 (vitesse libre sur 10 % des autoroutes)** contredit O-155
     (110 km/h) ; les deux sont gardées, à trancher par l'auteur.
 24. **Mesures pour le PIB (O-172 à O-174).** Le budget réglementaire porte
@@ -2800,15 +2871,15 @@ O-83 et O-121).
 
 | Domaine | Mesure (programme d'origine, chiffrage du parti) | Déficit | Chômage | IDH |
 |---|---|---|---|---|
-| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,09 pt | −0,06 pt | +1,0 |
-| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,09 pt | −0,04 pt | +0,9 |
-| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,18 pt | −0,09 pt | +1,9 |
-| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,13 pt | −0,09 pt | +1,4 |
-| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,07 pt | −0,03 pt | +0,7 |
-| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,04 pt | −0,02 pt | +0,4 |
-| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,13 pt | −0,08 pt | +1,3 |
-| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,15 pt | −0,10 pt | +2,0 |
-| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,03 pt | +0,00 pt | +0,2 |
+| Santé, déserts médicaux | Hôpitaux et EHPAD publics, mutuelle gratuite des 18-25 ans, 5 Md€ (PS, P-11) | +0,09 pt | −0,06 pt | +0,9 |
+| Logement | APL +10 %, allocations dès le premier enfant (Écologistes, E-14) | +0,08 pt | −0,05 pt | +0,9 |
+| Jeunesse | Garantie d'autonomie de 1 337 € par mois (LFI, L-19) | +0,17 pt | −0,10 pt | +1,9 |
+| École | Classes à 19 élèves en 2032, 12 en éducation prioritaire (Écologistes, E-12) | +0,13 pt | −0,10 pt | +1,3 |
+| Aidants, dentaire | Proches aidants, soins dentaires, 3,4 Md€ (RN, RN-19) | +0,07 pt | −0,04 pt | +0,6 |
+| Adaptation au climat | Fonds unique d'adaptation, 2 Md€ par an (Horizons, H-03) | +0,03 pt | −0,02 pt | +0,4 |
+| Adaptation au climat | Plan national d'adaptation, 7 Md€ par an en 2032 (Écologistes, E-03) | +0,13 pt | −0,08 pt | +1,2 |
+| Rénovation | Rénovation thermique des logements privés, 10 Md€ (PCF, PC-03) | +0,15 pt | −0,11 pt | +1,9 |
+| Mobilités | Réseau cyclable, 1 Md€ par an (PCF, PC-02) | +0,02 pt | −0,01 pt | +0,1 |
 
 E-14 recoupe en partie O-83 (allocations dès le premier enfant) : son
 chiffrage s'y ajouterait sans le corriger de ce recouvrement. La
@@ -2823,7 +2894,7 @@ culture ; intégration des étrangers (au-delà des préfectures, O-112).
 
 ### Chiffrages à documenter
 
-* 66 mesures sur 207 reposent au moins en partie sur une hypothèse ; les plus
+* 66 mesures sur 209 reposent au moins en partie sur une hypothèse ; les plus
   lourdes sur le solde : O-14 : −0,48 point, O-44 : −0,46 point, O-58 : −0,43 point, O-150 : −0,40 point.
 * Trois chiffrages du groupe PS sans contre-expertise connue : CSG sur les
   gros héritages (O-36, 10 Md€ : −0,49 point), exonérations (O-38, 4 Md€),
