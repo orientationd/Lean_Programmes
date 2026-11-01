@@ -560,4 +560,19 @@ theorem priorite_nucleaire :
       t3.prixElectriciteEntreprisesEurosMWh < s3.prixElectriciteEntreprisesEurosMWh := by
   decide +kernel
 
+/-- Pollution de l'air : `pollutionAir d` ajoute `d` décès attribuables et
+retire les années de vie correspondantes (11 par décès) ; l'investissement
+de transition en ascenseurs crée des emplois dans la construction et
+envoie un quart de la dépense aux importations, plus le contenu importé de
+la demande intérieure induite. -/
+theorem pollution_air_ascenseurs :
+    let s0 := etatDepart H
+    let z := depart (mesure (.pollutionAir 150))
+    let a := depart (mesure (.investissementTransition .ascenseur [1000]))
+    z.decesPollutionAir - s0.decesPollutionAir = 150 ∧
+      s0.anneesVieGagneesParAn - z.anneesVieGagneesParAn = 150 * 11 ∧
+      0 < a.emploi.construction - s0.emploi.construction ∧
+      250 ≤ a.importations - s0.importations ∧ a.importations - s0.importations < 350 := by
+  decide +kernel
+
 end Tests.Mecanismes

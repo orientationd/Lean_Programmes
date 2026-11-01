@@ -441,6 +441,10 @@ inductive Levier where
   `participationCiblePm` : coût des dépistages supplémentaires (santé), et
   décès évités par point de participation (axe économique). -/
   | depistageColorectal (participationCiblePm : Int)
+  /-- Décès annuels attribuables à la pollution de l'air ajoutés (`decesParAn`
+  positif : une règle qui améliorait l'air est supprimée) ou retirés
+  (négatif), en niveau ; les années de vie suivent (IDH). -/
+  | pollutionAir (decesParAn : Int)
   /-- Taux de scolarisation de chaque âge de 18 à 24 ans relevé de
   `hausseTauxPm` (places, bourses) : coût (dépense par étudiant) et durée
   attendue de scolarisation de l'IDH. -/
@@ -1198,6 +1202,10 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
       appliquerDepense H Fonction.sante.secteur .sante cout
         { s with baisseMortaliteCiblePm := s.baisseMortaliteCiblePm.ajouter .cancerColorectal
                    (points * H.eco.baisseDecesColorectalParPointPm / 10) }
+  | .pollutionAir d, s =>
+      { s with decesPollutionAir := max 0 (s.decesPollutionAir + d)
+               anneesVieGagneesParAn := s.anneesVieGagneesParAn
+                 - d * H.demo.anneesVieParDecesPollutionDixiemes / 10 }
   | .scolarisationJeunes h, s =>
       let etudiants := 7 * H.eco.jeunesParGenerationMilliers * h   -- milliers × pm → personnes
       appliquerDepense H Fonction.enseignement.secteur .enseignement
