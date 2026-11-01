@@ -237,6 +237,7 @@ def etatChamps (s : Etat) : List (String × Json) :=
     ("allegementsTranche", Json.mkObj <| TrancheSalaire.tous.map fun t => (t.id, toJson (s.allegementsTranche.get t))),
     ("participationsEtat", toJson s.participationsEtat),
     ("capitalPublicMesures", toJson s.capitalPublicMesures),
+    ("orRacheteMeur", toJson s.orRacheteMeur),
     ("dividendesEtat", toJson s.dividendesEtat),
     ("impots", Json.mkObj <| Impot.tous.map fun i => (i.id, toJson (s.impots.get i))),
     ("emploi", Json.mkObj <| Secteur.tous.map fun x => (x.id, toJson (s.emploi.get x)))]

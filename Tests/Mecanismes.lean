@@ -575,4 +575,20 @@ theorem pollution_air_ascenseurs :
       250 ≤ a.importations - s0.importations ∧ a.importations - s0.importations < 350 := by
   decide +kernel
 
+/-- État de départ avec un excédent de 10 Md€ l'année écoulée. -/
+def excedentDix : Etat :=
+  { etatDepart H with autresRecettes := (etatDepart H).autresRecettes + (etatDepart H).deficit + 10000 }
+
+/-- Placement de l'excédent : avec un excédent de 10 Md€ l'année précédente,
+la moitié est placée en or (plafonné ici à 3 Md€, le reste va aux
+participations : 7 Md€) ; la dette de fin d'année est plus haute d'autant,
+moins les dividendes des participations, qui réduisent le déficit. -/
+theorem placement_excedent :
+    let p := anneeSuivante D H { excedentDix with placementExcedentPm := 1000, partOrPlacementPm := 500,
+                                                   plafondOrRacheteMeur := 3000 }
+    let q := anneeSuivante D H excedentDix
+    p.orRacheteMeur = 3000 ∧ p.placementParticipationsAnnee = 7000 ∧
+      9000 < p.dette - q.dette ∧ p.dette - q.dette ≤ 10000 ∧ p.deficit < q.deficit := by
+  decide +kernel
+
 end Tests.Mecanismes

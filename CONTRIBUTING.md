@@ -193,7 +193,11 @@ du nucléaire (état `prioriteNucleaire`, `ecretementGwh`). `pollutionAir
 decesParAn` : décès attribuables à la pollution de l'air ajoutés (règle
 supprimée) ou retirés, en niveau, années de vie suivies. Technologie de
 transition `ascenseur` (pose dans la construction, un quart importé, aide
-aux propriétaires sans capital public).
+aux propriétaires sans capital public). `placementExcedent partPm partOrPm
+plafondOrMeur` : dès qu'une année finit en excédent, une part en est placée
+l'année suivante en rachat d'or (plafonné, état `orRacheteMeur`) et en
+prises de participation (dividendes au rendement de départ) ; opérations
+financières, dans la dette, hors déficit.
 Incidence des prélèvements : l'effet d'un prélèvement sur la demande est
 le niveau moyen du moteur (`multiplicateurPrelevementsPm`) réparti selon
 l'impôt (`incidencePrelevementPm`, axe économique) : la TVA et les

@@ -295,6 +295,13 @@ inductive Levier where
   le seuil ; l'économie passe par le multiplicateur, pondérée par le
   moteur. Un programme n'a qu'un frein : un second levier le remplace. -/
   | freinDeficit (seuilPb : Int) (moderationPb : Int)
+  /-- Placement de l'excédent : dès que le budget de l'année précédente est
+  en excédent, `partPm` de cet excédent est placé, dont `partOrPm` en rachat
+  d'or (jusqu'à `plafondOrMeur` cumulés) et le reste en prises de
+  participation dans les entreprises (dividendes au rendement du
+  portefeuille de départ). Opérations financières : la dette ne baisse pas
+  d'autant, le déficit n'en est pas affecté. -/
+  | placementExcedent (partPm partOrPm plafondOrMeur : Int)
   /-- Recette à échéancier : impôt (`some i`, avec effet de demande pondéré
   comme un prélèvement) ou recette non fiscale (`none`, sans effet de
   demande : péages, redevances déjà acquittés par les usagers). Niveaux
@@ -1067,6 +1074,8 @@ def Levier.appliquer (M : Moteur) (H : Scenario) : Levier → Etat → Etat
   | .normeDepense m, s => { s with moderationDepensesPb := s.moderationDepensesPb + m }
   | .freinDeficit seuil m, s =>
       { s with freinDeficitSeuilPb := seuil, freinDeficitPb := m }
+  | .placementExcedent part partOr plafond, s =>
+      { s with placementExcedentPm := part, partOrPlacementPm := partOr, plafondOrRacheteMeur := plafond }
   | .recetteEcheancier _ [], s => s
   | .recetteEcheancier i (n :: reste), s =>
       let e : EcheanceRecette := { impot := i, restants := reste, niveau := n, indice := 10000 }

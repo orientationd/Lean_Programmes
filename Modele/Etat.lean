@@ -1217,6 +1217,18 @@ structure Etat where
   elles accroissent la dette sans entrer dans le déficit (opérations
   financières) et augmentent le portefeuille. -/
   investissementsParticipations : Int := 0
+  /-- Placement de l'excédent (levier `placementExcedent`) : part de
+  l'excédent budgétaire de l'année précédente placée, pm (0 : inactif), et
+  part de ce placement consacrée au rachat d'or, le reste à des prises de
+  participation ; plafond cumulé du rachat d'or, M€. -/
+  placementExcedentPm : Int := 0
+  partOrPlacementPm : Int := 0
+  plafondOrRacheteMeur : Int := 0
+  /-- Placements de l'année écoulée (or, participations), M€, et or racheté
+  cumulé, M€ : opérations financières, dans la dette, pas dans le déficit. -/
+  placementOrAnnee : Int := 0
+  placementParticipationsAnnee : Int := 0
+  orRacheteMeur : Int := 0
   /-- Calendrier légal de l'âge de départ : hausses des années suivantes,
   mois par an (tête = année prochaine). -/
   calendrierAgeLegal : List Int := []
@@ -1421,7 +1433,7 @@ précédente, plus le déficit de l'année (mesures comprises), les opérations
 financières et l'ajustement dette-déficit de l'année. -/
 def dette (s : Etat) : Int :=
   s.detteDebut + s.deficit + s.operationsFinancieres + s.investissementsParticipations
-    + s.ajustementDetteAnnee
+    + s.placementOrAnnee + s.placementParticipationsAnnee + s.ajustementDetteAnnee
 
 /-- Émissions totales, Mt CO₂e (arrondi au Mt le plus proche). -/
 def emissionsMt (s : Etat) : Int := (s.emissionsKt.total + 500) / 1000
@@ -1452,7 +1464,7 @@ d'année précédente plus le déficit, les opérations financières et
 l'ajustement de l'année. -/
 theorem dette_identite (s : Etat) :
     s.dette - s.detteDebut = s.deficit + s.operationsFinancieres + s.investissementsParticipations
-      + s.ajustementDetteAnnee := by
+      + s.placementOrAnnee + s.placementParticipationsAnnee + s.ajustementDetteAnnee := by
   simp [dette]; omega
 
 /-- Emploi total, personnes. -/

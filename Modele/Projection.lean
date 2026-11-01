@@ -300,8 +300,15 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     + (croissance + H.eco.excesPatrimoineParDecesPb) * H.eco.elasticiteDroitsSuccessionPm / 1000
   -- participations de l'État : valorisation au rythme du PIB nominal, plus les
   -- prises de participation ; dividendes au rendement du portefeuille de départ
+  -- placement de l'excédent de l'année précédente (levier
+  -- `placementExcedent`) : rachat d'or jusqu'au plafond, le reste en prises
+  -- de participation ; opérations financières (dette, pas déficit)
+  let excedent := max 0 (0 - s.deficit)
+  let placement := if s.placementExcedentPm = 0 then 0 else excedent * s.placementExcedentPm / 1000
+  let orAchat := min (placement * s.partOrPlacementPm / 1000) (max 0 (s.plafondOrRacheteMeur - s.orRacheteMeur))
+  let participationsAchat := placement - orAchat
   let participations := s.participationsEtat + appliquerPb s.participationsEtat croissance
-    + s.investissementsParticipations
+    + s.investissementsParticipations + participationsAchat
   let dividendes := if ref.participationsEtat = 0 then s.dividendesEtat
     else participations * ref.dividendesEtat / ref.participationsEtat
   -- recettes non fiscales hors dividendes : acycliques, elles suivent le PIB
@@ -536,6 +543,9 @@ def anneeSuivante (M : Moteur) (H : Scenario) (s : Etat) : Etat :=
     detteDebut := dette
     ajustementDetteAnnee := 0
     participationsEtat := participations
+    placementOrAnnee := orAchat
+    placementParticipationsAnnee := participationsAchat
+    orRacheteMeur := s.orRacheteMeur + orAchat
     dividendesEtat := dividendes
     emissionsKt := emissions.1
     effetPrixTransportsPpm := emissions.2.1
